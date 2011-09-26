@@ -1,0 +1,6 @@
+class Periodictask < ActiveRecord::Base
+  unloadable
+  belongs_to :project
+  belongs_to :user
+  INTERVAL_UNITS = ['day','week', 'month']
+end

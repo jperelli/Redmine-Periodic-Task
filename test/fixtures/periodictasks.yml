@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+  project_id: 1
+  tracker_id: 1
+  assigned_to_id: 1
+  author_id: 1
+  subject: MyString
+  interval_number: 1
+  interval_units: MyString
+  last_assigned_date: 2011-09-22 14:08:41
+  next_run_date: 2011-09-22 14:08:41
+two:
+  id: 2
+  project_id: 1
+  tracker_id: 1
+  assigned_to_id: 1
+  author_id: 1
+  subject: MyString
+  interval_number: 1
+  interval_units: MyString
+  last_assigned_date: 2011-09-22 14:08:41
+  next_run_date: 2011-09-22 14:08:41

@@ -1,0 +1,3 @@
+class Periodictasks < ActiveRecord::Base
+  unloadable
+end

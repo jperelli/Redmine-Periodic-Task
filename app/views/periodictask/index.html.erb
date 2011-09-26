@@ -1,0 +1,53 @@
+<h2>Periodictask#index</h2>
+<% if @project_identifier %>
+
+<div class="contextual">
+<%= link_to('Add Periodic Task',
+                          {:controller => 'periodictask', :action => 'new', :project_id => @project},
+                          :class => 'icon icon-add',
+                          :onclick => 'Element.show("add-task"); Form.Element.focus("periodictask_subject"); return false;') if @project %>
+</div>
+
+<div id="add-task" style="display:none;">
+<h2><%= l(:label_email_assignment_new) %></h2>
+<p>Use this form to add another task.</p>
+<% labelled_tabular_form_for :periodictask, @periodictask, 
+  :url => { :controller => 'periodictask', :action => 'new', :project_id => @project },
+  :html => { :id => 'task-form' } do |f| %>
+<%= render :partial => 'periodictask/form', :locals => { :f => f } %>
+<%= submit_tag l(:button_create) %>
+<%= link_to l(:button_cancel), "#", :onclick => 'Element.hide("add-task")' %>
+<% end if @project %>
+</div>
+
+<h2>Periodic Tasks</h2>
+<p>These are the currently scheduled tasks</p>
+<table class="list">
+  <thead>
+    <tr>
+      <th><%= l(:label_subject) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tasks.each do |a| %>
+    <tr class="<%= cycle('odd', 'even') %>">
+      <td><%= a.subject %></td>
+      <td><%= a.next_run_date %></td>
+      <td>
+  <%= link_to l(:button_edit), 
+                            {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
+                            :class => 'icon icon-edit',
+                            :accesskey => accesskey(:edit),
+                            :onclick => 'Element.show("edit-task"); return false;' %>
+      </td>
+      <td>
+  <%= link_to l(:button_delete), {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project}, :confirm => l(:text_are_you_sure), :method => :post, :class => 'icon icon-del' %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% else %>
+  <p>No project ID supplied</p>
+<% end %>

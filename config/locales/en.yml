@@ -1,0 +1,12 @@
+# English strings go here for Rails i18n
+en:
+  field_interval_number: Interval Number
+  field_next_run_date: Next run date (yyyy-mm-dd)
+
+  label_email_assignment_new: Add email assignment
+  label_email_assignment: Email assignment
+  label_email_address: Email address
+  label_assigned_to_user: Assigned to user
+  no_members_in_project: This project has no members
+  label_subject: Subject
+  label_next_run_date: Next Run Date 
