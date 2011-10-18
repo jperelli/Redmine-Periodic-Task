@@ -5,7 +5,7 @@
 <p>
   <%= label(:periodictask, :assigned_to_user_id, "User") %>
   <% if @users.length > 0 %>
-    <%= collection_select(:periodictask, "assigned_to_id", @users, :id, :fullname ) %>
+    <%= collection_select(:periodictask, "assigned_to_id", @users, :id, :name ) %>
   <% else %>
     <%= l(:no_members_in_project) %>
   <% end %>
