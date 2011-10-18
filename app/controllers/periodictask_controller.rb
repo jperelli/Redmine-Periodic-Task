@@ -12,7 +12,15 @@ class PeriodictaskController < ApplicationController
     @project = Project.find(params[:project_id])
     @tasks = Periodictask.find_all_by_project_id(@project[:id])
   end
-
+  def update
+    if !params[:project_id] then return end
+    @periodictask = Periodictask.find(params[:id])
+    @periodictask.update_attributes(params[:periodictask])
+      if @periodictask.save
+        flash[:notice] = "Periodic Task is saved"
+        redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+      end
+  end
   def new
     if !params[:project_id] then return end
     @project = Project.find(params[:project_id])
