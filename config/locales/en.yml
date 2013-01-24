@@ -1,7 +1,7 @@
 # English strings go here for Rails i18n
 en:
   field_interval_number: Interval Number
-  field_next_run_date: Next run date (yyyy-mm-dd)
+  field_next_run_date: Next run date (yyyy-mm-dd hh:mm:ss)
 
   label_assigned_to_user: Assigned to user
   no_members_in_project: This project has no members
