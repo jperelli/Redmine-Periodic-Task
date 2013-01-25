@@ -1,23 +1,9 @@
-<h2>Periodictask#index</h2>
 <% if @project_identifier %>
 
 <div class="contextual">
 <%= link_to('Add Periodic Task',
                           {:controller => 'periodictask', :action => 'new', :project_id => @project},
-                          :class => 'icon icon-add',
-                          :onclick => 'Element.show("add-task"); Form.Element.focus("periodictask_subject"); return false;') if @project %>
-</div>
-
-<div id="add-task" style="display:none;">
-<h2><%= l(:label_email_assignment_new) %></h2>
-<p>Use this form to add another task.</p>
-<% labelled_tabular_form_for :periodictask, @periodictask, 
-  :url => { :controller => 'periodictask', :action => 'new', :project_id => @project },
-  :html => { :id => 'task-form' } do |f| %>
-<%= render :partial => 'periodictask/form', :locals => { :f => f } %>
-<%= submit_tag l(:button_create) %>
-<%= link_to l(:button_cancel), "#", :onclick => 'Element.hide("add-task")' %>
-<% end if @project %>
+                          :class => 'icon icon-add') %>
 </div>
 
 <h2>Periodic Tasks</h2>

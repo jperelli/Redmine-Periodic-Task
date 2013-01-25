@@ -1,7 +1,8 @@
-<%= error_messages_for 'periodicttask' %>
+<%= error_messages_for 'periodictask' %>
 <%= f.hidden_field :id %>
+<%= f.hidden_field :project_id %>
 <div class="box tabular">
-<p><%= f.text_field :subject, :required => true, :size => 60 %></p>
+<p><%= label(:periodictask, :subject, "Subject") %><%= f.text_field :subject, :required => true, :size => 60 %></p>
 <p>
   <%= label(:periodictask, :assigned_to_user_id, "User") %>
   <% if @users.length > 0 %>
@@ -10,8 +11,8 @@
     <%= l(:no_members_in_project) %>
   <% end %>
 </p>
-<p><%= f.text_field :interval_number, :required=> true, :size => 3 %> </p>
+<p><%= label(:periodictask, :interval_number, "Interval Number") %><%= f.text_field :interval_number, :required=> true, :size => 3 %> </p>
 <p><%= label(:periodictask, :interval_units, "Interval Unit") %><%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
 <P><%= label(:periodictask, :tracker_id, "Tracker") %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
-<P><%= f.text_field :next_run_date %> 
+<P><%= label(:periodictask, :next_run_date, "Next Run Date (yyyy-mm-dd hh:mm:ss") %><%= f.text_field :next_run_date %> 
 </div>

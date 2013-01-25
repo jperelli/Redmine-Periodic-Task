@@ -1,1 +1,6 @@
-<h2>Periodictask#new</h2>
+<h2>New Periodic Task</h2>
+
+<%= form_for(@periodictask) do |f| %>
+<%= render :partial => 'form', :locals => { :f => f } %>
+<%= f.submit "Go!" %>
+<% end %>
