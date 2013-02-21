@@ -1,0 +1,10 @@
+# German strings go here for Rails i18n
+de:
+  field_interval_number: Intervallnummer
+  field_next_run_date: Nächster Lauf am (yyyy-mm-dd hh:mm:ss)
+  field_interval_unit: Intervalleinheit
+  field_tracker: Tracker
+  label_assigned_to_user: Zugewiesen an
+  no_members_in_project: Dieses Projekt hat keine Mitglieder
+  label_subject: Thema
+  label_next_run_date: Nächster Lauf
