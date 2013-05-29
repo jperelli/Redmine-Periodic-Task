@@ -1,0 +1,17 @@
+# German strings go here for Rails i18n
+de:
+  field_interval_number: Intervallnummer
+  field_interval_unit: Intervalleinheit
+  field_tracker: Tracker
+  label_assigned_to_user: Zugewiesen an
+  no_members_in_project: Dieses Projekt hat keine Mitglieder
+  label_subject: Thema
+  label_next_run_date: Nächster Lauf am (yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
+  label_new_periodic_task: Wiederholende Aufgabe erstellen
+  label_no_members_in_project: Das Projket hat keine Mitglieder
+  label_periodic_tasks: Wiederholende Aufgaben
+  label_save_periodic_task: Erstellen
+  label_scheduled_tasks: Nachfolgend die Liste der aktiven wiederholenden Aufgaben.
+  label_no_project: Fehler! Es wurde keine project id gefunden.
+  label_remove_periodic_task: Wiederholende Aufgabe entfernen  
