@@ -1,13 +1,13 @@
 <% if @project_identifier %>
 
 <div class="contextual">
-<%= link_to('Add Periodic Task',
+<%= link_to(l(:label_new_periodic_task),
                           {:controller => 'periodictask', :action => 'new', :project_id => @project},
                           :class => 'icon icon-add') %>
 </div>
 
-<h2>Periodic Tasks</h2>
-<p>These are the currently scheduled tasks</p>
+<h2><%= l(:label_periodic_tasks) %></h2>
+<p><%= l(:label_scheduled_tasks) %></p>
 <table class="list">
   <thead>
     <tr>
@@ -35,5 +35,5 @@
 </table>
 
 <% else %>
-  <p>No project ID supplied</p>
+  <p><%= l(:label_no_project) %></p>
 <% end %>
