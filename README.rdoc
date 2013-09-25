@@ -22,7 +22,7 @@ make sure you run rake db:migrate_plugins as specified for installing new plugin
 This is how I recommend you to install it:
 
     cd /usr/local/share/redmine
-    git clone -b redmine2 http://github.com/jperelli/Redmine-Periodic-Task.git plugins/periodictask
+    git clone -b redmine2 https://github.com/jperelli/Redmine-Periodic-Task.git plugins/periodictask
     rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
     apache2ctl graceful
 
