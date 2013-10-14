@@ -11,6 +11,14 @@
     <%= l(:no_members_in_project) %>
   <% end %>
 </p>
+<p>
+  <%= label(:periodictask, :author_user_id, "User") %>
+  <% if @users.length > 0 %>
+    <%= collection_select(:periodictask, "author_id", @users, :id, :name ) %>
+  <% else %>
+    <%= l(:no_members_in_project) %>
+  <% end %>
+</p>
 <p><%= label(:periodictask, :interval_number, "Interval Number") %><%= f.text_field :interval_number, :required=> true, :size => 3 %> </p>
 <p><%= label(:periodictask, :interval_units, "Interval Unit") %><%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
 <P><%= label(:periodictask, :tracker_id, "Tracker") %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
