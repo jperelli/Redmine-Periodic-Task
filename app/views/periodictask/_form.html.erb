@@ -4,7 +4,7 @@
 <div class="box tabular">
 <p><%= label(:periodictask, :subject, "Subject") %><%= f.text_field :subject, :required => true, :size => 60 %></p>
 <p>
-  <%= label(:periodictask, :assigned_to_user_id, "User") %>
+  <%= label(:periodictask, :assigned_to_user_id, "Assigned") %>
   <% if @users.length > 0 %>
     <%= collection_select(:periodictask, "assigned_to_id", @users, :id, :name ) %>
   <% else %>
@@ -12,7 +12,7 @@
   <% end %>
 </p>
 <p>
-  <%= label(:periodictask, :author_user_id, "User") %>
+  <%= label(:periodictask, :author_user_id, "Author") %>
   <% if @users.length > 0 %>
     <%= collection_select(:periodictask, "author_id", @users, :id, :name ) %>
   <% else %>
