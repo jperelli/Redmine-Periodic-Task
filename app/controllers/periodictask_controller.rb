@@ -21,7 +21,7 @@ class PeriodictaskController < ApplicationController
     params[:periodictask][:project_id] = @project[:id]
     @periodictask.attributes = params[:periodictask]
     if @periodictask.save
-      flash[:notice] = "Periodic Task is saved"
+      flash[:notice] = l(:flash_task_created)
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
     end
   end
@@ -36,7 +36,7 @@ class PeriodictaskController < ApplicationController
     @periodictask = Periodictask.find(params[:id])
     params[:periodictask][:project_id] = @project[:id]
     if @periodictask.update_attributes(params[:periodictask])
-      flash[:notice] = "saved task"
+      flash[:notice] = l(:flash_task_saved)
       # redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
     end
