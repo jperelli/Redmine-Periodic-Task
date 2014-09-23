@@ -20,7 +20,8 @@ class ScheduledTasksChecker
       issue.save
       interval = task.interval_number
       units = task.interval_units
-      task.next_run_date =  interval.send(units.downcase).from_now
+      interval_steps = ((Time.now - task.next_run_date) / interval.send(units.downcase)).ceil
+      task.next_run_date += (interval * interval_steps).send(units.downcase)
       task.save
     end
   end
