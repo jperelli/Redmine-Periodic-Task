@@ -9,7 +9,9 @@ class PeriodictaskController < ApplicationController
   def index
     if !params[:project_id] then return end
     @project_identifier = params[:project_id]
-    @tasks = Periodictask.find_all_by_project_id(@project[:id])
+    # find_all_by is considered deprecated (Rails 4)
+    @tasks = Periodictask.where(project_id: @project[:id])
+    #@tasks = Periodictask.find_all_by_project_id(@project[:id])
   end
 
   def new
