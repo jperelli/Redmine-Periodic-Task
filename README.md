@@ -8,11 +8,46 @@ After you installed the plugin you can add it as a module to a project that alre
 or activate it as default module for new projects. On each project it will add a new tab 
 named "Periodic Task" - just go there to add your tasks.
 
+Note about redmine version support
+----------------------------------
+
+This fork (jperelli) supports now redmine v2 and v3.
+
+Redmine v1 support has been dropped in favor of newer v3. If you still need redmine v1 support, please use redmine2 branch, that supports v1 and v2.
+
+Support table :
+
+<table>
+  <tr>
+    <td rowspan="2">git branch</td>
+    <td colspan="3">redmine version support</td>
+  </tr>
+  <tr>
+    <td>1.x</td>
+    <td>2.x</td>
+    <td>3.x</td>
+  </tr>
+  <tr>
+    <td>master</td>
+    <td>Unknown</td>
+    <td>Yes</td>
+    <td>Yes</td>
+  </tr>
+  <tr>
+    <td>redmine2</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>No</td>
+  </tr>
+</table>
+
+To use redmine2 branch, when cloning use `-b redmine2` like this `git clone -b redmine2 http://github.com:/perelli/Redmine-Periodic-Task.git plugins/periodictask`
+
 Installation
 ------------
 
     cd /usr/local/share/redmine
-    git clone -b redmine2 http://github.com:/perelli/Redmine-Periodic-Task.git plugins/periodictask
+    git clone http://github.com:/perelli/Redmine-Periodic-Task.git plugins/periodictask
     rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
     apache2ctl graceful
 
@@ -51,4 +86,6 @@ Or even every 10 minutes
 
     0/10 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production"
 
-If you want to substitute variable MONTHNAME with localized version (de only by now) please add LOCALE="de" to cronjob.
+If you want to substitute variable `MONTHNAME` with localized version (`de` only by now) please add `LOCALE="de"` to cronjob like this
+
+    0 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
