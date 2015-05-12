@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  
 #  resources :periodictask
 #  es igual a las siguientes rutas
 
