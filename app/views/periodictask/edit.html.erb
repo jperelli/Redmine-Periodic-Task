@@ -1,9 +1,6 @@
-<h2><%= l(:label_email_assignment_new) %></h2>
-<p>Use this form to edit this task.</p>
-<% labelled_tabular_form_for :periodictask, @periodictask, 
-  :url => { :controller => 'periodictask', :action => 'update', :id=>@periodictask.id, :project_id => @project },
-  :html => { :id => 'task-form' } do |f| %>
-<%= render :partial => 'periodictask/form', :locals => { :f => f } %>
-<%= submit_tag l(:button_update) %>
-<%= link_to l(:button_cancel), "#", :onclick => 'Element.hide("add-task")' %>
-<% end if @project %>
+<h2><%= l(:label_new_periodic_task) %></h2>
+
+<%= form_for(@periodictask, :url => url_for(:controller => 'periodictask', :action => 'update', :project_id => @project.identifier, :id => @periodictask.id.to_s ) ) do |f| %>
+<%= render :partial => 'form', :locals => { :f => f } %>
+<%= f.submit l(:label_save_periodic_task) %>
+<% end %>
