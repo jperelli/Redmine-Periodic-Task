@@ -6,16 +6,16 @@
 <p><%= l(:subject_variables) %></p>
 <p>
   <%= label(:periodictask, :assigned_to_user_id, l(:label_assigned_to_user)) %>
-  <% if @users.length > 0 %>
-    <%= collection_select(:periodictask, "assigned_to_id", @users, :id, :name ) %>
+  <% if @assignables.length > 0 %>
+    <%= f.select :assigned_to_id, principals_options_for_select(@assignables, @periodictask.assigned_to), :include_blank => true, :required => true %>
   <% else %>
     <%= l(:no_members_in_project) %>
   <% end %>
 </p>
 <p>
   <%= label(:periodictask, :author_user_id, "Author") %>
-  <% if @users.length > 0 %>
-    <%= collection_select(:periodictask, "author_id", @users, :id, :name ) %>
+  <% if @authors.length > 0 %>
+    <%= collection_select(:periodictask, "author_id", @authors, :id, :name ) %>
   <% else %>
     <%= l(:no_members_in_project) %>
   <% end %>

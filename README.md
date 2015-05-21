@@ -41,13 +41,13 @@ Support table :
   </tr>
 </table>
 
-To use redmine2 branch, when cloning use `-b redmine2` like this `git clone -b redmine2 http://github.com:/perelli/Redmine-Periodic-Task.git plugins/periodictask`
+To use redmine2 branch, when cloning use `-b redmine2` like this `git clone -b redmine2 http://github.com:/jperelli/Redmine-Periodic-Task.git plugins/periodictask`
 
 Installation
 ------------
 
     cd /usr/local/share/redmine
-    git clone http://github.com:/perelli/Redmine-Periodic-Task.git plugins/periodictask
+    git clone http://github.com:/jperelli/Redmine-Periodic-Task.git plugins/periodictask
     rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
     apache2ctl graceful
 

@@ -1,6 +1,7 @@
 class Periodictask < ActiveRecord::Base
   unloadable
   belongs_to :project
+  belongs_to :assigned_to, :class_name => 'Principal', :foreign_key => 'assigned_to_id'
   # adapted to changes concerning mass-assigning values to attributes
   attr_accessible *column_names
   INTERVAL_UNITS = [
