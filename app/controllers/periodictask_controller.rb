@@ -67,17 +67,14 @@ private
   end
   
   def load_users
-    # Get the users that are members in the project
-    #
-    #@users = User.find_by_sql('SELECT users.id, CONCAT(users.firstname, \' \', users.lastname) fullname FROM members INNER JOIN users
-    #  ON members.user_id = users.id
-    #  WHERE project_id = ' + @project[:id].to_s + '
-    #  AND status = 1
-    #  ORDER BY firstname ASC')
-    @users = []
-    @project.members.each do |m|
-      @users << m.user
-    end
+    # Get the assignable users and groups in the project
+    @assignables = @project.assignable_users
 
+    # Get the users in the project (as authors)
+    @authors = []
+    @project.members.each do |m|
+      @authors << m.user
+    end
   end
+
 end
