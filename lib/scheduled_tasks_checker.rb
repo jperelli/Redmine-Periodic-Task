@@ -1,6 +1,6 @@
 class ScheduledTasksChecker
   def self.checktasks!
-    Periodictask.all(:conditions=> ["next_run_date <= ? ", Time.now]).each do |task| 
+    Periodictask.where("next_run_date <= ? ", Time.now).each do |task| 
 
       # replace variables (set locale from shell)
       I18n.locale = ENV['LOCALE'] || I18n.default_locale
