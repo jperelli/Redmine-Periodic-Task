@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jperelli/Redmine-Periodic-Task.svg)](https://travis-ci.org/jperelli/Redmine-Periodic-Task)
+
 periodictask
 ============
 
