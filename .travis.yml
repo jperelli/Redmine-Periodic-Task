@@ -7,7 +7,7 @@ env:
   - REDMINE_VERSION=3.1.1 VERBOSE=yes
 
 script:
-  - export PLUGIN=Redmine-Periodic-Task
+  - export PLUGIN=periodictask
   - export WORKSPACE=$(pwd)/workspace
   - export PATH_TO_PLUGIN=$(pwd)
   - export PATH_TO_REDMINE=$WORKSPACE/redmine
