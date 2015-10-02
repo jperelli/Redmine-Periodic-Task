@@ -11,13 +11,14 @@
 <table class="list">
   <thead>
     <tr>
-      <th><%= l(:label_subject) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp</th>
+      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp</th>
     </tr>
   </thead>
   <tbody>
     <% @tasks.each do |a| %>
     <tr class="<%= cycle('odd', 'even') %>">
       <td><%= a.subject %></td>
+      <td><%= a.issue_category%></td>
       <td><%= a.next_run_date %></td>
       <td>
   <%= link_to l(:button_edit), 
