@@ -10,7 +10,7 @@ class ScheduledTasksChecker
       task.subject.gsub!('**YEAR**', Time.now.strftime("%Y"))
 
       print "assigning #{task.subject}\n"
-      issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>task.subject, :description=>task.description);
+      issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>task.subject, :description=>task.description);
       issue.start_date ||= Date.today if task.set_start_date?
       if task.due_date_number
         due_date = task.due_date_number

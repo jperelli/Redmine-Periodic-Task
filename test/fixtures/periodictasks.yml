@@ -3,6 +3,7 @@ one:
   id: 1
   project_id: 1
   tracker_id: 1
+  issue_category_id: 1
   assigned_to_id: 1
   author_id: 1
   subject: MyString
@@ -14,6 +15,7 @@ two:
   id: 2
   project_id: 1
   tracker_id: 1
+  issue_category_id: 1
   assigned_to_id: 1
   author_id: 1
   subject: MyString

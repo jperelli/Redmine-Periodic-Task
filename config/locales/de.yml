@@ -3,13 +3,16 @@ de:
   field_interval_number: Intervallnummer
   field_interval_unit: Intervalleinheit
   field_tracker: Tracker
+  field_category: Kategorie
   label_assigned_to_user: Zugewiesen an
   no_members_in_project: Dieses Projekt hat keine Mitglieder
+  no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_subject: Thema
   label_next_run_date: Nächster Lauf (yyyy-mm-dd hh:mm:ss)
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
   label_no_members_in_project: Dieses Projekt hat keine Mitglieder
+  label_no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_periodic_tasks: Wiederholende Aufgaben
   label_create_periodic_task: Erstellen
   label_save_periodic_task: Speichern
@@ -20,6 +23,7 @@ de:
   label_set_start_date: Beginn setzen
   label_due_date: Setze Abgabedatum in
   label_description: Beschreibung
+  label_issue_category: Ticket-Kategorie
   label_unit_day: Tag(e)
   label_unit_week: Woche(n)
   label_unit_month: Monat(e)

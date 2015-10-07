@@ -5,6 +5,7 @@ class PeriodictaskController < ApplicationController
   before_filter :find_project
   #before_filter :find_periodictask, :except => [:new, :create, :index]
   before_filter :load_users, :except => [:destroy]
+  before_filter :load_categories, :except => [:destroy]
 
   def index
     if !params[:project_id] then return end
@@ -75,6 +76,11 @@ private
     @project.members.each do |m|
       @authors << m.user
     end
+  end
+
+  def load_categories
+    # Get the issue categories
+    @categories = @project.issue_categories
   end
 
 end

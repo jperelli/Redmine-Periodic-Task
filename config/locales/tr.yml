@@ -3,13 +3,16 @@ tr:
   field_interval_number: Tekrarlama aralığı
   field_interval_unit: Tekrarlama birimi
   field_tracker: İş Tipi
+  field_category: Kategori
   label_assigned_to_user: Atanan
   no_members_in_project: Tanımlı üye yok!
+  no_categories_in_project: Tanımlı kategori yok!
   label_subject: Konu
   label_next_run_date: Sonraki açılma zamanı (yyyy-mm-dd hh:mm:ss)
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
   label_no_members_in_project: Tanımlı üye yok
+  label_no_categories_in_project: Tanımlı kategori yok
   label_periodic_tasks: Periyodik İşler
   label_create_periodic_task: Yeni
   label_save_periodic_task: Kaydet
@@ -20,6 +23,7 @@ tr:
   label_set_start_date: Başlama tarihini set et
   label_due_date: Bitiş süresi
   label_description: Açıklama
+  label_issue_category: İş kategorisi
   label_unit_day: gün
   label_unit_week: hafta
   label_unit_month: ay
