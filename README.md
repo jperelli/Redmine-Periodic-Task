@@ -86,7 +86,7 @@ You can also make it run once per hour
 
 Or even every 10 minutes
 
-    0/10 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production"
+    */10 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production"
 
 If you want to substitute variable `MONTHNAME` with localized version (`de` only by now) please add `LOCALE="de"` to cronjob like this
 
