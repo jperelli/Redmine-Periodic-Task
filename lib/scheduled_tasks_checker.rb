@@ -8,6 +8,12 @@ class ScheduledTasksChecker
       task.subject.gsub!('**MONTH**', Time.now.strftime("%m"))
       task.subject.gsub!('**MONTHNAME**', I18n.localize(Time.now, :format => "%B"))
       task.subject.gsub!('**YEAR**', Time.now.strftime("%Y"))
+      task.subject.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 2592000, :format => "%B"))
+      task.description.gsub!('**WEEK**', Time.now.strftime("%W"))
+      task.description.gsub!('**MONTH**', Time.now.strftime("%m"))
+      task.description.gsub!('**MONTHNAME**', I18n.localize(Time.now, :format => "%B"))
+      task.description.gsub!('**YEAR**', Time.now.strftime("%Y"))
+      task.description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 2592000, :format => "%B"))
 
       print "assigning #{task.subject}\n"
       issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>task.subject, :description=>task.description);
