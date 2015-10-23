@@ -1,0 +1,32 @@
+ru:
+  field_interval_number: Interval number
+  field_interval_unit: Interval unit
+  field_tracker: Трекер
+  field_category: Category
+  label_assigned_to_user: Назначена
+  no_members_in_project: В этом проекте нет участников
+  no_categories_in_project: В этом проекте нет категорий
+  label_subject: Тема
+  label_next_run_date: Дата следующего запуска (yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: Редактировать периодическую задачу
+  label_new_periodic_task: Новая периодическая задача
+  label_no_members_in_project: В этом проекте нет участников
+  label_no_categories_in_project: В этом проекте нет категорий
+  label_periodic_tasks: Периодические Задачи
+  label_create_periodic_task: Создать
+  label_save_periodic_task: Сохранить
+  label_scheduled_tasks: Запланированные задачи
+  label_no_project: No project ID supplied
+  label_remove_periodic_task: Удалить периодическую задачу
+  label_interval: Интервал
+  label_set_start_date: Устанвить дату начала
+  label_due_date: Плановая дата через
+  label_description: Описание
+  label_issue_category: Категория задачи
+  label_unit_day: дней
+  label_unit_week: неделя
+  label_unit_month: месяц
+  label_unit_year: год(лет)
+  flash_task_created: Периодическа задача создана
+  flash_task_saved: Периодическа задача сохранена
+  subject_variables: Возможные переменные **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** (января - декабря), **PREVIOUS_MONTHNAME** передыдущий месяц, **YEAR** (YYYY)
