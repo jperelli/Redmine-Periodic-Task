@@ -1,4 +1,4 @@
-<h2><%= l(:label_new_periodic_task) %></h2>
+<h2><%= l(:label_edit_periodic_task) %></h2>
 
 <%= form_for(@periodictask, :url => url_for(:controller => 'periodictask', :action => 'update', :project_id => @project.identifier, :id => @periodictask.id.to_s ) ) do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
