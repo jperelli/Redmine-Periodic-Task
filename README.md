@@ -88,6 +88,6 @@ Or even every 10 minutes
 
     */10 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production"
 
-If you want to substitute variable `MONTHNAME` with localized version (`de` only by now) please add `LOCALE="de"` to cronjob like this
+If you want to substitute variable `MONTHNAME` with localized version (`de`, `tr`, `en` or `ru`) please add `LOCALE="de"` to cronjob like this
 
     0 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
