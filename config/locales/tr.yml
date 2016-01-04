@@ -30,4 +30,4 @@ tr:
   label_unit_year: yıl
   flash_task_created: Periyodik iş oluşturuldu
   flash_task_saved: Periyokik iş kaydedildi
-  subject_variables: Kullanılabilir makrolar; **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** (January - December), **YEAR** (YYYY)
+  subject_variables: Kullanılabilir makrolar; **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
