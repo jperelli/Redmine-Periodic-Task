@@ -30,4 +30,4 @@ en:
   label_unit_year: year(s)
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
-  subject_variables: Possible variables are **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** (January - December), **YEAR** (YYYY)
+  subject_variables: Possible variables are **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)

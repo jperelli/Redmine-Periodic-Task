@@ -30,4 +30,4 @@ de:
   label_unit_year: Jahr(e)
   flash_task_created: Aufgabe wurde angelegt
   flash_task_saved: Aufgabe wurde gespeichert
-  subject_variables: Mögliche Variablen sind **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** (Januar - Dezember), **YEAR** (YYYY)
+  subject_variables: Mögliche Variablen sind **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** und **PREVIOUS_MONTHNAME** (Januar - Dezember), **YEAR** (YYYY)
