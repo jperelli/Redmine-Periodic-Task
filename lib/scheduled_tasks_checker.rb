@@ -4,19 +4,23 @@ class ScheduledTasksChecker
 
       # replace variables (set locale from shell)
       I18n.locale = ENV['LOCALE'] || I18n.default_locale
-      task.subject.gsub!('**WEEK**', Time.now.strftime("%W"))
-      task.subject.gsub!('**MONTH**', Time.now.strftime("%m"))
-      task.subject.gsub!('**MONTHNAME**', I18n.localize(Time.now, :format => "%B"))
-      task.subject.gsub!('**YEAR**', Time.now.strftime("%Y"))
-      task.subject.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 2592000, :format => "%B"))
-      task.description.gsub!('**WEEK**', Time.now.strftime("%W"))
-      task.description.gsub!('**MONTH**', Time.now.strftime("%m"))
-      task.description.gsub!('**MONTHNAME**', I18n.localize(Time.now, :format => "%B"))
-      task.description.gsub!('**YEAR**', Time.now.strftime("%Y"))
-      task.description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 2592000, :format => "%B"))
 
-      print "assigning #{task.subject}\n"
-      issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>task.subject, :description=>task.description);
+      # Copy subject and description and replace variables
+      subject = task.subject.dup
+      description = task.description.dup
+      subject.gsub!('**WEEK**', Time.now.strftime("%W"))
+      subject.gsub!('**MONTH**', Time.now.strftime("%m"))
+      subject.gsub!('**MONTHNAME**', I18n.localize(Time.now, :format => "%B"))
+      subject.gsub!('**YEAR**', Time.now.strftime("%Y"))
+      subject.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 2592000, :format => "%B"))
+      description.gsub!('**WEEK**', Time.now.strftime("%W"))
+      description.gsub!('**MONTH**', Time.now.strftime("%m"))
+      description.gsub!('**MONTHNAME**', I18n.localize(Time.now, :format => "%B"))
+      description.gsub!('**YEAR**', Time.now.strftime("%Y"))
+      description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 2592000, :format => "%B"))
+
+      print "assigning #{subject}\n"
+      issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>subject, :description=>description);
       issue.start_date ||= Date.today if task.set_start_date?
       if task.due_date_number
         due_date = task.due_date_number
