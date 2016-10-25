@@ -1,0 +1,33 @@
+# Japanese strings go here for Rails i18n
+ja:
+  field_interval_number: Interval number
+  field_interval_unit: Interval unit
+  field_tracker: トラッカー
+  field_category: カテゴリ
+  label_assigned_to_user: 担当者
+  no_members_in_project: This project has no members
+  no_categories_in_project: This project has no categories
+  label_subject: 題名
+  label_next_run_date: 次回実行日時（UTC） (yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: Edit Periodic Task
+  label_new_periodic_task: 新規繰り返しチケット
+  label_no_members_in_project: This project has no members
+  label_no_categories_in_project: This project has no categories
+  label_periodic_tasks: 繰り返しチケット
+  label_create_periodic_task: 作成
+  label_save_periodic_task: 保存
+  label_scheduled_tasks: These are the currently scheduled tasks
+  label_no_project: No project ID supplied
+  label_remove_periodic_task: remove periodic task
+  label_interval: 間隔
+  label_set_start_date: 開始日を設定
+  label_due_date: 期日
+  label_description: 説明
+  label_issue_category: カテゴリ
+  label_unit_day: 日後
+  label_unit_week: 週間後
+  label_unit_month: ヶ月後
+  label_unit_year: 年後
+  flash_task_created: Periodic Task is created
+  flash_task_saved: Periodic Task is saved
+  subject_variables: 利用可能な変数 **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
