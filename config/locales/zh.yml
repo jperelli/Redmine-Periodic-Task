@@ -1,0 +1,35 @@
+# Coding：UTF-8
+# Chinese strings go here for Rails i18n 
+# Translated from English strings by Tomora.
+zh:
+  field_interval_number: 间隔数
+  field_interval_unit: 间隔单位
+  field_tracker: 跟踪
+  field_category: 类别
+  label_assigned_to_user: 指派给
+  no_members_in_project: 该项目没有成员
+  no_categories_in_project: 该项目没有类别
+  label_subject: 主题
+  label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: 编辑周期任务
+  label_new_periodic_task: 新建周期任务
+  label_no_members_in_project: 该项目没有成员
+  label_no_categories_in_project: 该项目没有类别
+  label_periodic_tasks: 周期任务
+  label_create_periodic_task: 新建
+  label_save_periodic_task: 保存
+  label_scheduled_tasks: 当前计划的任务
+  label_no_project: 没有提供项目标识
+  label_remove_periodic_task: 删除周期任务
+  label_interval: 间隔
+  label_set_start_date: 设置起始日期
+  label_due_date: 设置结束日期
+  label_description: 描述
+  label_issue_category: 问题类别
+  label_unit_day: 天
+  label_unit_week: 周
+  label_unit_month: 月
+  label_unit_year: 年
+  flash_task_created: 已创建周期任务
+  flash_task_saved: 周期任务已保存
+  subject_variables: 可选值是：**WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
