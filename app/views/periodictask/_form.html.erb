@@ -28,7 +28,7 @@
     <%= l(:no_members_in_project) %>
   <% end %>
 </p>
-<p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.text_field :interval_number, :required=> true, :size => 3 %> <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
+<p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :value => 1, :required => true, :min => 1 %> <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
 <p><%= label(:periodictask, :tracker_id, "Tracker") %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
 <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
 <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %></p>

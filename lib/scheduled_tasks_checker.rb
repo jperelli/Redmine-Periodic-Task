@@ -39,8 +39,10 @@ class ScheduledTasksChecker
       if units.downcase == "business_day"
         task.next_run_date = task.interval_number.business_day.after(now)
       else
-        interval_steps = ((now - task.next_run_date) / interval.send(unit_to_use)).ceil
-        task.next_run_date += (interval * interval_steps).send(units.downcase)
+        if (interval > 0)
+          interval_steps = ((now - task.next_run_date) / interval.send(units.downcase)).ceil
+          task.next_run_date += (interval * interval_steps).send(units.downcase)
+        end
       end
       task.save
     end
