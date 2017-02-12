@@ -19,7 +19,7 @@ en:
   label_scheduled_tasks: These are the currently scheduled tasks
   label_no_project: No project ID supplied
   label_remove_periodic_task: remove periodic task
-  label_interval: Intervall
+  label_interval: Interval
   label_set_start_date: Set start date
   label_due_date: Set due date in
   label_description: Description
