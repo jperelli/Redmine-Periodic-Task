@@ -41,12 +41,12 @@ chmod og+w /app/redmine/db
 echo "UPDATE users SET must_change_passwd=0 WHERE login='admin';" | /app/redmine/bin/rails db
 ### add a new project with periodictask module enabled
 ### TODO: do this only if "project1" does not exist yet in database
-echo "INSERT INTO projects (name, description, identifier, lft, rgt) VALUES ('project1', '', 'project1', 1, 2)" | /app/redmine/bin/rails db
-echo "INSERT INTO enabled_modules (name, project_id) VALUES ('issue_tracking', 1)" | /app/redmine/bin/rails db
-echo "INSERT INTO enabled_modules (name, project_id) VALUES ('periodictask', 1)" | /app/redmine/bin/rails db
-echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 1)" | /app/redmine/bin/rails db
-echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 2)" | /app/redmine/bin/rails db
-echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 3)" | /app/redmine/bin/rails db
+echo "INSERT INTO projects (name, description, identifier, lft, rgt) VALUES ('project1', '', 'project1', 1, 2);" | /app/redmine/bin/rails db
+echo "INSERT INTO enabled_modules (name, project_id) VALUES ('issue_tracking', 1);" | /app/redmine/bin/rails db
+echo "INSERT INTO enabled_modules (name, project_id) VALUES ('periodictask', 1);" | /app/redmine/bin/rails db
+echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 1);" | /app/redmine/bin/rails db
+echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 2);" | /app/redmine/bin/rails db
+echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 3);" | /app/redmine/bin/rails db
 
 
 
