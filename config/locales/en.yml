@@ -25,6 +25,7 @@ en:
   label_description: Description
   label_issue_category: Issue Category
   label_unit_day: day(s)
+  label_unit_business_day: business day(s)
   label_unit_week: week(s)
   label_unit_month: month(s)
   label_unit_year: year(s)

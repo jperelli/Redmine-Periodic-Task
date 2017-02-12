@@ -25,6 +25,7 @@ de:
   label_description: Beschreibung
   label_issue_category: Ticket-Kategorie
   label_unit_day: Tag(e)
+  label_unit_business_day: Arbeitstag(e)
   label_unit_week: Woche(n)
   label_unit_month: Monat(e)
   label_unit_year: Jahr(e)

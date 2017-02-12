@@ -4,7 +4,7 @@ Redmine::Plugin.register :periodictask do
   name 'Redmine Periodictask plugin'
   author 'Julian Perelli based on work from Tanguy de Courson'
   description 'This is a plugin for Redmine2 and 3 that will allow you to schedule a task to be assigned on a schedule'
-  version '3.1.1'
+  version '3.2.0'
   url 'http://github.com/jperelli/Redmine-Periodic-Task/'
   author_url 'http://jperelli.com.ar/'
 

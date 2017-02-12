@@ -7,6 +7,7 @@ class Periodictask < ActiveRecord::Base
   attr_accessible *column_names
   INTERVAL_UNITS = [
     [l(:label_unit_day), 'day'],
+    [l(:label_unit_business_day), 'business_day'],
     [l(:label_unit_week), 'week'], 
     [l(:label_unit_month), 'month'],
     [l(:label_unit_year), 'year']
