@@ -1,3 +1,1 @@
-source 'https://rubygems.org'
-
-gem 'business_time', '= 0.7.6'
+gem 'business_time', '0.7.6'
