@@ -91,3 +91,34 @@ Or even every 10 minutes
 If you want to substitute variable `MONTHNAME` with localized version (`de`, `tr`, `en` or `ru`) please add `LOCALE="de"` to cronjob like this
 
     0 * * * * cd /var/www/<redminedir>; rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
+
+Development
+-----------
+
+To help developing this plugin there is a Vagrantfile working, you can use it with VirtualBox or with [Vagrant-lxc (I recommend vagrant-lxc)](https://github.com/fgrehm/vagrant-lxc)
+
+    vagrant plugin install vagrant-lxc
+    vagrant up --provider lxc
+    vagrant ssh -c "/app/redmine/bin/rails server -b0.0.0.0 -p8080"
+
+Then go to http://192.168.2.100:8080/ and login with
+
+    user: admin
+    pass: admin
+
+You should have a project named *project1* with `periodictask` installed
+
+Author
+------
+
+  - [Tanguy de Courson](https://github.com/myneid/)
+
+Mantainer
+---------
+
+  - [Julian Perelli](https://jperelli.com.ar/)
+
+License
+-------
+
+  GNU GPLv3
