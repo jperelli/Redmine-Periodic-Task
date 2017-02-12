@@ -24,7 +24,6 @@ class ScheduledTasksChecker
       description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
       description.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
 
-      print "assigning #{subject}\n"
       issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>subject, :description=>description);
       issue.start_date ||= Date.today if task.set_start_date?
       if task.due_date_number
