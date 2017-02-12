@@ -9,12 +9,14 @@ class ScheduledTasksChecker
       # Copy subject and description and replace variables
       subject = task.subject.dup
       description = task.description.dup
+      subject.gsub!('**DAY**', now.strftime("%d"))
       subject.gsub!('**WEEK**', now.strftime("%W"))
       subject.gsub!('**MONTH**', now.strftime("%m"))
       subject.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
       subject.gsub!('**YEAR**', now.strftime("%Y"))
       subject.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
       subject.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
+      description.gsub!('**DAY**', now.strftime("%d"))
       description.gsub!('**WEEK**', now.strftime("%W"))
       description.gsub!('**MONTH**', now.strftime("%m"))
       description.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))

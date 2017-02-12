@@ -88,7 +88,7 @@ Or even every 10 minutes
 
     */10 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production"
 
-If you want to substitute variables `**WEEK**`, `**MONTH**`, `**MONTHNAME**`, `**YEAR**`, `**PREVIOUS_MONTHNAME**`, `**PREVIOUS_MONTH**` with a localized version in your laguage please add `LOCALE="de"` (available are `de`, `en`, `ja`, `tr`, `ru`, `tr`, `zh`) to cronjob like this
+If you want to substitute variables `**DAY**`, `**WEEK**`, `**MONTH**`, `**MONTHNAME**`, `**YEAR**`, `**PREVIOUS_MONTHNAME**`, `**PREVIOUS_MONTH**` with a localized version in your laguage please add `LOCALE="de"` (available are `de`, `en`, `ja`, `tr`, `ru`, `tr`, `zh`) to cronjob like this
 
     0 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
 

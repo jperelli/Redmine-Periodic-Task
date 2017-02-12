@@ -30,4 +30,4 @@ ja:
   label_unit_year: 年後
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
-  subject_variables: 利用可能な変数 **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)

@@ -32,4 +32,4 @@ zh:
   label_unit_year: 年
   flash_task_created: 已创建周期任务
   flash_task_saved: 周期任务已保存
-  subject_variables: 可选值是：**WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  subject_variables: 可选值是：**DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
