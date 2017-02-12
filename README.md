@@ -108,15 +108,11 @@ Then go to http://192.168.2.100:8080/ and login with
 
 You should have a project named *project1* with `periodictask` installed
 
-Author
-------
+Authors
+-------
 
-  - [Tanguy de Courson](https://github.com/myneid/)
-
-Mantainer
----------
-
-  - [Julian Perelli](https://jperelli.com.ar/)
+  - [Julian Perelli](https://jperelli.com.ar/) (Current Mantainer)
+  - [Tanguy de Courson](https://github.com/myneid/) (Original Author)
 
 License
 -------
