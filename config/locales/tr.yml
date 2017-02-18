@@ -1,9 +1,7 @@
 # Turkish strings by atopcu for Rails i18n
 tr:
-  field_interval_number: Tekrarlama aralığı
-  field_interval_unit: Tekrarlama birimi
-  field_tracker: İş Tipi
-  field_category: Kategori
+  label_tracker: İş Tipi
+  label_author: Yazar
   label_assigned_to_user: Atanan
   no_members_in_project: Tanımlı üye yok!
   no_categories_in_project: Tanımlı kategori yok!
@@ -25,6 +23,7 @@ tr:
   label_description: Açıklama
   label_issue_category: İş kategorisi
   label_unit_day: gün
+  label_unit_business_day: iş günü
   label_unit_week: hafta
   label_unit_month: ay
   label_unit_year: yıl

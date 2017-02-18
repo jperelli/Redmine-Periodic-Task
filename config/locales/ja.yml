@@ -1,9 +1,7 @@
 # Japanese strings go here for Rails i18n
 ja:
-  field_interval_number: Interval number
-  field_interval_unit: Interval unit
-  field_tracker: トラッカー
-  field_category: カテゴリ
+  label_tracker: トラッカー
+  label_author: 著者
   label_assigned_to_user: 担当者
   no_members_in_project: This project has no members
   no_categories_in_project: This project has no categories
@@ -25,6 +23,7 @@ ja:
   label_description: 説明
   label_issue_category: カテゴリ
   label_unit_day: 日後
+  label_unit_business_day: 営業日
   label_unit_week: 週間後
   label_unit_month: ヶ月後
   label_unit_year: 年後

@@ -1,9 +1,7 @@
 # German strings go here for Rails i18n
 de:
-  field_interval_number: Intervallnummer
-  field_interval_unit: Intervalleinheit
-  field_tracker: Tracker
-  field_category: Kategorie
+  label_tracker: Tracker
+  label_author: Autor
   label_assigned_to_user: Zugewiesen an
   no_members_in_project: Dieses Projekt hat keine Mitglieder
   no_categories_in_project: Dieses Projekt hat keine Kategorien

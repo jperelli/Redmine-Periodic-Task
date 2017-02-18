@@ -2,10 +2,8 @@
 # Chinese strings go here for Rails i18n 
 # Translated from English strings by Tomora.
 zh:
-  field_interval_number: 间隔数
-  field_interval_unit: 间隔单位
-  field_tracker: 跟踪
-  field_category: 类别
+  label_tracker: 跟踪
+  label_author: 作者
   label_assigned_to_user: 指派给
   no_members_in_project: 该项目没有成员
   no_categories_in_project: 该项目没有类别
@@ -27,6 +25,7 @@ zh:
   label_description: 描述
   label_issue_category: 问题类别
   label_unit_day: 天
+  label_business_day: 工作日
   label_unit_week: 周
   label_unit_month: 月
   label_unit_year: 年
