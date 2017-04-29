@@ -112,7 +112,7 @@ You should have a project named *project1* with `periodictask` installed
 Authors
 -------
 
-  - [Julian Perelli](https://jperelli.com.ar/) (Current Mantainer)
+  - [Julian Perelli](https://jperelli.com.ar/) (Current Maintainer)
   - [Tanguy de Courson](https://github.com/myneid/) (Original Author)
 
 License
