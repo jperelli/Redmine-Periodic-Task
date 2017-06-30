@@ -31,7 +31,7 @@ class ScheduledTasksChecker
         due_date_units = task.due_date_units
         issue.due_date = due_date.send(due_date_units.downcase).from_now
       end
-      issue.save
+      issue.save!
       interval = task.interval_number
       units = task.interval_units
 
