@@ -1,0 +1,32 @@
+# Italian strings go here for Rails i18n
+it:
+  label_tracker: Tracker
+  label_author: Autore
+  label_assigned_to_user: Assegnato a utente
+  no_members_in_project: Questo progetto non ha membri
+  no_categories_in_project: Questo progetto non ha categorie
+  label_subject: Oggetto
+  label_next_run_date: Data prossima esecuzione (yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: Modifica Periodic Task
+  label_new_periodic_task: Nuovo Periodic Task
+  label_no_members_in_project: Questo progetto non ha membri
+  label_no_categories_in_project: Questo progetto non ha categorie
+  label_periodic_tasks: Periodic Tasks
+  label_create_periodic_task: Crea
+  label_save_periodic_task: Salva
+  label_scheduled_tasks: Attualmente non ci sono task schedulati
+  label_no_project: ID progetto non fornito
+  label_remove_periodic_task: Elimina Periodic Task
+  label_interval: Intervallo
+  label_set_start_date: Imposta data di inizio
+  label_due_date: Imposta scadenza
+  label_description: Descrizione
+  label_issue_category: Categoria segnalazione
+  label_unit_day: giorni
+  label_unit_business_day: giorni lavorativi
+  label_unit_week: settimane
+  label_unit_month: mesi
+  label_unit_year: anni
+  flash_task_created: Periodic Task creato
+  flash_task_saved: Periodic Task salvato
+  subject_variables: I possibili valori sono **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (Gennaio - Dicembre), **YEAR** (YYYY)
