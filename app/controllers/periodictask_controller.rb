@@ -17,6 +17,7 @@ class PeriodictaskController < ApplicationController
 
   def new
     @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
+    @periodictask.interval_number = 1
   end
 
   def create
@@ -66,7 +67,7 @@ private
   def find_project
     @project = Project.find(params[:project_id])
   end
-  
+
   def load_users
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
