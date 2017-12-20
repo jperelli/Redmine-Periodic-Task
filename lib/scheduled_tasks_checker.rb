@@ -1,7 +1,7 @@
 class ScheduledTasksChecker
   def self.checktasks!
     now = Time.now
-    Periodictask.where("next_run_date <= ? ", now).each do |task| 
+    Periodictask.where("next_run_date <= ? ", now).each do |task|
 
       # replace variables (set locale from shell)
       I18n.locale = ENV['LOCALE'] || I18n.default_locale
@@ -16,14 +16,15 @@ class ScheduledTasksChecker
       subject.gsub!('**YEAR**', now.strftime("%Y"))
       subject.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
       subject.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
-      description.gsub!('**DAY**', now.strftime("%d"))
-      description.gsub!('**WEEK**', now.strftime("%W"))
-      description.gsub!('**MONTH**', now.strftime("%m"))
-      description.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
-      description.gsub!('**YEAR**', now.strftime("%Y"))
-      description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
-      description.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
-
+      if description.present?
+        description.gsub!('**DAY**', now.strftime("%d"))
+        description.gsub!('**WEEK**', now.strftime("%W"))
+        description.gsub!('**MONTH**', now.strftime("%m"))
+        description.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
+        description.gsub!('**YEAR**', now.strftime("%Y"))
+        description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
+        description.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
+      end
       issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>subject, :description=>description);
       issue.start_date ||= Date.today if task.set_start_date?
       if task.due_date_number
