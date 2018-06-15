@@ -31,7 +31,13 @@ class ScheduledTasksChecker
         due_date_units = task.due_date_units
         issue.due_date = due_date.send(due_date_units.downcase).from_now
       end
-      issue.save!
+      begin
+        issue.save!
+        task.last_error = nil unless task.last_error.blank?
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "ScheduledTasksChecker: #{e.message}"
+        task.last_error = e.message
+      end
       interval = task.interval_number
       units = task.interval_units
 

@@ -2,6 +2,12 @@
 <%= f.hidden_field :id %>
 <%= f.hidden_field :project_id %>
 <div class="box tabular">
+<% if @periodictask.last_error.present? %>
+<p>
+  <%= label_tag(nil, l(:label_last_error)) %>
+  <%= content_tag('span', @periodictask.last_error, :class => 'icon icon-error') %>
+</p>
+<% end %>
 <p><%= label(:periodictask, :subject, l(:label_subject)) %><%= f.text_field :subject, :required => true, :size => 60 %></p>
 <p><%= l(:subject_variables) %></p>
 <p>
