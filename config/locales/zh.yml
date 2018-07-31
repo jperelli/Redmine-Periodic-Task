@@ -1,13 +1,9 @@
 # Coding：UTF-8
-# Chinese strings go here for Rails i18n 
+# Chinese strings go here for Rails i18n
 # Translated from English strings by Tomora.
 zh:
-  label_tracker: 跟踪
-  label_author: 作者
-  label_assigned_to_user: 指派给
   no_members_in_project: 该项目没有成员
   no_categories_in_project: 该项目没有类别
-  label_subject: 主题
   label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss)
   label_edit_periodic_task: 编辑周期任务
   label_new_periodic_task: 新建周期任务
@@ -21,9 +17,6 @@ zh:
   label_remove_periodic_task: 删除周期任务
   label_interval: 间隔
   label_set_start_date: 设置起始日期
-  label_due_date: 设置结束日期
-  label_description: 描述
-  label_issue_category: 问题类别
   label_unit_day: 天
   label_business_day: 工作日
   label_unit_week: 周

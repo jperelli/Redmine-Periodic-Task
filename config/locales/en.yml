@@ -1,11 +1,7 @@
 # English strings go here for Rails i18n
 en:
-  label_tracker: Tracker
-  label_author: Author
-  label_assigned_to_user: Assigned to user
   no_members_in_project: This project has no members
   no_categories_in_project: This project has no categories
-  label_subject: Subject
   label_next_run_date: Next run date (yyyy-mm-dd hh:mm:ss)
   label_edit_periodic_task: Edit Periodic Task
   label_new_periodic_task: New Periodic Task
@@ -19,9 +15,6 @@ en:
   label_remove_periodic_task: remove periodic task
   label_interval: Interval
   label_set_start_date: Set start date
-  label_due_date: Set due date in
-  label_description: Description
-  label_issue_category: Issue Category
   label_unit_day: day(s)
   label_unit_business_day: business day(s)
   label_unit_week: week(s)

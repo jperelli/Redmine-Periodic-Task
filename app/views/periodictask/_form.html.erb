@@ -2,10 +2,10 @@
 <%= f.hidden_field :id %>
 <%= f.hidden_field :project_id %>
 <div class="box tabular">
-<p><%= label(:periodictask, :subject, l(:label_subject)) %><%= f.text_field :subject, :required => true, :size => 60 %></p>
+<p><%= label(:periodictask, :subject, l(:field_subject)) %><%= f.text_field :subject, :required => true, :size => 60 %></p>
 <p><%= l(:subject_variables) %></p>
 <p>
-  <%= label(:periodictask, :issue_category_id, l(:label_issue_category)) %>
+  <%= label(:periodictask, :issue_category_id, l(:field_category)) %>
   <% if @categories.length > 0 %>
     <%= f.select :issue_category_id, principals_options_for_select(@categories, @periodictask.issue_category), :include_blank => true, :required => true %>
   <% else %>
@@ -13,7 +13,7 @@
   <% end %>
 </p>
 <p>
-  <%= label(:periodictask, :assigned_to_user_id, l(:label_assigned_to_user)) %>
+  <%= label(:periodictask, :assigned_to_user_id, l(:field_assigned_to)) %>
   <% if @assignables.length > 0 %>
     <%= f.select :assigned_to_id, principals_options_for_select(@assignables, @periodictask.assigned_to), :include_blank => true, :required => true %>
   <% else %>
@@ -21,7 +21,7 @@
   <% end %>
 </p>
 <p>
-  <%= label(:periodictask, :author_user_id, l(:label_author)) %>
+  <%= label(:periodictask, :author_user_id, l(:field_author)) %>
   <% if @authors.length > 0 %>
     <%= collection_select(:periodictask, "author_id", @authors, :id, :name ) %>
   <% else %>
@@ -29,9 +29,10 @@
   <% end %>
 </p>
 <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :value => 1, :required => true, :min => 1 %> <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
-<p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
+<p><%= label(:periodictask, :tracker_id, l(:field_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
 <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
-<p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %></p>
+<p><%= label(:periodictask, :due_date, l(:field_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %></p>
 <p><%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %><%= f.text_field :next_run_date %> </p>
-<p><%= label(:periodictask, :description, l(:label_description)) %><%= f.text_area :description, :cols => 100, :rows => 10, :no_label => true %></p>
+
+<p><%= label(:periodictask, :description, l(:field_description)) %><%= f.text_area :description, :cols => 100, :rows => 10, :no_label => true %></p>
 </div>
