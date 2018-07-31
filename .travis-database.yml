@@ -1,7 +1,0 @@
-test:
-  adapter: sqlite3
-  database: db/redmine_test.sqlite3
-
-development:
-  adapter: sqlite3
-  database: db/redmine_development.sqlite3
