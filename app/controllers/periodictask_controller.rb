@@ -3,16 +3,13 @@ class PeriodictaskController < ApplicationController
 
 
   before_filter :find_project
-  #before_filter :find_periodictask, :except => [:new, :create, :index]
   before_filter :load_users, :except => [:destroy]
   before_filter :load_categories, :except => [:destroy]
 
   def index
     if !params[:project_id] then return end
     @project_identifier = params[:project_id]
-    # find_all_by is considered deprecated (Rails 4)
     @tasks = Periodictask.where(project_id: @project[:id])
-    #@tasks = Periodictask.find_all_by_project_id(@project[:id])
   end
 
   def new
@@ -40,7 +37,6 @@ class PeriodictaskController < ApplicationController
     params[:periodictask][:project_id] = @project[:id]
     if @periodictask.update_attributes(params[:periodictask])
       flash[:notice] = l(:flash_task_saved)
-      # redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
     end
   end
@@ -66,7 +62,7 @@ private
   def find_project
     @project = Project.find(params[:project_id])
   end
-  
+
   def load_users
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
