@@ -11,24 +11,34 @@
 <table class="list">
   <thead>
     <tr>
-      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp</th>
+      <th><%= l(:field_tracker) %></th>
+      <th><%= l(:field_subject) %></th>
+      <th><%= l(:field_category) %></th>
+      <th><%= l(:label_next_run_date) %></th>
+      <th>&nbsp</th>
+      <th>&nbsp</th>
     </tr>
   </thead>
   <tbody>
-    <% @tasks.each do |a| %>
+    <% @tasks.each do |task| %>
     <tr class="<%= cycle('odd', 'even') %>">
-      <td><%= a.subject %></td>
-      <td><%= a.issue_category%></td>
-      <td><%= a.next_run_date %></td>
+      <td><%= task.tracker %></td>
+      <td class="subject"><%= task.subject %></td>
+      <td><%= task.issue_category%></td>
+      <td><%= task.next_run_date %></td>
       <td>
-  <%= link_to l(:button_edit), 
-                            {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
-                            :class => 'icon icon-edit',
-                            :accesskey => accesskey(:edit),
-                            :onclick => 'Element.show("edit-task"); return false;' %>
+        <%= link_to l(:button_edit),
+                                  {:controller => 'periodictask', :action => 'edit', :id => task.id, :project_id => @project},
+                                  :class => 'icon icon-edit',
+                                  :accesskey => accesskey(:edit),
+                                  :onclick => 'Element.show("edit-task"); return false;' %>
       </td>
       <td>
-  <%= link_to l(:button_delete), {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project}, :confirm => l(:text_are_you_sure), :method => :delete, :class => 'icon icon-del' %>
+        <%= link_to l(:button_delete),
+                                  {:controller => 'periodictask', :action => 'destroy', :id => task.id, :project_id => @project},
+                                  :confirm => l(:text_are_you_sure),
+                                  :method => :delete,
+                                  :class => 'icon icon-del' %>
       </td>
     </tr>
     <% end %>
