@@ -8,7 +8,7 @@
   </p>
   <p>
     <%= label(:periodictask, :subject, l(:field_subject)) %>
-    <%= f.text_field :subject, :required => true, :size => 60 %>
+    <%= f.text_field :subject, :required => true, :size => 80 %>
   </p>
   <p><%= l(:subject_variables) %></p>
   <p>
@@ -50,11 +50,11 @@
   </p>
   <p>
     <%= label(:periodictask, :due_date, l(:field_due_date)) %>
-    <%= f.text_field :due_date_number, :size => 3 %>
-    <%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %>
+    <%= f.number_field :due_date_number, :min => 1 %>
+    <%= select 'periodictask', 'due_date_units', Periodictask::DUE_DATE_UNITS %>
   </p>
   <p>
     <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>
-    <%= f.text_field :next_run_date %>
+    <%= f.text_field :next_run_date, :placeholder => 'yyyy-mm-dd hh:mm:ss', :size => 25 %>
   </p>
 </div>

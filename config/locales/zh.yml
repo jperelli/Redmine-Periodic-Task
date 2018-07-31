@@ -8,7 +8,7 @@ zh:
   no_members_in_project: 该项目没有成员
   no_categories_in_project: 该项目没有类别
   label_subject: 主题
-  label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: 下一运行日
   label_edit_periodic_task: 编辑周期任务
   label_new_periodic_task: 新建周期任务
   label_no_members_in_project: 该项目没有成员
@@ -25,10 +25,15 @@ zh:
   label_description: 描述
   label_issue_category: 问题类别
   label_unit_day: 天
-  label_business_day: 工作日
+  label_unit_business_day: 工作日
   label_unit_week: 周
   label_unit_month: 月
   label_unit_year: 年
+  label_later_day: 天
+  label_later_business_day: 工作日
+  label_later_week: 周
+  label_later_month: 月
+  label_later_year: 年
   flash_task_created: 已创建周期任务
   flash_task_saved: 周期任务已保存
   subject_variables: 可选值是：**DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)

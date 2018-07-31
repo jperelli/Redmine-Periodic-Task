@@ -6,7 +6,7 @@ de:
   no_members_in_project: Dieses Projekt hat keine Mitglieder
   no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_subject: Thema
-  label_next_run_date: Nächster Lauf (yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: Nächster Lauf
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
   label_no_members_in_project: Dieses Projekt hat keine Mitglieder
@@ -27,6 +27,11 @@ de:
   label_unit_week: Woche(n)
   label_unit_month: Monat(e)
   label_unit_year: Jahr(e)
+  label_later_day: Tag(e)
+  label_later_business_day: Arbeitstag(e)
+  label_later_week: Woche(n)
+  label_later_month: Monat(e)
+  label_later_year: Jahr(e)
   flash_task_created: Aufgabe wurde angelegt
   flash_task_saved: Aufgabe wurde gespeichert
   subject_variables: Mögliche Variablen sind **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** und **PREVIOUS_MONTHNAME** (Januar - Dezember), **YEAR** (YYYY)

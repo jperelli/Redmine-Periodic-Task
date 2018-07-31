@@ -6,7 +6,7 @@ ru:
   no_members_in_project: В этом проекте нет участников
   no_categories_in_project: В этом проекте нет категорий
   label_subject: Тема
-  label_next_run_date: Дата следующего запуска (yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: Дата следующего запуска
   label_edit_periodic_task: Редактировать периодическую задачу
   label_new_periodic_task: Новая периодическая задача
   label_no_members_in_project: В этом проекте нет участников
@@ -27,6 +27,11 @@ ru:
   label_unit_week: неделя
   label_unit_month: месяц
   label_unit_year: год(лет)
+  label_later_day: дней
+  label_later_business_day: рабочие дни
+  label_later_week: неделя
+  label_later_month: месяц
+  label_later_year: год(лет)
   flash_task_created: Периодическа задача создана
   flash_task_saved: Периодическа задача сохранена
   subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (января - декабря), **PREVIOUS_MONTHNAME** передыдущий месяц, **YEAR** (YYYY)

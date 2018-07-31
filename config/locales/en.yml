@@ -6,7 +6,7 @@ en:
   no_members_in_project: This project has no members
   no_categories_in_project: This project has no categories
   label_subject: Subject
-  label_next_run_date: Next run date (yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: Next run date
   label_edit_periodic_task: Edit Periodic Task
   label_new_periodic_task: New Periodic Task
   label_no_members_in_project: This project has no members
@@ -27,6 +27,11 @@ en:
   label_unit_week: week(s)
   label_unit_month: month(s)
   label_unit_year: year(s)
+  label_later_day: day(s)
+  label_later_business_day: business day(s)
+  label_later_week: week(s)
+  label_later_month: month(s)
+  label_later_year: year(s)
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
   subject_variables: Possible variables are **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)

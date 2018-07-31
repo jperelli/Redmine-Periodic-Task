@@ -6,7 +6,7 @@ ja:
   no_members_in_project: このプロジェクトにはメンバーが未設定です
   no_categories_in_project: このプロジェクトにはカテゴリが未設定です
   label_subject: 題名
-  label_next_run_date: 次回実行日時 (yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: 次回実行日時
   label_edit_periodic_task: 繰り返しタスクの編集
   label_new_periodic_task: 新しい繰り返しタスク
   label_no_members_in_project: このプロジェクトにはメンバーが未設定です
@@ -22,11 +22,16 @@ ja:
   label_due_date: 期日
   label_description: 説明
   label_issue_category: カテゴリ
-  label_unit_day: 日後
-  label_unit_business_day: 営業日
-  label_unit_week: 週間後
-  label_unit_month: ヶ月後
-  label_unit_year: 年後
+  label_unit_day: 日毎
+  label_unit_business_day: 営業日毎
+  label_unit_week: 週間毎
+  label_unit_month: ヶ月毎
+  label_unit_year: 年毎
+  label_later_day: 日後
+  label_later_business_day: 営業日後
+  label_later_week: 週間後
+  label_later_month: ヶ月後
+  label_later_year: 年後
   flash_task_created: 繰り返しタスクを登録しました
   flash_task_saved: 繰り返しタスクを保存しました
   subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
