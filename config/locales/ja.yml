@@ -3,20 +3,20 @@ ja:
   label_tracker: トラッカー
   label_author: 著者
   label_assigned_to_user: 担当者
-  no_members_in_project: This project has no members
-  no_categories_in_project: This project has no categories
+  no_members_in_project: このプロジェクトにはメンバーが未設定です
+  no_categories_in_project: このプロジェクトにはカテゴリが未設定です
   label_subject: 題名
-  label_next_run_date: 次回実行日時（UTC） (yyyy-mm-dd hh:mm:ss)
-  label_edit_periodic_task: Edit Periodic Task
-  label_new_periodic_task: 新規繰り返しチケット
-  label_no_members_in_project: This project has no members
-  label_no_categories_in_project: This project has no categories
-  label_periodic_tasks: 繰り返しチケット
+  label_next_run_date: 次回実行日時 (yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: 繰り返しタスクの編集
+  label_new_periodic_task: 新しい繰り返しタスク
+  label_no_members_in_project: このプロジェクトにはメンバーが未設定です
+  label_no_categories_in_project: このプロジェクトにはカテゴリが未設定です
+  label_periodic_tasks: 繰り返しタスク
   label_create_periodic_task: 作成
   label_save_periodic_task: 保存
-  label_scheduled_tasks: These are the currently scheduled tasks
-  label_no_project: No project ID supplied
-  label_remove_periodic_task: remove periodic task
+  label_scheduled_tasks: 現在登録されている繰り返しタスクの一覧です
+  label_no_project: プロジェクトIDが指定されていません
+  label_remove_periodic_task: 繰り返しタスクを削除しました
   label_interval: 間隔
   label_set_start_date: 開始日を設定
   label_due_date: 期日
@@ -27,6 +27,6 @@ ja:
   label_unit_week: 週間後
   label_unit_month: ヶ月後
   label_unit_year: 年後
-  flash_task_created: Periodic Task is created
-  flash_task_saved: Periodic Task is saved
+  flash_task_created: 繰り返しタスクを登録しました
+  flash_task_saved: 繰り返しタスクを保存しました
   subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
