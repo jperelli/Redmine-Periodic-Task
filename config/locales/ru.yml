@@ -27,4 +27,5 @@ ru:
   label_later_year: год(лет)
   flash_task_created: Периодическа задача создана
   flash_task_saved: Периодическа задача сохранена
+  flash_task_removed: Periodic Task is removed
   subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (января - декабря), **PREVIOUS_MONTHNAME** передыдущий месяц, **YEAR** (YYYY)
