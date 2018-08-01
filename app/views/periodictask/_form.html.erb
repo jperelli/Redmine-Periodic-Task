@@ -55,6 +55,6 @@
   </p>
   <p>
     <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>
-    <%= f.text_field :next_run_date, :placeholder => 'yyyy-mm-dd hh:mm:ss', :size => 25 %>
+    <%= f.datetime_select :next_run_date, :include_blank => true, :start_year => Time.now.year %>
   </p>
 </div>
