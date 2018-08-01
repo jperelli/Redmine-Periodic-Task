@@ -47,6 +47,7 @@ class PeriodictaskController < ApplicationController
   def destroy
       @task = Periodictask.find(params[:id])
       @task.destroy
+      flash[:notice] = l(:flash_task_removed)
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
   end
 

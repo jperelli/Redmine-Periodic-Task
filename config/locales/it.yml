@@ -4,6 +4,7 @@ it:
   project_module_periodictask: Periodic Tasks
   no_members_in_project: Questo progetto non ha membri
   no_categories_in_project: Questo progetto non ha categorie
+  no_project: ID progetto non fornito
   label_next_run_date: Data prossima esecuzione
   label_edit_periodic_task: Modifica Periodic Task
   label_new_periodic_task: Nuovo Periodic Task
@@ -11,7 +12,6 @@ it:
   label_create_periodic_task: Crea
   label_save_periodic_task: Salva
   label_scheduled_tasks: Attualmente non ci sono task schedulati
-  label_no_project: ID progetto non fornito
   label_remove_periodic_task: Elimina Periodic Task
   label_interval: Intervallo
   label_set_start_date: Imposta data di inizio
@@ -27,4 +27,5 @@ it:
   label_later_year: anni
   flash_task_created: Periodic Task creato
   flash_task_saved: Periodic Task salvato
+  flash_task_removed: Periodic Task is removed
   subject_variables: I possibili valori sono **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (Gennaio - Dicembre), **YEAR** (YYYY)

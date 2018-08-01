@@ -4,6 +4,7 @@ de:
   project_module_periodictask: Periodic Tasks
   no_members_in_project: Dieses Projekt hat keine Mitglieder
   no_categories_in_project: Dieses Projekt hat keine Kategorien
+  no_project: Fehler! Es wurde keine project id gefunden.
   label_next_run_date: Nächster Lauf
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
@@ -11,7 +12,6 @@ de:
   label_create_periodic_task: Erstellen
   label_save_periodic_task: Speichern
   label_scheduled_tasks: Nachfolgend die Liste der aktiven wiederholenden Aufgaben.
-  label_no_project: Fehler! Es wurde keine project id gefunden.
   label_remove_periodic_task: Wiederholende Aufgabe entfernen
   label_interval: Intervall
   label_set_start_date: Beginn setzen
@@ -27,4 +27,5 @@ de:
   label_later_year: Jahr(e)
   flash_task_created: Aufgabe wurde angelegt
   flash_task_saved: Aufgabe wurde gespeichert
+  flash_task_removed: Periodic Task is removed
   subject_variables: Mögliche Variablen sind **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** und **PREVIOUS_MONTHNAME** (Januar - Dezember), **YEAR** (YYYY)
