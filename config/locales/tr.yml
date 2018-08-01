@@ -1,16 +1,12 @@
 # Turkish strings by atopcu for Rails i18n
 tr:
-  label_tracker: İş Tipi
-  label_author: Yazar
-  label_assigned_to_user: Atanan
+  project_menu_periodictask: Periodic Tasks
+  project_module_periodictask: Periodic Tasks
   no_members_in_project: Tanımlı üye yok!
   no_categories_in_project: Tanımlı kategori yok!
-  label_subject: Konu
   label_next_run_date: Sonraki açılma zamanı
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
-  label_no_members_in_project: Tanımlı üye yok
-  label_no_categories_in_project: Tanımlı kategori yok
   label_periodic_tasks: Periyodik İşler
   label_create_periodic_task: Yeni
   label_save_periodic_task: Kaydet
@@ -19,9 +15,6 @@ tr:
   label_remove_periodic_task: Periyodik işi sil
   label_interval: Tekrarlama
   label_set_start_date: Başlama tarihini set et
-  label_due_date: Bitiş süresi
-  label_description: Açıklama
-  label_issue_category: İş kategorisi
   label_unit_day: gün
   label_unit_business_day: iş günü
   label_unit_week: hafta

@@ -1,16 +1,12 @@
 # German strings go here for Rails i18n
 de:
-  label_tracker: Tracker
-  label_author: Autor
-  label_assigned_to_user: Zugewiesen an
+  project_menu_periodictask: Periodic Tasks
+  project_module_periodictask: Periodic Tasks
   no_members_in_project: Dieses Projekt hat keine Mitglieder
   no_categories_in_project: Dieses Projekt hat keine Kategorien
-  label_subject: Thema
   label_next_run_date: Nächster Lauf
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
-  label_no_members_in_project: Dieses Projekt hat keine Mitglieder
-  label_no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_periodic_tasks: Wiederholende Aufgaben
   label_create_periodic_task: Erstellen
   label_save_periodic_task: Speichern
@@ -19,9 +15,6 @@ de:
   label_remove_periodic_task: Wiederholende Aufgabe entfernen
   label_interval: Intervall
   label_set_start_date: Beginn setzen
-  label_due_date: Setze Abgabedatum in
-  label_description: Beschreibung
-  label_issue_category: Ticket-Kategorie
   label_unit_day: Tag(e)
   label_unit_business_day: Arbeitstag(e)
   label_unit_week: Woche(n)

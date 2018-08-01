@@ -1,16 +1,12 @@
 
 ru:
-  label_tracker: Трекер
-  label_author: автор
-  label_assigned_to_user: Назначена
+  project_menu_periodictask: Periodic Tasks
+  project_module_periodictask: Periodic Tasks
   no_members_in_project: В этом проекте нет участников
   no_categories_in_project: В этом проекте нет категорий
-  label_subject: Тема
   label_next_run_date: Дата следующего запуска
   label_edit_periodic_task: Редактировать периодическую задачу
   label_new_periodic_task: Новая периодическая задача
-  label_no_members_in_project: В этом проекте нет участников
-  label_no_categories_in_project: В этом проекте нет категорий
   label_periodic_tasks: Периодические Задачи
   label_create_periodic_task: Создать
   label_save_periodic_task: Сохранить
@@ -19,9 +15,6 @@ ru:
   label_remove_periodic_task: Удалить периодическую задачу
   label_interval: Интервал
   label_set_start_date: Устанвить дату начала
-  label_due_date: Плановая дата через
-  label_description: Описание
-  label_issue_category: Категория задачи
   label_unit_day: дней
   label_unit_business_day: рабочие дни
   label_unit_week: неделя
