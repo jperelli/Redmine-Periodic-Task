@@ -3,8 +3,8 @@ require 'redmine'
 Redmine::Plugin.register :periodictask do
   name 'Redmine Periodic task plugin'
   author 'yoshiaki tanaka'
-  description 'This is a plugin for Redmine2 and 3 that will allow you to schedule a task to be assigned on a schedule'
-  version '3.2.1'
+  description 'This is a plugin for Redmine that will allow you to schedule a task to be assigned on a schedule'
+  version '4.0'
   url 'https://github.com/wate/redmine_periodic_task'
   project_module :periodictask do
     permission :periodictask, {:periodictask => [:index, :edit]}
