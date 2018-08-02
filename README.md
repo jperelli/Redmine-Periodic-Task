@@ -46,7 +46,7 @@ Use that to configure cron like this
 As root do `crontab -e` and add this to the last line
 
 ```
-0 1 * * * cd /var/www/<redminedir>; bundle exec rake redmine:check_periodictasks RAILS_ENV=production
+0 1 * * * cd </path/to/redmine/dir>; bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 ```
 
 You can also make it run once per hour
