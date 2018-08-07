@@ -25,7 +25,7 @@
       <td><%= task.tracker %></td>
       <td class="subject"><%= task.subject %></td>
       <td><%= task.issue_category%></td>
-      <td><%= task.next_run_date ? task.next_run_date.to_s(:db) : '&nbsp;' %></td>
+      <td><%= task.next_run_date ? task.next_run_date.to_s(:db) : '' %></td>
       <td>
         <%= link_to l(:button_edit),
                                   {:controller => 'periodictask', :action => 'edit', :id => task.id, :project_id => @project},
