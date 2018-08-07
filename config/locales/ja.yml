@@ -1,18 +1,18 @@
 # Japanese strings go here for Rails i18n
 ja:
-  project_menu_periodictask: 繰り返しタスク
-  project_module_periodictask: 繰り返しタスク
+  project_menu_periodictask: 定期タスク
+  project_module_periodictask: 定期タスク
   no_members_in_project: このプロジェクトにはメンバーが未設定です
   no_categories_in_project: このプロジェクトにはカテゴリが未設定です
   no_project: プロジェクトIDが指定されていません
   label_next_run_date: 次回実行日時
-  label_edit_periodic_task: 繰り返しタスクの編集
-  label_new_periodic_task: 新しい繰り返しタスク
-  label_periodic_tasks: 繰り返しタスク
+  label_edit_periodic_task: 定期タスクの編集
+  label_new_periodic_task: 新しい定期タスク
+  label_periodic_tasks: 定期タスク
   label_create_periodic_task: 作成
   label_save_periodic_task: 保存
-  label_scheduled_tasks: 現在登録されている繰り返しタスクの一覧です
-  label_remove_periodic_task: 繰り返しタスクの削除
+  label_scheduled_tasks: 現在登録されている定期タスクの一覧です
+  label_remove_periodic_task: 定期タスクの削除
   label_interval: 間隔
   label_set_start_date: 開始日を設定
   label_unit_day: 日毎
@@ -25,7 +25,7 @@ ja:
   label_later_week: 週間後
   label_later_month: ヶ月後
   label_later_year: 年後
-  flash_task_created: 繰り返しタスクを登録しました
-  flash_task_saved: 繰り返しタスクを保存しました
-  flash_task_removed: 繰り返しタスクを削除しました
+  flash_task_created: 定期タスクを登録しました
+  flash_task_saved: 定期タスクを保存しました
+  flash_task_removed: 定期タスクを削除しました
   subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12), **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
