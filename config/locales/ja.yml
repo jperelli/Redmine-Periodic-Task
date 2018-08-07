@@ -13,13 +13,13 @@ ja:
   label_save_periodic_task: 保存
   label_scheduled_tasks: 現在登録されている定期タスクの一覧です
   label_remove_periodic_task: 定期タスクの削除
-  label_interval: 間隔
-  label_set_start_date: 開始日を設定
-  label_unit_day: 日毎
+  label_interval: 繰り返し間隔
+  label_set_start_date: チケットの開始日を設定する
+  label_unit_day: 日
   label_unit_business_day: 営業日毎
-  label_unit_week: 週間毎
-  label_unit_month: ヶ月毎
-  label_unit_year: 年毎
+  label_unit_week: 週
+  label_unit_month: ヶ月
+  label_unit_year: 年
   label_later_day: 日後
   label_later_business_day: 営業日後
   label_later_week: 週間後
