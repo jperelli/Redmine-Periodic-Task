@@ -8,6 +8,7 @@ one:
   author_id: 1
   subject: MyString
   interval_number: 1
+  estimated_hours: 4
   interval_units: MyString
   last_assigned_date: 2011-09-22 14:08:41
   next_run_date: 2011-09-22 14:08:41

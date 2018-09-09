@@ -20,6 +20,8 @@ en:
   label_interval: Interval
   label_set_start_date: Set start date
   label_due_date: Set due date in
+  label_estimated_hours: Estimated time
+  label_estimated_hours_after: Hours
   label_description: Description
   label_issue_category: Issue Category
   label_unit_day: day(s)

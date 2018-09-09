@@ -22,6 +22,8 @@ zh:
   label_interval: 间隔
   label_set_start_date: 设置起始日期
   label_due_date: 设置结束日期
+  label_estimated_hours: 预期时间
+  label_estimated_hours_after: 小时
   label_description: 描述
   label_issue_category: 问题类别
   label_unit_day: 天
