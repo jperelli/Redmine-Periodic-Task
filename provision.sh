@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## install rvm
-RUBY_VERSION="2.1.0"
+RUBY_VERSION="2.3.4"
 sudo apt-get -y update
 sudo apt-get -y install git nodejs libmagickwand-dev
 # Install ruby environment

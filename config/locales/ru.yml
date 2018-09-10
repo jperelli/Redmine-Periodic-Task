@@ -20,6 +20,8 @@ ru:
   label_interval: Интервал
   label_set_start_date: Устанвить дату начала
   label_due_date: Плановая дата через
+  label_estimated_hours: Оценка временных затрат
+  label_estimated_hours_after: час(а,ов)
   label_description: Описание
   label_issue_category: Категория задачи
   label_unit_day: дней

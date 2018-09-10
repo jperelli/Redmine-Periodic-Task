@@ -32,6 +32,7 @@
 <p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
 <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
 <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %></p>
+<p><%= label(:periodictask, :estimated_hours, l(:label_estimated_hours)) %><%= f.number_field :estimated_hours, step: :any %> <%= l(:label_estimated_hours_after) %></p>
 <p><%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %><%= f.text_field :next_run_date %> </p>
 <p><%= label(:periodictask, :description, l(:label_description)) %><%= f.text_area :description, :cols => 100, :rows => 10, :no_label => true %></p>
 </div>

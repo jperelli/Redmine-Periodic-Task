@@ -20,6 +20,8 @@ it:
   label_interval: Intervallo
   label_set_start_date: Imposta data di inizio
   label_due_date: Imposta scadenza
+  label_estimated_hours: Tempo stimato
+  label_estimated_hours_after: Ore
   label_description: Descrizione
   label_issue_category: Categoria segnalazione
   label_unit_day: giorni

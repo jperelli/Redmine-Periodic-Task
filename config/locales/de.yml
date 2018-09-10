@@ -21,6 +21,8 @@ de:
   label_set_start_date: Beginn setzen
   label_due_date: Setze Abgabedatum in
   label_description: Beschreibung
+  label_estimated_hours: Geschätzter Aufwand
+  label_estimated_hours_after: Stunden
   label_issue_category: Ticket-Kategorie
   label_unit_day: Tag(e)
   label_unit_business_day: Arbeitstag(e)

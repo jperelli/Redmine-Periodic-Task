@@ -20,6 +20,8 @@ tr:
   label_interval: Tekrarlama
   label_set_start_date: Başlama tarihini set et
   label_due_date: Bitiş süresi
+  label_estimated_hours: Kalan zaman
+  label_estimated_hours_after: Saat
   label_description: Açıklama
   label_issue_category: İş kategorisi
   label_unit_day: gün
