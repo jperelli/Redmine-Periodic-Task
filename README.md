@@ -1,17 +1,14 @@
 [![Build Status](https://travis-ci.org/jperelli/Redmine-Periodic-Task.svg)](https://travis-ci.org/jperelli/Redmine-Periodic-Task)
 
-periodictask
-============
+## Please [donate here in bountysource](https://salt.bountysource.com/teams/redmine-periodic-task) so I can continue mantaining the plugin
 
-In some projects there are tasks that need to be assigned on a schedule.
-Such as check the ssl registration once per year or run security checks every 3 months
+# Redmine periodictask
 
-After you installed the plugin you can add it as a module to a project that already exists
-or activate it as default module for new projects. On each project it will add a new tab 
-named "Periodic Task" - just go there to add your tasks.
+In some projects there are tasks that need to be assigned on a schedule. Such as check the ssl registration once per year or run security checks every 3 months
 
-Redmine version support
-----------------------------------
+After you installed the plugin you can add it as a module to a project that already exists or activate it as default module for new projects. On each project it will add a new tab named "Periodic Task" - just go there to add your tasks.
+
+## Redmine version support
 
 This fork (jperelli) supports now redmine v2 and v3.
 
@@ -45,8 +42,7 @@ Support table :
 
 To use redmine2 branch, when cloning use `-b redmine2` like this `git clone -b redmine2 http://github.com:/jperelli/Redmine-Periodic-Task.git plugins/periodictask`
 
-Installation
-------------
+## Installation
 
     cd /usr/local/share/redmine
     git clone http://github.com:/jperelli/Redmine-Periodic-Task.git plugins/periodictask
@@ -54,8 +50,7 @@ Installation
     bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
     apache2ctl graceful
 
-Upgrade
--------
+## Upgrade
 
     cd /usr/local/share/redmine/plugins/periodictask
     git pull
@@ -63,16 +58,14 @@ Upgrade
     bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
     apache2ctl graceful
 
-Uninstallation
---------------
+## Uninstallation
 
     cd /usr/local/share/redmine
     bundle exec rake redmine:plugins:migrate NAME=periodictask VERSION=0 RAILS_ENV=production
     rm -rf plugins/periodictask
     apache2ctl graceful
 
-Configuration
--------------
+## Configuration
 
 Go to your console and run `which bundle`. In my case, that command returned `/usr/local/rvm/gems/ruby-2.1.0/bin/bundle`. Use that to configure cron like this
 
@@ -93,8 +86,7 @@ If you want to substitute variables `**DAY**`, `**WEEK**`, `**MONTH**`, `**MONTH
     0 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
 
 
-Development
------------
+## Development
 
 To help developing this plugin there is a Vagrantfile working, you can use it with VirtualBox or with [Vagrant-lxc (I recommend vagrant-lxc)](https://github.com/fgrehm/vagrant-lxc)
 
@@ -109,13 +101,11 @@ Then go to http://192.168.2.100:8080/ and login with
 
 You should have a project named *project1* with `periodictask` installed
 
-Authors
--------
+## Authors
 
   - [Julian Perelli](https://jperelli.com.ar/) (Current Maintainer)
   - [Tanguy de Courson](https://github.com/myneid/) (Original Author)
 
-License
--------
+## License
 
-  GNU GPLv3
+GNU GPLv3
