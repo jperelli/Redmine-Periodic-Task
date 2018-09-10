@@ -11,7 +11,7 @@
 <table class="list">
   <thead>
     <tr>
-      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp</th>
+      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -21,14 +21,16 @@
       <td><%= a.issue_category%></td>
       <td><%= a.next_run_date %></td>
       <td>
-  <%= link_to l(:button_edit), 
+  <%= link_to l(:button_edit),
                             {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
                             :class => 'icon icon-edit',
                             :accesskey => accesskey(:edit),
                             :onclick => 'Element.show("edit-task"); return false;' %>
       </td>
       <td>
-  <%= link_to l(:button_delete), {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project}, :confirm => l(:text_are_you_sure), :method => :delete, :class => 'icon icon-del' %>
+        <%= delete_link({ :controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project },
+                                                 class: 'icon icon-del',
+                                                 title: l(:button_delete)) %>
       </td>
     </tr>
     <% end %>
