@@ -51,4 +51,4 @@ echo "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 3);" | /
 
 
 ## start development server
-# /app/redmine/bin/rails server -b0.0.0.0 -p8080
+# /app/redmine/bin/rails server -b0.0.0.0 -p8888

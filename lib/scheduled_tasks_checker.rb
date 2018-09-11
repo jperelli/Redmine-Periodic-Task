@@ -25,7 +25,15 @@ class ScheduledTasksChecker
         description.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
         description.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
       end
-      issue = Issue.new(:project_id=>task.project_id,  :tracker_id=>task.tracker_id, :category_id=>task.issue_category_id, :assigned_to_id=>task.assigned_to_id, :author_id=>task.author_id, :subject=>subject, :description=>description);
+      issue = Issue.new(
+        :project_id=>task.project_id,
+        :tracker_id=>task.tracker_id,
+        :category_id=>task.issue_category_id,
+        :assigned_to_id=>task.assigned_to_id,
+        :author_id=>task.author_id,
+        :subject=>subject,
+        :description=>description
+      )
       issue.start_date ||= Date.today if task.set_start_date?
       if task.due_date_number
         due_date = task.due_date_number
@@ -33,7 +41,23 @@ class ScheduledTasksChecker
         issue.due_date = due_date.send(due_date_units.downcase).from_now
       end
       issue.estimated_hours = task.estimated_hours
+
+      if task.checklists_template_id && Redmine::Plugin.all.any? {|p| p.id == :redmine_checklists}
+        template = ChecklistTemplate.find(task.checklists_template_id)
+        if template
+          items = template.template_items.split("\n")
+          checklists = items.each_with_index.map { |x, i| {
+            :is_done => false,
+            :subject => x,
+            :position => i
+          }}
+          issue.checklists_attributes = checklists
+        end
+      end
+
       issue.save!
+
+
       interval = task.interval_number
       units = task.interval_units
 
@@ -46,6 +70,7 @@ class ScheduledTasksChecker
         end
       end
       task.save
+
     end
   end
 end
