@@ -10,8 +10,6 @@ After you installed the plugin you can add it as a module to a project that alre
 
 ## Redmine version support
 
-This fork (jperelli) supports now redmine v2 and v3.
-
 Redmine v1 support has been dropped in favor of newer v3. If you still need redmine v1 support, please use redmine2 branch, that supports v1 and v2.
 
 Support table :
@@ -85,6 +83,9 @@ If you want to substitute variables `**DAY**`, `**WEEK**`, `**MONTH**`, `**MONTH
 
     0 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
 
+## Plugins supported
+
+redmine-periodictask supports [redminecrm checklist PRO](https://www.redmineup.com/pages/plugins/checklists) to be used when creating a periodic task.
 
 ## Development
 
@@ -92,9 +93,9 @@ To help developing this plugin there is a Vagrantfile working, you can use it wi
 
     vagrant plugin install vagrant-lxc
     vagrant up --provider lxc
-    vagrant ssh -c "/app/redmine/bin/rails server -b0.0.0.0 -p8080"
+    vagrant ssh -c "/app/redmine/bin/rails server -b0.0.0.0 -p8888"
 
-Then go to http://192.168.2.100:8080/ and login with
+Then go to http://192.168.2.100:888/ and login with
 
     user: admin
     pass: admin
