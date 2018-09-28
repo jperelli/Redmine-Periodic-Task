@@ -95,7 +95,7 @@ To help developing this plugin there is a Vagrantfile working, you can use it wi
     vagrant up --provider lxc
     vagrant ssh -c "/app/redmine/bin/rails server -b0.0.0.0 -p8888"
 
-Then go to http://192.168.2.100:888/ and login with
+Then go to http://192.168.2.100:8888/ and login with
 
     user: admin
     pass: admin
