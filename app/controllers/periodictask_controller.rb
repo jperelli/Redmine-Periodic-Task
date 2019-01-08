@@ -2,10 +2,10 @@ class PeriodictaskController < ApplicationController
   unloadable
 
 
-  before_filter :find_project
+  before_action :find_project
   #before_filter :find_periodictask, :except => [:new, :create, :index]
-  before_filter :load_users, :except => [:destroy]
-  before_filter :load_categories, :except => [:destroy]
+  before_action :load_users, :except => [:destroy]
+  before_action :load_categories, :except => [:destroy]
 
   def index
     if !params[:project_id] then return end

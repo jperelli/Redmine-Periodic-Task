@@ -1,0 +1,25 @@
+GEM
+  specs:
+    activesupport (5.2.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+    business_time (0.9.3)
+      activesupport (>= 3.2.0)
+      tzinfo
+    concurrent-ruby (1.1.4)
+    i18n (0.7.0)
+    minitest (5.11.3)
+    thread_safe (0.3.6)
+    tzinfo (1.2.5)
+      thread_safe (~> 0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  business_time
+
+BUNDLED WITH
+   2.0.1

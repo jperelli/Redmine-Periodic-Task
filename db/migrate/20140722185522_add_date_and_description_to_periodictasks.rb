@@ -1,4 +1,6 @@
-class AddDateAndDescriptionToPeriodictasks < ActiveRecord::Migration
+active_record_migration_class = ActiveRecord::Migration.respond_to?(:current_version) ? ActiveRecord::Migration[4.2] : ActiveRecord::Migration
+
+class AddDateAndDescriptionToPeriodictasks < active_record_migration_class
   def self.up
     add_column :periodictasks, :set_start_date, :boolean, :null => false, :default => false
     add_column :periodictasks, :due_date_number, :integer, :null => true, :default => nil
