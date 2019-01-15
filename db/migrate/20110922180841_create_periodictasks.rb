@@ -1,4 +1,6 @@
-class CreatePeriodictasks < ActiveRecord::Migration
+active_record_migration_class = ActiveRecord::Migration.respond_to?(:current_version) ? ActiveRecord::Migration[4.2] : ActiveRecord::Migration
+
+class CreatePeriodictasks < active_record_migration_class
   def self.up
     create_table :periodictasks do |t|
       t.column :project_id, :integer
