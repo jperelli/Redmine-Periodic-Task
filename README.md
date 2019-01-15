@@ -17,15 +17,17 @@ Support table :
 <table>
   <tr>
     <td rowspan="2">git branch</td>
-    <td colspan="3">redmine version support</td>
+    <td colspan="4">redmine version support</td>
   </tr>
   <tr>
     <td>1.x</td>
     <td>2.x</td>
     <td>3.x</td>
+    <td>4.x</td>
   </tr>
   <tr>
     <td>master</td>
+    <td>Unknown</td>
     <td>Unknown</td>
     <td>Yes</td>
     <td>Yes</td>
@@ -34,6 +36,7 @@ Support table :
     <td>redmine2</td>
     <td>Yes</td>
     <td>Yes</td>
+    <td>No</td>
     <td>No</td>
   </tr>
 </table>
