@@ -1,7 +1,9 @@
 class PeriodictaskController < ApplicationController
   unloadable
 
-
+  class << self
+    alias_method :before_action, :before_filter
+  end unless respond_to?(:before_action)
   before_action :find_project
   #before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, :except => [:destroy]
