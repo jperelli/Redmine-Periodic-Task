@@ -17,7 +17,10 @@
   <tbody>
     <% @tasks.each do |a| %>
     <tr class="<%= cycle('odd', 'even') %>">
-      <td><%= a.subject %></td>
+      <td>
+        <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
+        <%= a.subject %>
+      </td>
       <td><%= a.issue_category%></td>
       <td><%= a.next_run_date %></td>
       <td>

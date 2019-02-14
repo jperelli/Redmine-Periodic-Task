@@ -1,4 +1,4 @@
-gem 'business_time'
+gem 'business_time', '>= 0.7.6'
 
 rails_gem = Bundler.rubygems.find_name('rails').first
 rails_version = rails_gem.version unless rails_gem.nil?

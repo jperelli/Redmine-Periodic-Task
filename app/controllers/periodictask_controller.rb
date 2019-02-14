@@ -9,6 +9,9 @@ class PeriodictaskController < ApplicationController
   before_action :load_users, :except => [:destroy]
   before_action :load_categories, :except => [:destroy]
 
+  helper :custom_fields
+  include CustomFieldsHelper
+
   def index
     if !params[:project_id] then return end
     @project_identifier = params[:project_id]
@@ -20,31 +23,40 @@ class PeriodictaskController < ApplicationController
   def new
     @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
     @periodictask.interval_number = 1
+    @issue = @periodictask.generate_issue
   end
 
   def create
     @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
     params[:periodictask][:project_id] = @project[:id]
     @periodictask.attributes = params[:periodictask]
-    if @periodictask.save
+    @issue = @periodictask.generate_issue
+    if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_created)
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+    else
+      render :action => 'new'
     end
   end
 
   def edit
     @periodictask = Periodictask.find(params[:id])
-    @periodictask[:project_id] = @project[:identifier]
+    @periodictask.project = @project
     params[:project_id] = @project[:identifier]
+    @issue = @periodictask.generate_issue
   end
 
   def update
     @periodictask = Periodictask.find(params[:id])
     params[:periodictask][:project_id] = @project[:id]
-    if @periodictask.update_attributes(params[:periodictask])
+    @periodictask.attributes = params[:periodictask]
+    @issue = @periodictask.generate_issue
+    if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_saved)
       # redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+    else
+      render :action => 'edit'
     end
   end
 
@@ -57,6 +69,11 @@ class PeriodictaskController < ApplicationController
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
   end
 
+  def customfields
+      @periodictask = params[:periodictask][:id].present? ? Periodictask.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
+      @periodictask.attributes = params[:periodictask]
+      @issue = @periodictask.generate_issue
+  end
 
 private
 

@@ -1,4 +1,4 @@
-<%= error_messages_for 'periodictask' %>
+<%= error_messages_for 'periodictask', 'issue' %>
 <%= f.hidden_field :id %>
 <%= f.hidden_field :project_id %>
 <div class="box tabular">
@@ -28,7 +28,7 @@
       <%= l(:no_members_in_project) %>
     <% end %>
   </p>
-  <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :required => true, :min => 1 %> 
+  <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :required => true, :min => 1 %>
   <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
   <p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
   <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
@@ -42,4 +42,26 @@
       <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %>
     </p>
   <% end %>
+  <% if @periodictask.last_error.present? %>
+    <p>
+      <%= label_tag(nil, l(:label_last_error)) %>
+      <%= content_tag('span', @periodictask.last_error, :class => 'icon icon-error') %>
+    </p>
+  <% end %>
 </div>
+
+<div id="issue_custom_fields">
+<%= render :partial => 'customfields', :locals => { :issue => @issue } %>
+</div>
+
+<%= javascript_tag do %>
+  $(document).ready(function() {
+    $('#periodictask_tracker_id').change(function() {
+      $.ajax({
+        url: '<%= escape_javascript(periodictask_customfields_path(@project, :format => 'js')) %>',
+        type: 'post',
+        data: $(this).closest('form').serialize()
+      });
+    });
+  });
+<% end %>
