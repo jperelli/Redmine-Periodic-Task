@@ -20,30 +20,14 @@ class Periodictask < ActiveRecord::Base
     if project && project.active?
       # Copy subject and description and replace variables
       subj = subject.dup rescue nil
-      if subj.present?
-        subj.gsub!('**DAY**', now.strftime("%d"))
-        subj.gsub!('**WEEK**', now.strftime("%W"))
-        subj.gsub!('**MONTH**', now.strftime("%m"))
-        subj.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
-        subj.gsub!('**YEAR**', now.strftime("%Y"))
-        subj.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
-        subj.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
-      end
+      parse_macro(subj, now) if subj.present?
       desc = description.dup rescue nil
-      if desc.present?
-        desc.gsub!('**DAY**', now.strftime("%d"))
-        desc.gsub!('**WEEK**', now.strftime("%W"))
-        desc.gsub!('**MONTH**', now.strftime("%m"))
-        desc.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
-        desc.gsub!('**YEAR**', now.strftime("%Y"))
-        desc.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
-        desc.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
-      end
+      parse_macro(desc, now) if desc.present?
 
       issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
                         :assigned_to_id => assigned_to_id, :author_id => author_id,
                         :subject => subj, :description => desc)
-      issue.start_date ||= Date.today if set_start_date?
+      issue.start_date ||= now.to_date if set_start_date?
       if due_date_number
         due_date = due_date_number
         due_date_units = due_date_units || 'day'
@@ -68,5 +52,16 @@ class Periodictask < ActiveRecord::Base
 
       issue
     end
+  end
+
+  private
+  def parse_macro(str, now)
+    str.gsub!('**DAY**', now.strftime("%d"))
+    str.gsub!('**WEEK**', now.strftime("%W"))
+    str.gsub!('**MONTH**', now.strftime("%m"))
+    str.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
+    str.gsub!('**YEAR**', now.strftime("%Y"))
+    str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
+    str.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
   end
 end
