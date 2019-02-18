@@ -6,7 +6,8 @@ module Redmine
     def self.included(base)
       base.class_eval do
         def self.plugin_fixtures(*symbols)
-          ActiveRecord::Fixtures.create_fixtures(File.dirname(__FILE__) + '/fixtures/', symbols)
+          fixture_klass = ActiveRecord.const_defined?("FixtureSet") ? ActiveRecord::FixtureSet : ActiveRecord::Fixtures
+          fixture_klass.create_fixtures(File.dirname(__FILE__) + '/fixtures/', symbols)
         end
       end
     end
