@@ -10,20 +10,18 @@ class ScheduledTasksChecker
       if issue
         begin
           issue.save!
-          task.last_error = nil unless task.last_error.blank?
+          task.last_error = nil
         rescue ActiveRecord::RecordInvalid => e
           Rails.logger.error "ScheduledTasksChecker: #{e.message}"
           task.last_error = e.message
         end
         interval = task.interval_number
-        units = task.interval_units
-        if units.downcase == "business_day"
+        units = task.interval_units.downcase
+        if units == "business_day"
           task.next_run_date = task.interval_number.business_day.after(now)
         else
-          if (interval > 0)
-            interval_steps = ((now - task.next_run_date) / interval.send(units.downcase)).ceil
-            task.next_run_date += (interval * interval_steps).send(units.downcase)
-          end
+          interval_steps = ((now - task.next_run_date) / interval.send(units)).ceil
+          task.next_run_date += (interval * interval_steps).send(units)
         end
       else
         msg = "Project is missing or closed"

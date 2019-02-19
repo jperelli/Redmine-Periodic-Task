@@ -40,14 +40,14 @@ class PeriodictaskController < ApplicationController
   end
 
   def edit
-    @periodictask = Periodictask.find(params[:id])
+    @periodictask = Periodictask.accessible.find(params[:id])
     @periodictask.project = @project
     params[:project_id] = @project[:identifier]
     @issue = @periodictask.generate_issue
   end
 
   def update
-    @periodictask = Periodictask.find(params[:id])
+    @periodictask = Periodictask.accessible.find(params[:id])
     params[:periodictask][:project_id] = @project[:id]
     @periodictask.attributes = params[:periodictask]
     @issue = @periodictask.generate_issue
@@ -64,13 +64,13 @@ class PeriodictaskController < ApplicationController
   end
 
   def destroy
-      @task = Periodictask.find(params[:id])
+      @task = Periodictask.accessible.find(params[:id])
       @task.destroy
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
   end
 
   def customfields
-      @periodictask = params[:periodictask][:id].present? ? Periodictask.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
+      @periodictask = params[:periodictask][:id].present? ? Periodictask.accessible.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
       @periodictask.attributes = params[:periodictask]
       @issue = @periodictask.generate_issue
   end
@@ -78,7 +78,7 @@ class PeriodictaskController < ApplicationController
 private
 
   def find_periodictask
-    @periodictask = Periodictask.find(params[:id])
+    @periodictask = Periodictask.accessible.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render_404
   end
