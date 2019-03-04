@@ -110,6 +110,11 @@ You should have a project named *project1* with `periodictask` installed
   - [Julian Perelli](https://jperelli.com.ar/) (Current Maintainer)
   - [Tanguy de Courson](https://github.com/myneid/) (Original Author)
 
+## Top Contributors
+
+ - [yzzy](https://github.com/yzzy)
+ - [s-andy](https://github.com/s-andy)
+
 ## License
 
 GNU GPLv3
