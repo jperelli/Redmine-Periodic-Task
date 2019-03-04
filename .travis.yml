@@ -4,7 +4,7 @@ rvm:
   - 2.3.4
 
 env:
-  - REDMINE_VERSION=3.4.7 VERBOSE=yes
+  - REDMINE_VERSION=4.0 VERBOSE=yes
 
 install:
   - export PLUGIN=periodictask

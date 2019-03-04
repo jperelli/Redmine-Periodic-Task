@@ -1,0 +1,8 @@
+<% if @issue.editable_custom_field_values.any? %>
+<fieldset class="box tabular">
+<legend><%= l(:label_issue_custom_fields) %></legend>
+<% issue.editable_custom_field_values.each do |value| %>
+  <p><%= custom_field_tag_with_label(:periodictask, value, :required => issue.required_attribute?(value.custom_field_id)) %></p>
+<% end %>
+</fieldset>
+<% end %>

@@ -1,5 +1,11 @@
 require 'redmine'
 
+Rails.configuration.to_prepare do
+  unless Project.included_modules.include? RedminePeriodictask::ProjectPatch
+    Project.send(:include, RedminePeriodictask::ProjectPatch)
+  end
+end
+
 Redmine::Plugin.register :periodictask do
   name 'Redmine Periodictask plugin'
   author 'Julian Perelli'
