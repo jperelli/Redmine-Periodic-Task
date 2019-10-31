@@ -1,7 +1,7 @@
 
 ru:
   label_tracker: Трекер
-  label_author: автор
+  label_author: Автор
   label_assigned_to_user: Назначена
   no_members_in_project: В этом проекте нет участников
   no_categories_in_project: В этом проекте нет категорий
@@ -15,10 +15,10 @@ ru:
   label_create_periodic_task: Создать
   label_save_periodic_task: Сохранить
   label_scheduled_tasks: Запланированные задачи
-  label_no_project: No project ID supplied
+  label_no_project: ID проекта не указан
   label_remove_periodic_task: Удалить периодическую задачу
   label_interval: Интервал
-  label_set_start_date: Устанвить дату начала
+  label_set_start_date: Установить дату начала
   label_due_date: Плановая дата через
   label_estimated_hours: Оценка временных затрат
   label_estimated_hours_after: час(а,ов)
