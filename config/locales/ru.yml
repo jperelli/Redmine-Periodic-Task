@@ -19,7 +19,7 @@ ru:
   label_remove_periodic_task: Удалить периодическую задачу
   label_interval: Интервал
   label_set_start_date: Установить дату начала
-  label_due_date: Плановая дата через
+  label_due_date: Срок завершения через
   label_estimated_hours: Оценка временных затрат
   label_estimated_hours_after: час(а,ов)
   label_description: Описание
@@ -28,7 +28,9 @@ ru:
   label_unit_business_day: рабочие дни
   label_unit_week: неделя
   label_unit_month: месяц
-  label_unit_year: год(лет)
+  label_unit_year: год (лет)
   flash_task_created: Периодическа задача создана
   flash_task_saved: Периодическа задача сохранена
   subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (января - декабря), **PREVIOUS_MONTHNAME** передыдущий месяц, **YEAR** (YYYY)
+  label_last_error: Последняя ошибка
+  label_issue_custom_fields: Настраиваемые поля задачи
