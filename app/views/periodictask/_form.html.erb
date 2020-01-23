@@ -39,7 +39,7 @@
   <% if checklistPluginInstalled? %>
     <p>
       <%= label(:periodictask, :checklists_template_id, l(:label_checklist_template)) %>
-      <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %>
+      <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %> 
     </p>
   <% end %>
   <% if @periodictask.last_error.present? %>
