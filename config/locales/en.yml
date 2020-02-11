@@ -35,3 +35,5 @@ en:
   label_last_error: Last error
   label_issue_custom_fields: Issue custom fields
   menu_periodic_tasks: Periodic Tasks
+  permission_periodictask: Edit periodic tasks
+  project_module_periodictask: Periodic tasks
