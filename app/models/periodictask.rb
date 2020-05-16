@@ -36,11 +36,11 @@ class Periodictask < ActiveRecord::Base
   ]
 
   def generate_issue(now = Time.now)
+    Time.zone = User.current.time_zone
     if project.try(:active?)
       # Copy subject and description and replace variables
       subj = parse_macro(subject.try(:dup), now)
       desc = parse_macro(description.try(:dup), now)
-
       issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
                         :assigned_to_id => assigned_to_id, :author_id => author_id,
                         :subject => subj, :description => desc)
