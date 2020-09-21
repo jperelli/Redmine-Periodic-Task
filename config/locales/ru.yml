@@ -1,6 +1,7 @@
 
 ru:
   label_tracker: Трекер
+  label_facility: Услуга
   label_author: Автор
   label_assigned_to_user: Назначена
   no_members_in_project: В этом проекте нет участников

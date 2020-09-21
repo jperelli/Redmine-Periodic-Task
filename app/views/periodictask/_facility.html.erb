@@ -1,0 +1,1 @@
+  <p><%= label(:periodictask, :facility_id, l(:label_facility)) %><%= collection_select( 'periodictask', 'facility_id', @periodictask.filterFacilityByTrackerId( 0 ), :id, :name ) %></p>  

@@ -1,0 +1,1 @@
+$( '#periodictask_facility_id' ).html( '<%= escape_javascript options_from_collection_for_select( @periodictask.filterFacilityByTrackerId( @periodictask.tracker_id ), :id, :name ) %>' );
