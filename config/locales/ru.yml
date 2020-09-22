@@ -1,7 +1,6 @@
 
 ru:
   label_tracker: Трекер
-  label_facility: Услуга
   label_author: Автор
   label_assigned_to_user: Назначена
   no_members_in_project: В этом проекте нет участников
@@ -36,3 +35,5 @@ ru:
   menu_periodic_tasks: Плановые задачи
   permission_periodictask: Редактировать плановые задачи
   project_module_periodictask: Плановые задачи
+  label_facility: Услуга
+  label_issue_facility: Услуга
