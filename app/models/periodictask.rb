@@ -35,32 +35,32 @@ class Periodictask < ActiveRecord::Base
     [l(:label_unit_year), 'year']
   ]
 
-  #** generate_issue
-  def generate_issue(now = Time.now)
-    if project.try(:active?)
-      # Copy subject and description and replace variables
-      subj = parse_macro(subject.try(:dup), now)
-      desc = parse_macro(description.try(:dup), now)
-
-      issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
-                        :assigned_to_id => assigned_to_id, :author_id => author_id,
-                        :subject => subj, :description => desc, :facility_id => facility_id )
-                        
-      issue.start_date ||= now.to_date if set_start_date?
-      if due_date_number
-        due_date = due_date_number
-        due_date_units = due_date_units || 'day'
-        issue.due_date = due_date.send(due_date_units.downcase).from_now
-      end
-      
-      issue.estimated_hours = estimated_hours
-
-      fill_checklists issue
-      fill_custom_fields issue
-
-      issue
+    #** generate_issue
+    def generate_issue(now = Time.now)
+        return unless project.try( :active? )
+        # puts "AAAAAAAAAAAAAAAAAAAAAAAAAA " + inspect
+        # Copy subject and description and replace variables
+        subj = parse_macro( subject.try( :dup ), now )
+        desc = parse_macro( description.try( :dup ), now )
+        
+        issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
+                          :assigned_to_id => assigned_to_id, :author_id => author_id,
+                          :subject => subj, :description => desc, :facility_id => facility_id )
+                          
+        issue.start_date ||= now.to_date if set_start_date?
+        if due_date_number
+            due_date = due_date_number
+            due_date_units = due_date_units || 'day'
+            issue.due_date = due_date.send(due_date_units.downcase).from_now
+        end
+        
+        issue.estimated_hours = estimated_hours
+        
+        fill_checklists issue
+        fill_custom_fields issue
+        
+        issue
     end
-  end
 
     #** filterFacilityByTrackerId
     def filterFacilityByTrackerId( aTrackerId )  
