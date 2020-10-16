@@ -29,14 +29,27 @@ class Periodictask < ActiveRecord::Base
     end
   }
 
-  INTERVAL_UNITS = [
-    [l(:label_unit_day), 'day'],
-    [l(:label_unit_business_day), 'business_day'],
-    [l(:label_unit_week), 'week'],
-    [l(:label_unit_month), 'month'],
-    [l(:label_unit_year), 'year']
-  ]
-
+    #** INTERVAL_UNITS
+    def self.INTERVAL_UNITS()
+        [
+            [ l(:label_unit_day), 'day' ],
+            [ l(:label_unit_business_day ), 'business_day' ],
+            [ l(:label_unit_week), 'week' ],
+            [ l(:label_unit_month), 'month' ],
+            [ l(:label_unit_year), 'year' ]
+        ]
+    end
+    
+    #** trimTimeZone
+    def self.trimTimeZone( aDateTime )
+    puts 'AAAAAAAAAAAAAAAAAAAA 0 ' + aDateTime.inspect
+        t = aDateTime.to_s.dup
+        t.delete_suffix!( ' UTC' )
+        t.gsub!( / \+[0-8]+/, '' )
+    puts 'AAAAAAAAAAAAAAAAAAAA 1 ' + t        
+        return t
+    end    
+    
     #** generate_issue
     def generate_issue(now = Time.now)
         return unless project.try( :active? )
