@@ -8,6 +8,7 @@ class PeriodictaskController < ApplicationController
   #before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, :except => [:destroy]
   before_action :load_categories, :except => [:destroy]
+  before_action :load_versions, :except => [:destroy]
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -85,6 +86,11 @@ private
 
   def find_project
     @project = Project.find(params[:project_id])
+  end
+
+  def load_versions
+    # Get the project versions
+    @versions = @project.shared_versions
   end
 
   def load_users

@@ -2,6 +2,7 @@
 <%= f.hidden_field :id %>
 <%= f.hidden_field :project_id %>
 <div class="box tabular">
+  <p><%= label(:periodictask, :is_disabled, l(:label_is_disabled)) %><%= f.check_box :is_disabled %> </p>
   <p><%= label(:periodictask, :subject, l(:label_subject)) %><%= f.text_field :subject, :required => true, :size => 60 %></p>
   <p><%= l(:subject_variables) %></p>
   <p>
@@ -31,6 +32,8 @@
   <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :required => true, :min => 1 %>
   <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
   <p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
+  <p><%= label(:periodictask, :version_id, l(:label_version)) %><%= collection_select("periodictask", "version_id", @project.shared_versions.sort_by{|v|v.name}, :id, :name, { include_blank: l(:prompt_version_select), disabled: @project.shared_versions.select{|v| v.closed?}.map{|v| v.id} } ) %></p>
+  <p><%= label(:periodictask, :version_name, l(:label_version_name)) %><%= f.text_field :version_name %> </p>
   <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
   <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %></p>
   <p><%= label(:periodictask, :estimated_hours, l(:label_estimated_hours)) %><%= f.number_field :estimated_hours, step: :any %> <%= l(:label_estimated_hours_after) %></p>
