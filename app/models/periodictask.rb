@@ -14,7 +14,7 @@ class Periodictask < ActiveRecord::Base
   after_initialize do |task|
     if task.new_record?
       task.interval_number ||= 1
-      task.interval_units ||= INTERVAL_UNITS.first[1];
+      task.interval_units ||= Periodictask.INTERVAL_UNITS.first[1];
     end
   end
 
