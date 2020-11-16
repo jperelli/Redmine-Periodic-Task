@@ -73,7 +73,14 @@ class PeriodictaskController < ApplicationController
       @periodictask = params[:periodictask][:id].present? ? Periodictask.accessible.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
       @periodictask.attributes = params[:periodictask]
       @issue = @periodictask.generate_issue
+  end  
+  
+  def facility
+      @periodictask = params[:periodictask][:id].present? ? Periodictask.accessible.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
+      @periodictask.attributes = params[:periodictask]
   end
+  
+  
 
 private
 
