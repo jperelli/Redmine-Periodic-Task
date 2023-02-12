@@ -1,0 +1,36 @@
+# Portuguese strings go here for Rails i18n
+pt:
+  label_tracker: Tracker
+  label_author: Autor
+  label_assigned_to_user: Atribuído ao usuário
+  no_members_in_project: Este projeto não tem membros
+  no_categories_in_project: Este projeto não tem categorias
+  label_subject: Assunto
+  label_next_run_date: Data da próxima execução (yyyy-mm-dd hh:mm:ss)
+  label_edit_periodic_task: Editar Tarefa Periódica
+  label_new_periodic_task: Nova Tarefa Periódica
+  label_no_members_in_project: Este projeto não tem membros
+  label_no_categories_in_project: Este projeto não tem categorias
+  label_periodic_tasks: Tarefas Periódicas
+  label_create_periodic_task: Criar
+  label_save_periodic_task: Guardar
+  label_scheduled_tasks: Estas são as tarefas agendadas atualmente
+  label_no_project: Nenhum ID de projeto fornecido
+  label_remove_periodic_task: remover tarefa periódica
+  label_interval: Intervalo
+  label_set_start_date: Definir data de início
+  label_due_date: Definir data de vencimento em
+  label_estimated_hours: Tempo estimado
+  label_estimated_hours_after: Horas
+  label_description: Descrição
+  label_issue_category: Categoria Tarefa
+  label_unit_day: Dias(s)
+  label_unit_business_day: dias(s) de trabalho
+  label_unit_week: semana(s)
+  label_unit_month: mese(s)
+  label_unit_year: ano(s)
+  flash_task_created: Tarefa periódica é criada
+  flash_task_saved: Tarefa periódica salva
+  subject_variables: As variáveis ​​possíveis são ** DAY ** (01-31), ** WEEK ** (01-53), ** MONTH ** (01-12), ** MONTHNAME ** e ** PREVIOUS_MONTHNAME ** (Janeiro - Dezembro), ** ANO ** (AAAA)
+  label_last_error: Último erro
+  label_issue_custom_fields: Emitir campos personalizados
