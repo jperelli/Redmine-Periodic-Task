@@ -14,6 +14,7 @@ class PeriodictaskController < ApplicationController
   include CustomFieldsHelper
 
   def index
+    Time.zone = User.current.time_zone
     if !params[:project_id] then return end
     @project_identifier = params[:project_id]
     # find_all_by is considered deprecated (Rails 4)

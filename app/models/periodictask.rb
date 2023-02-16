@@ -37,6 +37,7 @@ class Periodictask < ActiveRecord::Base
   ]
 
   def generate_issue(now = Time.now)
+    Time.zone = User.current.time_zone
     if project.try(:active?)
       # Copy subject and description and replace variables
       v_id = version_id

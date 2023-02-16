@@ -11,7 +11,7 @@
 <table class="list">
   <thead>
     <tr>
-      <th><%= l(:label_subject) %></th><th><%= l(:label_is_disabled) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp;</th>
+      <th><%= l(:field_subject) %></th><th><%= l(:label_disabled) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -21,7 +21,7 @@
         <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
         <%= a.subject %>
       </td>
-      <td><%= check_box_tag 'is_disabled', a.is_disabled===1, (a.is_disabled === 1 ? true : false), disabled: true %></td>
+      <td><%= check_box_tag 'is_disabled', a.is_disabled===1, (a.is_disabled == true ? true : false), disabled: true %></td>
       <td><%= a.issue_category%></td>
       <td><%= a.next_run_date %></td>
       <td>

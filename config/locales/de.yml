@@ -5,7 +5,6 @@ de:
   label_assigned_to_user: Zugewiesen an
   no_members_in_project: Dieses Projekt hat keine Mitglieder
   no_categories_in_project: Dieses Projekt hat keine Kategorien
-  label_subject: Thema
   label_next_run_date: Nächster Lauf (yyyy-mm-dd hh:mm:ss)
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen

@@ -5,7 +5,6 @@ tr:
   label_assigned_to_user: Atanan
   no_members_in_project: Tanımlı üye yok!
   no_categories_in_project: Tanımlı kategori yok!
-  label_subject: Konu
   label_next_run_date: Sonraki açılma zamanı (yyyy-mm-dd hh:mm:ss)
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
