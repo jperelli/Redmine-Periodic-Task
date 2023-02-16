@@ -1,5 +1,7 @@
 # English strings go here for Rails i18n
 en:
+  project_module_periodictask: Periodic tasks
+  permission_periodictask: Manage periodic tasks
   label_tracker: Tracker
   label_author: Author
   label_assigned_to_user: Assigned to user
@@ -33,4 +35,4 @@ en:
   flash_task_saved: Periodic Task is saved
   subject_variables: Possible variables are **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
   label_last_error: Last error
-  label_issue_custom_fields: Issue custom fields
+#  label_issue_custom_fields: Issue custom fields

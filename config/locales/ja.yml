@@ -1,6 +1,7 @@
 # Japanese strings go here for Rails i18n
 ja:
-  label_tracker: トラッカー
+  project_module_periodictask: 定期チケット
+  label_periodictask: 定期チケット
   label_author: 著者
   label_assigned_to_user: 担当者
   no_members_in_project: このプロジェクトにはメンバーがいません。

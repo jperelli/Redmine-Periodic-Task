@@ -2,5 +2,5 @@
 
 <%= form_for(@periodictask, :url => url_for(:controller => 'periodictask', :action => 'update', :project_id => @project.identifier, :id => @periodictask.id.to_s ) ) do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
-<%= f.submit l(:label_save_periodic_task) %>
+<%= f.submit l(:button_save) %>
 <% end %>
