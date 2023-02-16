@@ -3,6 +3,7 @@ class Periodictask < ActiveRecord::Base
   belongs_to :project
   belongs_to :assigned_to, :class_name => 'Principal', :foreign_key => 'assigned_to_id'
   belongs_to :issue_category, :class_name => 'IssueCategory', :foreign_key => 'issue_category_id'
+  belongs_to :version, :class_name => 'Version', :foreign_key => 'version_id'
   serialize :custom_field_values
   # adapted to changes concerning mass-assigning values to attributes
   #attr_accessible *column_names
@@ -38,13 +39,21 @@ class Periodictask < ActiveRecord::Base
   def generate_issue(now = Time.now)
     if project.try(:active?)
       # Copy subject and description and replace variables
+      v_id = version_id
       subj = parse_macro(subject.try(:dup), now)
       desc = parse_macro(description.try(:dup), now)
+      version_name = parse_macro(version_name.try(:dup), now)
 
+      if version_name.present?
+        v = Project.find(task.project_id).shared_versions.where(name: version_name).first
+        v_id = v.id if v.present?
+      end
+      #trace "Version: #{v_id}. Name: #{version_name}. Tracker: #{task.tracker_id}"
       issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
                         :assigned_to_id => assigned_to_id, :author_id => author_id,
                         :subject => subj, :description => desc)
       issue.start_date ||= now.to_date if set_start_date?
+      issue.fixed_version = Version.find(v_id) if v_id.present?
       if due_date_number
         due_date = due_date_number
         due_date_units = due_date_units || 'day'
@@ -69,6 +78,8 @@ class Periodictask < ActiveRecord::Base
       str.gsub!('**YEAR**', now.strftime("%Y"))
       str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
       str.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
+      str.gsub!('**NEXT_MONTHNAME**', I18n.localize(now + 2592000, :format => "%B"))
+      str.gsub!('**NEXT_MONTH**', I18n.localize(now + 2592000, :format => "%m"))
     end
     str
   end
