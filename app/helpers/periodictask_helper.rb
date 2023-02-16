@@ -21,4 +21,10 @@ module PeriodictaskHelper
     )
   end
 
+  def versions_for_select(project = nil, selected_id = nil)
+     @project.shared_versions.each do |v|
+       content_tag(:option, v.name, value: v.id, selected: selected_id, disabled: @project.shared_versions.select{|v| !v.open?}).map{|v| v.id}
+     end if project.present?
+  end
+
 end
