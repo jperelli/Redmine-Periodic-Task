@@ -1,5 +1,5 @@
 # Coding：UTF-8
-# Chinese strings go here for Rails i18n 
+# Chinese strings go here for Rails i18n
 # Translated from English strings by Tomora.
 zh:
   label_tracker: 跟踪
@@ -8,7 +8,7 @@ zh:
   no_members_in_project: 该项目没有成员
   no_categories_in_project: 该项目没有类别
   label_subject: 主题
-  label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss timezone)
   label_edit_periodic_task: 编辑周期任务
   label_new_periodic_task: 新建周期任务
   label_no_members_in_project: 该项目没有成员
