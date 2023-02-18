@@ -5,6 +5,7 @@
 
 ### Added
 
+- redmine 5.0 support
 - settings page with list of all tasks in Administration-> Modules -> Periodic Tasks-> Configre
 - option is_disabled
 - hints for fields in edit page

@@ -17,7 +17,6 @@ After you installed the plugin you can add it as a module to a project that alre
 or activate it as default module for new projects.
 On each project it will add a new tab named "Periodic Task" - just go there to add your tasks.
 
-
 ## Upgrade
 
 1. `cd </path/to/redmine/dir/>plugins/periodictask`
@@ -62,6 +61,11 @@ If you want to substitute variables `**DAY**`, `**WEEK**`, `**MONTH**`, `**MONTH
 ```
 0 * * * * cd </path/to/redmine/dir/>; bundle exec rake redmine:check_periodictasks RAILS_ENV=production LOCALE=ja
 ```
+
+## Compatibility
+
+redmine 4.1 - 5.0
+
 
 ## Plugins supported
 
