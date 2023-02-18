@@ -10,6 +10,7 @@
 - option is_disabled
 - hints for fields in edit page
 - PT translation
+- use default redmine language if no env LOCALE
 
 ### Changed
 - improved the appearance

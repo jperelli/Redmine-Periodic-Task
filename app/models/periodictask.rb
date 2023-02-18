@@ -93,16 +93,16 @@ class Periodictask < ActiveRecord::Base
       str.gsub!('**MONTH**', now.strftime("%m"))
       str.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
       str.gsub!('**YEAR**', now.strftime("%Y"))
-      str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
-      str.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
-      str.gsub!('**NEXT_MONTHNAME**', I18n.localize(now + 2592000, :format => "%B"))
-      str.gsub!('**NEXT_MONTH**', I18n.localize(now + 2592000, :format => "%m"))
+      str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(Time.now - 1.month, :format => "%B"))
+      str.gsub!('**PREVIOUS_MONTH**', I18n.localize(Time.now - 1.month, :format => "%m"))
+      str.gsub!('**NEXT_MONTHNAME**', I18n.localize(Time.now + 1.month, :format => "%B"))
+      str.gsub!('**NEXT_MONTH**', I18n.localize(Time.now + 1.month, :format => "%m"))
     end
     str
   end
 
   def fill_checklists(issue)
-    if checklists_template_id && Redmine::Plugin.all.any? {|p| p.id == :redmine_checklists} && Object.const_defined?('ChecklistTemplate')
+    if PeriodictaskHelper.checklist_plugin_installed? && checklists_template_id
       template = ChecklistTemplate.find(checklists_template_id)
       if template
         items = template.template_items.split("\n")

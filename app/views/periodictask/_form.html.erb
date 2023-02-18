@@ -52,7 +52,7 @@
   <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::DUE_DATE_UNITS %></p>
   <p><%= label(:periodictask, :estimated_hours, l(:field_estimated_hours)) %><%= f.number_field :estimated_hours, step: :any %> <%= l(:field_hours) %></p>
   <p><%= label(:periodictask, :description, l(:field_description)) %><%= f.text_area :description, :cols => 100, :rows => 10, :no_label => true %></p><p><%= l(:hint_allow_use_variables) %></p>
-  <% if checklistPluginInstalled? %>
+  <% if PeriodictaskHelper.checklist_plugin_installed? %>
     <p>
       <%= label(:periodictask, :checklists_template_id, l(:label_checklist_template)) %>
       <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %>

@@ -1,13 +1,12 @@
 class ScheduledTasksChecker
 
   def self.checktasks!
+    # replace variables (set locale from shell)
+    I18n.locale = ENV['LOCALE'] || Setting.default_language || I18n.default_locale
 
     Time.zone = User.current.time_zone
     now = Time.zone.now
     Periodictask.where("(next_run_date <= ? OR next_run_date IS null) and is_disabled = ? ", now, false).each do |task|
-      # replace variables (set locale from shell)
-      I18n.locale = ENV['LOCALE'] || I18n.default_locale
-
       issue = task.generate_issue(now)
       if issue
         begin

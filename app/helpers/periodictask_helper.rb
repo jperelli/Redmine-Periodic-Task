@@ -1,7 +1,7 @@
 module PeriodictaskHelper
 
-  def checklistPluginInstalled?
-    return Redmine::Plugin.all.any? {|p| p.id == :redmine_checklists} && Object.const_defined?('ChecklistTemplate')
+  def self.checklist_plugin_installed?
+    return Redmine::Plugin.all.any? {|p| p.id == :redmine_checklists} && Object.const_defined?('ChecklistTemplate') && ChecklistTemplate.column_names.include?('name')
   end
 
   def template_options_for_select(project = nil, selected_id = nil)
