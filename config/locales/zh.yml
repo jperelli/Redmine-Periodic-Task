@@ -2,34 +2,31 @@
 # Chinese strings go here for Rails i18n
 # Translated from English strings by Tomora.
 zh:
-  label_tracker: 跟踪
-  label_author: 作者
-  label_assigned_to_user: 指派给
+  project_module_periodictask: 周期任务
   no_members_in_project: 该项目没有成员
   no_categories_in_project: 该项目没有类别
   label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss timezone)
+  label_no_project: 没有提供项目标识
   label_edit_periodic_task: 编辑周期任务
   label_new_periodic_task: 新建周期任务
-  label_no_members_in_project: 该项目没有成员
-  label_no_categories_in_project: 该项目没有类别
   label_periodic_tasks: 周期任务
   label_create_periodic_task: 新建
   label_save_periodic_task: 保存
   label_scheduled_tasks: 当前计划的任务
-  label_no_project: 没有提供项目标识
   label_remove_periodic_task: 删除周期任务
   label_interval: 间隔
   label_set_start_date: 设置起始日期
-  label_due_date: 设置结束日期
-  label_estimated_hours: 预期时间
-  label_estimated_hours_after: 小时
-  label_description: 描述
-  label_issue_category: 问题类别
   label_unit_day: 天
-  label_business_day: 工作日
+  label_unit_business_day: 工作日
   label_unit_week: 周
   label_unit_month: 月
   label_unit_year: 年
+  label_later_day: 天
+  label_later_business_day: 工作日
+  label_later_week: 周
+  label_later_month: 月
+  label_later_year: 年
   flash_task_created: 已创建周期任务
   flash_task_saved: 周期任务已保存
-  subject_variables: 可选值是：**DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  flash_task_removed: Periodic Task is removed
+  subject_variables: 可选值是：**DAY** (01-31), **WEEK** (01-53), **MONTH** and **PREVIOUS_MONTH** and **NEXT_MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** and **NEXT_MONTHNAME** (January - December), **YEAR** (YYYY)
