@@ -4,7 +4,7 @@ Redmine::Plugin.register :periodictask do
   name 'Redmine Periodictask plugin'
   author 'rk team '
   description 'Plugin to create a task periodically by defining an interval'
-  version '4.1.0'
+  version '4.2.0'
   url 'https://redmine-kanban.com'
   author_url 'https://redmine-kanban.com'
 
