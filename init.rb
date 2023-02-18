@@ -13,4 +13,6 @@ Redmine::Plugin.register :periodictask do
   end
 
   menu :project_menu, :periodictask, { :controller => 'periodictask', :action => 'index' }, :caption => :label_periodic_tasks, :after => :settings, :param => :project_id
+
+  settings :default => {:empty => true}, :partial => 'settings/periodictask/index'
 end

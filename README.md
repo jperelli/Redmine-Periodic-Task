@@ -71,9 +71,8 @@ redmine-periodictask supports [redminecrm checklist PRO](https://www.redmineup.c
 ## Authors
 
 - [rk team](https://github.com/rkteam/) (Current maintainer)
+- [jperelli](https://github.com/jperelli/Redmine-Periodic-Task) (Maintainer)
 - [Tanguy de Courson](https://github.com/myneid/) (Original Author)
-
-__*This repository was forked from [jperelli/Redmine-Periodic-Task](https://github.com/jperelli/Redmine-Periodic-Task)*__
 
 ## Top Contributors
 - [yoshiaki tanaka](https://github.com/wate)

@@ -1,10 +1,3 @@
-<% if @project_identifier %>
-
-<div class="contextual">
-<%= link_to(l(:label_new_periodic_task),
-                          {:controller => 'periodictask', :action => 'new', :project_id => @project},
-                          :class => 'icon icon-add') %>
-</div>
 
 <h2><%= l(:label_periodic_tasks) %></h2>
 <p><%= l(:label_scheduled_tasks) %></p>
@@ -13,6 +6,7 @@
     <tr>
       <th><%= l(:label_disabled) %></th>
       <th><%= l(:field_subject) %></th>
+      <th><%= l(:field_project) %></th>
       <th><%= l(:field_tracker) %></th>
       <th><%= l(:field_category) %></th>
       <th><%= l(:label_next_run_date) %></th>
@@ -21,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @tasks.each do |task| %>
+    <% Periodictask.all.each do |task| %>
     <tr class="<%= cycle('odd', 'even') %>">
 
       <td><%= check_box_tag 'is_disabled', task.is_disabled===1, (task.is_disabled == true ? true : false), disabled: true %></td>
@@ -29,6 +23,7 @@
         <%= content_tag('span', '', :title => task.last_error, :class => 'icon-only icon-error') if task.last_error.present? %>
         <%= task.subject %>
       </td>
+      <td><%= task.project.name %></td>
       <td><%= task.tracker %></td>
       <td><%= task.issue_category%></td>
       <td><%= task.next_run_date %></td>
@@ -50,7 +45,3 @@
     <% end %>
   </tbody>
 </table>
-
-<% else %>
-  <p><%= l(:label_no_project) %></p>
-<% end %>
