@@ -6,11 +6,9 @@ ja:
   label_assigned_to_user: 担当者
   no_members_in_project: このプロジェクトにはメンバーがいません。
   no_categories_in_project: このプロジェクトにはカテゴリーがありません。
-  label_next_run_date: 次回実行日時（UTC） (yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: 次回実行日時
   label_edit_periodic_task: 繰り返しチケットの編集
   label_new_periodic_task: 新規繰り返しチケット
-  label_no_members_in_project: このプロジェクトにはメンバーがいません。
-  label_no_categories_in_project: このプロジェクトにはカテゴリーがありません。
   label_periodic_tasks: 繰り返しチケット
   label_create_periodic_task: 作成
   label_save_periodic_task: 保存
@@ -20,10 +18,6 @@ ja:
   label_interval: 間隔
   label_set_start_date: 開始日を設定
   label_due_date: 期日
-  label_estimated_hours: 予定工数
-  label_estimated_hours_after: 時間
-  label_description: 説明
-  label_issue_category: カテゴリ
   label_unit_day: 日後
   label_unit_business_day: 営業日
   label_unit_week: 週間後
@@ -31,4 +25,11 @@ ja:
   label_unit_year: 年後
   flash_task_created: 繰り返しチケットが作成されました。
   flash_task_saved: 繰り返しチケットが保存されました。
-  subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  label_later_day: 日後
+  label_later_business_day: 営業日後
+  label_later_week: 週間後
+  label_later_month: ヶ月後
+  label_later_year: 年後
+  flash_task_removed: 定期タスクを削除しました
+  subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** and **PREVIOUS_MONTH** and **NEXT_MONTH**  (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12),**MONTHNAME** and **PREVIOUS_MONTHNAME** and **NEXT_MONTHNAME** (January - December), **YEAR** (YYYY)
+

@@ -1,33 +1,31 @@
 # Turkish strings by atopcu for Rails i18n
 tr:
-  label_tracker: İş Tipi
-  label_author: Yazar
-  label_assigned_to_user: Atanan
+  project_module_periodictask: Periyodik İşler
   no_members_in_project: Tanımlı üye yok!
   no_categories_in_project: Tanımlı kategori yok!
-  label_next_run_date: Sonraki açılma zamanı (yyyy-mm-dd hh:mm:ss)
+
+  label_next_run_date: Sonraki açılma zamanı
+  label_no_project: ID sağlanmadı
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
-  label_no_members_in_project: Tanımlı üye yok
-  label_no_categories_in_project: Tanımlı kategori yok
   label_periodic_tasks: Periyodik İşler
   label_create_periodic_task: Yeni
   label_save_periodic_task: Kaydet
   label_scheduled_tasks: Periyodik iş listesi
-  label_no_project: ID sağlanmadı
   label_remove_periodic_task: Periyodik işi sil
   label_interval: Tekrarlama
   label_set_start_date: Başlama tarihini set et
-  label_due_date: Bitiş süresi
-  label_estimated_hours: Kalan zaman
-  label_estimated_hours_after: Saat
-  label_description: Açıklama
-  label_issue_category: İş kategorisi
   label_unit_day: gün
   label_unit_business_day: iş günü
   label_unit_week: hafta
   label_unit_month: ay
   label_unit_year: yıl
+  label_later_day: gün
+  label_later_business_day: iş günü
+  label_later_week: hafta
+  label_later_month: ay
+  label_later_year: yıl
   flash_task_created: Periyodik iş oluşturuldu
   flash_task_saved: Periyokik iş kaydedildi
-  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  flash_task_removed: Periodic Task is removed
+  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (01-53), **MONTH** and **PREVIOUS_MONTH** and **NEXT_MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** and **NEXT_MONTHNAME** (January - December), **YEAR** (YYYY)

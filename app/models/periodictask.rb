@@ -1,6 +1,7 @@
 class Periodictask < ActiveRecord::Base
   unloadable
   belongs_to :project
+  belongs_to :tracker
   belongs_to :assigned_to, :class_name => 'Principal', :foreign_key => 'assigned_to_id'
   belongs_to :issue_category, :class_name => 'IssueCategory', :foreign_key => 'issue_category_id'
   belongs_to :version, :class_name => 'Version', :foreign_key => 'version_id'
@@ -57,8 +58,8 @@ class Periodictask < ActiveRecord::Base
       issue.fixed_version = Version.find(v_id) if v_id.present?
       if due_date_number
         due_date = due_date_number
-        due_date_units = due_date_units || 'day'
-        issue.due_date = due_date.send(due_date_units.downcase).from_now
+        due_date_unit = due_date_units || 'day'
+        issue.due_date = due_date.send(due_date_unit.downcase).from_now
       end
       issue.estimated_hours = estimated_hours
 
@@ -67,6 +68,21 @@ class Periodictask < ActiveRecord::Base
 
       issue
     end
+  end
+
+  def self.get_next_run_date(prev_run_date, interval, units)
+    if units == "business_day"
+      next_run_date = interval.business_day.after(Time.zone.now)
+    else
+      if prev_run_date
+        interval_steps = (( Time.zone.now - prev_run_date) / interval.send(units)).ceil
+        next_run_date = prev_run_date + (interval * interval_steps).send(units)
+        next_run_date.change({ hour: prev_run_date.hour.to_i, min: prev_run_date.min.to_i, sec: prev_run_date.sec.to_i })
+      else
+        next_run_date =  Time.zone.now
+      end
+    end
+    next_run_date
   end
 
   private
@@ -103,4 +119,13 @@ class Periodictask < ActiveRecord::Base
   def fill_custom_fields(issue)
     issue.custom_field_values = custom_field_values.to_unsafe_hash if custom_field_values.respond_to?(:to_unsafe_hash)
   end
+
+  DUE_DATE_UNITS = [
+    [l(:label_later_day), 'day'],
+    [l(:label_later_business_day), 'business_day'],
+    [l(:label_later_week), 'week'],
+    [l(:label_later_month), 'month'],
+    [l(:label_later_year), 'year']
+  ]
+
 end

@@ -7,33 +7,38 @@ en:
   label_assigned_to_user: Assigned to user
   no_members_in_project: This project has no members
   no_categories_in_project: This project has no categories
-  label_next_run_date: Next run date (yyyy-mm-dd hh:mm:ss timezone)
+  label_next_run_date: Next run date
+  label_no_project: No project ID supplied
   label_edit_periodic_task: Edit Periodic Task
   label_new_periodic_task: New Periodic Task
-  label_no_members_in_project: This project has no members
-  label_no_categories_in_project: This project has no categories
   label_periodic_tasks: Periodic Tasks
   label_create_periodic_task: Create
   label_save_periodic_task: Save
   label_scheduled_tasks: These are the currently scheduled tasks
-  label_no_project: No project ID supplied
   label_remove_periodic_task: remove periodic task
   label_interval: Interval
   label_set_start_date: Set start date
   label_due_date: Set due date in
-  label_estimated_hours: Estimated time
-  label_estimated_hours_after: Hours
-  label_description: Description
-  label_issue_category: Issue Category
+
   label_unit_day: day(s)
   label_unit_business_day: business day(s)
   label_unit_week: week(s)
   label_unit_month: month(s)
   label_unit_year: year(s)
+  label_later_day: day(s)
+  label_later_business_day: business day(s)
+  label_later_week: week(s)
+  label_later_month: month(s)
+  label_later_year: year(s)
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
-  subject_variables: Possible variables are **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** and **NEXT_MONTHNAME** (January - December), **PREVIOUS_MONTH**, **NEXT_MONTH**, **YEAR** (YYYY)
+
+  subject_variables: Possible variables are **DAY** (01-31), **WEEK** (01-53), **MONTH** and **PREVIOUS_MONTH** and **NEXT_MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** and **NEXT_MONTHNAME** (January - December), **YEAR** (YYYY)
   label_last_error: Last error
   label_version_name: Version name
   prompt_version_select: Choose a version or use Version name field.
+  flash_task_removed: Periodic Task is removed
+  hint_version_name: If version will not found, issue will be created without version
+  hint_allow_use_variables: You can use variables.
+
 

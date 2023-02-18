@@ -1,12 +1,7 @@
 class PeriodictaskController < ApplicationController
   unloadable
 
-  class << self
-    alias_method :before_action, :before_filter
-  end unless respond_to?(:before_action)
-  before_action :find_project
-  #before_filter :find_periodictask, :except => [:new, :create, :index]
-  before_action :load_users, :except => [:destroy]
+  before_action :find_project_by_project_id, :load_users, :except => [:destroy]
   before_action :load_categories, :except => [:destroy]
   before_action :load_versions, :except => [:destroy]
 
@@ -17,9 +12,7 @@ class PeriodictaskController < ApplicationController
     Time.zone = User.current.time_zone
     if !params[:project_id] then return end
     @project_identifier = params[:project_id]
-    # find_all_by is considered deprecated (Rails 4)
     @tasks = Periodictask.where(project_id: @project[:id])
-    #@tasks = Periodictask.find_all_by_project_id(@project[:id])
   end
 
   def new
@@ -55,7 +48,6 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_saved)
-      # redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
     else
       render :action => 'edit'
@@ -68,6 +60,7 @@ class PeriodictaskController < ApplicationController
   def destroy
       @task = Periodictask.accessible.find(params[:id])
       @task.destroy
+      flash[:notice] = l(:flash_task_removed)
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
   end
 
@@ -85,9 +78,6 @@ private
     render_404
   end
 
-  def find_project
-    @project = Project.find(params[:project_id])
-  end
 
   def load_versions
     # Get the project versions

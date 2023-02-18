@@ -4,7 +4,7 @@ class ScheduledTasksChecker
 
     Time.zone = User.current.time_zone
     now = Time.zone.now
-    Periodictask.where("next_run_date <= ? and is_disabled = ? ", now, false).each do |task|
+    Periodictask.where("(next_run_date <= ? OR next_run_date IS null) and is_disabled = ? ", now, false).each do |task|
       # replace variables (set locale from shell)
       I18n.locale = ENV['LOCALE'] || I18n.default_locale
 
@@ -18,16 +18,7 @@ class ScheduledTasksChecker
           "ScheduledTasksChecker: #{e.message}"
           task.last_error = e.message
         end
-        interval = task.interval_number
-        units = task.interval_units.downcase
-        if units == "business_day"
-          next_run_date = task.interval_number.business_day.after(Time.zone.now)
-        else
-          interval_steps = ((now - task.next_run_date) / interval.send(units)).ceil
-          next_run_date = task.next_run_date + (interval * interval_steps).send(units)
-        end
-        next_run_date = next_run_date.change({ hour: task.next_run_date.hour.to_i, min: task.next_run_date.min.to_i, sec: task.next_run_date.sec.to_i })
-        task.next_run_date = next_run_date
+        task.next_run_date = Periodictask.get_next_run_date(task.next_run_date, task.interval_number, task.interval_units.downcase)
       else
         msg = "Project is missing or closed"
         Rails.logger.error "ScheduledTasksChecker: #{msg}"
@@ -36,4 +27,5 @@ class ScheduledTasksChecker
       task.save
     end
   end
+
 end

@@ -1,18 +1,12 @@
 require 'redmine'
 
-Rails.configuration.to_prepare do
-  unless Project.included_modules.include? RedminePeriodictask::ProjectPatch
-    Project.send(:include, RedminePeriodictask::ProjectPatch)
-  end
-end
-
 Redmine::Plugin.register :periodictask do
   name 'Redmine Periodictask plugin'
-  author 'Julian Perelli'
+  author 'rk team '
   description 'Plugin to create a task periodically by defining an interval'
-  version '4.1.0'
-  url 'https://github.com/jperelli/Redmine-Periodic-Task/'
-  author_url 'https://jperelli.com.ar/'
+  version '4.2.0'
+  url 'https://redmine-kanban.com'
+  author_url 'https://redmine-kanban.com'
 
   project_module :periodictask do
     permission :periodictask, {:periodictask => [:index, :edit]}
