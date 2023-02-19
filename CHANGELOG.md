@@ -11,9 +11,8 @@
 - hints for fields in edit page
 - PT translation
 - use default redmine language if no env LOCALE
+- improved the UX/UI
 
-### Changed
-- improved the appearance
 
 ### Fixed
 
