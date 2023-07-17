@@ -1,6 +1,7 @@
-<h2><%= l(:label_new_periodic_task) %></h2>
+<h3><%= link_to l(:label_periodic_tasks), settings_project_path(@project, :tab => 'periodictask') %> : <%= l(:label_new_periodic_task) %></h3>
 
 <%= form_for(@periodictask) do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
 <%= f.submit l(:button_create) %>
 <% end %>
+<%= link_to l(:button_cancel), settings_project_path(@project, :tab => 'periodictask') %>

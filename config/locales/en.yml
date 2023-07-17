@@ -17,7 +17,7 @@ en:
   label_scheduled_tasks: These are the currently scheduled tasks
   label_remove_periodic_task: remove periodic task
   label_interval: Interval
-  label_set_start_date: Set start date
+  hint_set_start_date: When creating a task, the "start date" will be filled with the current date
   label_due_date: Set due date in
 
   label_unit_day: day(s)
@@ -36,7 +36,7 @@ en:
   subject_variables: Possible variables are **DAY** (01-31), **WEEK** (01-53), **MONTH** and **PREVIOUS_MONTH** and **NEXT_MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** and **NEXT_MONTHNAME** (January - December), **YEAR** (YYYY)
   label_last_error: Last error
   label_version_name: Version name
-  prompt_version_select: Choose a version or use Version name field.
+  prompt_version_select: Choose a version or create new
   flash_task_removed: Periodic Task is removed
   hint_version_name: If version will not found, issue will be created without version
   hint_allow_use_variables: You can use variables.

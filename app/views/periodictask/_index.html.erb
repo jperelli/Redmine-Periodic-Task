@@ -1,0 +1,55 @@
+<% if @project %>
+
+  <div class="contextual">
+    <%= link_to(l(:label_new_periodic_task),
+                {:controller => 'periodictask', :action => 'new', :project_id => @project},
+                :class => 'icon icon-add') %>
+  </div>
+
+  <h3><%= l(:label_periodic_tasks) %></h3>
+  <table class="list">
+    <thead>
+    <tr>
+      <th><%= l(:label_disabled) %></th>
+      <th><%= l(:field_subject) %></th>
+      <th><%= l(:field_tracker) %></th>
+      <th><%= l(:field_category) %></th>
+      <th><%= l(:label_next_run_date) %></th>
+      <th>&nbsp</th>
+      <th>&nbsp</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% Periodictask.where(project: @project).each do |task| %>
+      <tr class="<%= cycle('odd', 'even') %>">
+
+        <td><%= check_box_tag 'is_disabled', task.is_disabled===1, (task.is_disabled == true ? true : false), disabled: true %></td>
+        <td class="subject">
+          <%= content_tag('span', '', :title => task.last_error, :class => 'icon-only icon-error') if task.last_error.present? %>
+          <%= task.subject %>
+        </td>
+        <td><%= task.tracker %></td>
+        <td><%= task.issue_category%></td>
+        <td><%= task.next_run_date %></td>
+        <td>
+          <%= link_to l(:button_edit),
+                      {:controller => 'periodictask', :action => 'edit', :id => task.id, :project_id => task.project},
+                      :class => 'icon icon-edit',
+                      :accesskey => accesskey(:edit),
+                      :onclick => 'Element.show("edit-task"); return false;' %>
+        </td>
+        <td>
+          <%= link_to l(:button_delete),
+                      {:controller => 'periodictask', :action => 'destroy', :id => task.id, :project_id => task.project},
+                      :confirm => l(:text_are_you_sure),
+                      :method => :delete,
+                      :class => 'icon icon-del' %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+<% else %>
+  <p><%= l(:label_no_project) %></p>
+<% end %>

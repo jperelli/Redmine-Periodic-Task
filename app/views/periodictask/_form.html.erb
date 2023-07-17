@@ -8,16 +8,20 @@
     <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>
     <%= f.datetime_select :next_run_date, :include_blank => true, :start_year => Time.now.year %>
   </p>
-  <p><%= label(:periodictask, :subject, l(:field_subject)) %><%= f.text_field :subject, :required => true, :size => 60 %></p>
+  <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :value => 1, :required => true, :min => 1 %>
+    <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
+
+  <p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
+  <p><%= label(:periodictask, :subject, l(:field_subject)) %><%= f.text_field :subject, :required => true, :size => 100 %></p>
 
   <p><%= l(:subject_variables) %></p>
-  <p>
-    <%= label(:periodictask, :issue_category_id, l(:label_issue_category)) %>
 
-    <% if @categories.length > 0 %>
-      <%= f.select :issue_category_id, principals_options_for_select(@categories, @periodictask.issue_category), :include_blank => true, :required => true %>
+  <p>
+    <%= label(:periodictask, :author_user_id, l(:field_author)) %>
+    <% if @authors.length > 0 %>
+      <%= collection_select(:periodictask, "author_id", @authors, :id, :name ) %>
     <% else %>
-      <%= l(:no_categories_in_project) %>
+      <%= l(:no_members_in_project) %>
     <% end %>
   </p>
   <p>
@@ -28,28 +32,25 @@
       <%= l(:no_members_in_project) %>
     <% end %>
   </p>
+
+
+
   <p>
-    <%= label(:periodictask, :author_user_id, l(:field_author)) %>
-    <% if @authors.length > 0 %>
-      <%= collection_select(:periodictask, "author_id", @authors, :id, :name ) %>
+    <%= label(:periodictask, :issue_category_id, l(:label_issue_category)) %>
+
+    <% if @categories.length > 0 %>
+      <%= f.select :issue_category_id, principals_options_for_select(@categories, @periodictask.issue_category), :include_blank => true, :required => true %>
     <% else %>
-      <%= l(:no_members_in_project) %>
+      <%= l(:no_categories_in_project) %>
     <% end %>
   </p>
-
-  <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :value => 1, :required => true, :min => 1 %>
-  <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
-  <p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
   <p><%= label(:periodictask, :version_id, l(:label_version)) %>
     <%= collection_select("periodictask", "version_id", @project.shared_versions.sort_by{|v|v.name}, :id, :name, { include_blank: l(:prompt_version_select), disabled: @project.shared_versions.select{|v| v.closed?}.map{|v| v.id} } ) %>
-  </p>
+  <%= f.text_field :version_name, placeholder: l(:label_version_new) %> </p>
+  <p><%= l(:hint_allow_use_variables) %> <%= l(:hint_version_name) %></p>
 
-  <p><%= label(:periodictask, :version_name, l(:label_version_name)) %><%= f.text_field :version_name %> </p>
-  <p><%= l(:hint_allow_use_variables) %></p>
-  <p><%= l(:hint_version_name) %></p>
-
-  <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
-  <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::DUE_DATE_UNITS %></p>
+  <p><%= label(:periodictask, :set_start_date, l(:field_start_date)) %><%= f.check_box :set_start_date %> <%= l(:hint_set_start_date) %></p>
+  <p><%= label(:periodictask, :due_date, l(:field_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::DUE_DATE_UNITS %></p>
   <p><%= label(:periodictask, :estimated_hours, l(:field_estimated_hours)) %><%= f.number_field :estimated_hours, step: :any %> <%= l(:field_hours) %></p>
   <p><%= label(:periodictask, :description, l(:field_description)) %><%= f.text_area :description, :cols => 100, :rows => 10, :no_label => true %></p><p><%= l(:hint_allow_use_variables) %></p>
   <% if PeriodictaskHelper.checklist_plugin_installed? %>

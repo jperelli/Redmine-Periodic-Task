@@ -1,19 +1,19 @@
 class PeriodictaskController < ApplicationController
   unloadable
 
-  before_action :find_project_by_project_id, :load_users, :except => [:destroy]
+  before_action :find_project_by_project_id, :load_users
   before_action :load_categories, :except => [:destroy]
   before_action :load_versions, :except => [:destroy]
 
   helper :custom_fields
   include CustomFieldsHelper
 
-  def index
-    Time.zone = User.current.time_zone
-    if !params[:project_id] then return end
-    @project_identifier = params[:project_id]
-    @tasks = Periodictask.where(project_id: @project[:id])
-  end
+  # def index
+  #   Time.zone = User.current.time_zone
+  #   if !params[:project_id] then return end
+  #   @project_identifier = params[:project_id]
+  #   @tasks = Periodictask.where(project_id: @project[:id])
+  # end
 
   def new
     @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
@@ -28,7 +28,8 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_created)
-      redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+      redirect_to settings_project_path(@project, :tab => 'periodictask')
+
     else
       render :action => 'new'
     end
@@ -48,7 +49,7 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_saved)
-      redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+      redirect_to settings_project_path(@project, :tab => 'periodictask')
     else
       render :action => 'edit'
     end
@@ -61,7 +62,7 @@ class PeriodictaskController < ApplicationController
       @task = Periodictask.accessible.find(params[:id])
       @task.destroy
       flash[:notice] = l(:flash_task_removed)
-      redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+      redirect_to settings_project_path(@project, tab: 'periodictask', id: @project.id)
   end
 
   def customfields

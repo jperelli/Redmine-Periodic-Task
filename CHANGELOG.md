@@ -1,5 +1,11 @@
-# Change Log
+# ChangeLog
 
+## [4.2.1] - 2023-07-18
+
+### Added
+
+- move settings to project settings
+- change hints and rearrangement fields on form
 
 ## [4.2.0] - 2023-02-18
 

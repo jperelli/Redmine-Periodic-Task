@@ -13,7 +13,7 @@ ru:
   label_no_project: ID проекта не указан
   label_remove_periodic_task: Удалить периодическую задачу
   label_interval: Интервал
-  label_set_start_date: Установить дату начала
+  hint_set_start_date: При создании задачи будет заполнена "дата начала" текущей датой
   label_due_date: Установить срок
   label_unit_day: дней
   label_unit_business_day: рабочие дни
@@ -29,7 +29,7 @@ ru:
   flash_task_saved: Периодическа задача сохранена
   subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (01-53), **MONTH** | **PREVIOUS_MONTH** | **NEXT_MONTH** (01-12), **MONTHNAME** | **PREVIOUS_MONTHNAME** | **NEXT_MONTHNAME** (январь - декабрь), **YEAR** (YYYY)
   label_version_name: Имя версии
-  prompt_version_select: Выберете версию или испольщойте поле Имя версии
+  prompt_version_select: Выберете версию или создайте новую
   flash_task_removed: Плановая задача удалена
   hint_version_name: Если версия не будет найдена, будет создана задача без версии
   hint_allow_use_variables: Можно использовать переменные.
