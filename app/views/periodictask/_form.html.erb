@@ -13,6 +13,9 @@
     <% end %>
   </p>
   <p>
+    <%= label(:periodictask, :parent_id, l(:label_parent_id)) %><%= f.number_field :parent_id, step: :any %>
+  </p>
+  <p>
     <%= label(:periodictask, :assigned_to_user_id, l(:label_assigned_to_user)) %>
     <% if @assignables.length > 0 %>
       <%= f.select :assigned_to_id, principals_options_for_select(@assignables, @periodictask.assigned_to), :include_blank => true, :required => true %>

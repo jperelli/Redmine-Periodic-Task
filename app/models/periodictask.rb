@@ -41,7 +41,7 @@ class Periodictask < ActiveRecord::Base
       subj = parse_macro(subject.try(:dup), now)
       desc = parse_macro(description.try(:dup), now)
 
-      issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
+      issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id , :parent_id => parent_id,
                         :assigned_to_id => assigned_to_id, :author_id => author_id,
                         :subject => subj, :description => desc)
       issue.start_date ||= now.to_date if set_start_date?
