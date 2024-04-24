@@ -1,44 +1,55 @@
 <% if @project_identifier %>
 
-<div class="contextual">
-<%= link_to(l(:label_new_periodic_task),
-                          {:controller => 'periodictask', :action => 'new', :project_id => @project},
-                          :class => 'icon icon-add') %>
-</div>
+  <div class="contextual">
+    <%= link_to(
+      l(:label_new_periodic_task),
+      {:controller => 'periodictask', :action => 'new', :project_id => @project},
+      :class => 'icon icon-add'
+    ) %>
+  </div>
 
-<h2><%= l(:label_periodic_tasks) %></h2>
-<p><%= l(:label_scheduled_tasks) %></p>
-<table class="list">
-  <thead>
-    <tr>
-      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @tasks.each do |a| %>
-    <tr class="<%= cycle('odd', 'even') %>">
-      <td>
-        <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
-        <%= a.subject %>
-      </td>
-      <td><%= a.issue_category%></td>
-      <td><%= a.next_run_date %></td>
-      <td>
-  <%= link_to l(:button_edit),
-                            {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
-                            :class => 'icon icon-edit',
-                            :accesskey => accesskey(:edit),
-                            :onclick => 'Element.show("edit-task"); return false;' %>
-      </td>
-      <td>
-        <%= delete_link({ :controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project },
-                                                 class: 'icon icon-del',
-                                                 title: l(:button_delete)) %>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+  <h2><%= l(:label_periodic_tasks) %></h2>
+  <p><%= l(:label_scheduled_tasks) %></p>
+
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:label_subject) %></th>
+        <th><%= l(:label_issue_category) %></th>
+        <th><%= l(:label_next_run_date) %></th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tasks.each do |a| %>
+        <tr class="<%= cycle('odd', 'even') %>">
+          <td>
+            <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
+            <%= a.subject %>
+          </td>
+          <td><%= a.issue_category%></td>
+          <td><%= a.next_run_date %></td>
+          <td>
+            <%= link_to(
+              l(:button_edit),
+              {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
+              :class => 'icon icon-edit',
+              :accesskey => accesskey(:edit),
+              :onclick => 'Element.show("edit-task"); return false;'
+            ) %>
+          </td>
+          <td>
+            <%= delete_link(
+              {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},
+              class: 'icon icon-del',
+              title: l(:button_delete)
+            ) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
 <% else %>
   <p><%= l(:label_no_project) %></p>

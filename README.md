@@ -8,34 +8,45 @@ After you installed the plugin you can add it as a module to a project that alre
 
 ## Redmine version support
 
-Redmine v1 support has been dropped in favor of newer v3. If you still need redmine v1 support, please use redmine2 branch, that supports v1 and v2.
-
-Support table :
+Support for old redmine versions has been dropped.
+If you are using an old version, you can use the corresponding branch according to the following table.
+If you cannot migrate to a newer version and still need support, you can hire me to do it. Just contact me with the details.
 
 <table>
   <tr>
     <td rowspan="2">git branch</td>
-    <td colspan="4">redmine version support</td>
+    <td colspan="5">redmine version support</td>
   </tr>
   <tr>
     <td>1.x</td>
     <td>2.x</td>
     <td>3.x</td>
     <td>4.x</td>
+    <td>5.x</td>
   </tr>
   <tr>
-    <td>master</td>
-    <td>Unknown</td>
-    <td>Unknown</td>
-    <td>Yes</td>
-    <td>Yes</td>
+    <td>main</td>
+    <td>?</td>
+    <td>?</td>
+    <td>?</td>
+    <td>?</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>redmine4</td>
+    <td>?</td>
+    <td>?</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>🚫</td>
   </tr>
   <tr>
     <td>redmine2</td>
-    <td>Yes</td>
-    <td>Yes</td>
-    <td>No</td>
-    <td>No</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>🚫</td>
+    <td>🚫</td>
+    <td>🚫</td>
   </tr>
 </table>
 
@@ -90,18 +101,17 @@ redmine-periodictask supports [redminecrm checklist PRO](https://www.redmineup.c
 
 ## Development
 
-To help developing this plugin there is a Vagrantfile working, you can use it with VirtualBox or with [Vagrant-lxc (I recommend vagrant-lxc)](https://github.com/fgrehm/vagrant-lxc)
+Start with `docker compose up --build` and wait until it finishes.
+In other console do `./provision.sh`, this will install initial data for it to be easier to develop.
 
-    vagrant plugin install vagrant-lxc
-    vagrant up --provider lxc
-    vagrant ssh -c "/app/redmine/bin/rails server -b0.0.0.0 -p8888"
-
-Then go to http://192.168.2.100:8888/ and login with
+Then go to http://127.0.0.1:3000/ and login with
 
     user: admin
     pass: admin
 
 You should have a project named *project1* with `periodictask` installed
+
+In order to run the "cron checker": `docker compose exec redmine bundle exec rake redmine:check_periodictasks RAILS_ENV=development`
 
 ## Authors
 
@@ -115,4 +125,4 @@ You should have a project named *project1* with `periodictask` installed
 
 ## License
 
-GNU GPLv3
+MIT

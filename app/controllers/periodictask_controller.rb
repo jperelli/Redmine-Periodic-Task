@@ -4,6 +4,7 @@ class PeriodictaskController < ApplicationController
   class << self
     alias_method :before_action, :before_filter
   end unless respond_to?(:before_action)
+
   before_action :find_project
   #before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, :except => [:destroy]
@@ -15,9 +16,7 @@ class PeriodictaskController < ApplicationController
   def index
     if !params[:project_id] then return end
     @project_identifier = params[:project_id]
-    # find_all_by is considered deprecated (Rails 4)
     @tasks = Periodictask.where(project_id: @project[:id])
-    #@tasks = Periodictask.find_all_by_project_id(@project[:id])
   end
 
   def new
@@ -29,6 +28,11 @@ class PeriodictaskController < ApplicationController
   def create
     @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
     params[:periodictask][:project_id] = @project[:id]
+    # log values
+    if params[:periodictask][:next_run_date].blank?
+      params[:periodictask][:next_run_date] = @periodictask.get_next_run_date(Time.now)
+    end
+
     @periodictask.attributes = params[:periodictask]
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
@@ -53,7 +57,6 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_saved)
-      # redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
       redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
     else
       render :action => 'edit'
@@ -70,7 +73,9 @@ class PeriodictaskController < ApplicationController
   end
 
   def customfields
-      @periodictask = params[:periodictask][:id].present? ? Periodictask.accessible.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
+      @periodictask = params[:periodictask][:id].present? ?
+        Periodictask.accessible.find(params[:periodictask][:id]) :
+        Periodictask.new(:project=>@project, :author_id=>User.current.id)
       @periodictask.attributes = params[:periodictask]
       @issue = @periodictask.generate_issue
   end

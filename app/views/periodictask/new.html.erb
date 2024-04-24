@@ -1,6 +1,6 @@
 <h2><%= l(:label_new_periodic_task) %></h2>
 
 <%= form_for(@periodictask) do |f| %>
-<%= render :partial => 'form', :locals => { :f => f } %>
-<%= f.submit l(:label_create_periodic_task) %>
+  <%= render :partial => 'form', :locals => { :f => f } %>
+  <%= f.submit l(:label_create_periodic_task) %>
 <% end %>

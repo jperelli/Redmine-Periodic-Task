@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+  redmine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - REDMINE_PLUGINS_MIGRATE=true
+      - RAILS_ENV=development
+    volumes:
+      - ./.volumes/files:/usr/src/redmine/files
+      - ./.volumes/sqlite:/usr/src/redmine/sqlite
+      - ./:/usr/src/redmine/plugins/periodictask
+    depends_on:
+      - redmine_fix_permissions
+
+  redmine_fix_permissions:
+    image: redmine:5.1-bookworm
+    volumes:
+      - ./.volumes/sqlite:/usr/src/redmine/sqlite
+    command: >
+      /bin/sh -c "chown -R 999:999 /usr/src/redmine/sqlite"

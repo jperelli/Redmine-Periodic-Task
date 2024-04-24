@@ -15,14 +15,7 @@ class ScheduledTasksChecker
           Rails.logger.error "ScheduledTasksChecker: #{e.message}"
           task.last_error = e.message
         end
-        interval = task.interval_number
-        units = task.interval_units.downcase
-        if units == "business_day"
-          task.next_run_date = task.interval_number.business_day.after(now)
-        else
-          interval_steps = ((now - task.next_run_date) / interval.send(units)).ceil
-          task.next_run_date += (interval * interval_steps).send(units)
-        end
+        task.next_run_date = task.get_next_run_date(now)
       else
         msg = "Project is missing or closed"
         Rails.logger.error "ScheduledTasksChecker: #{msg}"

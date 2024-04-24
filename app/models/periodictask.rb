@@ -59,6 +59,18 @@ class Periodictask < ActiveRecord::Base
     end
   end
 
+  def get_next_run_date(now = Time.now)
+    units = self.interval_units.downcase
+    val = self.next_run_date || now
+    if units == "business_day"
+      val = self.interval_number.business_day.after(now)
+    else
+      interval_steps = ((now - val) / self.interval_number.send(units)).ceil
+      val += (self.interval_number * interval_steps).send(units)
+    end
+    val
+  end
+
   private
   def parse_macro(str, now)
     if str.respond_to?(:gsub!) && str.present?
