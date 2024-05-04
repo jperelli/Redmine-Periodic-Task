@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/jperelli/Redmine-Periodic-Task.svg)](https://travis-ci.org/jperelli/Redmine-Periodic-Task)
 
-## Please [donate here in bountysource](https://salt.bountysource.com/teams/redmine-periodic-task) so I can continue mantaining the plugin
-
 # Redmine periodictask
 
 In some projects there are tasks that need to be assigned on a schedule. Such as check the ssl registration once per year or run security checks every 3 months
