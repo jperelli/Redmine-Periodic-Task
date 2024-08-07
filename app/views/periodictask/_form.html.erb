@@ -29,17 +29,18 @@
     <% end %>
   </p>
   <p><%= label(:periodictask, :interval_number, l(:label_interval)) %><%= f.number_field :interval_number, :required => true, :min => 1 %>
-  <%= select 'periodictask', 'interval_units', Periodictask::INTERVAL_UNITS %></p>
+  <%= select 'periodictask', 'interval_units', Periodictask.INTERVAL_UNITS %></p>
   <p><%= label(:periodictask, :tracker_id, l(:label_tracker)) %><%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %></p>
+  <%= render :partial => 'facility', :locals => { :issue => @issue } %>
   <p><%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %><%= f.check_box :set_start_date %> </p>
-  <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask::INTERVAL_UNITS %></p>
+  <p><%= label(:periodictask, :due_date, l(:label_due_date)) %><%= f.text_field :due_date_number, :size => 3 %><%= select 'periodictask', 'due_date_units', Periodictask.INTERVAL_UNITS %></p>
   <p><%= label(:periodictask, :estimated_hours, l(:label_estimated_hours)) %><%= f.number_field :estimated_hours, step: :any %> <%= l(:label_estimated_hours_after) %></p>
-  <p><%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %><%= f.text_field :next_run_date %> </p>
+  <p><%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %><%= text_field_tag 'periodictask[next_run_date]', Periodictask.trimTimeZone( @periodictask.next_run_date ) %> </p>
   <p><%= label(:periodictask, :description, l(:label_description)) %><%= f.text_area :description, :cols => 100, :rows => 10, :no_label => true %></p>
   <% if checklistPluginInstalled? %>
     <p>
       <%= label(:periodictask, :checklists_template_id, l(:label_checklist_template)) %>
-      <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %>
+      <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %> 
     </p>
   <% end %>
   <% if @periodictask.last_error.present? %>
@@ -55,13 +56,29 @@
 </div>
 
 <%= javascript_tag do %>
-  $(document).ready(function() {
+$(document).ready(function() {
     $('#periodictask_tracker_id').change(function() {
-      $.ajax({
-        url: '<%= escape_javascript(periodictask_customfields_path(@project, :format => 'js')) %>',
-        type: 'post',
-        data: $(this).closest('form').serialize()
-      });
+        data = $(this).closest('form').serialize();
+
+        $.ajax({
+            url: '<%= escape_javascript(periodictask_customfields_path(@project, :format => 'js')) %>',
+            type: 'post',
+            data: data
+        });
+        
+        updateFacility();
     });
-  });
+    
+    function updateFacility() {
+        // $.get( 'facility', data, 'script' );
+        data = $('#periodictask_tracker_id').closest('form').serialize();
+        $.ajax({
+            url: '<%= escape_javascript(periodictask_facility_path(@project, :format => 'js')) %>',
+            type: 'post',
+            data: data
+        });    
+    }
+    
+    updateFacility();
+});
 <% end %>

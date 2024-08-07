@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 #  and the new verb 'patch' for compatibility with Redmine 3 and below
   
   match    'projects/:project_id/periodictask/customfields', :to => 'periodictask#customfields', :as => 'periodictask_customfields', :via => [:post, :patch]
+  match    'projects/:project_id/periodictask/facility', :to => 'periodictask#facility', :as => 'periodictask_facility', :via => [:post, :patch]
+  
   get      'projects/:project_id/periodictask',            :to => 'periodictask#index',  :as => 'periodictasks'
   get      'projects/:project_id/periodictask/new',        :to => 'periodictask#new',    :as => 'new_periodictask'
   post     'projects/:project_id/periodictask',            :to => 'periodictask#create'

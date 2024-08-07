@@ -4,6 +4,7 @@ class PeriodictaskController < ApplicationController
   class << self
     alias_method :before_action, :before_filter
   end unless respond_to?(:before_action)
+  
   before_action :find_project
   #before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, :except => [:destroy]
@@ -73,7 +74,14 @@ class PeriodictaskController < ApplicationController
       @periodictask = params[:periodictask][:id].present? ? Periodictask.accessible.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
       @periodictask.attributes = params[:periodictask]
       @issue = @periodictask.generate_issue
+  end  
+  
+  def facility
+      @periodictask = params[:periodictask][:id].present? ? Periodictask.accessible.find(params[:periodictask][:id]) : Periodictask.new(:project=>@project, :author_id=>User.current.id)
+      @periodictask.attributes = params[:periodictask]
   end
+  
+  
 
 private
 

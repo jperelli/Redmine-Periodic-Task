@@ -1,17 +1,27 @@
 <% if @project_identifier %>
 
+<style type="text/css">
+table.periodictask td{
+    text-align:left
+}
+table.periodictask th{
+    text-align:left
+}
+</style>
+
 <div class="contextual">
-<%= link_to(l(:label_new_periodic_task),
-                          {:controller => 'periodictask', :action => 'new', :project_id => @project},
-                          :class => 'icon icon-add') %>
+<%= link_to( l(:label_new_periodic_task),
+            {:controller => 'periodictask', :action => 'new', :project_id => @project},
+            :class => 'icon icon-add'
+) %>
 </div>
 
 <h2><%= l(:label_periodic_tasks) %></h2>
 <p><%= l(:label_scheduled_tasks) %></p>
-<table class="list">
+<table class="list periodictask">
   <thead>
     <tr>
-      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_category) %></th><th><%= l(:label_next_run_date) %></th><th>&nbsp</th><th>&nbsp;</th>
+      <th><%= l(:label_subject) %></th><th><%= l(:label_issue_facility) %></th><th><%= l(:label_next_run_date) %></th><th><%= l(:label_interval) %></th><th>&nbsp</th><th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -21,8 +31,9 @@
         <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
         <%= a.subject %>
       </td>
-      <td><%= a.issue_category%></td>
-      <td><%= a.next_run_date %></td>
+      <td><%= a.issue_facility%></td>
+      <td><%= Periodictask.trimTimeZone( a.next_run_date ) %></td>
+      <td><%= a.interval_number %>/<%= l( "label_unit_" + a.interval_units ) %></td>
       <td>
   <%= link_to l(:button_edit),
                             {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
