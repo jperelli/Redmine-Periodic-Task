@@ -1,5 +1,4 @@
 class PeriodictaskController < ApplicationController
-  unloadable
 
   class << self
     alias_method :before_action, :before_filter
