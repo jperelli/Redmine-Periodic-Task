@@ -2,6 +2,7 @@
 
 # run copy bundle, bundle install, all with volume
 
+docker compose run -e REDMINE_LANG=en redmine bin/rails db:migrate
 
 # add initial data (tracker/task types, etc) to redmine database
 # this script is run after redmine is up and running, so we can use the redmine container to run sql commands

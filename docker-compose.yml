@@ -18,7 +18,7 @@ services:
       - redmine_fix_permissions
 
   redmine_fix_permissions:
-    image: redmine:5.1-bookworm
+    image: redmine:6.0-bookworm
     volumes:
       - ./.volumes/sqlite:/usr/src/redmine/sqlite
     command: >

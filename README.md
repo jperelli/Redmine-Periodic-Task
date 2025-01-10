@@ -23,6 +23,7 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>3.x</td>
     <td>4.x</td>
     <td>5.x</td>
+    <td>6.x</td>
   </tr>
   <tr>
     <td>main</td>
@@ -30,6 +31,7 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>?</td>
     <td>?</td>
     <td>?</td>
+    <td>✅</td>
     <td>✅</td>
   </tr>
   <tr>
@@ -39,11 +41,13 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>✅</td>
     <td>✅</td>
     <td>🚫</td>
+    <td>🚫</td>
   </tr>
   <tr>
     <td>redmine2</td>
     <td>✅</td>
     <td>✅</td>
+    <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>
@@ -122,6 +126,7 @@ In order to run the "cron checker": `docker compose exec redmine bundle exec rak
 
  - [yzzy](https://github.com/yzzy)
  - [s-andy](https://github.com/s-andy)
+ - [tuzumkuru](https://github.com/tuzumkuru) redmine v6 support
 
 ## License
 

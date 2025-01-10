@@ -10,7 +10,7 @@ Redmine::Plugin.register :periodictask do
   name 'Redmine Periodictask plugin'
   author 'Julian Perelli'
   description 'Plugin to create a task periodically by defining an interval'
-  version '5.0.0'
+  version '6.0.0'
   url 'https://github.com/jperelli/Redmine-Periodic-Task/'
   author_url 'https://jperelli.com.ar/'
 

@@ -1,5 +1,6 @@
 class Periodictask < ActiveRecord::Base
-  unloadable
+  include Redmine::I18n
+
   belongs_to :project
   belongs_to :assigned_to, :class_name => 'Principal', :foreign_key => 'assigned_to_id'
   belongs_to :issue_category, :class_name => 'IssueCategory', :foreign_key => 'issue_category_id'
