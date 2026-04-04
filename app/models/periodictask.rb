@@ -64,7 +64,9 @@ class Periodictask < ActiveRecord::Base
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      val = interval_number.business_day.after(now)
+      while val <= now
+        val = interval_number.business_day.after(val)
+      end
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
