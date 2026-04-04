@@ -31,7 +31,7 @@ class PeriodictaskController < ApplicationController
     params[:periodictask][:project_id] = @project[:id]
     # log values
     if params[:periodictask][:next_run_date].blank?
-      params[:periodictask][:next_run_date] = @periodictask.get_next_run_date(Time.now)
+      params[:periodictask][:next_run_date] = @periodictask.get_next_run_date(Time.current)
     end
 
     @periodictask.attributes = params[:periodictask]

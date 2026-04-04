@@ -36,7 +36,7 @@ class Periodictask < ActiveRecord::Base
     [l(:label_unit_year), 'year']
   ]
 
-  def generate_issue(now = Time.now)
+  def generate_issue(now = Time.current)
     return unless project.try(:active?)
 
     # Copy subject and description and replace variables
@@ -60,7 +60,7 @@ class Periodictask < ActiveRecord::Base
     issue
   end
 
-  def get_next_run_date(now = Time.now)
+  def get_next_run_date(now = Time.current)
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'

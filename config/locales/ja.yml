@@ -6,7 +6,7 @@ ja:
   no_members_in_project: このプロジェクトにはメンバーがいません。
   no_categories_in_project: このプロジェクトにはカテゴリーがありません。
   label_subject: 題名
-  label_next_run_date: 次回実行日時（UTC） (yyyy-mm-dd hh:mm:ss)
+  label_next_run_date: 次回実行日時 (yyyy-mm-dd hh:mm:ss, サーバータイムゾーン)
   label_edit_periodic_task: 繰り返しチケットの編集
   label_new_periodic_task: 新規繰り返しチケット
   label_no_members_in_project: このプロジェクトにはメンバーがいません。
