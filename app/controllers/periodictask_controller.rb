@@ -1,31 +1,33 @@
 class PeriodictaskController < ApplicationController
-
-  class << self
-    alias_method :before_action, :before_filter
-  end unless respond_to?(:before_action)
+  unless respond_to?(:before_action)
+    class << self
+      alias before_action before_filter
+    end
+  end
 
   before_action :find_project
-  #before_filter :find_periodictask, :except => [:new, :create, :index]
-  before_action :load_users, :except => [:destroy]
-  before_action :load_categories, :except => [:destroy]
+  # before_filter :find_periodictask, :except => [:new, :create, :index]
+  before_action :load_users, except: [:destroy]
+  before_action :load_categories, except: [:destroy]
 
   helper :custom_fields
   include CustomFieldsHelper
 
   def index
-    if !params[:project_id] then return end
+    return unless params[:project_id]
+
     @project_identifier = params[:project_id]
     @tasks = Periodictask.where(project_id: @project[:id])
   end
 
   def new
-    @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
+    @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
     @periodictask.interval_number = 1
     @issue = @periodictask.generate_issue
   end
 
   def create
-    @periodictask = Periodictask.new(:project=>@project, :author_id=>User.current.id)
+    @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
     params[:periodictask][:project_id] = @project[:id]
     # log values
     if params[:periodictask][:next_run_date].blank?
@@ -36,9 +38,9 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_created)
-      redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+      redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
-      render :action => 'new'
+      render action: 'new'
     end
   end
 
@@ -56,30 +58,31 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_saved)
-      redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+      redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
-      render :action => 'edit'
+      render action: 'edit'
     end
   end
 
-  def show
-  end
+  def show; end
 
   def destroy
-      @task = Periodictask.accessible.find(params[:id])
-      @task.destroy
-      redirect_to :controller => 'periodictask', :action => 'index', :project_id=>params[:project_id]
+    @task = Periodictask.accessible.find(params[:id])
+    @task.destroy
+    redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
   end
 
   def customfields
-      @periodictask = params[:periodictask][:id].present? ?
-        Periodictask.accessible.find(params[:periodictask][:id]) :
-        Periodictask.new(:project=>@project, :author_id=>User.current.id)
-      @periodictask.attributes = params[:periodictask]
-      @issue = @periodictask.generate_issue
+    @periodictask = if params[:periodictask][:id].present?
+                      Periodictask.accessible.find(params[:periodictask][:id])
+                    else
+                      Periodictask.new(project: @project, author_id: User.current.id)
+                    end
+    @periodictask.attributes = params[:periodictask]
+    @issue = @periodictask.generate_issue
   end
 
-private
+  private
 
   def find_periodictask
     @periodictask = Periodictask.accessible.find(params[:id])
@@ -106,5 +109,4 @@ private
     # Get the issue categories
     @categories = @project.issue_categories
   end
-
 end

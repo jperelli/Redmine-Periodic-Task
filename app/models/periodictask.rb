@@ -2,18 +2,18 @@ class Periodictask < ActiveRecord::Base
   include Redmine::I18n
 
   belongs_to :project
-  belongs_to :assigned_to, :class_name => 'Principal', :foreign_key => 'assigned_to_id'
-  belongs_to :issue_category, :class_name => 'IssueCategory', :foreign_key => 'issue_category_id'
+  belongs_to :assigned_to, class_name: 'Principal', foreign_key: 'assigned_to_id'
+  belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
   serialize :custom_field_values
   # adapted to changes concerning mass-assigning values to attributes
-  #attr_accessible *column_names
+  # attr_accessible *column_names
   # the above (attr_accessible *column_names) does not work for some reason
   attr_protected
 
   after_initialize do |task|
     if task.new_record?
       task.interval_number ||= 1
-      task.interval_units ||= INTERVAL_UNITS.first[1];
+      task.interval_units ||= INTERVAL_UNITS.first[1]
     end
   end
 
@@ -37,65 +37,70 @@ class Periodictask < ActiveRecord::Base
   ]
 
   def generate_issue(now = Time.now)
-    if project.try(:active?)
-      # Copy subject and description and replace variables
-      subj = parse_macro(subject.try(:dup), now)
-      desc = parse_macro(description.try(:dup), now)
+    return unless project.try(:active?)
 
-      issue = Issue.new(:project_id => project_id, :tracker_id => tracker_id || project.trackers.first.try(:id), :category_id => issue_category_id,
-                        :assigned_to_id => assigned_to_id, :author_id => author_id,
-                        :subject => subj, :description => desc)
-      issue.start_date ||= now.to_date if set_start_date?
-      if due_date_number
-        due_date = due_date_number
-        due_date_units = due_date_units || 'day'
-        issue.due_date = due_date.send(due_date_units.downcase).from_now
-      end
-      issue.estimated_hours = estimated_hours
+    # Copy subject and description and replace variables
+    subj = parse_macro(subject.try(:dup), now)
+    desc = parse_macro(description.try(:dup), now)
 
-      fill_checklists issue
-      fill_custom_fields issue
-
-      issue
+    issue = Issue.new(project_id: project_id, tracker_id: tracker_id || project.trackers.first.try(:id), category_id: issue_category_id,
+                      assigned_to_id: assigned_to_id, author_id: author_id,
+                      subject: subj, description: desc)
+    issue.start_date ||= now.to_date if set_start_date?
+    if due_date_number
+      due_date = due_date_number
+      due_date_units ||= 'day'
+      issue.due_date = due_date.send(due_date_units.downcase).from_now
     end
+    issue.estimated_hours = estimated_hours
+
+    fill_checklists issue
+    fill_custom_fields issue
+
+    issue
   end
 
   def get_next_run_date(now = Time.now)
-    units = self.interval_units.downcase
-    val = self.next_run_date || now
-    if units == "business_day"
-      val = self.interval_number.business_day.after(now)
+    units = interval_units.downcase
+    val = next_run_date || now
+    if units == 'business_day'
+      val = interval_number.business_day.after(now)
     else
-      interval_steps = ((now - val) / self.interval_number.send(units)).ceil
-      val += (self.interval_number * interval_steps).send(units)
+      interval_steps = ((now - val) / interval_number.send(units)).ceil
+      val += (interval_number * interval_steps).send(units)
     end
     val
   end
 
   private
+
   def parse_macro(str, now)
     if str.respond_to?(:gsub!) && str.present?
-      str.gsub!('**DAY**', now.strftime("%d"))
-      str.gsub!('**WEEK**', now.strftime("%W"))
-      str.gsub!('**MONTH**', now.strftime("%m"))
-      str.gsub!('**MONTHNAME**', I18n.localize(now, :format => "%B"))
-      str.gsub!('**YEAR**', now.strftime("%Y"))
-      str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2592000, :format => "%B"))
-      str.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2592000, :format => "%m"))
+      str.gsub!('**DAY**', now.strftime('%d'))
+      str.gsub!('**WEEK**', now.strftime('%W'))
+      str.gsub!('**MONTH**', now.strftime('%m'))
+      str.gsub!('**MONTHNAME**', I18n.localize(now, format: '%B'))
+      str.gsub!('**YEAR**', now.strftime('%Y'))
+      str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2_592_000, format: '%B'))
+      str.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2_592_000, format: '%m'))
     end
     str
   end
 
   def fill_checklists(issue)
-    if checklists_template_id && Redmine::Plugin.all.any? {|p| p.id == :redmine_checklists} && Object.const_defined?('ChecklistTemplate')
+    if checklists_template_id && Redmine::Plugin.all.any? do |p|
+      p.id == :redmine_checklists
+    end && Object.const_defined?('ChecklistTemplate')
       template = ChecklistTemplate.find(checklists_template_id)
       if template
         items = template.template_items.split("\n")
-        checklists = items.each_with_index.map { |x, i| {
-          :is_done => false,
-          :subject => x,
-          :position => i
-        }}
+        checklists = items.each_with_index.map do |x, i|
+          {
+            is_done: false,
+            subject: x,
+            position: i
+          }
+        end
         issue.checklists_attributes = checklists
       end
     end

@@ -2,7 +2,7 @@ active_record_migration_class = ActiveRecord::Migration.respond_to?(:current_ver
 
 class AddEstimatedHoursToPeriodictasks < active_record_migration_class
   def self.up
-    add_column :periodictasks, :estimated_hours, :float, :null => true, :default => nil
+    add_column :periodictasks, :estimated_hours, :float, null: true, default: nil
   end
 
   def self.down
