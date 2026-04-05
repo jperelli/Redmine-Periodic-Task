@@ -99,8 +99,16 @@ class TimezoneCodeTest < Minitest::Test
     # PR #102 does: Time.zone = User.current.time_zone (= nil)
     #               now = Time.zone.now  -> NoMethodError!
     Time.zone = nil
-    assert_nil Time.zone, 'Setting Time.zone to nil should result in nil'
-    assert_raises(NoMethodError) { Time.zone.now }
+    # In standalone Ruby, Time.zone becomes nil and Time.zone.now raises
+    # NoMethodError. In Rails, Time.zone falls back to UTC, masking the bug.
+    if Time.zone.nil?
+      assert_nil Time.zone, 'Setting Time.zone to nil should result in nil'
+      assert_raises(NoMethodError) { Time.zone.now }
+    else
+      # In Rails, the fallback to UTC means the bug is hidden but the
+      # approach is still fragile — the user's intended timezone is lost.
+      assert_equal 'UTC', Time.zone.name
+    end
 
     # Our approach: Time.current still works because it falls back to
     # the default zone configured in config.time_zone
