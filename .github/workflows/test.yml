@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build test image
+        run: docker build -f Dockerfile.test -t periodictask-test .
+
+      - name: Run plugin tests
+        run: docker run --rm periodictask-test
+
+      - name: Run standalone unit tests
+        run: |
+          docker run --rm periodictask-test \
+            bundle exec ruby plugins/periodictask/test/unit/get_next_run_date_test.rb
+
+      - name: Run standalone timezone tests
+        run: |
+          docker run --rm periodictask-test \
+            bundle exec ruby plugins/periodictask/test/unit/timezone_test.rb

@@ -1,0 +1,20 @@
+FROM redmine:6.0-bookworm
+
+# Configure sqlite for test environment
+RUN printf "test:\n  adapter: sqlite3\n  database: /usr/src/redmine/sqlite/test.db\n" \
+    > /usr/src/redmine/config/database.yml
+RUN mkdir -p /usr/src/redmine/sqlite
+
+RUN apt-get update && apt-get install -y gcc make && rm -rf /var/lib/apt/lists/*
+
+# Copy plugin
+COPY . /usr/src/redmine/plugins/periodictask/
+
+RUN bundle install --with test
+
+# Prepare test database
+RUN bundle exec rake db:migrate RAILS_ENV=test
+RUN bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=test
+
+ENTRYPOINT [""]
+CMD ["bundle", "exec", "rake", "redmine:plugins:test", "NAME=periodictask", "RAILS_ENV=test"]
