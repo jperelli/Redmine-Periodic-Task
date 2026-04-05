@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/jperelli/Redmine-Periodic-Task.svg)](https://travis-ci.org/jperelli/Redmine-Periodic-Task)
-
-# Redmine periodictask
+# Redmine periodictask [![Test](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml/badge.svg)](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml)
 
 In some projects there are tasks that need to be assigned on a schedule. Such as check the ssl registration once per year or run security checks every 3 months
 
@@ -15,7 +13,7 @@ If you cannot migrate to a newer version and still need support, you can hire me
 <table>
   <tr>
     <td rowspan="2">git branch</td>
-    <td colspan="5">redmine version support</td>
+    <td colspan="6">redmine version support</td>
   </tr>
   <tr>
     <td>1.x</td>
