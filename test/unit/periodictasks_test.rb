@@ -299,4 +299,140 @@ class PeriodictasksTest < ActiveSupport::TestCase
     task.reload
     assert_equal 42, task.parent_id
   end
+
+  def test_macro_quarter_q1
+    now = Time.utc(2026, 2, 15, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Q**QUARTER** report',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Q1 report', issue.subject
+  end
+
+  def test_macro_quarter_q2
+    now = Time.utc(2026, 5, 1, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Q**QUARTER**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Q2', issue.subject
+  end
+
+  def test_macro_quarter_q3
+    now = Time.utc(2026, 9, 30, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Q**QUARTER**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Q3', issue.subject
+  end
+
+  def test_macro_quarter_q4
+    now = Time.utc(2026, 12, 31, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Q**QUARTER**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Q4', issue.subject
+  end
+
+  def test_macro_weekiso
+    now = Time.utc(2026, 1, 5, 10, 0, 0) # Monday of ISO week 02
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Week **WEEKISO**',
+      interval_number: 1,
+      interval_units: 'week',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal "Week #{now.strftime('%V')}", issue.subject
+  end
+
+  def test_macro_previous_month_on_march_1st
+    now = Time.utc(2026, 3, 1, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Report **PREVIOUS_MONTH**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Report 02', issue.subject
+  end
+
+  def test_macro_previous_monthname_on_march_1st
+    now = Time.utc(2026, 3, 1, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Report **PREVIOUS_MONTHNAME**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Report February', issue.subject
+  end
+
+  def test_macro_previous_month_on_january_1st
+    now = Time.utc(2026, 1, 1, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Report **PREVIOUS_MONTH**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal 'Report 12', issue.subject
+  end
+
+  def test_macro_substitution_in_description
+    now = Time.utc(2026, 7, 20, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Test',
+      description: 'Q**QUARTER** W**WEEKISO** **PREVIOUS_MONTH**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal "Q3 W#{now.strftime('%V')} 06", issue.description
+  end
 end

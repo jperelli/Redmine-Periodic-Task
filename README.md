@@ -93,7 +93,23 @@ Or even every 10 minutes
 
     */10 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production"
 
-If you want to substitute variables `**DAY**`, `**WEEK**`, `**MONTH**`, `**MONTHNAME**`, `**YEAR**`, `**PREVIOUS_MONTHNAME**`, `**PREVIOUS_MONTH**` with a localized version in your laguage please add `LOCALE="de"` (available are `de`, `en`, `ja`, `tr`, `ru`, `tr`, `zh`) to cronjob like this
+### Variable interpolation
+
+You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.
+
+| Variable | Description |
+|---|---|
+| `**DAY**` | Day of the month, zero-padded (01..31) |
+| `**WEEK**` | Week number of the year, starting with the first Monday as the first day of the first week (00..53) |
+| `**WEEKISO**` | ISO 8601 week number of the year (01..53) |
+| `**MONTH**` | Month of the year, zero-padded (01..12) |
+| `**MONTHNAME**` | Full month name (e.g. January), localized |
+| `**QUARTER**` | Quarter of the year (1..4) |
+| `**YEAR**` | Four-digit year |
+| `**PREVIOUS_MONTH**` | Previous month, zero-padded (01..12) |
+| `**PREVIOUS_MONTHNAME**` | Full name of the previous month, localized |
+
+If you want to get localized month names, please add `LOCALE="de"` (available are `de`, `en`, `ja`, `tr`, `ru`, `tr`, `zh`) to cronjob like this
 
     0 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
 

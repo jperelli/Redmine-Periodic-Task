@@ -78,13 +78,16 @@ class Periodictask < ActiveRecord::Base
 
   def parse_macro(str, now)
     if str.respond_to?(:gsub!) && str.present?
+      previous_month_time = now - 1.month
       str.gsub!('**DAY**', now.strftime('%d'))
+      str.gsub!('**WEEKISO**', now.strftime('%V'))
       str.gsub!('**WEEK**', now.strftime('%W'))
-      str.gsub!('**MONTH**', now.strftime('%m'))
+      str.gsub!('**QUARTER**', ((now.month - 1) / 3 + 1).to_s)
       str.gsub!('**MONTHNAME**', I18n.localize(now, format: '%B'))
+      str.gsub!('**MONTH**', now.strftime('%m'))
       str.gsub!('**YEAR**', now.strftime('%Y'))
-      str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(now - 2_592_000, format: '%B'))
-      str.gsub!('**PREVIOUS_MONTH**', I18n.localize(now - 2_592_000, format: '%m'))
+      str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(previous_month_time, format: '%B'))
+      str.gsub!('**PREVIOUS_MONTH**', previous_month_time.strftime('%m'))
     end
     str
   end
