@@ -1,5 +1,38 @@
 # Changelog
 
+## v6.1.0 - 2026-04-07
+
+> warning: This version requires migrations to be run. Remember to run:
+> bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
+
+### Features
+
+- Using timezones other than UTC is now possible ([#25](https://github.com/jperelli/Redmine-Periodic-Task/issues/25)) (@jperelli)
+- Add parent task support ([#107](https://github.com/jperelli/Redmine-Periodic-Task/issues/107), [#108](https://github.com/jperelli/Redmine-Periodic-Task/issues/108), [#116](https://github.com/jperelli/Redmine-Periodic-Task/issues/116))  (@jperelli)
+- Add QUARTER variable to use in subject and description ([#101](https://github.com/jperelli/Redmine-Periodic-Task/issues/101)) (@jperelli)
+- Add WEEKISO variable to use in subject and description ([#92](https://github.com/jperelli/Redmine-Periodic-Task/issues/92)) (@jperelli)
+- Add field priority to periodic tasks ([#56](https://github.com/jperelli/Redmine-Periodic-Task/issues/56), [#127](https://github.com/jperelli/Redmine-Periodic-Task/issues/127)) (@jperelli)
+- Add field watchers to periodic tasks ([#52](https://github.com/jperelli/Redmine-Periodic-Task/issues/52)) (@jperelli)
+
+### Fixes
+
+- Next run date constantly increasing ([#79](https://github.com/jperelli/Redmine-Periodic-Task/issues/79))
+- PREVIOUS_MONTH variable not working correctly ([#118](https://github.com/jperelli/Redmine-Periodic-Task/issues/118), [#126](https://github.com/jperelli/Redmine-Periodic-Task/issues/126))
+- Compatibility with redmine 6.1, attr_protected issue ([#129](https://github.com/jperelli/Redmine-Periodic-Task/issues/129))
+
+### Chores
+
+- Code formatted with RuboCop (@jperelli)
+- Add plugin tests (@jperelli)
+- Add github CI configuration to run tests on each commit (@jperelli)
+- Update README.md and add badge (@jperelli)
+- Add CHANGELOG.md (@jperelli)
+- Improve all locales (@jperelli)
+- Add translation for portuguese (@jperelli)
+- Add translation for croatian ([#123](https://github.com/jperelli/Redmine-Periodic-Task/issues/123)) (@jperelli)
+- Add translation for polish ([#77](https://github.com/jperelli/Redmine-Periodic-Task/issues/77)) (@jperelli)
+- Add translation for ukranian (@jperelli)
+
 ## v6.0.0 - 2025-01-11
 
 ### Features
