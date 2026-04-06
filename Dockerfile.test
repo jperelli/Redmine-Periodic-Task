@@ -1,4 +1,4 @@
-FROM redmine:6.0-bookworm
+FROM redmine:6.1-bookworm
 
 # Configure sqlite for test environment
 RUN printf "test:\n  adapter: sqlite3\n  database: /usr/src/redmine/sqlite/test.db\n" \

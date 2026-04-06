@@ -1,4 +1,4 @@
-FROM redmine:6.0-bookworm
+FROM redmine:6.1-bookworm
 
 RUN echo "development:\n  adapter: sqlite3\n  database: /usr/src/redmine/sqlite/redmine.db" > /usr/src/redmine/config/database.yml
 RUN mkdir -p /usr/src/redmine/sqlite

@@ -35,7 +35,7 @@ class PeriodictaskController < ApplicationController
       params[:periodictask][:next_run_date] = @periodictask.get_next_run_date(Time.current)
     end
 
-    @periodictask.attributes = params[:periodictask]
+    @periodictask.attributes = periodictask_params
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_created)
@@ -55,7 +55,7 @@ class PeriodictaskController < ApplicationController
   def update
     @periodictask = Periodictask.accessible.find(params[:id])
     params[:periodictask][:project_id] = @project[:id]
-    @periodictask.attributes = params[:periodictask]
+    @periodictask.attributes = periodictask_params
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       flash[:notice] = l(:flash_task_saved)
@@ -79,7 +79,7 @@ class PeriodictaskController < ApplicationController
                     else
                       Periodictask.new(project: @project, author_id: User.current.id)
                     end
-    @periodictask.attributes = params[:periodictask]
+    @periodictask.attributes = periodictask_params
     @issue = @periodictask.generate_issue
   end
 
@@ -116,5 +116,16 @@ class PeriodictaskController < ApplicationController
     @project.members.each do |m|
       @watchers << m.user
     end
+  end
+
+  def periodictask_params
+    params.require(:periodictask).permit(
+      :project_id, :tracker_id, :assigned_to_id, :author_id, :subject,
+      :interval_number, :interval_units, :next_run_date, :set_start_date,
+      :due_date_number, :due_date_units, :description, :issue_category_id,
+      :estimated_hours, :checklists_template_id, :parent_id, :priority_id,
+      { custom_field_values: {} },
+      { watcher_user_ids: [] }
+    )
   end
 end

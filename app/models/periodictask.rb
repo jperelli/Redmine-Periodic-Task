@@ -6,10 +6,6 @@ class Periodictask < ActiveRecord::Base
   belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
   serialize :custom_field_values
   attribute :watcher_user_ids, :json, default: []
-  # adapted to changes concerning mass-assigning values to attributes
-  # attr_accessible *column_names
-  # the above (attr_accessible *column_names) does not work for some reason
-  attr_protected
 
   def watcher_user_ids=(value)
     super(Array(value).map(&:to_i).reject(&:zero?))
