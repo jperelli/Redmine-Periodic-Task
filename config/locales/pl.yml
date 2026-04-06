@@ -1,0 +1,40 @@
+# Polish strings go here for Rails i18n
+pl:
+  label_tracker: Typ
+  label_author: Autor
+  label_assigned_to_user: Przypisane do
+  no_members_in_project: Ten projekt nie ma członków
+  no_categories_in_project: Ten projekt nie ma kategorii
+  label_subject: Temat
+  label_next_run_date: Następne uruchomienie (yyyy-mm-dd hh:mm:ss, strefa czasowa serwera)
+  label_edit_periodic_task: Edytuj zadanie cykliczne
+  label_new_periodic_task: Nowe zadanie cykliczne
+  label_no_members_in_project: Ten projekt nie ma członków
+  label_no_categories_in_project: Ten projekt nie ma kategorii
+  label_periodic_tasks: Zadania cykliczne
+  label_create_periodic_task: Utwórz
+  label_save_periodic_task: Zapisz
+  label_scheduled_tasks: Aktualnie zaplanowane zadania
+  label_no_project: Nie podano ID projektu
+  label_remove_periodic_task: Usuń zadanie cykliczne
+  label_interval: Interwał
+  label_set_start_date: Ustaw datę rozpoczęcia
+  label_due_date: Ustaw termin za
+  label_estimated_hours: Szacowany czas
+  label_estimated_hours_after: godzin
+  label_description: Opis
+  label_issue_category: Kategoria zagadnienia
+  label_parent_id: Zadanie nadrzędne
+  label_unit_day: dni
+  label_unit_business_day: dni roboczych
+  label_unit_week: tygodni
+  label_unit_month: miesięcy
+  label_unit_year: lat
+  flash_task_created: Zadanie cykliczne zostało utworzone
+  flash_task_saved: Zadanie cykliczne zostało zapisane
+  subject_variables: Dostępne zmienne to **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Styczeń - Grudzień), **YEAR** (YYYY)
+  label_last_error: Ostatni błąd
+  label_issue_custom_fields: Pola niestandardowe
+  label_priority: Priorytet
+  label_priority_default: (Domyślny - Normalny)
+  label_watchers: Obserwatorzy

@@ -27,10 +27,16 @@ zh:
   label_description: 描述
   label_issue_category: 问题类别
   label_unit_day: 天
-  label_business_day: 工作日
+  label_unit_business_day: 工作日
   label_unit_week: 周
   label_unit_month: 月
   label_unit_year: 年
   flash_task_created: 已创建周期任务
   flash_task_saved: 周期任务已保存
-  subject_variables: 可选值是：**DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  subject_variables: 可选值是：**DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (一月 - 十二月), **YEAR** (YYYY)
+  label_last_error: 最后错误
+  label_issue_custom_fields: 自定义字段
+  label_parent_id: 父任务
+  label_priority: 优先级
+  label_priority_default: (默认 - 正常)
+  label_watchers: 关注者

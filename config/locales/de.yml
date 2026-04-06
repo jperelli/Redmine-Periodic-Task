@@ -32,3 +32,9 @@ de:
   flash_task_created: Aufgabe wurde angelegt
   flash_task_saved: Aufgabe wurde gespeichert
   subject_variables: Mögliche Variablen sind **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** und **PREVIOUS_MONTHNAME** (Januar - Dezember), **YEAR** (YYYY)
+  label_last_error: Letzter Fehler
+  label_issue_custom_fields: Benutzerdefinierte Felder
+  label_parent_id: Übergeordnete Aufgabe
+  label_priority: Priorität
+  label_priority_default: (Standard - Normal)
+  label_watchers: Beobachter

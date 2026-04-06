@@ -1,0 +1,40 @@
+# Ukrainian strings go here for Rails i18n
+uk:
+  label_tracker: Трекер
+  label_author: Автор
+  label_assigned_to_user: Призначено
+  no_members_in_project: У цьому проекті немає учасників
+  no_categories_in_project: У цьому проекті немає категорій
+  label_subject: Тема
+  label_next_run_date: Наступний запуск (yyyy-mm-dd hh:mm:ss, часовий пояс сервера)
+  label_edit_periodic_task: Редагувати періодичне завдання
+  label_new_periodic_task: Нове періодичне завдання
+  label_no_members_in_project: У цьому проекті немає учасників
+  label_no_categories_in_project: У цьому проекті немає категорій
+  label_periodic_tasks: Періодичні завдання
+  label_create_periodic_task: Створити
+  label_save_periodic_task: Зберегти
+  label_scheduled_tasks: Заплановані завдання
+  label_no_project: ID проекту не вказано
+  label_remove_periodic_task: Видалити періодичне завдання
+  label_interval: Інтервал
+  label_set_start_date: Встановити дату початку
+  label_due_date: Встановити термін через
+  label_estimated_hours: Оцінка часу
+  label_estimated_hours_after: годин
+  label_description: Опис
+  label_issue_category: Категорія завдання
+  label_parent_id: Батьківське завдання
+  label_unit_day: днів
+  label_unit_business_day: робочих днів
+  label_unit_week: тижнів
+  label_unit_month: місяців
+  label_unit_year: років
+  flash_task_created: Періодичне завдання створено
+  flash_task_saved: Періодичне завдання збережено
+  subject_variables: Можливі змінні **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** та **PREVIOUS_MONTHNAME** (Січень - Грудень), **YEAR** (YYYY)
+  label_last_error: Остання помилка
+  label_issue_custom_fields: Налаштовувані поля завдання
+  label_priority: Пріоритет
+  label_priority_default: (За замовчуванням - Нормальний)
+  label_watchers: Спостерігачі

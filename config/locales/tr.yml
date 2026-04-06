@@ -30,5 +30,11 @@ tr:
   label_unit_month: ay
   label_unit_year: yıl
   flash_task_created: Periyodik iş oluşturuldu
-  flash_task_saved: Periyokik iş kaydedildi
-  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  flash_task_saved: Periyodik iş kaydedildi
+  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (Ocak - Aralık), **YEAR** (YYYY)
+  label_last_error: Son hata
+  label_issue_custom_fields: Özel alanlar
+  label_parent_id: Üst görev
+  label_priority: Öncelik
+  label_priority_default: (Varsayılan - Normal)
+  label_watchers: İzleyenler

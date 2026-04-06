@@ -32,3 +32,9 @@ ja:
   flash_task_created: 繰り返しチケットが作成されました。
   flash_task_saved: 繰り返しチケットが保存されました。
   subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME**, **PREVIOUS_MONTH** (01-12) and **PREVIOUS_MONTHNAME** (January - December), **YEAR** (YYYY)
+  label_last_error: 最後のエラー
+  label_issue_custom_fields: カスタムフィールド
+  label_parent_id: 親チケット
+  label_priority: 優先度
+  label_priority_default: (デフォルト - 通常)
+  label_watchers: ウォッチャー

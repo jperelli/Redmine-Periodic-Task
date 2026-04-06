@@ -32,3 +32,9 @@ it:
   flash_task_created: Periodic Task creato
   flash_task_saved: Periodic Task salvato
   subject_variables: I possibili valori sono **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** and **PREVIOUS_MONTHNAME** (Gennaio - Dicembre), **YEAR** (YYYY)
+  label_last_error: Ultimo errore
+  label_issue_custom_fields: Campi personalizzati
+  label_parent_id: Attività padre
+  label_priority: Priorità
+  label_priority_default: (Predefinito - Normale)
+  label_watchers: Osservatori

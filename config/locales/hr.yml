@@ -1,0 +1,40 @@
+# Croatian strings go here for Rails i18n
+hr:
+  label_tracker: Vrsta
+  label_author: Autor
+  label_assigned_to_user: Dodijeljeno korisniku
+  no_members_in_project: Ovaj projekt nema članova
+  no_categories_in_project: Ovaj projekt nema kategorija
+  label_subject: Predmet
+  label_next_run_date: Sljedeće pokretanje (yyyy-mm-dd hh:mm:ss, vremenska zona servera)
+  label_edit_periodic_task: Uredi periodički zadatak
+  label_new_periodic_task: Novi periodički zadatak
+  label_no_members_in_project: Ovaj projekt nema članova
+  label_no_categories_in_project: Ovaj projekt nema kategorija
+  label_periodic_tasks: Periodički zadaci
+  label_create_periodic_task: Stvori
+  label_save_periodic_task: Spremi
+  label_scheduled_tasks: Trenutno zakazani zadaci
+  label_no_project: ID projekta nije naveden
+  label_remove_periodic_task: Ukloni periodički zadatak
+  label_interval: Interval
+  label_set_start_date: Postavi datum početka
+  label_due_date: Postavi rok za
+  label_estimated_hours: Procijenjeno vrijeme
+  label_estimated_hours_after: sati
+  label_description: Opis
+  label_issue_category: Kategorija zadatka
+  label_parent_id: Nadređeni zadatak
+  label_unit_day: dan(a)
+  label_unit_business_day: radni(h) dan(a)
+  label_unit_week: tjedan/tjedna
+  label_unit_month: mjesec(i)
+  label_unit_year: godina/e
+  flash_task_created: Periodički zadatak je stvoren
+  flash_task_saved: Periodički zadatak je spremljen
+  subject_variables: Moguće varijable su **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Siječanj - Prosinac), **YEAR** (YYYY)
+  label_last_error: Zadnja greška
+  label_issue_custom_fields: Prilagođena polja
+  label_priority: Prioritet
+  label_priority_default: (Zadano - Normalan)
+  label_watchers: Promatrači
