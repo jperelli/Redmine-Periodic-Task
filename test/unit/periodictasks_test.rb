@@ -435,4 +435,168 @@ class PeriodictasksTest < ActiveSupport::TestCase
     issue = task.generate_issue(now)
     assert_equal "Q3 W#{now.strftime('%V')} 06", issue.description
   end
+
+  # --- Priority tests ---
+
+  def test_generate_issue_without_priority_uses_default
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'No priority set',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.month.from_now
+    )
+    assert_nil task.priority_id
+    issue = task.generate_issue
+    assert_not_nil issue
+    # When priority_id is nil, the issue should use Redmine's default priority
+    assert_not_nil issue.priority
+  end
+
+  def test_generate_issue_with_priority
+    priority = IssuePriority.find_by(name: 'High') || IssuePriority.active.last
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'With priority',
+      interval_number: 1,
+      interval_units: 'month',
+      priority_id: priority.id,
+      next_run_date: 1.month.from_now
+    )
+    issue = task.generate_issue
+    assert_not_nil issue
+    assert_equal priority.id, issue.priority_id
+  end
+
+  def test_periodictask_stores_priority_id
+    priority = IssuePriority.active.first
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Store priority test',
+      interval_number: 1,
+      interval_units: 'month',
+      priority_id: priority.id
+    )
+    task.reload
+    assert_equal priority.id, task.priority_id
+  end
+
+  def test_priority_id_defaults_to_nil
+    task = Periodictask.new
+    assert_nil task.priority_id
+  end
+
+  # --- Watcher tests ---
+
+  def test_watcher_user_ids_defaults_to_empty
+    task = Periodictask.new
+    assert_equal [], task.watcher_user_ids
+  end
+
+  def test_periodictask_stores_watcher_user_ids
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Store watchers test',
+      interval_number: 1,
+      interval_units: 'month',
+      watcher_user_ids: [1, 2]
+    )
+    task.reload
+    assert_equal [1, 2], task.watcher_user_ids
+  end
+
+  def test_periodictask_stores_empty_watcher_user_ids
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Empty watchers test',
+      interval_number: 1,
+      interval_units: 'month',
+      watcher_user_ids: []
+    )
+    task.reload
+    assert_equal [], task.watcher_user_ids
+  end
+
+  def test_fill_watchers_adds_watchers_to_persisted_issue
+    user = User.find(2)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Watcher fill test',
+      interval_number: 1,
+      interval_units: 'month',
+      watcher_user_ids: [user.id],
+      next_run_date: 1.day.ago
+    )
+    issue = task.generate_issue
+    issue.priority_id ||= IssuePriority.default.id
+    issue.status_id ||= IssueStatus.default.id
+    issue.save!
+
+    task.fill_watchers(issue)
+    assert issue.watched_by?(user)
+  end
+
+  def test_fill_watchers_skips_invalid_user_ids
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Invalid watcher test',
+      interval_number: 1,
+      interval_units: 'month',
+      watcher_user_ids: [999999],
+      next_run_date: 1.day.ago
+    )
+    issue = task.generate_issue
+    issue.priority_id ||= IssuePriority.default.id
+    issue.status_id ||= IssueStatus.default.id
+    issue.save!
+
+    # Should not raise
+    assert_nothing_raised do
+      task.fill_watchers(issue)
+    end
+  end
+
+  def test_scheduled_checker_with_priority_and_watchers
+    user = User.find(2)
+    priority = IssuePriority.active.last
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Checker priority+watchers test',
+      interval_number: 1,
+      interval_units: 'month',
+      priority_id: priority.id,
+      watcher_user_ids: [user.id],
+      next_run_date: 1.day.ago
+    )
+
+    assert_difference('Issue.count') do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    created_issue = Issue.where(subject: 'Checker priority+watchers test').last
+    assert_not_nil created_issue
+    assert_equal priority.id, created_issue.priority_id
+    assert created_issue.watched_by?(user)
+
+    task.reload
+    assert task.next_run_date > Time.current
+    assert_nil task.last_error
+  end
 end

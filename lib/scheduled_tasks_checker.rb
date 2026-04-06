@@ -9,6 +9,7 @@ class ScheduledTasksChecker
       if issue
         begin
           issue.save!
+          task.fill_watchers(issue)
           task.last_error = nil
         rescue ActiveRecord::RecordInvalid => e
           Rails.logger.error "ScheduledTasksChecker: #{e.message}"

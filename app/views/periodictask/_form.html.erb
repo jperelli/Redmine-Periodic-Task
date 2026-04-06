@@ -48,6 +48,10 @@
     <%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %>
   </p>
   <p>
+    <%= label(:periodictask, :priority_id, l(:label_priority)) %>
+    <%= f.select :priority_id, IssuePriority.active.map { |p| [p.name, p.id] }, :include_blank => l(:label_priority_default) %>
+  </p>
+  <p>
     <%= label(:periodictask, :set_start_date, l(:label_set_start_date)) %>
     <%= f.check_box :set_start_date %> </p>
   <p>
@@ -58,6 +62,14 @@
   <p>
     <%= label(:periodictask, :estimated_hours, l(:label_estimated_hours)) %>
     <%= f.number_field :estimated_hours, step: :any %> <%= l(:label_estimated_hours_after) %>
+  </p>
+  <p>
+    <%= label(:periodictask, :watcher_user_ids, l(:label_watchers)) %>
+    <% if @watchers.length > 0 %>
+      <%= select_tag 'periodictask[watcher_user_ids][]', options_from_collection_for_select(@watchers, :id, :name, @periodictask.watcher_user_ids.map(&:to_i)), :multiple => true, :size => 5 %>
+    <% else %>
+      <%= l(:no_members_in_project) %>
+    <% end %>
   </p>
   <p>
     <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>

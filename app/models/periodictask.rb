@@ -5,10 +5,15 @@ class Periodictask < ActiveRecord::Base
   belongs_to :assigned_to, class_name: 'Principal', foreign_key: 'assigned_to_id'
   belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
   serialize :custom_field_values
+  attribute :watcher_user_ids, :json, default: []
   # adapted to changes concerning mass-assigning values to attributes
   # attr_accessible *column_names
   # the above (attr_accessible *column_names) does not work for some reason
   attr_protected
+
+  def watcher_user_ids=(value)
+    super(Array(value).map(&:to_i).reject(&:zero?))
+  end
 
   after_initialize do |task|
     if task.new_record?
@@ -46,6 +51,7 @@ class Periodictask < ActiveRecord::Base
     issue = Issue.new(project_id: project_id, tracker_id: tracker_id || project.trackers.first.try(:id), category_id: issue_category_id, parent_id: parent_id,
                       assigned_to_id: assigned_to_id, author_id: author_id,
                       subject: subj, description: desc)
+    issue.priority_id = priority_id if priority_id.present?
     issue.start_date ||= now.to_date if set_start_date?
     if due_date_number
       due_date = due_date_number
@@ -58,6 +64,19 @@ class Periodictask < ActiveRecord::Base
     fill_custom_fields issue
 
     issue
+  end
+
+  def fill_watchers(issue)
+    return if watcher_user_ids.blank?
+    return unless issue.persisted?
+
+    watcher_user_ids.each do |uid|
+      uid = uid.to_i
+      next if uid == 0
+
+      user = User.find_by(id: uid)
+      issue.add_watcher(user) if user
+    end
   end
 
   def get_next_run_date(now = Time.current)
