@@ -24,6 +24,7 @@ en:
   label_estimated_hours_after: Hours
   label_description: Description
   label_issue_category: Issue Category
+  label_parent_id: Issue Parent task
   label_unit_day: day(s)
   label_unit_business_day: business day(s)
   label_unit_week: week(s)

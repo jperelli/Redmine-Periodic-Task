@@ -243,4 +243,60 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert task.next_run_date > Time.current
     assert_nil task.last_error
   end
+
+  def test_generate_issue_with_parent_id
+    # Create a parent issue first
+    parent_issue = Issue.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Parent issue',
+      status_id: 1,
+      priority_id: IssuePriority.first.id
+    )
+
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Child periodic task',
+      interval_number: 1,
+      interval_units: 'month',
+      parent_id: parent_issue.id,
+      next_run_date: 1.month.from_now
+    )
+    issue = task.generate_issue
+    assert_not_nil issue
+    assert_equal parent_issue.id, issue.parent_id
+    assert_equal 'Child periodic task', issue.subject
+  end
+
+  def test_generate_issue_without_parent_id
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'No parent task',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.month.from_now
+    )
+    issue = task.generate_issue
+    assert_not_nil issue
+    assert_nil issue.parent_id
+  end
+
+  def test_periodictask_stores_parent_id
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Store parent test',
+      interval_number: 1,
+      interval_units: 'month',
+      parent_id: 42
+    )
+    task.reload
+    assert_equal 42, task.parent_id
+  end
 end
