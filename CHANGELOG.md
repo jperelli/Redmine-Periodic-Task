@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.1.1 - 2026-04-07
+
+### Fixes
+
+- Migration fails for mysql watcher_user_ids json default value ([#130](https://github.com/jperelli/Redmine-Periodic-Task/issues/130)) (@jperelli)
+
 ## v6.1.0 - 2026-04-07
 
 > warning: This version requires migrations to be run. Remember to run:
