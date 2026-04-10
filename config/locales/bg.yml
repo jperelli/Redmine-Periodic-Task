@@ -32,7 +32,7 @@ bg:
   label_unit_year: година/и
   flash_task_created: Периодичната задача е създадена
   flash_task_saved: Периодичната задача е записана
-  subject_variables: Възможни променливи **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (Яннуари - Декември), **YEAR** (YYYY)
+  subject_variables: Възможни променливи **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (Януари - Декември), **YEAR** (YYYY)
   label_last_error: Последна грешка
   label_issue_custom_fields: Потребителски полета на задачата
   label_priority: Приоритет
