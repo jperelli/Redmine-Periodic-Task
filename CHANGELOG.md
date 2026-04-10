@@ -1,5 +1,15 @@
 # Changelog
 
+## v6.1.2 - 2026-04-10
+
+### Fixes
+
+- fix Custom Fields aren't read from the DB ([#131](https://github.com/jperelli/Redmine-Periodic-Task/issues/131)) (@jperelli)
+
+### Chores
+
+- Add bulgarian translation ([#132](https://github.com/jperelli/Redmine-Periodic-Task/pull/132)) (@jwalkerbg)
+
 ## v6.1.1 - 2026-04-07
 
 ### Fixes
