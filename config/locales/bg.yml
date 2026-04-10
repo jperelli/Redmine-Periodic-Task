@@ -1,0 +1,40 @@
+
+bg:
+  label_tracker: Тракер
+  label_author: Автор
+  label_assigned_to_user: Назначена на потребител
+  no_members_in_project: В този проект няма потребители
+  no_categories_in_project: В този проект няма категории
+  label_subject: Тема
+  label_next_run_date: Дата на следващо стартиране (yyyy-mm-dd hh:mm:ss, часова зона на сървъра)
+  label_edit_periodic_task: Редактиране на периодична задача
+  label_new_periodic_task: Нова периодична задача
+  label_no_members_in_project: В този проект няма потребители
+  label_no_categories_in_project: В този проект няма категории
+  label_periodic_tasks: Периодични задачи
+  label_create_periodic_task: Създаване
+  label_save_periodic_task: Запис
+  label_scheduled_tasks: Планирани задачи
+  label_no_project: Не е зададен ID на проекта
+  label_remove_periodic_task: премахване на периодична задача
+  label_interval: Интервал
+  label_set_start_date: Установяване на стартова дата
+  label_due_date: Дата на изпълнение след
+  label_estimated_hours: Изчислено време
+  label_estimated_hours_after: час/а
+  label_description: Описание
+  label_issue_category: Категория на задачата
+  label_parent_id: Родителска задача
+  label_unit_day: дни
+  label_unit_business_day: работни дни
+  label_unit_week: седмица
+  label_unit_month: месец
+  label_unit_year: година/и
+  flash_task_created: Периодичната задача е създадена
+  flash_task_saved: Периодичната задача е записана
+  subject_variables: Възможни променливи **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (Януари - Декември), **YEAR** (YYYY)
+  label_last_error: Последна грешка
+  label_issue_custom_fields: Потребителски полета на задачата
+  label_priority: Приоритет
+  label_priority_default: (По подразбиране - Нормален)
+  label_watchers: Наблюдатели
