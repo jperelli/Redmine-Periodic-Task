@@ -127,6 +127,14 @@ class Periodictask < ActiveRecord::Base
   end
 
   def fill_custom_fields(issue)
-    issue.custom_field_values = custom_field_values.to_unsafe_hash if custom_field_values.respond_to?(:to_unsafe_hash)
+    values = if custom_field_values.respond_to?(:to_unsafe_hash)
+               custom_field_values.to_unsafe_hash
+             elsif custom_field_values.respond_to?(:to_hash)
+               custom_field_values.to_hash
+             end
+
+    return if values.nil?
+
+    issue.custom_field_values = values.stringify_keys
   end
 end

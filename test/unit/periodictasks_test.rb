@@ -436,6 +436,24 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal "Q3 W#{now.strftime('%V')} 06", issue.description
   end
 
+  def test_fill_custom_fields_assigns_hash_loaded_from_db
+    task = Periodictask.new(custom_field_values: { 10 => 'Stored value' })
+    issue = Struct.new(:custom_field_values).new
+
+    task.send(:fill_custom_fields, issue)
+
+    assert_equal({ '10' => 'Stored value' }, issue.custom_field_values)
+  end
+
+  def test_fill_custom_fields_assigns_action_controller_parameters
+    task = Periodictask.new(custom_field_values: ActionController::Parameters.new('10' => 'Param value'))
+    issue = Struct.new(:custom_field_values).new
+
+    task.send(:fill_custom_fields, issue)
+
+    assert_equal({ '10' => 'Param value' }, issue.custom_field_values)
+  end
+
   # --- Priority tests ---
 
   def test_generate_issue_without_priority_uses_default
