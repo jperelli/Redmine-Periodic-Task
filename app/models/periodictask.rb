@@ -1,5 +1,6 @@
 class Periodictask < ActiveRecord::Base
   include Redmine::I18n
+  extend Redmine::I18n
 
   belongs_to :project
   belongs_to :assigned_to, class_name: 'Principal', foreign_key: 'assigned_to_id'
@@ -18,7 +19,7 @@ class Periodictask < ActiveRecord::Base
   after_initialize do |task|
     if task.new_record?
       task.interval_number ||= 1
-      task.interval_units ||= INTERVAL_UNITS.first[1]
+      task.interval_units ||= INTERVAL_UNITS.first
     end
   end
 
@@ -33,13 +34,20 @@ class Periodictask < ActiveRecord::Base
     end
   }
 
-  INTERVAL_UNITS = [
-    [l(:label_unit_day), 'day'],
-    [l(:label_unit_business_day), 'business_day'],
-    [l(:label_unit_week), 'week'],
-    [l(:label_unit_month), 'month'],
-    [l(:label_unit_year), 'year']
-  ]
+  INTERVAL_UNITS = %w[day business_day week month year].freeze
+
+  # Localized [label, value] pairs for select inputs.
+  # Built per call so labels reflect the current user's locale instead of
+  # being frozen to the boot-time default locale.
+  def self.interval_units_options
+    [
+      [l(:label_unit_day), 'day'],
+      [l(:label_unit_business_day), 'business_day'],
+      [l(:label_unit_week), 'week'],
+      [l(:label_unit_month), 'month'],
+      [l(:label_unit_year), 'year']
+    ]
+  end
 
   def generate_issue(now = Time.current)
     return unless project.try(:active?)
