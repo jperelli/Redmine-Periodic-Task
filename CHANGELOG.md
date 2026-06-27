@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased - 2026-06-27
+
+### Fixes
+
+- Enforce project permissions on the periodic task controller so only members with the `:periodictask` permission can list, create or edit tasks (@jperelli)
+
+
 ## v6.1.3 - 2026-05-08
 
 ### Fixes

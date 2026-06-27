@@ -128,6 +128,14 @@ class PeriodictaskControllerTest < ActionController::TestCase
     Setting.login_required = '0'
   end
 
+  def test_denies_member_without_permission
+    # dlopez (user 3) is a Developer member of ecookbook but the Developer role
+    # was not granted the :periodictask permission in setup.
+    @request.session[:user_id] = 3
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response 403
+  end
+
   private
 
   def create_test_periodictask(attrs = {})

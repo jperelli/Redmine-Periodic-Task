@@ -15,7 +15,8 @@ Redmine::Plugin.register :periodictask do
   author_url 'https://jperelli.com.ar/'
 
   project_module :periodictask do
-    permission :periodictask, { periodictask: %i[index edit] }
+    permission :periodictask,
+               { periodictask: %i[index new create edit update destroy customfields] }
   end
 
   menu :project_menu, :periodictask, { controller: 'periodictask', action: 'index' },

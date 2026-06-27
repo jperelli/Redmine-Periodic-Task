@@ -6,6 +6,7 @@ class PeriodictaskController < ApplicationController
   end
 
   before_action :find_project
+  before_action :authorize
   # before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, except: [:destroy]
   before_action :load_categories, except: [:destroy]
