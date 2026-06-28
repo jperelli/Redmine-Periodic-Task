@@ -6,7 +6,7 @@ tr:
   no_members_in_project: Tanımlı üye yok!
   no_categories_in_project: Tanımlı kategori yok!
   label_subject: Konu
-  label_next_run_date: Sonraki açılma zamanı (yyyy-mm-dd hh:mm:ss, sunucu saat dilimi)
+  label_next_run_date: Sonraki açılma zamanı
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
   label_no_members_in_project: Tanımlı üye yok
@@ -38,3 +38,8 @@ tr:
   label_priority: Öncelik
   label_priority_default: (Varsayılan - Normal)
   label_watchers: İzleyenler
+  label_periodictask_history: Oluşturulan iş kayıtları
+  label_periodictask_no_history: Bu görev henüz hiç iş kaydı oluşturmadı
+  label_issue_created_by_periodictask: Periyodik görev tarafından otomatik oluşturuldu
+  label_periodic_task: Periyodik görev
+  label_periodictask_template: Şablon

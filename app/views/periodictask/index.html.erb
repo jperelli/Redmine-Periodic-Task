@@ -26,7 +26,7 @@
         <tr class="<%= cycle('odd', 'even') %>">
           <td>
             <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
-            <%= a.subject %>
+            <%= link_to a.subject, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %>
           </td>
           <td><%= a.issue_category%></td>
           <td><%= a.next_run_date %></td>

@@ -6,7 +6,7 @@ hr:
   no_members_in_project: Ovaj projekt nema članova
   no_categories_in_project: Ovaj projekt nema kategorija
   label_subject: Predmet
-  label_next_run_date: Sljedeće pokretanje (yyyy-mm-dd hh:mm:ss, vremenska zona servera)
+  label_next_run_date: Sljedeće pokretanje
   label_edit_periodic_task: Uredi periodički zadatak
   label_new_periodic_task: Novi periodički zadatak
   label_no_members_in_project: Ovaj projekt nema članova
@@ -38,3 +38,8 @@ hr:
   label_priority: Prioritet
   label_priority_default: (Zadano - Normalan)
   label_watchers: Promatrači
+  label_periodictask_history: Stvoreni zadaci
+  label_periodictask_no_history: Ovaj zadatak još nije stvorio nijedan zadatak
+  label_issue_created_by_periodictask: Automatski stvoreno periodičnim zadatkom
+  label_periodic_task: Periodični zadatak
+  label_periodictask_template: Predložak

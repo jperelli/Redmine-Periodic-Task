@@ -244,6 +244,49 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil task.last_error
   end
 
+  def test_checker_records_generated_issue_in_history
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'History test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+
+    ScheduledTasksChecker.checktasks!
+
+    created = Issue.where(subject: 'History test').last
+    assert_includes task.created_issues, created
+    assert_equal 1, task.created_issues.count
+  end
+
+  def test_record_generated_issue_is_idempotent
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Idempotent history test',
+      interval_number: 1,
+      interval_units: 'month'
+    )
+    issue = Issue.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Generated',
+      status_id: 1,
+      priority_id: IssuePriority.default.id
+    )
+
+    task.record_generated_issue(issue)
+    task.record_generated_issue(issue)
+
+    assert_equal 1, task.created_issues.count
+  end
+
   def test_generate_issue_with_parent_id
     # Create a parent issue first
     parent_issue = Issue.create!(

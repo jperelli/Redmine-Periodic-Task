@@ -111,6 +111,20 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 'week', task.interval_units
   end
 
+  def test_show
+    task = create_test_periodictask
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+  end
+
+  def test_show_lists_generated_issues
+    task = create_test_periodictask(next_run_date: 1.day.ago)
+    ScheduledTasksChecker.checktasks!
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_equal 1, task.created_issues.count
+  end
+
   def test_destroy
     task = create_test_periodictask
     assert_difference('Periodictask.count', -1) do

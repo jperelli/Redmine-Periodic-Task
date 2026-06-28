@@ -6,7 +6,7 @@ pt-BR:
   no_members_in_project: Este projeto não possui membros
   no_categories_in_project: Este projeto não possui categorias
   label_subject: Assunto
-  label_next_run_date: Próxima execução (yyyy-mm-dd hh:mm:ss, fuso horário do servidor)
+  label_next_run_date: Próxima execução
   label_edit_periodic_task: Editar tarefa periódica
   label_new_periodic_task: Nova tarefa periódica
   label_no_members_in_project: Este projeto não possui membros
@@ -38,3 +38,8 @@ pt-BR:
   label_priority: Prioridade
   label_priority_default: (Padrão - Normal)
   label_watchers: Observadores
+  label_periodictask_history: Tarefas geradas
+  label_periodictask_no_history: Nenhuma tarefa foi gerada por esta tarefa periódica ainda
+  label_issue_created_by_periodictask: Criada automaticamente pela tarefa periódica
+  label_periodic_task: Tarefa periódica
+  label_periodictask_template: Modelo

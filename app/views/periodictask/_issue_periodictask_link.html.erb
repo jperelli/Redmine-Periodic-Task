@@ -1,0 +1,13 @@
+<% pi = PeriodictaskIssue.find_by(issue_id: issue.id) %>
+<% if pi&.periodictask %>
+  <% task = pi.periodictask %>
+  <p class="periodictask-origin">
+    <span class="icon icon-reload"></span>
+    <%= l(:label_issue_created_by_periodictask) %>
+    <% if User.current.allowed_to?(:periodictask, task.project) %>
+      <%= link_to "##{task.id}", periodictask_path(project_id: task.project, id: task.id) %>
+    <% else %>
+      #<%= task.id %>
+    <% end %>
+  </p>
+<% end %>

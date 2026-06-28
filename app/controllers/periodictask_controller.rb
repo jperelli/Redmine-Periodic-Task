@@ -14,6 +14,8 @@ class PeriodictaskController < ApplicationController
 
   helper :custom_fields
   include CustomFieldsHelper
+  helper :issues
+  helper :queries
 
   def index
     return unless params[:project_id]
@@ -66,7 +68,24 @@ class PeriodictaskController < ApplicationController
     end
   end
 
-  def show; end
+  def show
+    @periodictask = Periodictask.accessible.find(params[:id])
+    @periodictask.project = @project
+
+    issue_ids = @periodictask.issues.pluck(:id)
+    return if issue_ids.empty?
+
+    # Render the generated issues with Redmine's own issue list, so columns,
+    # sorting and styling match the project's regular issue view.
+    @query = IssueQuery.new(name: '_', project: @project)
+    @query.filters = {} # drop the default "open status only" filter so closed issues show too
+    @query.add_filter('issue_id', '=', [issue_ids.join(',')])
+    @query.sort_criteria = params[:sort] if params[:sort].present?
+
+    @issue_count = @query.issue_count
+    @issue_pages = Paginator.new @issue_count, per_page_option, params['page']
+    @issues = @query.issues(offset: @issue_pages.offset, limit: @issue_pages.per_page)
+  end
 
   def destroy
     @task = Periodictask.accessible.find(params[:id])

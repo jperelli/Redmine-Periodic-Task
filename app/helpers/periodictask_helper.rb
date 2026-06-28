@@ -1,4 +1,26 @@
 module PeriodictaskHelper
+  # Localized label for an interval/due-date unit value (e.g. 'business_day').
+  def periodictask_unit_label(value)
+    Periodictask.interval_units_options.find { |(_, v)| v == value }&.first || value
+  end
+
+  # Formatted time for display, with the full ISO 8601 timestamp (including the
+  # timezone offset) shown as a tooltip on hover.
+  def periodictask_time_with_title(time)
+    return '-' if time.blank?
+
+    content_tag(:span, format_time(time), title: time.iso8601)
+  end
+
+  # Link to the parent issue, falling back to a plain "#id" when the issue is
+  # missing or not visible, and "-" when no parent is set.
+  def periodictask_parent_link(task)
+    return '-' if task.parent_id.blank?
+
+    issue = Issue.visible.find_by(id: task.parent_id)
+    issue ? link_to_issue(issue) : "##{task.parent_id}"
+  end
+
   def checklistPluginInstalled?
     Redmine::Plugin.all.any? { |p| p.id == :redmine_checklists } && Object.const_defined?('ChecklistTemplate')
   end

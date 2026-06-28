@@ -1,0 +1,135 @@
+<div class="contextual">
+  <%= link_to(
+    sprite_icon('edit', l(:button_edit)),
+    { controller: 'periodictask', action: 'edit', id: @periodictask.id, project_id: @project },
+    class: 'icon icon-edit'
+  ) %>
+  <%= delete_link(
+    { controller: 'periodictask', action: 'destroy', id: @periodictask.id, project_id: @project },
+    class: 'icon icon-del',
+    title: l(:button_delete)
+  ) %>
+</div>
+
+<h2 class="inline-block"><%= l(:label_periodic_task) %> #<%= @periodictask.id %></h2>
+
+<div class="issue details periodictask-schedule">
+  <div class="attributes" style="margin-top: 0;">
+    <%= issue_fields_rows do |rows|
+      rows.left l(:label_interval),
+                "#{@periodictask.interval_number} #{periodictask_unit_label(@periodictask.interval_units)}",
+                class: 'interval'
+      rows.right l(:label_next_run_date),
+                 periodictask_time_with_title(@periodictask.next_run_date),
+                 class: 'next-run-date'
+    end %>
+  </div>
+</div>
+
+<fieldset class="box periodictask-template">
+  <legend><%= l(:label_periodictask_template) %></legend>
+
+  <% if @periodictask.tracker %>
+    <h3><%= @periodictask.tracker.name %></h3>
+  <% end %>
+
+  <div class="issue details">
+  <% if @periodictask.author %>
+    <div class="avatar-with-child">
+      <%= author_avatar(@periodictask.author, size: "50") %>
+      <%= assignee_avatar(@periodictask.assigned_to, size: "22", class: "avatar-child") if @periodictask.assigned_to %>
+    </div>
+  <% end %>
+
+  <div class="subject">
+    <% if @periodictask.parent_id %>
+      <div>
+        <p><%= periodictask_parent_link(@periodictask) %></p>
+        <div>
+          <h3><%= @periodictask.subject %></h3>
+        </div>
+      </div>
+    <% else %>
+      <h3><%= @periodictask.subject %></h3>
+    <% end %>
+  </div>
+
+  <% if @periodictask.created_at && @periodictask.author %>
+    <p class="author">
+      <%= authoring @periodictask.created_at, @periodictask.author %>.
+      <% if @periodictask.updated_at && @periodictask.created_at != @periodictask.updated_at %>
+        <%= l(:label_updated_time, time_tag(@periodictask.updated_at)).html_safe %>.
+      <% end %>
+    </p>
+  <% end %>
+
+  <div class="attributes">
+    <%= issue_fields_rows do |rows|
+      rows.left l(:label_priority),
+                (@periodictask.priority_id ? IssuePriority.find_by(id: @periodictask.priority_id)&.name : l(:label_priority_default)),
+                class: 'priority'
+      rows.left l(:field_assigned_to),
+                (@periodictask.assigned_to ? link_to_principal(@periodictask.assigned_to) : '-'),
+                class: 'assigned-to'
+      rows.left l(:field_category),
+                (@periodictask.issue_category&.name || '-'),
+                class: 'category'
+
+      rows.right l(:label_set_start_date),
+                 checked_image(@periodictask.set_start_date?),
+                 class: 'start-date'
+      rows.right l(:label_due_date),
+                 (@periodictask.due_date_number ? "#{@periodictask.due_date_number} #{periodictask_unit_label(@periodictask.due_date_units)}" : '-'),
+                 class: 'due-date'
+      rows.right l(:label_estimated_hours),
+                 (@periodictask.estimated_hours.present? ? "#{@periodictask.estimated_hours} #{l(:label_estimated_hours_after)}" : '-'),
+                 class: 'estimated-hours'
+    end %>
+  </div>
+
+  <% if @periodictask.last_error.present? %>
+    <hr />
+    <p>
+      <strong><%= l(:label_last_error) %></strong>
+      <%= content_tag('span', @periodictask.last_error, class: 'icon icon-error') %>
+    </p>
+  <% end %>
+
+  <% if @periodictask.description.present? %>
+    <hr />
+    <p><strong><%= l(:label_description) %></strong></p>
+    <div class="wiki"><%= textilizable @periodictask, :description %></div>
+  <% end %>
+
+  <% watcher_users = User.where(id: @periodictask.watcher_user_ids).sorted.to_a %>
+  <% if watcher_users.any? %>
+    <hr />
+    <p><strong><%= l(:label_watchers) %> (<%= watcher_users.size %>)</strong></p>
+    <ul class="watchers">
+      <% watcher_users.each do |user| %>
+        <li class="user-<%= user.id %>"><%= avatar(user, size: "16") %><%= link_to_principal(user, class: user.class.to_s.downcase) %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  </div>
+</fieldset>
+
+<h3><%= l(:label_periodictask_history) %></h3>
+
+<% if @issues.present? %>
+  <% content_for :header_tags do %>
+    <style>
+      /* Read-only history: hide the bulk-select checkboxes and the row context-menu button */
+      .periodictask-generated-issues table.issues th.checkbox,
+      .periodictask-generated-issues table.issues td.checkbox,
+      .periodictask-generated-issues table.issues th.buttons,
+      .periodictask-generated-issues table.issues td.buttons { display: none; }
+    </style>
+  <% end %>
+  <div class="periodictask-generated-issues">
+    <%= render partial: 'issues/list', locals: { issues: @issues, query: @query } %>
+  </div>
+  <span class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></span>
+<% else %>
+  <p class="nodata"><%= l(:label_periodictask_no_history) %></p>
+<% end %>

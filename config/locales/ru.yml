@@ -6,7 +6,7 @@ ru:
   no_members_in_project: В этом проекте нет участников
   no_categories_in_project: В этом проекте нет категорий
   label_subject: Тема
-  label_next_run_date: Дата следующего запуска (yyyy-mm-dd hh:mm:ss, часовой пояс сервера)
+  label_next_run_date: Дата следующего запуска
   label_edit_periodic_task: Редактировать периодическую задачу
   label_new_periodic_task: Новая периодическая задача
   label_no_members_in_project: В этом проекте нет участников
@@ -38,3 +38,8 @@ ru:
   label_priority: Приоритет
   label_priority_default: (По умолчанию - Нормальный)
   label_watchers: Наблюдатели
+  label_periodictask_history: Созданные задачи
+  label_periodictask_no_history: Эта задача ещё не создала ни одной задачи
+  label_issue_created_by_periodictask: Автоматически создано периодической задачей
+  label_periodic_task: Периодическая задача
+  label_periodictask_template: Шаблон

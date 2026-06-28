@@ -6,7 +6,7 @@ pl:
   no_members_in_project: Ten projekt nie ma członków
   no_categories_in_project: Ten projekt nie ma kategorii
   label_subject: Temat
-  label_next_run_date: Następne uruchomienie (yyyy-mm-dd hh:mm:ss, strefa czasowa serwera)
+  label_next_run_date: Następne uruchomienie
   label_edit_periodic_task: Edytuj zadanie cykliczne
   label_new_periodic_task: Nowe zadanie cykliczne
   label_no_members_in_project: Ten projekt nie ma członków
@@ -38,3 +38,8 @@ pl:
   label_priority: Priorytet
   label_priority_default: (Domyślny - Normalny)
   label_watchers: Obserwatorzy
+  label_periodictask_history: Wygenerowane zagadnienia
+  label_periodictask_no_history: To zadanie nie wygenerowało jeszcze żadnych zagadnień
+  label_issue_created_by_periodictask: Utworzone automatycznie przez zadanie cykliczne
+  label_periodic_task: Zadanie cykliczne
+  label_periodictask_template: Szablon

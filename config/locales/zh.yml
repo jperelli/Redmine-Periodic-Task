@@ -8,7 +8,7 @@ zh:
   no_members_in_project: 该项目没有成员
   no_categories_in_project: 该项目没有类别
   label_subject: 主题
-  label_next_run_date: 下一运行日(yyyy-mm-dd hh:mm:ss, 服务器时区)
+  label_next_run_date: 下一运行日
   label_edit_periodic_task: 编辑周期任务
   label_new_periodic_task: 新建周期任务
   label_no_members_in_project: 该项目没有成员
@@ -40,3 +40,8 @@ zh:
   label_priority: 优先级
   label_priority_default: (默认 - 正常)
   label_watchers: 关注者
+  label_periodictask_history: 已生成的问题
+  label_periodictask_no_history: 此任务尚未生成任何问题
+  label_issue_created_by_periodictask: 由周期任务自动创建
+  label_periodic_task: 周期任务
+  label_periodictask_template: 模板
