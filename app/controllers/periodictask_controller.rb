@@ -10,7 +10,6 @@ class PeriodictaskController < ApplicationController
   # before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, except: [:destroy]
   before_action :load_categories, except: [:destroy]
-  before_action :load_watchers, except: [:destroy]
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -119,23 +118,14 @@ class PeriodictaskController < ApplicationController
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
 
-    # Get the users in the project (as authors)
-    @authors = []
-    @project.members.each do |m|
-      @authors << m.user
-    end
+    # Get the users in the project (as authors and watchers)
+    @authors = @project.members.map(&:user)
+    @watchers = @authors
   end
 
   def load_categories
     # Get the issue categories
     @categories = @project.issue_categories
-  end
-
-  def load_watchers
-    @watchers = []
-    @project.members.each do |m|
-      @watchers << m.user
-    end
   end
 
   def periodictask_params
