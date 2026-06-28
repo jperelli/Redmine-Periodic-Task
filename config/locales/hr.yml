@@ -32,7 +32,7 @@ hr:
   label_unit_year: godina/e
   flash_task_created: Periodički zadatak je stvoren
   flash_task_saved: Periodički zadatak je spremljen
-  subject_variables: Moguće varijable su **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Siječanj - Prosinac), **YEAR** (YYYY)
+  subject_variables: Moguće varijable su **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Siječanj - Prosinac)
   label_last_error: Zadnja greška
   label_issue_custom_fields: Prilagođena polja
   label_priority: Prioritet

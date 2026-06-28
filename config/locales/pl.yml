@@ -32,7 +32,7 @@ pl:
   label_unit_year: lat
   flash_task_created: Zadanie cykliczne zostało utworzone
   flash_task_saved: Zadanie cykliczne zostało zapisane
-  subject_variables: Dostępne zmienne to **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Styczeń - Grudzień), **YEAR** (YYYY)
+  subject_variables: Dostępne zmienne to **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Styczeń - Grudzień)
   label_last_error: Ostatni błąd
   label_issue_custom_fields: Pola niestandardowe
   label_priority: Priorytet

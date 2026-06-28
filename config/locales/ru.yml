@@ -31,7 +31,7 @@ ru:
   label_unit_year: год(лет)
   flash_task_created: Периодическая задача создана
   flash_task_saved: Периодическая задача сохранена
-  subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** и **PREVIOUS_MONTHNAME** (Январь - Декабрь), **YEAR** (YYYY)
+  subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** и **PREVIOUS_MONTHNAME** (Январь - Декабрь)
   label_last_error: Последняя ошибка
   label_issue_custom_fields: Настраиваемые поля задачи
   label_parent_id: Родительская задача

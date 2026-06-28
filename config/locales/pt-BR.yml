@@ -32,7 +32,7 @@ pt-BR:
   label_unit_year: ano(s)
   flash_task_created: Tarefa periódica criada
   flash_task_saved: Tarefa periódica salva
-  subject_variables: Variáveis possíveis são **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** e **PREVIOUS_MONTHNAME** (Janeiro - Dezembro), **YEAR** (YYYY)
+  subject_variables: Variáveis possíveis são **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** e **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
   label_last_error: Último erro
   label_issue_custom_fields: Campos personalizados
   label_priority: Prioridade

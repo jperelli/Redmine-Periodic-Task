@@ -32,7 +32,7 @@ uk:
   label_unit_year: років
   flash_task_created: Періодичне завдання створено
   flash_task_saved: Періодичне завдання збережено
-  subject_variables: Можливі змінні **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** та **PREVIOUS_MONTHNAME** (Січень - Грудень), **YEAR** (YYYY)
+  subject_variables: Можливі змінні **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** та **PREVIOUS_MONTHNAME** (Січень - Грудень)
   label_last_error: Остання помилка
   label_issue_custom_fields: Налаштовувані поля завдання
   label_priority: Пріоритет

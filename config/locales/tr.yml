@@ -31,7 +31,7 @@ tr:
   label_unit_year: yıl
   flash_task_created: Periyodik iş oluşturuldu
   flash_task_saved: Periyodik iş kaydedildi
-  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (01-53), **MONTH** (01-12), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (Ocak - Aralık), **YEAR** (YYYY)
+  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (Ocak - Aralık)
   label_last_error: Son hata
   label_issue_custom_fields: Özel alanlar
   label_parent_id: Üst görev
