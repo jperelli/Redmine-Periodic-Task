@@ -7,6 +7,7 @@ bg:
   no_categories_in_project: В този проект няма категории
   label_subject: Тема
   label_next_run_date: Дата на следващо стартиране
+  label_last_run: Дата на последно стартиране
   label_edit_periodic_task: Редактиране на периодична задача
   label_new_periodic_task: Нова периодична задача
   label_no_members_in_project: В този проект няма потребители

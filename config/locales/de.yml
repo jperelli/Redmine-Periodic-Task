@@ -7,6 +7,7 @@ de:
   no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_subject: Thema
   label_next_run_date: Nächster Lauf
+  label_last_run: Letzter Lauf
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
   label_no_members_in_project: Dieses Projekt hat keine Mitglieder

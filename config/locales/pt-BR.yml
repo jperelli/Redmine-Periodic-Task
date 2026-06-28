@@ -7,6 +7,7 @@ pt-BR:
   no_categories_in_project: Este projeto não possui categorias
   label_subject: Assunto
   label_next_run_date: Próxima execução
+  label_last_run: Última execução
   label_edit_periodic_task: Editar tarefa periódica
   label_new_periodic_task: Nova tarefa periódica
   label_no_members_in_project: Este projeto não possui membros

@@ -7,6 +7,7 @@ uk:
   no_categories_in_project: У цьому проекті немає категорій
   label_subject: Тема
   label_next_run_date: Наступний запуск
+  label_last_run: Останній запуск
   label_edit_periodic_task: Редагувати періодичне завдання
   label_new_periodic_task: Нове періодичне завдання
   label_no_members_in_project: У цьому проекті немає учасників

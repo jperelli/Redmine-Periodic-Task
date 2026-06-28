@@ -15,12 +15,48 @@ class PeriodictaskController < ApplicationController
   include CustomFieldsHelper
   helper :issues
   helper :queries
+  helper :sort
+  include SortHelper
 
   def index
     return unless params[:project_id]
 
     @project_identifier = params[:project_id]
+
+    # Correlated subquery for the most recent generated-issue time, so the list
+    # can be ordered by "last run" even though it isn't a column on the table.
+    last_run_sql = "(SELECT MAX(#{PeriodictaskIssue.table_name}.created_at) " \
+                   "FROM #{PeriodictaskIssue.table_name} " \
+                   "WHERE #{PeriodictaskIssue.table_name}.periodictask_id = #{Periodictask.table_name}.id)"
+
+    # Approximate interval length in days, so the interval column sorts by actual
+    # duration (1 week > 1 day) instead of just the raw number.
+    interval_days_sql = "#{Periodictask.table_name}.interval_number * " \
+                        "CASE #{Periodictask.table_name}.interval_units " \
+                        "WHEN 'week' THEN 7 " \
+                        "WHEN 'month' THEN 30 " \
+                        "WHEN 'year' THEN 365 " \
+                        "ELSE 1 END"
+
+    sort_init 'id', 'desc'
+    sort_update(
+      'id'            => "#{Periodictask.table_name}.id",
+      'interval'      => interval_days_sql,
+      'next_run_date' => "#{Periodictask.table_name}.next_run_date",
+      'tracker'       => "#{Tracker.table_name}.position",
+      'priority'      => "#{Periodictask.table_name}.priority_id",
+      'subject'       => "#{Periodictask.table_name}.subject",
+      'assigned_to'   => ["#{User.table_name}.lastname", "#{User.table_name}.firstname"],
+      'last_run'      => last_run_sql
+    )
+
     @tasks = Periodictask.where(project_id: @project[:id])
+                         .left_outer_joins(:tracker, :assigned_to)
+                         .preload(:tracker, :assigned_to)
+                         .order(sort_clause)
+    @priorities = IssuePriority.all.index_by(&:id)
+    @last_runs = PeriodictaskIssue.where(periodictask_id: @tasks.map(&:id))
+                                  .group(:periodictask_id).maximum(:created_at)
   end
 
   def new

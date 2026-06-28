@@ -1,49 +1,69 @@
 <% if @project_identifier %>
 
+  <% content_for :header_tags do %>
+    <style>
+      /* Stack the row action-menu items vertically; without this the .icon
+         links default to inline-flex and sit side by side. */
+      .periodictask-actions .drdn-items > a { display: flex; padding: 5px 8px; }
+    </style>
+  <% end %>
+
   <div class="contextual">
     <%= link_to(
-      l(:label_new_periodic_task),
+      sprite_icon('add', l(:label_new_periodic_task)),
       {:controller => 'periodictask', :action => 'new', :project_id => @project},
-      :class => 'icon icon-add'
+      :class => 'icon icon-add new-issue'
     ) %>
   </div>
 
   <h2><%= l(:label_periodic_tasks) %></h2>
   <p><%= l(:label_scheduled_tasks) %></p>
 
-  <table class="list">
+  <table class="list <%= sort_css_classes %>">
     <thead>
       <tr>
-        <th><%= l(:label_subject) %></th>
-        <th><%= l(:label_issue_category) %></th>
-        <th><%= l(:label_next_run_date) %></th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
+        <%= sort_header_tag('id', :caption => '#') %>
+        <%= sort_header_tag('interval', :caption => l(:label_interval)) %>
+        <%= sort_header_tag('next_run_date', :caption => l(:label_next_run_date)) %>
+        <%= sort_header_tag('tracker', :caption => l(:label_tracker)) %>
+        <%= sort_header_tag('priority', :caption => l(:label_priority)) %>
+        <%= sort_header_tag('subject', :caption => l(:label_subject)) %>
+        <%= sort_header_tag('assigned_to', :caption => l(:field_assigned_to)) %>
+        <%= sort_header_tag('last_run', :caption => l(:label_last_run)) %>
+        <th class="buttons hide-when-print"></th>
       </tr>
     </thead>
     <tbody>
       <% @tasks.each do |a| %>
         <tr class="<%= cycle('odd', 'even') %>">
+          <td><%= link_to a.id, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %></td>
+          <td><%= "#{a.interval_number} #{periodictask_unit_label(a.interval_units)}" %></td>
+          <td><%= periodictask_time_with_title(a.next_run_date) %></td>
+          <td><%= a.tracker&.name %></td>
+          <td><%= @priorities[a.priority_id]&.name %></td>
           <td>
             <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
             <%= link_to a.subject, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %>
           </td>
-          <td><%= a.issue_category%></td>
-          <td><%= a.next_run_date %></td>
-          <td>
-            <%= link_to(
-              l(:button_edit),
-              {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
-              :class => 'icon icon-edit',
-              :accesskey => accesskey(:edit)
-            ) %>
-          </td>
-          <td>
-            <%= delete_link(
-              {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},
-              class: 'icon icon-del',
-              title: l(:button_delete)
-            ) %>
+          <td><%= a.assigned_to ? link_to_principal(a.assigned_to) : '-' %></td>
+          <td><%= periodictask_time_with_title(@last_runs[a.id]) %></td>
+          <td class="buttons hide-when-print">
+            <div class="drdn periodictask-actions">
+              <span class="drdn-trigger"><%= sprite_icon('3-bullets', l(:button_actions), icon_only: true) %></span>
+              <div class="drdn-content">
+                <div class="drdn-items">
+                  <%= link_to(
+                    sprite_icon('edit', l(:button_edit)),
+                    {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
+                    :class => 'icon icon-edit'
+                  ) %>
+                  <%= delete_link(
+                    {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},
+                    :class => 'icon icon-del'
+                  ) %>
+                </div>
+              </div>
+            </div>
           </td>
         </tr>
       <% end %>

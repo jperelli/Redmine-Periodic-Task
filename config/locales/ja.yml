@@ -7,6 +7,7 @@ ja:
   no_categories_in_project: このプロジェクトにはカテゴリーがありません。
   label_subject: 題名
   label_next_run_date: 次回実行日時
+  label_last_run: 前回実行日時
   label_edit_periodic_task: 繰り返しチケットの編集
   label_new_periodic_task: 新規繰り返しチケット
   label_no_members_in_project: このプロジェクトにはメンバーがいません。

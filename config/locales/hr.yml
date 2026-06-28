@@ -7,6 +7,7 @@ hr:
   no_categories_in_project: Ovaj projekt nema kategorija
   label_subject: Predmet
   label_next_run_date: Sljedeće pokretanje
+  label_last_run: Zadnje pokretanje
   label_edit_periodic_task: Uredi periodički zadatak
   label_new_periodic_task: Novi periodički zadatak
   label_no_members_in_project: Ovaj projekt nema članova

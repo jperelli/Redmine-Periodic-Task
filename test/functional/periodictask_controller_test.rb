@@ -33,6 +33,35 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  def test_index_is_sortable_by_each_column
+    create_test_periodictask(subject: 'Sortable task')
+    %w[id interval next_run_date tracker priority subject assigned_to last_run].each do |column|
+      get :index, params: { project_id: 'ecookbook', sort: "#{column}:desc" }
+      assert_response :success, "sorting by #{column} should not error"
+    end
+  end
+
+  def test_index_sort_by_interval_uses_duration_not_raw_number
+    create_test_periodictask(subject: 'One day', interval_number: 1, interval_units: 'day')
+    create_test_periodictask(subject: 'One week', interval_number: 1, interval_units: 'week')
+    create_test_periodictask(subject: 'One year', interval_number: 1, interval_units: 'year')
+    get :index, params: { project_id: 'ecookbook', sort: 'interval:asc' }
+    assert_response :success
+    body = @response.body
+    assert_operator body.index('One day'), :<, body.index('One week')
+    assert_operator body.index('One week'), :<, body.index('One year')
+  end
+
+  def test_index_orders_by_id_desc_by_default
+    create_test_periodictask(subject: 'Older task')
+    create_test_periodictask(subject: 'Newer task')
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+    # Default sort is id desc, so the most recently created task appears first.
+    assert_operator @response.body.index('Newer task'), :<,
+                    @response.body.index('Older task')
+  end
+
   def test_new
     get :new, params: { project_id: 'ecookbook' }
     assert_response :success
