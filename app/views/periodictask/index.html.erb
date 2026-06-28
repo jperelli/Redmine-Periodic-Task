@@ -35,8 +35,7 @@
               l(:button_edit),
               {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
               :class => 'icon icon-edit',
-              :accesskey => accesskey(:edit),
-              :onclick => 'Element.show("edit-task"); return false;'
+              :accesskey => accesskey(:edit)
             ) %>
           </td>
           <td>
