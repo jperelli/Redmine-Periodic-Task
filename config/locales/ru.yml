@@ -15,6 +15,7 @@ ru:
   label_save_periodic_task: Сохранить
   label_scheduled_tasks: Запланированные задачи
   label_no_project: ID проекта не указан
+  label_no_periodic_tasks: Периодических задач пока нет — создайте первую, чтобы начать.
   label_remove_periodic_task: Удалить периодическую задачу
   label_interval: Интервал
   label_set_start_date: Установить дату начала

@@ -15,6 +15,7 @@ tr:
   label_save_periodic_task: Kaydet
   label_scheduled_tasks: Periyodik iş listesi
   label_no_project: ID sağlanmadı
+  label_no_periodic_tasks: Henüz periyodik iş yok — başlamak için bir tane oluşturun.
   label_remove_periodic_task: Periyodik işi sil
   label_interval: Tekrarlama
   label_set_start_date: Başlama tarihini set et

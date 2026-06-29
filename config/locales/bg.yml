@@ -15,6 +15,7 @@ bg:
   label_save_periodic_task: Запис
   label_scheduled_tasks: Планирани задачи
   label_no_project: Не е зададен ID на проекта
+  label_no_periodic_tasks: Все още няма периодични задачи — създайте първата, за да започнете.
   label_remove_periodic_task: премахване на периодична задача
   label_interval: Интервал
   label_set_start_date: Установяване на стартова дата

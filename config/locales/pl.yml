@@ -15,6 +15,7 @@ pl:
   label_save_periodic_task: Zapisz
   label_scheduled_tasks: Aktualnie zaplanowane zadania
   label_no_project: Nie podano ID projektu
+  label_no_periodic_tasks: Brak zadań cyklicznych — utwórz pierwsze, aby rozpocząć.
   label_remove_periodic_task: Usuń zadanie cykliczne
   label_interval: Interwał
   label_set_start_date: Ustaw datę rozpoczęcia

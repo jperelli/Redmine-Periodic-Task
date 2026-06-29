@@ -15,6 +15,7 @@ pt-BR:
   label_save_periodic_task: Salvar
   label_scheduled_tasks: Tarefas agendadas atualmente
   label_no_project: ID do projeto não informado
+  label_no_periodic_tasks: Nenhuma tarefa periódica ainda — crie uma para começar.
   label_remove_periodic_task: Remover tarefa periódica
   label_interval: Intervalo
   label_set_start_date: Definir data de início

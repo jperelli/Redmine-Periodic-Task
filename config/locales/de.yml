@@ -15,6 +15,7 @@ de:
   label_save_periodic_task: Speichern
   label_scheduled_tasks: Nachfolgend die Liste der aktiven wiederholenden Aufgaben.
   label_no_project: Fehler! Es wurde keine project id gefunden.
+  label_no_periodic_tasks: Noch keine wiederholenden Aufgaben — erstellen Sie eine, um zu beginnen.
   label_remove_periodic_task: Wiederholende Aufgabe entfernen
   label_interval: Intervall
   label_set_start_date: Beginn setzen

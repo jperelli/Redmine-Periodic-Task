@@ -15,6 +15,7 @@ it:
   label_save_periodic_task: Salva
   label_scheduled_tasks: Attualmente non ci sono task schedulati
   label_no_project: ID progetto non fornito
+  label_no_periodic_tasks: Nessun task periodico ancora — creane uno per iniziare.
   label_remove_periodic_task: Elimina Periodic Task
   label_interval: Intervallo
   label_set_start_date: Imposta data di inizio

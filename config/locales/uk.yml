@@ -15,6 +15,7 @@ uk:
   label_save_periodic_task: Зберегти
   label_scheduled_tasks: Заплановані завдання
   label_no_project: ID проекту не вказано
+  label_no_periodic_tasks: Періодичних завдань ще немає — створіть перше, щоб почати.
   label_remove_periodic_task: Видалити періодичне завдання
   label_interval: Інтервал
   label_set_start_date: Встановити дату початку

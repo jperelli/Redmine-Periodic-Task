@@ -19,6 +19,9 @@
   <h2><%= l(:label_periodic_tasks) %></h2>
   <p><%= l(:label_scheduled_tasks) %></p>
 
+  <% if @tasks.empty? %>
+    <p class="nodata"><%= l(:label_no_periodic_tasks) %></p>
+  <% else %>
   <table class="list <%= sort_css_classes %>">
     <thead>
       <tr>
@@ -69,6 +72,7 @@
       <% end %>
     </tbody>
   </table>
+  <% end %>
 
 <% else %>
   <p><%= l(:label_no_project) %></p>

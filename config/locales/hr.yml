@@ -15,6 +15,7 @@ hr:
   label_save_periodic_task: Spremi
   label_scheduled_tasks: Trenutno zakazani zadaci
   label_no_project: ID projekta nije naveden
+  label_no_periodic_tasks: Još nema periodičnih zadataka — stvorite prvi za početak.
   label_remove_periodic_task: Ukloni periodički zadatak
   label_interval: Interval
   label_set_start_date: Postavi datum početka
