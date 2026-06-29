@@ -21,7 +21,7 @@ Redmine::Plugin.register :periodictask do
 
   project_module :periodictask do
     permission :periodictask,
-               { periodictask: %i[index show new create edit update destroy customfields] }
+               { periodictask: %i[index show new create edit update destroy customfields run_now] }
   end
 
   menu :project_menu, :periodictask, { controller: 'periodictask', action: 'index' },

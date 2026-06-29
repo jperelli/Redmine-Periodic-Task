@@ -1,13 +1,5 @@
 <% if @project_identifier %>
 
-  <% content_for :header_tags do %>
-    <style>
-      /* Stack the row action-menu items vertically; without this the .icon
-         links default to inline-flex and sit side by side. */
-      .periodictask-actions .drdn-items > a { display: flex; padding: 5px 8px; }
-    </style>
-  <% end %>
-
   <div class="contextual">
     <%= link_to(
       sprite_icon('add', l(:label_new_periodic_task)),
@@ -51,22 +43,22 @@
           <td><%= a.assigned_to ? link_to_principal(a.assigned_to) : '-' %></td>
           <td><%= periodictask_time_with_title(@last_runs[a.id]) %></td>
           <td class="buttons hide-when-print">
-            <div class="drdn periodictask-actions">
-              <span class="drdn-trigger"><%= sprite_icon('3-bullets', l(:button_actions), icon_only: true) %></span>
-              <div class="drdn-content">
-                <div class="drdn-items">
-                  <%= link_to(
-                    sprite_icon('edit', l(:button_edit)),
-                    {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
-                    :class => 'icon icon-edit'
-                  ) %>
-                  <%= delete_link(
-                    {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},
-                    :class => 'icon icon-del'
-                  ) %>
-                </div>
-              </div>
-            </div>
+            <%= link_to(
+              sprite_icon('edit', l(:button_edit), icon_only: true),
+              {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
+              :class => 'icon-only icon-edit', :title => l(:button_edit)
+            ) %>
+            <%= link_to(
+              sprite_icon('reload', l(:button_run_now), icon_only: true),
+              {:controller => 'periodictask', :action => 'run_now', :id => a.id, :project_id => @project},
+              :method => :post,
+              :data => { :confirm => l(:text_run_now_confirm) },
+              :class => 'icon-only', :title => l(:button_run_now)
+            ) %>
+            <%= delete_link(
+              {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},
+              :class => 'icon-only icon-del'
+            ) %>
           </td>
         </tr>
       <% end %>

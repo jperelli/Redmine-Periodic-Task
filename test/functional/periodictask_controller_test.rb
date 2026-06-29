@@ -162,6 +162,30 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
   end
 
+  def test_run_now_creates_issue_and_records_history
+    task = create_test_periodictask(next_run_date: 1.month.from_now)
+    assert_difference('Issue.count', 1) do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    assert_equal 1, task.created_issues.count
+  end
+
+  def test_run_now_redirects_back_to_referer
+    task = create_test_periodictask
+    @request.env['HTTP_REFERER'] = "/projects/ecookbook/periodictask/#{task.id}"
+    post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    assert_redirected_to controller: 'periodictask', action: 'show', id: task.id, project_id: 'ecookbook'
+  end
+
+  def test_run_now_does_not_advance_schedule
+    next_run = 1.month.from_now
+    task = create_test_periodictask(next_run_date: next_run)
+    post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    task.reload
+    assert_in_delta next_run.to_i, task.next_run_date.to_i, 1
+  end
+
   def test_requires_login
     @request.session[:user_id] = nil
     Setting.login_required = '1'

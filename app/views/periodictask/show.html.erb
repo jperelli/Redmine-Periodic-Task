@@ -4,6 +4,13 @@
     { controller: 'periodictask', action: 'edit', id: @periodictask.id, project_id: @project },
     class: 'icon icon-edit'
   ) %>
+  <%= link_to(
+    sprite_icon('reload', l(:button_run_now)),
+    { controller: 'periodictask', action: 'run_now', id: @periodictask.id, project_id: @project },
+    method: :post,
+    data: { confirm: l(:text_run_now_confirm) },
+    class: 'icon icon-reload'
+  ) %>
   <%= delete_link(
     { controller: 'periodictask', action: 'destroy', id: @periodictask.id, project_id: @project },
     class: 'icon icon-del',

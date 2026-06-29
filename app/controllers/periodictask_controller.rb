@@ -8,8 +8,8 @@ class PeriodictaskController < ApplicationController
   before_action :find_project
   before_action :authorize
   # before_filter :find_periodictask, :except => [:new, :create, :index]
-  before_action :load_users, except: [:destroy]
-  before_action :load_categories, except: [:destroy]
+  before_action :load_users, except: %i[destroy run_now]
+  before_action :load_categories, except: %i[destroy run_now]
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -127,6 +127,32 @@ class PeriodictaskController < ApplicationController
     @task = Periodictask.accessible.find(params[:id])
     @task.destroy
     redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+  end
+
+  # Generate an issue right now from the task config, without touching the
+  # schedule. Handy for testing a task before its next run date arrives.
+  def run_now
+    @periodictask = Periodictask.accessible.find(params[:id])
+    @periodictask.project = @project
+    issue = @periodictask.generate_issue(Time.current)
+
+    if issue.nil?
+      @periodictask.update(last_error: l(:label_project_missing_or_closed))
+      flash[:error] = l(:flash_task_run_failed, error: l(:label_project_missing_or_closed))
+    elsif issue.save
+      @periodictask.fill_watchers(issue)
+      @periodictask.record_generated_issue(issue)
+      @periodictask.update(last_error: nil)
+      flash[:notice] = l(:flash_task_run_now, id: issue.id)
+    else
+      error = issue.errors.full_messages.join(', ')
+      @periodictask.update(last_error: error)
+      flash[:error] = l(:flash_task_run_failed, error: error)
+    end
+
+    # Return to wherever the action was triggered (the task detail page shows the
+    # new issue in its history), falling back to the list.
+    redirect_back fallback_location: { controller: 'periodictask', action: 'index', project_id: params[:project_id] }
   end
 
   def customfields

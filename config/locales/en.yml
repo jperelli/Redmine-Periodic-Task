@@ -33,6 +33,11 @@ en:
   label_unit_year: year(s)
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
+  flash_task_run_now: 'Issue #%{id} created'
+  flash_task_run_failed: 'Could not create issue: %{error}'
+  button_run_now: Run now
+  text_run_now_confirm: Create an issue now from this periodic task? The schedule will not change.
+  label_project_missing_or_closed: Project is missing or closed
   subject_variables: |-
     Possible variables:
     **DAY** (01-31)

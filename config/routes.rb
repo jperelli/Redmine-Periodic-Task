@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post     'projects/:project_id/periodictask',            to: 'periodictask#create'
   get      'projects/:project_id/periodictask/:id',        to: 'periodictask#show',   as: 'periodictask'
   get      'projects/:project_id/periodictask/:id/edit',   to: 'periodictask#edit',   as: 'edit_periodictask'
+  post     'projects/:project_id/periodictask/:id/run_now', to: 'periodictask#run_now', as: 'run_now_periodictask'
   match    'projects/:project_id/periodictask/:id',        to: 'periodictask#update', via: %i[put patch]
   delete   'projects/:project_id/periodictask/:id',        to: 'periodictask#destroy'
 end
