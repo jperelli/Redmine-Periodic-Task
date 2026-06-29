@@ -1,8 +1,8 @@
 # Italian strings go here for Rails i18n
 it:
   label_tracker: Tracker
-  label_author: Autore
-  label_assigned_to_user: Assegnato a utente
+  label_issue_author: 'Autore della richiesta'
+  label_periodictask_configuration: 'Configurazione dell''attività periodica'
   no_members_in_project: Questo progetto non ha membri
   no_categories_in_project: Questo progetto non ha categorie
   label_subject: Oggetto
@@ -10,8 +10,6 @@ it:
   label_last_run: Data ultima esecuzione
   label_edit_periodic_task: Modifica Periodic Task
   label_new_periodic_task: Nuovo Periodic Task
-  label_no_members_in_project: Questo progetto non ha membri
-  label_no_categories_in_project: Questo progetto non ha categorie
   label_periodic_tasks: Periodic Tasks
   label_create_periodic_task: Crea
   label_save_periodic_task: Salva
@@ -20,11 +18,12 @@ it:
   label_remove_periodic_task: Elimina Periodic Task
   label_interval: Intervallo
   label_set_start_date: Imposta data di inizio
-  label_due_date: Imposta scadenza
+  label_set_start_date_info: 'Se selezionato, la data di inizio di ogni richiesta creata viene impostata al giorno in cui viene generata.'
+  label_due_date: 'Imposta scadenza dopo'
+  label_due_date_info: 'Data di scadenza di ogni richiesta creata, impostata di questo intervallo dopo la sua data di inizio.'
   label_estimated_hours: Tempo stimato
   label_estimated_hours_after: Ore
   label_description: Descrizione
-  label_issue_category: Categoria segnalazione
   label_unit_day: giorni
   label_unit_business_day: giorni lavorativi
   label_unit_week: settimane
@@ -32,10 +31,20 @@ it:
   label_unit_year: anni
   flash_task_created: Periodic Task creato
   flash_task_saved: Periodic Task salvato
-  subject_variables: I possibili valori sono **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** and **PREVIOUS_MONTHNAME** (Gennaio - Dicembre)
+  subject_variables: |-
+    I possibili valori:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Gennaio - Dicembre)
+    **PREVIOUS_MONTHNAME** (Gennaio - Dicembre)
+  label_variables_markdown_note: 'Nota: nella descrizione appaiono in grassetto nell''anteprima perché ** è la sintassi del grassetto di Markdown; vengono sostituite con il valore effettivo quando la richiesta viene creata.'
   label_last_error: Ultimo errore
   label_issue_custom_fields: Campi personalizzati
-  label_parent_id: Attività padre
   label_priority: Priorità
   label_priority_default: (Predefinito - Normale)
   label_watchers: Osservatori

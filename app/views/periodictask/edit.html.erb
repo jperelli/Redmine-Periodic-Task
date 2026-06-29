@@ -5,4 +5,5 @@
 <%= form_for(@periodictask, :url => url_for(:controller => 'periodictask', :action => 'update', :project_id => @project.identifier, :id => @periodictask.id.to_s ) ) do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= f.submit l(:label_save_periodic_task) %>
+  <%= link_to l(:button_cancel), { :controller => 'periodictask', :action => 'index', :project_id => @project }, :class => 'icon icon-cancel' %>
 <% end %>

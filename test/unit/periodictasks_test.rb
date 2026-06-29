@@ -122,6 +122,61 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_not_nil issue.due_date
   end
 
+  def test_estimated_hours_accepts_hmm_format
+    task = Periodictask.new
+    task.estimated_hours = '1:30'
+    assert_equal 1.5, task.estimated_hours
+  end
+
+  def test_estimated_hours_accepts_decimal_string
+    task = Periodictask.new
+    task.estimated_hours = '2.5'
+    assert_in_delta 2.5, task.estimated_hours, 0.0001
+  end
+
+  def test_estimated_hours_accepts_numeric
+    task = Periodictask.new
+    task.estimated_hours = 3
+    assert_equal 3, task.estimated_hours
+  end
+
+  def test_generate_issue_due_date_relative_to_start_date
+    now = Time.utc(2026, 3, 10, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Due from start date',
+      interval_number: 1,
+      interval_units: 'month',
+      set_start_date: true,
+      due_date_number: 7,
+      due_date_units: 'day',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal issue.start_date, now.to_date
+    assert_equal issue.start_date + 7.days, issue.due_date.to_date
+  end
+
+  def test_generate_issue_due_date_from_now_without_start_date
+    now = Time.utc(2026, 3, 10, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Due from now',
+      interval_number: 1,
+      interval_units: 'month',
+      set_start_date: false,
+      due_date_number: 7,
+      due_date_units: 'day',
+      next_run_date: now
+    )
+    issue = task.generate_issue(now)
+    assert_equal (now + 7.days).to_date, issue.due_date.to_date
+  end
+
   def test_macro_substitution_in_subject
     now = Time.utc(2026, 3, 15, 10, 0, 0)
     task = Periodictask.create!(

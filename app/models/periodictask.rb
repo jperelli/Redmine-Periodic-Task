@@ -20,6 +20,11 @@ class Periodictask < ActiveRecord::Base
     super(Array(value).map(&:to_i).reject(&:zero?))
   end
 
+  # Accept "h:mm" / "1h30" / decimal input like Redmine's issue estimated time.
+  def estimated_hours=(h)
+    write_attribute :estimated_hours, (h.is_a?(String) ? (h.to_hours || h) : h)
+  end
+
   after_initialize do |task|
     if task.new_record?
       task.interval_number ||= 1
@@ -66,9 +71,15 @@ class Periodictask < ActiveRecord::Base
     issue.priority_id = priority_id if priority_id.present?
     issue.start_date ||= now.to_date if set_start_date?
     if due_date_number
-      due_date = due_date_number
       due_date_units ||= 'day'
-      issue.due_date = due_date.send(due_date_units.downcase).from_now
+      units = due_date_units.downcase
+      # Count the offset from the issue's start date when it was set, otherwise from now.
+      base = set_start_date? && issue.start_date ? issue.start_date.to_time : now
+      issue.due_date = if units == 'business_day'
+                         due_date_number.business_day.after(base)
+                       else
+                         due_date_number.send(units).since(base)
+                       end
     end
     issue.estimated_hours = estimated_hours
 

@@ -1,8 +1,8 @@
 # German strings go here for Rails i18n
 de:
   label_tracker: Tracker
-  label_author: Autor
-  label_assigned_to_user: Zugewiesen an
+  label_issue_author: 'Ticket-Autor'
+  label_periodictask_configuration: 'Konfiguration der periodischen Aufgabe'
   no_members_in_project: Dieses Projekt hat keine Mitglieder
   no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_subject: Thema
@@ -10,8 +10,6 @@ de:
   label_last_run: Letzter Lauf
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
-  label_no_members_in_project: Dieses Projekt hat keine Mitglieder
-  label_no_categories_in_project: Dieses Projekt hat keine Kategorien
   label_periodic_tasks: Wiederholende Aufgaben
   label_create_periodic_task: Erstellen
   label_save_periodic_task: Speichern
@@ -20,11 +18,12 @@ de:
   label_remove_periodic_task: Wiederholende Aufgabe entfernen
   label_interval: Intervall
   label_set_start_date: Beginn setzen
-  label_due_date: Setze Abgabedatum in
+  label_set_start_date_info: 'Wenn aktiviert, wird das Startdatum jeder erstellten Aufgabe auf den Tag der Erstellung gesetzt.'
+  label_due_date: 'Fälligkeitsdatum setzen nach'
+  label_due_date_info: 'Fälligkeitsdatum jeder erstellten Aufgabe, gesetzt um diese Zeitspanne nach ihrem Startdatum.'
   label_description: Beschreibung
   label_estimated_hours: Geschätzter Aufwand
   label_estimated_hours_after: Stunden
-  label_issue_category: Ticket-Kategorie
   label_unit_day: Tag(e)
   label_unit_business_day: Arbeitstag(e)
   label_unit_week: Woche(n)
@@ -32,10 +31,20 @@ de:
   label_unit_year: Jahr(e)
   flash_task_created: Aufgabe wurde angelegt
   flash_task_saved: Aufgabe wurde gespeichert
-  subject_variables: Mögliche Variablen sind **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** und **PREVIOUS_MONTHNAME** (Januar - Dezember)
+  subject_variables: |-
+    Mögliche Variablen:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Januar - Dezember)
+    **PREVIOUS_MONTHNAME** (Januar - Dezember)
+  label_variables_markdown_note: 'Hinweis: In der Beschreibung erscheinen diese in der Vorschau fett, da ** die Fett-Syntax von Markdown ist; sie werden beim Erstellen der Aufgabe durch den tatsächlichen Wert ersetzt.'
   label_last_error: Letzter Fehler
   label_issue_custom_fields: Benutzerdefinierte Felder
-  label_parent_id: Übergeordnete Aufgabe
   label_priority: Priorität
   label_priority_default: (Standard - Normal)
   label_watchers: Beobachter

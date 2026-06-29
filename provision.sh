@@ -29,6 +29,52 @@ runsql "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 1);"
 runsql "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 2);"
 runsql "INSERT INTO projects_trackers (project_id, tracker_id) VALUES (1, 3);"
 
+### seed extra users (members of project1) and a few issue custom fields, so the
+### assignee/author/watcher pickers and the custom-fields section have data to play with.
+### done through the app so password hashing, email addresses and memberships are handled
+### correctly (and so the live WAL-mode db is not written out of band).
+docker compose run --rm -e REDMINE_LANG=en redmine bin/rails runner -e development '
+  project = Project.find_by(identifier: "project1")
+  role = Role.find_by(name: "Manager") || Role.givable.first
+
+  # make admin a member too, so it shows up in the assignee/author pickers
+  admin = User.find_by(login: "admin")
+  Member.create!(project: project, user: admin, roles: [role]) if admin && !Member.exists?(project_id: project.id, user_id: admin.id)
+
+  [
+    ["alice", "Alice", "Anderson"],
+    ["bob",   "Bob",   "Brown"],
+    ["carol", "Carol", "Clark"],
+    ["dave",  "Dave",  "Davis"],
+    ["erin",  "Erin",  "Evans"]
+  ].each do |login, first, last|
+    user = User.find_by(login: login) || User.new(login: login)
+    user.firstname = first
+    user.lastname = last
+    user.mail = "#{login}@example.com"
+    user.status = User::STATUS_ACTIVE
+    user.must_change_passwd = false
+    user.password = user.password_confirmation = "password123" if user.new_record?
+    user.save!
+    Member.create!(project: project, user: user, roles: [role]) unless Member.exists?(project_id: project.id, user_id: user.id)
+  end
+
+  [
+    { name: "Environment",       format: "string", values: nil },
+    { name: "Severity",          format: "list",   values: ["Low", "Medium", "High"] },
+    { name: "Requires approval", format: "bool",   values: nil },
+    { name: "Review date",       format: "date",   values: nil }
+  ].each do |attrs|
+    cf = IssueCustomField.find_or_initialize_by(name: attrs[:name])
+    cf.field_format = attrs[:format]
+    cf.possible_values = attrs[:values] if attrs[:values]
+    cf.is_for_all = true
+    cf.save!
+    cf.trackers = Tracker.all
+    cf.save!
+  end
+'
+
 ### seed a handful of sample periodic tasks so there is data to play with right away.
 ### done through the app (not raw sqlite) because the running server uses WAL mode,
 ### and out-of-band writes to the db file race with it. tasks with a past next_run_date

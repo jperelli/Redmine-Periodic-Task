@@ -1,8 +1,8 @@
 # Polish strings go here for Rails i18n
 pl:
   label_tracker: Typ
-  label_author: Autor
-  label_assigned_to_user: Przypisane do
+  label_issue_author: 'Autor zgłoszenia'
+  label_periodictask_configuration: 'Konfiguracja zadania cyklicznego'
   no_members_in_project: Ten projekt nie ma członków
   no_categories_in_project: Ten projekt nie ma kategorii
   label_subject: Temat
@@ -10,8 +10,6 @@ pl:
   label_last_run: Ostatnie uruchomienie
   label_edit_periodic_task: Edytuj zadanie cykliczne
   label_new_periodic_task: Nowe zadanie cykliczne
-  label_no_members_in_project: Ten projekt nie ma członków
-  label_no_categories_in_project: Ten projekt nie ma kategorii
   label_periodic_tasks: Zadania cykliczne
   label_create_periodic_task: Utwórz
   label_save_periodic_task: Zapisz
@@ -20,12 +18,12 @@ pl:
   label_remove_periodic_task: Usuń zadanie cykliczne
   label_interval: Interwał
   label_set_start_date: Ustaw datę rozpoczęcia
-  label_due_date: Ustaw termin za
+  label_set_start_date_info: 'Po zaznaczeniu data rozpoczęcia każdego utworzonego zadania jest ustawiana na dzień jego wygenerowania.'
+  label_due_date: 'Ustaw termin po'
+  label_due_date_info: 'Termin każdego utworzonego zadania, ustawiony o ten okres po jego dacie rozpoczęcia.'
   label_estimated_hours: Szacowany czas
   label_estimated_hours_after: godzin
   label_description: Opis
-  label_issue_category: Kategoria zagadnienia
-  label_parent_id: Zadanie nadrzędne
   label_unit_day: dni
   label_unit_business_day: dni roboczych
   label_unit_week: tygodni
@@ -33,7 +31,18 @@ pl:
   label_unit_year: lat
   flash_task_created: Zadanie cykliczne zostało utworzone
   flash_task_saved: Zadanie cykliczne zostało zapisane
-  subject_variables: Dostępne zmienne to **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** i **PREVIOUS_MONTHNAME** (Styczeń - Grudzień)
+  subject_variables: |-
+    Dostępne zmienne:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Styczeń - Grudzień)
+    **PREVIOUS_MONTHNAME** (Styczeń - Grudzień)
+  label_variables_markdown_note: 'Uwaga: w opisie są one wyświetlane pogrubioną czcionką w podglądzie, ponieważ ** to składnia pogrubienia w Markdown; przy tworzeniu zadania są zastępowane rzeczywistą wartością.'
   label_last_error: Ostatni błąd
   label_issue_custom_fields: Pola niestandardowe
   label_priority: Priorytet

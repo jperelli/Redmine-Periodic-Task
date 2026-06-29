@@ -1,8 +1,8 @@
 # Brazilian Portuguese strings go here for Rails i18n
 pt-BR:
   label_tracker: Tipo
-  label_author: Autor
-  label_assigned_to_user: Atribuído a
+  label_issue_author: 'Autor da tarefa'
+  label_periodictask_configuration: 'Configuração da tarefa periódica'
   no_members_in_project: Este projeto não possui membros
   no_categories_in_project: Este projeto não possui categorias
   label_subject: Assunto
@@ -10,8 +10,6 @@ pt-BR:
   label_last_run: Última execução
   label_edit_periodic_task: Editar tarefa periódica
   label_new_periodic_task: Nova tarefa periódica
-  label_no_members_in_project: Este projeto não possui membros
-  label_no_categories_in_project: Este projeto não possui categorias
   label_periodic_tasks: Tarefas Periódicas
   label_create_periodic_task: Criar
   label_save_periodic_task: Salvar
@@ -20,12 +18,12 @@ pt-BR:
   label_remove_periodic_task: Remover tarefa periódica
   label_interval: Intervalo
   label_set_start_date: Definir data de início
-  label_due_date: Definir data de vencimento em
+  label_set_start_date_info: 'Quando marcado, a data de início de cada tarefa criada é definida para o dia em que é gerada.'
+  label_due_date: 'Definir data de vencimento após'
+  label_due_date_info: 'Data de vencimento de cada tarefa criada, definida com este intervalo após a data de início.'
   label_estimated_hours: Tempo estimado
   label_estimated_hours_after: Horas
   label_description: Descrição
-  label_issue_category: Categoria da tarefa
-  label_parent_id: Tarefa pai
   label_unit_day: dia(s)
   label_unit_business_day: dia(s) útil(eis)
   label_unit_week: semana(s)
@@ -33,7 +31,18 @@ pt-BR:
   label_unit_year: ano(s)
   flash_task_created: Tarefa periódica criada
   flash_task_saved: Tarefa periódica salva
-  subject_variables: Variáveis possíveis são **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** e **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
+  subject_variables: |-
+    Variáveis possíveis:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Janeiro - Dezembro)
+    **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
+  label_variables_markdown_note: 'Observação: na descrição elas aparecem em negrito na pré-visualização porque ** é a sintaxe de negrito do Markdown; são substituídas pelo valor real quando a tarefa é criada.'
   label_last_error: Último erro
   label_issue_custom_fields: Campos personalizados
   label_priority: Prioridade

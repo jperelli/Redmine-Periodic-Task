@@ -1,8 +1,8 @@
 
 ru:
   label_tracker: Трекер
-  label_author: Автор
-  label_assigned_to_user: Назначена
+  label_issue_author: 'Автор задачи'
+  label_periodictask_configuration: 'Настройка периодической задачи'
   no_members_in_project: В этом проекте нет участников
   no_categories_in_project: В этом проекте нет категорий
   label_subject: Тема
@@ -10,8 +10,6 @@ ru:
   label_last_run: Дата последнего запуска
   label_edit_periodic_task: Редактировать периодическую задачу
   label_new_periodic_task: Новая периодическая задача
-  label_no_members_in_project: В этом проекте нет участников
-  label_no_categories_in_project: В этом проекте нет категорий
   label_periodic_tasks: Периодические Задачи
   label_create_periodic_task: Создать
   label_save_periodic_task: Сохранить
@@ -20,11 +18,12 @@ ru:
   label_remove_periodic_task: Удалить периодическую задачу
   label_interval: Интервал
   label_set_start_date: Установить дату начала
-  label_due_date: Плановая дата через
+  label_set_start_date_info: 'Если отмечено, дата начала каждой созданной задачи устанавливается на день её создания.'
+  label_due_date: 'Установить плановую дату через'
+  label_due_date_info: 'Плановая дата каждой созданной задачи, устанавливается через этот период после её даты начала.'
   label_estimated_hours: Оценка временных затрат
   label_estimated_hours_after: час(а,ов)
   label_description: Описание
-  label_issue_category: Категория задачи
   label_unit_day: дней
   label_unit_business_day: рабочие дни
   label_unit_week: неделя
@@ -32,10 +31,20 @@ ru:
   label_unit_year: год(лет)
   flash_task_created: Периодическая задача создана
   flash_task_saved: Периодическая задача сохранена
-  subject_variables: Возможные переменные **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** и **PREVIOUS_MONTHNAME** (Январь - Декабрь)
+  subject_variables: |-
+    Возможные переменные:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Январь - Декабрь)
+    **PREVIOUS_MONTHNAME** (Январь - Декабрь)
+  label_variables_markdown_note: 'Примечание: в описании они отображаются полужирным в предпросмотре, так как ** — это синтаксис полужирного начертания в Markdown; при создании задачи они заменяются фактическим значением.'
   label_last_error: Последняя ошибка
   label_issue_custom_fields: Настраиваемые поля задачи
-  label_parent_id: Родительская задача
   label_priority: Приоритет
   label_priority_default: (По умолчанию - Нормальный)
   label_watchers: Наблюдатели

@@ -21,6 +21,16 @@ module PeriodictaskHelper
     issue ? link_to_issue(issue) : "##{task.parent_id}"
   end
 
+  # Initial set of users shown as checkboxes in the watchers picker:
+  # the already-selected watchers plus the project's assignable watchers
+  # (only when the list is short enough), mirroring Redmine's issue form.
+  def users_for_new_periodictask_watchers(periodictask)
+    users = User.where(id: periodictask.watcher_user_ids, status: User::STATUS_ACTIVE).to_a
+    assignable_watchers = periodictask.project.principals.assignable_watchers.limit(21)
+    users += assignable_watchers.sort if assignable_watchers.size <= 20
+    users.uniq
+  end
+
   def checklistPluginInstalled?
     Redmine::Plugin.all.any? { |p| p.id == :redmine_checklists } && Object.const_defined?('ChecklistTemplate')
   end

@@ -14,6 +14,7 @@ class PeriodictaskController < ApplicationController
   helper :custom_fields
   include CustomFieldsHelper
   helper :issues
+  helper :watchers
   helper :queries
   helper :sort
   include SortHelper
@@ -154,9 +155,8 @@ class PeriodictaskController < ApplicationController
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
 
-    # Get the users in the project (as authors and watchers)
+    # Get the users in the project (as authors)
     @authors = @project.members.map(&:user)
-    @watchers = @authors
   end
 
   def load_categories

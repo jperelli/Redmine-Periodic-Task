@@ -1,8 +1,8 @@
 # Ukrainian strings go here for Rails i18n
 uk:
   label_tracker: Трекер
-  label_author: Автор
-  label_assigned_to_user: Призначено
+  label_issue_author: 'Автор завдання'
+  label_periodictask_configuration: 'Налаштування періодичного завдання'
   no_members_in_project: У цьому проекті немає учасників
   no_categories_in_project: У цьому проекті немає категорій
   label_subject: Тема
@@ -10,8 +10,6 @@ uk:
   label_last_run: Останній запуск
   label_edit_periodic_task: Редагувати періодичне завдання
   label_new_periodic_task: Нове періодичне завдання
-  label_no_members_in_project: У цьому проекті немає учасників
-  label_no_categories_in_project: У цьому проекті немає категорій
   label_periodic_tasks: Періодичні завдання
   label_create_periodic_task: Створити
   label_save_periodic_task: Зберегти
@@ -20,12 +18,12 @@ uk:
   label_remove_periodic_task: Видалити періодичне завдання
   label_interval: Інтервал
   label_set_start_date: Встановити дату початку
-  label_due_date: Встановити термін через
+  label_set_start_date_info: 'Якщо позначено, дата початку кожного створеного завдання встановлюється на день його генерації.'
+  label_due_date: 'Встановити термін після'
+  label_due_date_info: 'Планова дата кожного створеного завдання, встановлюється через цей період після його дати початку.'
   label_estimated_hours: Оцінка часу
   label_estimated_hours_after: годин
   label_description: Опис
-  label_issue_category: Категорія завдання
-  label_parent_id: Батьківське завдання
   label_unit_day: днів
   label_unit_business_day: робочих днів
   label_unit_week: тижнів
@@ -33,7 +31,18 @@ uk:
   label_unit_year: років
   flash_task_created: Періодичне завдання створено
   flash_task_saved: Періодичне завдання збережено
-  subject_variables: Можливі змінні **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** та **PREVIOUS_MONTHNAME** (Січень - Грудень)
+  subject_variables: |-
+    Можливі змінні:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Січень - Грудень)
+    **PREVIOUS_MONTHNAME** (Січень - Грудень)
+  label_variables_markdown_note: 'Примітка: в описі вони відображаються жирним у попередньому перегляді, оскільки ** — це синтаксис жирного шрифту в Markdown; під час створення завдання вони замінюються фактичним значенням.'
   label_last_error: Остання помилка
   label_issue_custom_fields: Налаштовувані поля завдання
   label_priority: Пріоритет

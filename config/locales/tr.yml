@@ -1,8 +1,8 @@
 # Turkish strings by atopcu for Rails i18n
 tr:
   label_tracker: İş Tipi
-  label_author: Yazar
-  label_assigned_to_user: Atanan
+  label_issue_author: 'İş kaydı yazarı'
+  label_periodictask_configuration: 'Periyodik görev yapılandırması'
   no_members_in_project: Tanımlı üye yok!
   no_categories_in_project: Tanımlı kategori yok!
   label_subject: Konu
@@ -10,8 +10,6 @@ tr:
   label_last_run: Son açılma zamanı
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
-  label_no_members_in_project: Tanımlı üye yok
-  label_no_categories_in_project: Tanımlı kategori yok
   label_periodic_tasks: Periyodik İşler
   label_create_periodic_task: Yeni
   label_save_periodic_task: Kaydet
@@ -20,11 +18,12 @@ tr:
   label_remove_periodic_task: Periyodik işi sil
   label_interval: Tekrarlama
   label_set_start_date: Başlama tarihini set et
-  label_due_date: Bitiş süresi
+  label_set_start_date_info: 'İşaretlendiğinde, oluşturulan her iş kaydının başlangıç tarihi oluşturulduğu güne ayarlanır.'
+  label_due_date: 'Bitiş tarihini sonra ayarla'
+  label_due_date_info: 'Oluşturulan her iş kaydının bitiş tarihi; başlangıç tarihinden bu kadar sonra ayarlanır.'
   label_estimated_hours: Kalan zaman
   label_estimated_hours_after: Saat
   label_description: Açıklama
-  label_issue_category: İş kategorisi
   label_unit_day: gün
   label_unit_business_day: iş günü
   label_unit_week: hafta
@@ -32,10 +31,20 @@ tr:
   label_unit_year: yıl
   flash_task_created: Periyodik iş oluşturuldu
   flash_task_saved: Periyodik iş kaydedildi
-  subject_variables: Kullanılabilir makrolar; **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** ve **PREVIOUS_MONTHNAME** (Ocak - Aralık)
+  subject_variables: |-
+    Kullanılabilir makrolar:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (Ocak - Aralık)
+    **PREVIOUS_MONTHNAME** (Ocak - Aralık)
+  label_variables_markdown_note: 'Not: açıklamada önizlemede kalın görünürler çünkü ** Markdown''ın kalın yazı söz dizimidir; iş kaydı oluşturulduğunda gerçek değerleriyle değiştirilirler.'
   label_last_error: Son hata
   label_issue_custom_fields: Özel alanlar
-  label_parent_id: Üst görev
   label_priority: Öncelik
   label_priority_default: (Varsayılan - Normal)
   label_watchers: İzleyenler

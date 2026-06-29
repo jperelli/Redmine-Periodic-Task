@@ -1,8 +1,8 @@
 # Japanese strings go here for Rails i18n
 ja:
   label_tracker: トラッカー
-  label_author: 著者
-  label_assigned_to_user: 担当者
+  label_issue_author: 'チケットの作成者'
+  label_periodictask_configuration: '定期タスクの設定'
   no_members_in_project: このプロジェクトにはメンバーがいません。
   no_categories_in_project: このプロジェクトにはカテゴリーがありません。
   label_subject: 題名
@@ -10,8 +10,6 @@ ja:
   label_last_run: 前回実行日時
   label_edit_periodic_task: 繰り返しチケットの編集
   label_new_periodic_task: 新規繰り返しチケット
-  label_no_members_in_project: このプロジェクトにはメンバーがいません。
-  label_no_categories_in_project: このプロジェクトにはカテゴリーがありません。
   label_periodic_tasks: 繰り返しチケット
   label_create_periodic_task: 作成
   label_save_periodic_task: 保存
@@ -20,11 +18,12 @@ ja:
   label_remove_periodic_task: 繰り返しチケットの削除
   label_interval: 間隔
   label_set_start_date: 開始日を設定
-  label_due_date: 期日
+  label_set_start_date_info: 'オンにすると、作成される各チケットの開始日が生成された日に設定されます。'
+  label_due_date: '期日を設定（開始後）'
+  label_due_date_info: '作成される各チケットの期日。開始日からこの期間後に設定されます。'
   label_estimated_hours: 予定工数
   label_estimated_hours_after: 時間
   label_description: 説明
-  label_issue_category: カテゴリ
   label_unit_day: 日後
   label_unit_business_day: 営業日
   label_unit_week: 週間後
@@ -32,10 +31,20 @@ ja:
   label_unit_year: 年後
   flash_task_created: 繰り返しチケットが作成されました。
   flash_task_saved: 繰り返しチケットが保存されました。
-  subject_variables: 利用可能な変数 **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December)
+  subject_variables: |-
+    利用可能な変数:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (January - December)
+    **PREVIOUS_MONTHNAME** (January - December)
+  label_variables_markdown_note: '注: 説明欄では ** が Markdown の太字記法であるため、プレビューでは太字で表示されますが、チケット作成時に実際の値に置き換えられます。'
   label_last_error: 最後のエラー
   label_issue_custom_fields: カスタムフィールド
-  label_parent_id: 親チケット
   label_priority: 優先度
   label_priority_default: (デフォルト - 通常)
   label_watchers: ウォッチャー

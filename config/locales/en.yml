@@ -1,8 +1,8 @@
 # English strings go here for Rails i18n
 en:
   label_tracker: Tracker
-  label_author: Author
-  label_assigned_to_user: Assigned to user
+  label_issue_author: Issue Author
+  label_periodictask_configuration: Periodic task configuration
   no_members_in_project: This project has no members
   no_categories_in_project: This project has no categories
   label_subject: Subject
@@ -10,8 +10,6 @@ en:
   label_last_run: Last run
   label_edit_periodic_task: Edit Periodic Task
   label_new_periodic_task: New Periodic Task
-  label_no_members_in_project: This project has no members
-  label_no_categories_in_project: This project has no categories
   label_periodic_tasks: Periodic Tasks
   label_periodic_task: Periodic Task
   label_create_periodic_task: Create
@@ -21,12 +19,12 @@ en:
   label_remove_periodic_task: remove periodic task
   label_interval: Interval
   label_set_start_date: Set start date
-  label_due_date: Set due date in
+  label_set_start_date_info: When checked, the start date of each created issue is set to the day it is generated.
+  label_due_date: 'Set due date after'
+  label_due_date_info: 'Due date of each created issue, set this amount of time after its start date.'
   label_estimated_hours: Estimated time
   label_estimated_hours_after: Hours
   label_description: Description
-  label_issue_category: Issue Category
-  label_parent_id: Issue Parent task
   label_unit_day: day(s)
   label_unit_business_day: business day(s)
   label_unit_week: week(s)
@@ -34,7 +32,18 @@ en:
   label_unit_year: year(s)
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
-  subject_variables: Possible variables are **DAY** (01-31), **WEEK** (00-53), **WEEKISO** (01-53), **MONTH** (01-12), **PREVIOUS_MONTH** (01-12), **QUARTER** (1-4), **YEAR** (YYYY), **MONTHNAME** and **PREVIOUS_MONTHNAME** (January - December)
+  subject_variables: |-
+    Possible variables:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (January - December)
+    **PREVIOUS_MONTHNAME** (January - December)
+  label_variables_markdown_note: 'Note: in the description these appear in bold in the preview because ** is Markdown''s bold syntax; they are replaced with the actual value when the issue is created.'
   label_last_error: Last error
   label_issue_custom_fields: Issue custom fields
   label_priority: Priority
