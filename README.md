@@ -4,6 +4,20 @@ In some projects there are tasks that need to be assigned on a schedule. Such as
 
 After you installed the plugin you can add it as a module to a project that already exists or activate it as default module for new projects. On each project it will add a new tab named "Periodic Task" - just go there to add your tasks.
 
+## Screenshots
+
+List of scheduled tasks for a project, showing interval, next run date and last run:
+
+![Periodic task list view](doc/screenshots/list_view.png)
+
+Creating or editing a periodic task - it mirrors Redmine's own issue form (tracker, priority, watchers, custom fields, ...):
+
+![Create / edit a periodic task](doc/screenshots/create_update.png)
+
+Task detail page with the history of issues generated from it:
+
+![Periodic task detail](doc/screenshots/detail.png)
+
 ## Redmine version support
 
 Support for old redmine versions has been dropped.
