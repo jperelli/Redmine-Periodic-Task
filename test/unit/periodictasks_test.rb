@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require "#{File.dirname(__FILE__)}/../test_helper"
 
 class PeriodictasksTest < ActiveSupport::TestCase
   fixtures :projects, :users, :trackers, :projects_trackers, :issue_statuses,
@@ -688,7 +688,7 @@ class PeriodictasksTest < ActiveSupport::TestCase
       subject: 'Invalid watcher test',
       interval_number: 1,
       interval_units: 'month',
-      watcher_user_ids: [999999],
+      watcher_user_ids: [999_999],
       next_run_date: 1.day.ago
     )
     issue = task.generate_issue

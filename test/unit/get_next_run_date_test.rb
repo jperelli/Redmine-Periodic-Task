@@ -16,9 +16,7 @@ GetNextRunDateTestTask = Struct.new(:next_run_date, :interval_number, :interval_
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      while val <= now
-        val = interval_number.business_day.after(val)
-      end
+      val = interval_number.business_day.after(val) while val <= now
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
@@ -43,11 +41,11 @@ class GetNextRunDateTest < Minitest::Test
 
     # Next run should preserve 10:00 from original schedule, NOT use 10:35
     assert_equal 10, next_date.hour,
-      "Expected next run hour to be 10:00 (original schedule), got #{next_date.strftime('%H:%M')}"
+                 "Expected next run hour to be 10:00 (original schedule), got #{next_date.strftime('%H:%M')}"
     assert_equal 0, next_date.min,
-      "Expected next run minute to be :00, got #{next_date.strftime('%H:%M')}"
+                 "Expected next run minute to be :00, got #{next_date.strftime('%H:%M')}"
     assert next_date > execution_time,
-      "Next run date should be in the future relative to execution time"
+           'Next run date should be in the future relative to execution time'
   end
 
   # Verify that running the same scenario multiple times doesn't cause
@@ -63,11 +61,11 @@ class GetNextRunDateTest < Minitest::Test
       next_date = task.get_next_run_date(execution_time)
 
       assert_equal 10, next_date.hour,
-        "Run #{i + 1}: Expected hour 10, got #{next_date.strftime('%H:%M:%S')}"
+                   "Run #{i + 1}: Expected hour 10, got #{next_date.strftime('%H:%M:%S')}"
       assert_equal 0, next_date.min,
-        "Run #{i + 1}: Expected minute 00, got #{next_date.strftime('%H:%M:%S')}"
+                   "Run #{i + 1}: Expected minute 00, got #{next_date.strftime('%H:%M:%S')}"
       assert next_date > execution_time,
-        "Run #{i + 1}: Next run date should be after execution time"
+             "Run #{i + 1}: Next run date should be after execution time"
 
       # Update task's next_run_date as the checker would
       task.next_run_date = next_date
@@ -97,9 +95,9 @@ class GetNextRunDateTest < Minitest::Test
       next_date = task.get_next_run_date(execution_time)
 
       assert_equal 9, next_date.hour,
-        "Run #{i + 2}: Expected hour 09:00 (stable), got #{next_date.strftime('%H:%M')}"
+                   "Run #{i + 2}: Expected hour 09:00 (stable), got #{next_date.strftime('%H:%M')}"
       assert_equal 0, next_date.min,
-        "Run #{i + 2}: Expected minute 00, got #{next_date.strftime('%H:%M')}"
+                   "Run #{i + 2}: Expected minute 00, got #{next_date.strftime('%H:%M')}"
       assert next_date > execution_time
 
       task.next_run_date = next_date
@@ -117,9 +115,9 @@ class GetNextRunDateTest < Minitest::Test
     next_date = task.get_next_run_date(execution_time)
 
     assert_equal 14, next_date.hour,
-      "Expected hour 14, got #{next_date.strftime('%H:%M')}"
+                 "Expected hour 14, got #{next_date.strftime('%H:%M')}"
     assert_equal 0, next_date.min,
-      "Expected minute 00, got #{next_date.strftime('%H:%M')}"
+                 "Expected minute 00, got #{next_date.strftime('%H:%M')}"
     assert next_date > execution_time
   end
 
@@ -132,7 +130,7 @@ class GetNextRunDateTest < Minitest::Test
     next_date = task.get_next_run_date(execution_time)
 
     assert_equal 6, next_date.hour,
-      "Day interval: expected hour 06, got #{next_date.strftime('%H:%M')}"
+                 "Day interval: expected hour 06, got #{next_date.strftime('%H:%M')}"
     assert_equal 0, next_date.min
     assert next_date > execution_time
   end

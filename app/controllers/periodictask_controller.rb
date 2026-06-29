@@ -12,6 +12,7 @@ class PeriodictaskController < ApplicationController
 
   helper :custom_fields
   include CustomFieldsHelper
+
   helper :issues
   helper :watchers
   helper :queries
@@ -36,18 +37,18 @@ class PeriodictaskController < ApplicationController
                         "WHEN 'week' THEN 7 " \
                         "WHEN 'month' THEN 30 " \
                         "WHEN 'year' THEN 365 " \
-                        "ELSE 1 END"
+                        'ELSE 1 END'
 
     sort_init 'id', 'desc'
     sort_update(
-      'id'            => "#{Periodictask.table_name}.id",
-      'interval'      => interval_days_sql,
+      'id' => "#{Periodictask.table_name}.id",
+      'interval' => interval_days_sql,
       'next_run_date' => "#{Periodictask.table_name}.next_run_date",
-      'tracker'       => "#{Tracker.table_name}.position",
-      'priority'      => "#{Periodictask.table_name}.priority_id",
-      'subject'       => "#{Periodictask.table_name}.subject",
-      'assigned_to'   => ["#{User.table_name}.lastname", "#{User.table_name}.firstname"],
-      'last_run'      => last_run_sql
+      'tracker' => "#{Tracker.table_name}.position",
+      'priority' => "#{Periodictask.table_name}.priority_id",
+      'subject' => "#{Periodictask.table_name}.subject",
+      'assigned_to' => ["#{User.table_name}.lastname", "#{User.table_name}.firstname"],
+      'last_run' => last_run_sql
     )
 
     @tasks = Periodictask.where(project_id: @project[:id])

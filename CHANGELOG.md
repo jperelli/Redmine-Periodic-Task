@@ -28,6 +28,7 @@
 - Remove the unused `find_periodictask` controller method (@jperelli)
 - Remove deprecated version from docker-compose (@jperelli)
 - Improve Readme install instructions (@jperelli)
+- Add RuboCop config and a lint job to CI to enforce code style for contributors (@jperelli)
 
 ## v6.1.3 - 2026-05-08
 

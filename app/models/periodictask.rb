@@ -21,8 +21,8 @@ class Periodictask < ActiveRecord::Base
   end
 
   # Accept "h:mm" / "1h30" / decimal input like Redmine's issue estimated time.
-  def estimated_hours=(h)
-    write_attribute :estimated_hours, (h.is_a?(String) ? (h.to_hours || h) : h)
+  def estimated_hours=(hours)
+    write_attribute :estimated_hours, (hours.is_a?(String) ? (hours.to_hours || hours) : hours)
   end
 
   after_initialize do |task|
@@ -65,7 +65,9 @@ class Periodictask < ActiveRecord::Base
     subj = parse_macro(subject.try(:dup), now)
     desc = parse_macro(description.try(:dup), now)
 
-    issue = Issue.new(project_id: project_id, tracker_id: tracker_id || project.trackers.first.try(:id), category_id: issue_category_id, parent_id: parent_id,
+    issue = Issue.new(project_id: project_id,
+                      tracker_id: tracker_id || project.trackers.first.try(:id),
+                      category_id: issue_category_id, parent_id: parent_id,
                       assigned_to_id: assigned_to_id, author_id: author_id,
                       subject: subj, description: desc)
     issue.priority_id = priority_id if priority_id.present?
@@ -109,7 +111,7 @@ class Periodictask < ActiveRecord::Base
 
     watcher_user_ids.each do |uid|
       uid = uid.to_i
-      next if uid == 0
+      next if uid.zero?
 
       user = User.find_by(id: uid)
       issue.add_watcher(user) if user
@@ -134,9 +136,7 @@ class Periodictask < ActiveRecord::Base
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      while val <= now
-        val = interval_number.business_day.after(val)
-      end
+      val = interval_number.business_day.after(val) while val <= now
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
@@ -152,7 +152,7 @@ class Periodictask < ActiveRecord::Base
       str.gsub!('**DAY**', now.strftime('%d'))
       str.gsub!('**WEEKISO**', now.strftime('%V'))
       str.gsub!('**WEEK**', now.strftime('%W'))
-      str.gsub!('**QUARTER**', ((now.month - 1) / 3 + 1).to_s)
+      str.gsub!('**QUARTER**', (((now.month - 1) / 3) + 1).to_s)
       str.gsub!('**MONTHNAME**', I18n.localize(now, format: '%B'))
       str.gsub!('**MONTH**', now.strftime('%m'))
       str.gsub!('**YEAR**', now.strftime('%Y'))

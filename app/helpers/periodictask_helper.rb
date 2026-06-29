@@ -31,7 +31,7 @@ module PeriodictaskHelper
     users.uniq
   end
 
-  def checklistPluginInstalled?
+  def checklist_plugin_installed?
     Redmine::Plugin.all.any? { |p| p.id == :redmine_checklists } && Object.const_defined?('ChecklistTemplate')
   end
 
@@ -39,10 +39,9 @@ module PeriodictaskHelper
     scoped = ChecklistTemplate.visible
     scoped = scoped.in_project_and_global(project) if project.present?
     templates = scoped.eager_load(:category).to_a
-    without_category = templates.select do |x|
-      x.category.nil?
-    end.map { |x| [x.name, x.id, { 'data-template-items' => x.template_items }] }
-    with_category = templates.select { |x| x.category }
+    uncategorized = templates.select { |x| x.category.nil? }
+    without_category = uncategorized.map { |x| [x.name, x.id, { 'data-template-items' => x.template_items }] }
+    with_category = templates.select(&:category)
     options_for_select(
       [[l(:label_select_template), '']] + without_category,
       selected: selected_id

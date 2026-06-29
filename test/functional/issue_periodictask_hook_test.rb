@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require "#{File.dirname(__FILE__)}/../test_helper"
 
 class IssuePeriodictaskHookTest < ActionController::TestCase
   tests IssuesController
@@ -25,7 +25,7 @@ class IssuePeriodictaskHookTest < ActionController::TestCase
     get :show, params: { id: issue.id }
     assert_response :success
     assert_select 'p.periodictask-origin'
-    assert_select "p.periodictask-origin a[href=?]",
+    assert_select 'p.periodictask-origin a[href=?]',
                   "/projects/#{@project.identifier}/periodictask/#{task.id}",
                   text: "##{task.id}"
   end

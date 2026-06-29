@@ -13,11 +13,11 @@ class PeriodictaskJournal < ApplicationRecord
 
   acts_as_event(
     datetime: :created_on,
-    title: proc { |o| o.event_title },
+    title: proc(&:event_title),
     description: '',
     author: :user,
     type: proc { |o| "periodictask-#{o.action}" },
-    url: proc { |o| o.event_url_hash },
+    url: proc(&:event_url_hash),
     group: :periodictask
   )
 

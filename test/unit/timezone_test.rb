@@ -17,9 +17,7 @@ TimezoneTestTask = Struct.new(:next_run_date, :interval_number, :interval_units)
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      while val <= now
-        val = interval_number.business_day.after(val)
-      end
+      val = interval_number.business_day.after(val) while val <= now
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
@@ -32,33 +30,33 @@ class TimezoneCodeTest < Minitest::Test
   # ---- Source code checks: no Time.now anywhere ----
 
   def test_model_uses_time_current
-    source = File.read(File.expand_path('../../../app/models/periodictask.rb', __FILE__))
+    source = File.read(File.expand_path('../../app/models/periodictask.rb', __dir__))
 
     refute_match(/def generate_issue\(now\s*=\s*Time\.now\)/,
-      source, 'generate_issue should use Time.current, not Time.now')
+                 source, 'generate_issue should use Time.current, not Time.now')
     refute_match(/def get_next_run_date\(now\s*=\s*Time\.now\)/,
-      source, 'get_next_run_date should use Time.current, not Time.now')
+                 source, 'get_next_run_date should use Time.current, not Time.now')
 
     assert_match(/def generate_issue\(now\s*=\s*Time\.current\)/,
-      source, 'generate_issue should default to Time.current')
+                 source, 'generate_issue should default to Time.current')
     assert_match(/def get_next_run_date\(now\s*=\s*Time\.current\)/,
-      source, 'get_next_run_date should default to Time.current')
+                 source, 'get_next_run_date should default to Time.current')
   end
 
   def test_checker_uses_time_current
-    source = File.read(File.expand_path('../../../lib/scheduled_tasks_checker.rb', __FILE__))
+    source = File.read(File.expand_path('../../lib/scheduled_tasks_checker.rb', __dir__))
 
     refute_match(/now\s*=\s*Time\.now/, source,
-      'ScheduledTasksChecker should use Time.current, not Time.now')
+                 'ScheduledTasksChecker should use Time.current, not Time.now')
     assert_match(/now\s*=\s*Time\.current/, source,
-      'ScheduledTasksChecker should use Time.current')
+                 'ScheduledTasksChecker should use Time.current')
   end
 
   def test_controller_uses_time_current
-    source = File.read(File.expand_path('../../../app/controllers/periodictask_controller.rb', __FILE__))
+    source = File.read(File.expand_path('../../app/controllers/periodictask_controller.rb', __dir__))
 
     refute_match(/Time\.now/, source,
-      'Controller should use Time.current, not Time.now')
+                 'Controller should use Time.current, not Time.now')
   end
 
   # ---- Locale labels mention server timezone ----
@@ -67,7 +65,7 @@ class TimezoneCodeTest < Minitest::Test
     %w[en de it ru tr zh ja].each do |lang|
       source = File.read(File.expand_path("../../../config/locales/#{lang}.yml", __FILE__))
       refute_match(/label_next_run_date:.*\(yyyy-mm-dd hh:mm:ss\)\s*$/,
-        source, "#{lang}.yml label should mention timezone, not just format")
+                   source, "#{lang}.yml label should mention timezone, not just format")
     end
   end
 
@@ -80,7 +78,7 @@ class TimezoneCodeTest < Minitest::Test
     now = Time.current
     assert_instance_of ActiveSupport::TimeWithZone, now
     assert_equal 'JST', now.zone
-    assert_equal 32400, now.utc_offset
+    assert_equal 32_400, now.utc_offset
 
     Time.zone = 'Mountain Time (US & Canada)' # UTC-7 / UTC-6
     now = Time.current
@@ -114,7 +112,7 @@ class TimezoneCodeTest < Minitest::Test
     # the default zone configured in config.time_zone
     Time.zone = 'UTC'
     assert_instance_of ActiveSupport::TimeWithZone, Time.current,
-      'Time.current should work even without a user timezone'
+                       'Time.current should work even without a user timezone'
   ensure
     Time.zone = original_zone
   end
@@ -199,7 +197,7 @@ class TimezoneCodeTest < Minitest::Test
       run_time = task.next_run_date + 1800 # 30 min late
       next_date = task.get_next_run_date(run_time)
       assert_equal 10, next_date.hour,
-        "Run #{i + 2}: hour should stay 10, got #{next_date.strftime('%H:%M')}"
+                   "Run #{i + 2}: hour should stay 10, got #{next_date.strftime('%H:%M')}"
       task.next_run_date = next_date
     end
   ensure

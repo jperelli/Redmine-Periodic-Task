@@ -1,0 +1,26 @@
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  Exclude:
+    - 'db/**/*'
+    - 'vendor/**/*'
+    - '.volumes/**/*'
+
+# This is a Redmine plugin: files are loaded into Redmine's runtime, so the
+# frozen string literal comment is not used across the codebase.
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Top-level classes document themselves; class-level comments are not required.
+Style/Documentation:
+  Enabled: false
+
+# Redmine plugins follow Rails conventions where longer methods/classes are
+# common; keep metrics advisory rather than failing CI.
+Metrics:
+  Enabled: false
+
+# Test names encode domain identifiers with trailing numbers (timezone offsets
+# like `gmt_plus_1`, quarters like `q1`) that don't fit a single number style.
+Naming/VariableNumber:
+  Enabled: false
