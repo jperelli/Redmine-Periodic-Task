@@ -24,6 +24,7 @@
 - Store custom field values as JSON instead of YAML, removing a Rails 7.1+ deprecation **requires migration** (@jperelli)
 - Add seed data to ./provision.sh so that we get periodictasks and issues created for developing faster (@jperelli)
 - Collapse the duplicate `load_users`/`load_watchers` controller filters into a single member lookup (@jperelli)
+- Remove the unused `find_periodictask` controller method (@jperelli)
 - Remove deprecated version from docker-compose (@jperelli)
 
 ## v6.1.3 - 2026-05-08

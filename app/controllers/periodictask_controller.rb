@@ -7,7 +7,6 @@ class PeriodictaskController < ApplicationController
 
   before_action :find_project
   before_action :authorize
-  # before_filter :find_periodictask, :except => [:new, :create, :index]
   before_action :load_users, except: %i[destroy run_now]
   before_action :load_categories, except: %i[destroy run_now]
 
@@ -170,12 +169,6 @@ class PeriodictaskController < ApplicationController
   end
 
   private
-
-  def find_periodictask
-    @periodictask = Periodictask.accessible.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render_404
-  end
 
   def find_project
     @project = Project.find(params[:project_id])
