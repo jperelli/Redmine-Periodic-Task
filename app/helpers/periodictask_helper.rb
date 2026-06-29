@@ -1,4 +1,13 @@
 module PeriodictaskHelper
+  # Renders an icon + label using Redmine 6's sprite_icon when available, and
+  # falls back to the plain label on Redmine 5, where the icon is supplied by
+  # the link's `icon icon-*` CSS class instead.
+  def periodictask_sprite_icon(name, label = nil, **)
+    return sprite_icon(name, label, **) if respond_to?(:sprite_icon)
+
+    label
+  end
+
   # Localized label for an interval/due-date unit value (e.g. 'business_day').
   def periodictask_unit_label(value)
     Periodictask.interval_units_options.find { |(_, v)| v == value }&.first || value

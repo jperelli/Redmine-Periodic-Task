@@ -109,7 +109,7 @@
     </span>
     <% if User.current.allowed_to?(:add_issue_watchers, @project) %>
       <span class="search_for_watchers">
-        <%= link_to sprite_icon('add', l(:label_search_for_watchers), size: 12),
+        <%= link_to periodictask_sprite_icon('add', l(:label_search_for_watchers), size: 12),
                     { :controller => 'watchers', :action => 'new', :project_id => @project },
                     :class => 'icon icon-add-bullet',
                     :remote => true, :method => 'get' %>

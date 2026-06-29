@@ -29,6 +29,7 @@
 - Remove deprecated version from docker-compose (@jperelli)
 - Improve Readme install instructions (@jperelli)
 - Add RuboCop config and a lint job to CI to enforce code style for contributors (@jperelli)
+- Add tests suite to run in multiple versions of redmine in CI (@jperelli)
 
 ## v6.1.3 - 2026-05-08
 

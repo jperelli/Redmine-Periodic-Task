@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'logger' # activesupport 6.1 (Redmine 5) references Logger before requiring it on Ruby 3.x
 require 'active_support'
 require 'active_support/core_ext/integer/time'
 require 'active_support/core_ext/numeric/time'

@@ -1,11 +1,11 @@
 <div class="contextual">
   <%= link_to(
-    sprite_icon('edit', l(:button_edit)),
+    periodictask_sprite_icon('edit', l(:button_edit)),
     { controller: 'periodictask', action: 'edit', id: @periodictask.id, project_id: @project },
     class: 'icon icon-edit'
   ) %>
   <%= link_to(
-    sprite_icon('reload', l(:button_run_now)),
+    periodictask_sprite_icon('reload', l(:button_run_now)),
     { controller: 'periodictask', action: 'run_now', id: @periodictask.id, project_id: @project },
     method: :post,
     data: { confirm: l(:text_run_now_confirm) },

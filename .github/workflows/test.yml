@@ -24,11 +24,18 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        redmine-tag:
+          - '5.1-bookworm'
+          - '6.0-bookworm'
+          - '6.1-bookworm'
     steps:
       - uses: actions/checkout@v6
 
       - name: Build test image
-        run: docker build -f Dockerfile.test -t periodictask-test .
+        run: docker build -f Dockerfile.test --build-arg REDMINE_TAG=${{ matrix.redmine-tag }} -t periodictask-test .
 
       - name: Run plugin tests
         run: docker run --rm periodictask-test

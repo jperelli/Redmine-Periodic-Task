@@ -20,8 +20,10 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>2.x</td>
     <td>3.x</td>
     <td>4.x</td>
-    <td>5.x</td>
-    <td>6.x</td>
+    <td>5.0</td>
+    <td>5.1</td>
+    <td>6.0</td>
+    <td>6.1</td>
   </tr>
   <tr>
     <td>main</td>
@@ -29,6 +31,8 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>?</td>
     <td>?</td>
     <td>?</td>
+    <td>?</td>
+    <td>✅</td>
     <td>✅</td>
     <td>✅</td>
   </tr>
@@ -40,11 +44,15 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>✅</td>
     <td>🚫</td>
     <td>🚫</td>
+    <td>🚫</td>
+    <td>🚫</td>
   </tr>
   <tr>
     <td>redmine2</td>
     <td>✅</td>
     <td>✅</td>
+    <td>🚫</td>
+    <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>

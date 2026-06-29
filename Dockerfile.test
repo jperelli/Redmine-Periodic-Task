@@ -1,4 +1,5 @@
-FROM redmine:6.1-bookworm
+ARG REDMINE_TAG=6.1-bookworm
+FROM redmine:${REDMINE_TAG}
 
 # Configure sqlite for test environment
 RUN printf "test:\n  adapter: sqlite3\n  database: /usr/src/redmine/sqlite/test.db\n" \

@@ -2,7 +2,7 @@
 
   <div class="contextual">
     <%= link_to(
-      sprite_icon('add', l(:label_new_periodic_task)),
+      periodictask_sprite_icon('add', l(:label_new_periodic_task)),
       {:controller => 'periodictask', :action => 'new', :project_id => @project},
       :class => 'icon icon-add new-issue'
     ) %>
@@ -44,12 +44,12 @@
           <td><%= periodictask_time_with_title(@last_runs[a.id]) %></td>
           <td class="buttons hide-when-print">
             <%= link_to(
-              sprite_icon('edit', l(:button_edit), icon_only: true),
+              periodictask_sprite_icon('edit', l(:button_edit), icon_only: true),
               {:controller => 'periodictask', :action => 'edit', :id => a.id, :project_id => @project},
               :class => 'icon-only icon-edit', :title => l(:button_edit)
             ) %>
             <%= link_to(
-              sprite_icon('reload', l(:button_run_now), icon_only: true),
+              periodictask_sprite_icon('reload', l(:button_run_now), icon_only: true),
               {:controller => 'periodictask', :action => 'run_now', :id => a.id, :project_id => @project},
               :method => :post,
               :data => { :confirm => l(:text_run_now_confirm) },
