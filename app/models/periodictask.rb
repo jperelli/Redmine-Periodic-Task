@@ -9,7 +9,7 @@ class Periodictask < ActiveRecord::Base
   belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
   has_many :periodictask_issues, dependent: :delete_all
   has_many :issues, through: :periodictask_issues
-  serialize :custom_field_values
+  attribute :custom_field_values, :json
   attribute :watcher_user_ids, :json, default: []
 
   def watcher_user_ids
