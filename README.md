@@ -52,46 +52,61 @@ If you cannot migrate to a newer version and still need support, you can hire me
   </tr>
 </table>
 
-To use redmine2 branch, when cloning use `-b redmine2` like this `git clone -b redmine2 http://github.com:/jperelli/Redmine-Periodic-Task.git plugins/periodictask`
+To use redmine2 branch, when cloning use `-b redmine2` like this `git clone -b redmine2 https://github.com/jperelli/Redmine-Periodic-Task.git plugins/periodictask`
 
 ## Installation
 
-    cd /usr/local/share/redmine
-    git clone http://github.com:/jperelli/Redmine-Periodic-Task.git plugins/periodictask
+Run these from your Redmine root (paths below assume `/opt/redmine` — adjust to yours):
+
+    cd /opt/redmine
+    git clone https://github.com/jperelli/Redmine-Periodic-Task.git plugins/periodictask
     bundle install
     bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
-    apache2ctl graceful
+
+Then restart Redmine so it picks up the plugin (see [Restarting Redmine](#restarting-redmine)).
 
 ## Upgrade
 
-    cd /usr/local/share/redmine/plugins/periodictask
+    cd /opt/redmine/plugins/periodictask
     git pull
     bundle install
     bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
-    apache2ctl graceful
+
+Then restart Redmine (see [Restarting Redmine](#restarting-redmine)).
 
 ## Uninstallation
 
-    cd /usr/local/share/redmine
+    cd /opt/redmine
     bundle exec rake redmine:plugins:migrate NAME=periodictask VERSION=0 RAILS_ENV=production
     rm -rf plugins/periodictask
-    apache2ctl graceful
+
+Then restart Redmine (see [Restarting Redmine](#restarting-redmine)).
+
+### Restarting Redmine
+
+How you reload Redmine depends on how it's served:
+
+- **Puma / Unicorn under systemd:** `sudo systemctl restart redmine`
+- **Passenger (Apache or nginx):** `touch /opt/redmine/tmp/restart.txt`
+- **Docker:** `docker compose restart redmine`
 
 ## Configuration
 
-Go to your console and run `which bundle`. In my case, that command returned `/usr/local/rvm/gems/ruby-2.1.0/bin/bundle`. Use that to configure cron like this
+Periodic tasks are created by a rake task that you run from cron. Cron has a minimal `PATH`, so use the absolute path to `bundle`. Find it with `which bundle` (e.g. with rbenv it's something like `/home/redmine/.rbenv/shims/bundle`, with a system Ruby `/usr/local/bin/bundle`).
 
-As root do `crontab -e` and add this to the last line
+Edit the crontab of the user that owns your Redmine install (`crontab -e`) and add one of the following. Replace `/opt/redmine` with your Redmine root and `/usr/local/bin/bundle` with the path from `which bundle`.
 
-    0 1 * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production"
+Once a day, at 01:00:
 
-You can also make it run once per hour
+    0 1 * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
-    0 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production"
+Once per hour:
 
-Or even every 10 minutes
+    0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
-    */10 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production"
+Every 10 minutes:
+
+    */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
 ### Variable interpolation
 
@@ -109,9 +124,9 @@ You can use the following variables in the subject and description of a periodic
 | `**PREVIOUS_MONTH**` | Previous month, zero-padded (01..12) |
 | `**PREVIOUS_MONTHNAME**` | Full name of the previous month, localized |
 
-If you want to get localized month names, please add `LOCALE="de"` (available are `de`, `en`, `ja`, `tr`, `ru`, `tr`, `zh`) to cronjob like this
+If you want to get localized month names, please add `LOCALE="de"` (available are `de`, `en`, `ja`, `ru`, `tr`, `zh`) to the cronjob like this
 
-    0 * * * * cd /var/www/<redminedir>; /usr/local/rvm/gems/ruby-2.1.0/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV="production" LOCALE="de"
+    0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production LOCALE="de"
 
 ## Plugins supported
 

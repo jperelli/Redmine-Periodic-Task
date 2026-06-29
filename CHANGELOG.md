@@ -27,6 +27,7 @@
 - Collapse the duplicate `load_users`/`load_watchers` controller filters into a single member lookup (@jperelli)
 - Remove the unused `find_periodictask` controller method (@jperelli)
 - Remove deprecated version from docker-compose (@jperelli)
+- Improve Readme install instructions (@jperelli)
 
 ## v6.1.3 - 2026-05-08
 
