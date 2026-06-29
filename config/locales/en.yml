@@ -64,3 +64,5 @@ en:
   label_periodictask_journal_update: Periodic task updated
   label_periodictask_journal_delete: Periodic task deleted
   label_periodictask_journal_run: Periodic task run
+  label_periodictask_plugin_name: Periodic Task plugin
+  label_periodictask_credit_by: by
