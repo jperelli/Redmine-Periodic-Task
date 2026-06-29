@@ -116,6 +116,20 @@ class Periodictask < ActiveRecord::Base
     end
   end
 
+  # Records a create/update/delete in the activity log. Called from the
+  # controller (not a model callback) so the scheduler's own writes to
+  # next_run_date / last_error are not logged as user edits.
+  def log_activity(action, user = User.current)
+    PeriodictaskJournal.create(
+      periodictask_id: id,
+      project_id: project_id,
+      user_id: user&.id,
+      action: action,
+      subject: subject,
+      created_on: Time.current
+    )
+  end
+
   def get_next_run_date(now = Time.current)
     units = interval_units.downcase
     val = next_run_date || now

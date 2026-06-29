@@ -54,3 +54,8 @@ bg:
   label_issue_created_by_periodictask: Автоматично създадена от периодична задача
   label_periodic_task: Периодична задача
   label_periodictask_template: Шаблон
+  label_periodictask_plural: Периодични задачи
+  label_periodictask_journal_create: Добавена периодична задача
+  label_periodictask_journal_update: Обновена периодична задача
+  label_periodictask_journal_delete: Изтрита периодична задача
+  label_periodictask_journal_run: Изпълнена периодична задача

@@ -54,3 +54,8 @@ de:
   label_issue_created_by_periodictask: Automatisch erstellt durch periodische Aufgabe
   label_periodic_task: Periodische Aufgabe
   label_periodictask_template: Vorlage
+  label_periodictask_plural: Wiederholende Aufgaben
+  label_periodictask_journal_create: Periodische Aufgabe hinzugefügt
+  label_periodictask_journal_update: Periodische Aufgabe aktualisiert
+  label_periodictask_journal_delete: Periodische Aufgabe gelöscht
+  label_periodictask_journal_run: Periodische Aufgabe ausgeführt

@@ -54,3 +54,8 @@ ja:
   label_issue_created_by_periodictask: 定期タスクにより自動作成
   label_periodic_task: 定期タスク
   label_periodictask_template: テンプレート
+  label_periodictask_plural: 定期タスク
+  label_periodictask_journal_create: 定期タスクを追加しました
+  label_periodictask_journal_update: 定期タスクを更新しました
+  label_periodictask_journal_delete: 定期タスクを削除しました
+  label_periodictask_journal_run: 定期タスクを実行しました

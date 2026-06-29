@@ -54,3 +54,8 @@ hr:
   label_issue_created_by_periodictask: Automatski stvoreno periodičnim zadatkom
   label_periodic_task: Periodični zadatak
   label_periodictask_template: Predložak
+  label_periodictask_plural: Periodički zadaci
+  label_periodictask_journal_create: Periodički zadatak dodan
+  label_periodictask_journal_update: Periodički zadatak ažuriran
+  label_periodictask_journal_delete: Periodički zadatak obrisan
+  label_periodictask_journal_run: Periodički zadatak pokrenut

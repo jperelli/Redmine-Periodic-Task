@@ -54,3 +54,8 @@ pl:
   label_issue_created_by_periodictask: Utworzone automatycznie przez zadanie cykliczne
   label_periodic_task: Zadanie cykliczne
   label_periodictask_template: Szablon
+  label_periodictask_plural: Zadania cykliczne
+  label_periodictask_journal_create: Dodano zadanie cykliczne
+  label_periodictask_journal_update: Zaktualizowano zadanie cykliczne
+  label_periodictask_journal_delete: Usunięto zadanie cykliczne
+  label_periodictask_journal_run: Uruchomiono zadanie cykliczne

@@ -54,3 +54,8 @@ pt-BR:
   label_issue_created_by_periodictask: Criada automaticamente pela tarefa periódica
   label_periodic_task: Tarefa periódica
   label_periodictask_template: Modelo
+  label_periodictask_plural: Tarefas periódicas
+  label_periodictask_journal_create: Tarefa periódica adicionada
+  label_periodictask_journal_update: Tarefa periódica atualizada
+  label_periodictask_journal_delete: Tarefa periódica excluída
+  label_periodictask_journal_run: Tarefa periódica executada

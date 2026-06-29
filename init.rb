@@ -24,6 +24,10 @@ Redmine::Plugin.register :periodictask do
                { periodictask: %i[index show new create edit update destroy customfields run_now] }
   end
 
+  # Surface create/update/delete of periodic tasks in the activity log, gated by
+  # the :periodictask permission (see PeriodictaskJournal).
+  activity_provider :periodictasks, class_name: 'PeriodictaskJournal'
+
   menu :project_menu, :periodictask, { controller: 'periodictask', action: 'index' },
        caption: 'Periodic Task', after: :settings, param: :project_id
 end

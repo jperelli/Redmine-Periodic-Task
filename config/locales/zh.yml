@@ -56,3 +56,8 @@ zh:
   label_issue_created_by_periodictask: 由周期任务自动创建
   label_periodic_task: 周期任务
   label_periodictask_template: 模板
+  label_periodictask_plural: 周期任务
+  label_periodictask_journal_create: 已添加周期任务
+  label_periodictask_journal_update: 已更新周期任务
+  label_periodictask_journal_delete: 已删除周期任务
+  label_periodictask_journal_run: 已运行周期任务

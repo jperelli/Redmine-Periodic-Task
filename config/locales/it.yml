@@ -54,3 +54,8 @@ it:
   label_issue_created_by_periodictask: Creata automaticamente dal task periodico
   label_periodic_task: Task periodico
   label_periodictask_template: Modello
+  label_periodictask_plural: Task periodici
+  label_periodictask_journal_create: Task periodico aggiunto
+  label_periodictask_journal_update: Task periodico aggiornato
+  label_periodictask_journal_delete: Task periodico eliminato
+  label_periodictask_journal_run: Task periodico eseguito

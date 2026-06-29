@@ -54,3 +54,8 @@ tr:
   label_issue_created_by_periodictask: Periyodik görev tarafından otomatik oluşturuldu
   label_periodic_task: Periyodik görev
   label_periodictask_template: Şablon
+  label_periodictask_plural: Periyodik işler
+  label_periodictask_journal_create: Periyodik iş eklendi
+  label_periodictask_journal_update: Periyodik iş güncellendi
+  label_periodictask_journal_delete: Periyodik iş silindi
+  label_periodictask_journal_run: Periyodik iş çalıştırıldı

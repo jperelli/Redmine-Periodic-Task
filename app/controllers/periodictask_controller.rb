@@ -77,6 +77,7 @@ class PeriodictaskController < ApplicationController
     @periodictask.attributes = periodictask_params
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
+      @periodictask.log_activity('create')
       flash[:notice] = l(:flash_task_created)
       redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
@@ -97,6 +98,7 @@ class PeriodictaskController < ApplicationController
     @periodictask.attributes = periodictask_params
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
+      @periodictask.log_activity('update')
       flash[:notice] = l(:flash_task_saved)
       redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
@@ -126,6 +128,7 @@ class PeriodictaskController < ApplicationController
   def destroy
     @task = Periodictask.accessible.find(params[:id])
     @task.destroy
+    @task.log_activity('delete')
     redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
   end
 
@@ -140,6 +143,7 @@ class PeriodictaskController < ApplicationController
       @periodictask.update(last_error: l(:label_project_missing_or_closed))
       flash[:error] = l(:flash_task_run_failed, error: l(:label_project_missing_or_closed))
     elsif issue.save
+      @periodictask.log_activity('run')
       @periodictask.fill_watchers(issue)
       @periodictask.record_generated_issue(issue)
       @periodictask.update(last_error: nil)

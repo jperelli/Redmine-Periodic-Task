@@ -54,3 +54,8 @@ uk:
   label_issue_created_by_periodictask: Автоматично створено періодичним завданням
   label_periodic_task: Періодичне завдання
   label_periodictask_template: Шаблон
+  label_periodictask_plural: Періодичні завдання
+  label_periodictask_journal_create: Періодичне завдання додано
+  label_periodictask_journal_update: Періодичне завдання оновлено
+  label_periodictask_journal_delete: Періодичне завдання видалено
+  label_periodictask_journal_run: Періодичне завдання виконано

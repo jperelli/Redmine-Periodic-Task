@@ -4,7 +4,8 @@
 
 ### Features
 
-- Add created/updated timestamps to periodictask and generated issues are linked back to their periodic task (requires migration) (@jperelli)
+- Add created/updated timestamps to periodictask and generated issues are linked back to their periodic task **requires migration** (@jperelli)
+- Add a journal table to see the actions in user and project *activity* page **requires migration** (@jperelli)
 - New detail page showing its configuration and the history of issues it has generated. (@jperelli)
 - Modernize the list view to match Redmine's issue list: more columns, sortable headers, and a three-dots actions menu (@jperelli)
 - Modernize the create/edit form to match Redmine's create/edit forms: same labels and order, reused components (@jperelli)
