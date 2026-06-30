@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased - 2026-06-27
+## v6.2.0 - 2026-06-30
 
 ### Features
 
