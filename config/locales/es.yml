@@ -1,5 +1,4 @@
 # Spanish strings go here for Rails i18n
-```yaml
 es:
   label_tracker: Tracker
   label_issue_author: Autor de la incidencia
@@ -67,4 +66,3 @@ es:
   label_periodictask_journal_run: Tarea periódica corrida
   label_periodictask_plugin_name: Complemento de tareas periódicas
   label_periodictask_credit_by: por
-```
