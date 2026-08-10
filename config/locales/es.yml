@@ -1,6 +1,6 @@
 # Spanish strings go here for Rails i18n
 es:
-  label_tracker: Tracker
+  label_tracker: Tipo
   label_issue_author: Autor de la incidencia
   label_periodictask_configuration: Configuración de tareas periódicas
   no_members_in_project: Este proyecto no tiene miembros
@@ -64,5 +64,5 @@ es:
   label_periodictask_journal_update: Tarea periódica actualizada
   label_periodictask_journal_delete: Tarea periódica eliminada
   label_periodictask_journal_run: Tarea periódica corrida
-  label_periodictask_plugin_name: Complemento de tareas periódicas
+  label_periodictask_plugin_name: Complemento Periodic Task
   label_periodictask_credit_by: por
