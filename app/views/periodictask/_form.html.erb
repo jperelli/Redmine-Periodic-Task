@@ -95,10 +95,12 @@
         <%= label(:periodictask, :estimated_hours, l(:label_estimated_hours)) %>
         <%= f.text_field :estimated_hours, :size => 6, :value => format_hours(@periodictask.estimated_hours), :placeholder => 'h:mm' %> <%= l(:label_estimated_hours_after) %>
       </p>
+      <% if Issue.use_field_for_done_ratio? %>
       <p>
-        <label><%= l(:field_done_ratio) %></label>
-        <%= select_tag '', options_for_select([['0 %', 0]]), :disabled => true, :style => 'width: auto' %>
+        <%= label(:periodictask, :done_ratio, l(:field_done_ratio)) %>
+        <%= f.select :done_ratio, ((0..10).to_a.collect { |r| ["#{r * 10} %", r * 10] }), { :include_blank => periodictask_default_label('0 %') }, { :style => 'width: auto' } %>
       </p>
+      <% end %>
     </div>
   </div>
   </div>

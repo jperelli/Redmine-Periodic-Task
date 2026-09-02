@@ -98,6 +98,7 @@ class Periodictask < ActiveRecord::Base
 
   validates :interval_number, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :interval_units, presence: true
+  validates :done_ratio, inclusion: { in: 0..100 }, allow_nil: true
   validate :validate_subtasks_and_relations
 
   scope :accessible, lambda {
@@ -137,6 +138,7 @@ class Periodictask < ActiveRecord::Base
                       subject: subj, description: desc)
     issue.priority_id = priority_id if priority_id.present?
     issue.status_id = status_id if status_id.present?
+    issue.done_ratio = done_ratio if done_ratio.present? && Issue.use_field_for_done_ratio?
     issue.start_date ||= now.to_date if set_start_date?
     if due_date_number
       due_date_units ||= 'day'

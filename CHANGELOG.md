@@ -6,6 +6,7 @@
 
 - Support Redmine 7.0 (Rails 8.1 / Ruby 4.0) (@jperelli)
 - Add configurable `subtasks` and `related issues`: each generated issue gets the configured child issues and relations **requires migration** (@jperelli)
+- Add configurable `% Done` shown with Redmine's progress bar in the detail page **requires migration** (@jperelli)
 
 ### Chore
 
