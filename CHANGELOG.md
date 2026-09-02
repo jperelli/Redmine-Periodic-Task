@@ -9,7 +9,7 @@
 
 ### Fixes
 
-- Parse and render the `next run date` in the user's Redmine time zone, and show the applied zone next to the input with a link to change it (@jperelli, #137)
+- Use the user's time zone for `next run date` and show it next to the input (@jperelli, #137)
 
 ## v6.2.0 - 2026-06-30
 
