@@ -48,6 +48,8 @@ tr:
   label_issue_custom_fields: Özel alanlar
   label_priority: Öncelik
   label_watchers: İzleyenler
+  label_tags: Etiketler
+  label_tags_info: "Oluşturulan her işe eklenen virgülle ayrılmış etiketler (RedmineUP Tags eklentisi)."
   label_periodictask_history: Oluşturulan iş kayıtları
   label_periodictask_no_history: Bu görev henüz hiç iş kaydı oluşturmadı
   label_issue_created_by_periodictask: Periyodik görev tarafından otomatik oluşturuldu

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   match    'projects/:project_id/periodictask/customfields', to: 'periodictask#customfields',
                                                              as: 'periodictask_customfields', via: %i[post patch]
+  get      'projects/:project_id/periodictask/tags',       to: 'periodictask#tags',   as: 'periodictask_tags'
   get      'projects/:project_id/periodictask',            to: 'periodictask#index',  as: 'periodictasks'
   get      'projects/:project_id/periodictask/new',        to: 'periodictask#new',    as: 'new_periodictask'
   post     'projects/:project_id/periodictask',            to: 'periodictask#create'

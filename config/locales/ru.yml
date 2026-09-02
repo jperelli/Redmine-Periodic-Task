@@ -48,6 +48,8 @@ ru:
   label_issue_custom_fields: Настраиваемые поля задачи
   label_priority: Приоритет
   label_watchers: Наблюдатели
+  label_tags: Теги
+  label_tags_info: "Теги через запятую, добавляемые к каждой созданной задаче (плагин RedmineUP Tags)."
   label_periodictask_history: Созданные задачи
   label_periodictask_no_history: Эта задача ещё не создала ни одной задачи
   label_issue_created_by_periodictask: Автоматически создано периодической задачей

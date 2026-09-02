@@ -48,6 +48,8 @@ de:
   label_issue_custom_fields: Benutzerdefinierte Felder
   label_priority: Priorität
   label_watchers: Beobachter
+  label_tags: Tags
+  label_tags_info: "Kommagetrennte Tags, die jedem erstellten Ticket hinzugefügt werden (RedmineUP Tags Plugin)."
   label_periodictask_history: Erzeugte Tickets
   label_periodictask_no_history: Von dieser Aufgabe wurden noch keine Tickets erzeugt
   label_issue_created_by_periodictask: Automatisch erstellt durch periodische Aufgabe

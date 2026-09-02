@@ -257,6 +257,26 @@ class PeriodictaskControllerTest < ActionController::TestCase
     Setting.login_required = '0'
   end
 
+  def test_tags_autocomplete_returns_empty_list_without_tagging_plugin
+    skip 'a tagging plugin is installed' if Periodictask.tags_plugin_installed?
+
+    get :tags, params: { project_id: 'ecookbook', term: 'op' }
+    assert_response :success
+    assert_equal [], JSON.parse(@response.body)
+  end
+
+  def test_create_stores_tag_list
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Tagged task', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'month', tag_list: 'ops, weekly'
+      }
+    }
+    assert_response :redirect
+    assert_equal 'ops, weekly', Periodictask.find_by(subject: 'Tagged task').tag_list
+  end
+
   def test_denies_member_without_permission
     # dlopez (user 3) is a Developer member of ecookbook but the Developer role
     # was not granted the :periodictask permission in setup.

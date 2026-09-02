@@ -48,6 +48,8 @@ ja:
   label_issue_custom_fields: カスタムフィールド
   label_priority: 優先度
   label_watchers: ウォッチャー
+  label_tags: タグ
+  label_tags_info: "作成される各チケットに追加されるカンマ区切りのタグ（RedmineUP Tags プラグイン）。"
   label_periodictask_history: 作成されたチケット
   label_periodictask_no_history: このタスクではまだチケットが作成されていません
   label_issue_created_by_periodictask: 定期タスクにより自動作成

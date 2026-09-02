@@ -48,6 +48,8 @@ it:
   label_issue_custom_fields: Campi personalizzati
   label_priority: Priorità
   label_watchers: Osservatori
+  label_tags: Tag
+  label_tags_info: "Tag separati da virgola aggiunti a ogni segnalazione creata (plugin RedmineUP Tags)."
   label_periodictask_history: Issue generate
   label_periodictask_no_history: Questo task non ha ancora generato alcuna issue
   label_issue_created_by_periodictask: Creata automaticamente dal task periodico
