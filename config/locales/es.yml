@@ -1,0 +1,74 @@
+# Spanish strings go here for Rails i18n
+es:
+  label_tracker: Tipo
+  label_issue_author: Autor de la incidencia
+  label_periodictask_configuration: Configuración de tareas periódicas
+  no_members_in_project: Este proyecto no tiene miembros
+  no_categories_in_project: Este proyecto no tiene categorías
+  label_subject: Asunto
+  label_next_run_date: Próxima ejecución
+  label_last_run: Última ejecución
+  label_edit_periodic_task: Editar tarea periódica
+  label_new_periodic_task: Nueva tarea periódica
+  label_periodic_tasks: Tareas periódicas
+  label_periodic_task: Tarea periódica
+  label_create_periodic_task: Crear
+  label_save_periodic_task: Guardar
+  label_scheduled_tasks: Estas son las tareas programadas actualmente
+  label_no_project: No se proporcionó el ID del proyecto
+  label_no_periodic_tasks: Aún no hay tareas periódicas — crea una para comenzar.
+  label_remove_periodic_task: eliminar tarea periódica
+  label_interval: Intervalo
+  label_set_start_date: Establecer fecha de inicio
+  label_set_start_date_info: Cuando está marcada, la fecha de inicio de cada incidencia creada se establece en el día en que se genera.
+  label_due_date: 'Establecer fecha fin después de'
+  label_due_date_info: 'Fecha fin de cada incidencia creada, establecida después de este período de tiempo a partir de su fecha de inicio.'
+  label_estimated_hours: Tiempo estimado
+  label_estimated_hours_after: Horas
+  label_description: Descripción
+  label_unit_day: día(s)
+  label_unit_business_day: día(s) hábil(es)
+  label_unit_week: semana(s)
+  label_unit_month: mes(es)
+  label_unit_year: año(s)
+  flash_task_created: La tarea periódica ha sido creada
+  flash_task_saved: La tarea periódica ha sido guardada
+  flash_task_run_now: 'Incidencia #%{id} creada'
+  flash_task_run_failed: 'No se pudo crear la incidencia: %{error}'
+  button_run_now: Correr ahora
+  text_run_now_confirm: ¿Crear una incidencia ahora a partir de esta tarea periódica? La programación no cambiará.
+  label_project_missing_or_closed: El proyecto no existe o está cerrado
+  subject_variables: |-
+    Variables disponibles:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (AAAA)
+    **MONTHNAME** (Enero - Diciembre)
+    **PREVIOUS_MONTHNAME** (Enero - Diciembre)
+  label_variables_markdown_note: 'Nota: en la descripción, estas variables aparecen en negrita en la vista previa porque ** es la sintaxis de negrita de Markdown; se reemplazan por el valor real cuando se crea la incidencia.'
+  label_last_error: Último error
+  label_issue_custom_fields: Campos personalizados de la incidencia
+  label_priority: Prioridad
+  label_watchers: Seguidores
+  label_tags: Etiquetas
+  label_tags_info: "Etiquetas separadas por comas que se añaden a cada incidencia creada (complemento RedmineUP Tags)."
+  label_periodictask_template: Plantilla
+  label_periodictask_history: Incidencias generadas
+  label_periodictask_no_history: Esta tarea aún no ha generado ninguna incidencia
+  label_issue_created_by_periodictask: Creada automáticamente por una tarea periódica
+  label_periodictask_plural: Tareas periódicas
+  label_periodictask_journal_create: Tarea periódica añadida
+  label_periodictask_journal_update: Tarea periódica actualizada
+  label_periodictask_journal_delete: Tarea periódica eliminada
+  label_periodictask_journal_run: Tarea periódica corrida
+  label_periodictask_plugin_name: Complemento Periodic Task
+  label_periodictask_credit_by: por
+  label_subtasks_info: "Incidencias hijas creadas bajo cada incidencia generada. Los asuntos aceptan las mismas variables que el asunto de la incidencia."
+  label_relations_info: "Relaciones creadas desde cada incidencia generada hacia incidencias existentes."
+  error_subtask_subject_blank: "El asunto de la subtarea no puede estar en blanco"
+  error_relation_type_invalid: "Tipo de relación no válido"
+  error_relation_issue_invalid: "La incidencia relacionada debe ser un número de incidencia"
