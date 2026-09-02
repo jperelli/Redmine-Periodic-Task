@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d23e3e"/>
+      <stop offset="1" stop-color="#8f1c1c"/>
+    </linearGradient>
+  </defs>
+  <!-- rounded background -->
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+
+  <!-- circular repeat arrows -->
+  <g fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round">
+    <path d="M 62 108 A 70 70 0 0 1 178 78"/>
+    <path d="M 194 148 A 70 70 0 0 1 78 178"/>
+  </g>
+  <g fill="#fff">
+    <polygon points="178,52 200,84 164,88"/>
+    <polygon points="78,204 56,172 92,168"/>
+  </g>
+
+  <!-- calendar / task card -->
+  <rect x="96" y="96" width="64" height="64" rx="10" fill="#fff"/>
+  <rect x="96" y="96" width="64" height="18" rx="10" fill="#ffd0d0"/>
+  <rect x="96" y="106" width="64" height="8" fill="#ffd0d0"/>
+  <rect x="108" y="88" width="8" height="18" rx="4" fill="#fff"/>
+  <rect x="140" y="88" width="8" height="18" rx="4" fill="#fff"/>
+  <!-- check mark -->
+  <path d="M 112 136 L 124 148 L 146 124" fill="none" stroke="#b02525" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
