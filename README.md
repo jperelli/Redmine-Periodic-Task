@@ -31,7 +31,7 @@ If you cannot migrate to a newer version and still need support, you can hire me
 <table>
   <tr>
     <td rowspan="2">git branch</td>
-    <td colspan="6">redmine version support</td>
+    <td colspan="9">redmine version support</td>
   </tr>
   <tr>
     <td>1.x</td>
@@ -42,6 +42,7 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>5.1</td>
     <td>6.0</td>
     <td>6.1</td>
+    <td>7.0</td>
   </tr>
   <tr>
     <td>main</td>
@@ -50,6 +51,7 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>?</td>
     <td>?</td>
     <td>?</td>
+    <td>✅</td>
     <td>✅</td>
     <td>✅</td>
     <td>✅</td>
@@ -64,11 +66,13 @@ If you cannot migrate to a newer version and still need support, you can hire me
     <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>
+    <td>🚫</td>
   </tr>
   <tr>
     <td>redmine2</td>
     <td>✅</td>
     <td>✅</td>
+    <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>
     <td>🚫</td>
