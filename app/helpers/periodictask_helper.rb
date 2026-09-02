@@ -17,15 +17,20 @@ module PeriodictaskHelper
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end
 
-  # Zone in which Redmine's format_time renders times for the current user:
-  # the user's preference when set, otherwise the server's local zone.
-  def periodictask_time_zone
-    User.current.time_zone || ActiveSupport::TimeZone[Time.now.utc_offset]
+  # Parses a wall-clock datetime (no offset) in the zone Redmine's format_time
+  # uses for the current user: their preference when set, otherwise the
+  # server's local zone.
+  def periodictask_parse_time(value)
+    zone = User.current.time_zone
+    zone ? zone.parse(value) : Time.parse(value)
   end
 
   # Value for the next_run_date datetime-local input, in the display zone.
   def periodictask_next_run_date_input_value(time)
-    time&.in_time_zone(periodictask_time_zone)&.strftime('%Y-%m-%dT%H:%M')
+    return if time.blank?
+
+    zone = User.current.time_zone
+    (zone ? time.in_time_zone(zone) : time.getlocal).strftime('%Y-%m-%dT%H:%M')
   end
 
   # Zone name and UTC offset shown next to the next_run_date input.

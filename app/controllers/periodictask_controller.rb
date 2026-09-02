@@ -193,7 +193,7 @@ class PeriodictaskController < ApplicationController
   def assign_periodictask_params
     attrs = periodictask_params
     if attrs[:next_run_date].present?
-      attrs[:next_run_date] = helpers.periodictask_time_zone.parse(attrs[:next_run_date].to_s)
+      attrs[:next_run_date] = helpers.periodictask_parse_time(attrs[:next_run_date].to_s)
     end
     @periodictask.attributes = attrs
   end

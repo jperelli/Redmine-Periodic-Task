@@ -194,6 +194,21 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select 'span.periodictask-time-zone', text: '(GMT-03:00) Buenos Aires'
   end
 
+  def test_next_run_date_round_trips_in_server_zone_without_user_time_zone
+    User.find(2).pref.update!(time_zone: '')
+    task = create_test_periodictask
+    patch :update, params: {
+      project_id: 'ecookbook',
+      id: task.id,
+      periodictask: { next_run_date: '2026-08-20T10:00' }
+    }
+    task.reload
+    assert_equal '2026-08-20 10:00', task.next_run_date.getlocal.strftime('%Y-%m-%d %H:%M')
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '#periodictask_next_run_date[value="2026-08-20T10:00"]'
+  end
+
   def test_show
     task = create_test_periodictask
     get :show, params: { project_id: 'ecookbook', id: task.id }
