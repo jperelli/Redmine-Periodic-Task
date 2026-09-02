@@ -130,6 +130,7 @@
       <%= f.text_field :tag_list, :style => 'width: 99%', :autocomplete => 'off' %>
     </p>
   <% end %>
+  <%= render :partial => 'subtasks_relations', :locals => { :periodictask => @periodictask } %>
   <% if @periodictask.last_error.present? %>
     <p>
       <%= label_tag(nil, l(:label_last_error)) %>

@@ -60,3 +60,8 @@ uk:
   label_periodictask_journal_update: Періодичне завдання оновлено
   label_periodictask_journal_delete: Періодичне завдання видалено
   label_periodictask_journal_run: Періодичне завдання виконано
+  label_subtasks_info: "Підзадачі, що створюються під кожною створеною задачею. Теми приймають ті самі змінні, що й тема задачі."
+  label_relations_info: "Зв'язки, що створюються від кожної створеної задачі до існуючих задач."
+  error_subtask_subject_blank: "Тема підзадачі не може бути порожньою"
+  error_relation_type_invalid: "Недійсний тип зв'язку"
+  error_relation_issue_invalid: "Пов'язана задача має бути номером задачі"

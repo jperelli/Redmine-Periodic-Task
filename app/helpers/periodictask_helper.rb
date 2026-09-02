@@ -54,8 +54,24 @@ module PeriodictaskHelper
   def periodictask_parent_link(task)
     return '-' if task.parent_id.blank?
 
-    issue = Issue.visible.find_by(id: task.parent_id)
-    issue ? link_to_issue(issue) : "##{task.parent_id}"
+    periodictask_issue_link(task.parent_id)
+  end
+
+  # Localized [label, value] pairs for the relation type select, in Redmine's order.
+  def periodictask_relation_type_options
+    IssueRelation::TYPES.sort_by { |_, v| v[:order] }.map { |key, v| [l(v[:name]), key] }
+  end
+
+  def periodictask_relation_type_label(relation_type)
+    type = IssueRelation::TYPES[relation_type.to_s]
+    type ? l(type[:name]) : relation_type.to_s
+  end
+
+  # Link to a related issue, falling back to a plain "#id" when the issue is
+  # missing or not visible.
+  def periodictask_issue_link(issue_id)
+    issue = Issue.visible.find_by(id: issue_id)
+    issue ? link_to_issue(issue) : "##{issue_id}"
   end
 
   # Initial set of users shown as checkboxes in the watchers picker:

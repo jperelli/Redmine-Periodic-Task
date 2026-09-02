@@ -62,3 +62,8 @@ zh:
   label_periodictask_journal_update: 已更新周期任务
   label_periodictask_journal_delete: 已删除周期任务
   label_periodictask_journal_run: 已运行周期任务
+  label_subtasks_info: "在每个创建的问题下创建的子问题。主题支持与问题主题相同的变量。"
+  label_relations_info: "从每个创建的问题到现有问题建立的关联。"
+  error_subtask_subject_blank: "子问题主题不能为空"
+  error_relation_type_invalid: "无效的关联类型"
+  error_relation_issue_invalid: "关联问题必须是问题编号"

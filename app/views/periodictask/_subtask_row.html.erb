@@ -1,0 +1,24 @@
+<% name = "periodictask[subtasks][#{index}]" %>
+<tr class="periodictask-subtask-row">
+  <td class="tracker">
+    <%= select_tag "#{name}[tracker_id]",
+                   options_for_select(@project.trackers.map { |t| [t.name, t.id] }, row['tracker_id'].presence&.to_i),
+                   :include_blank => periodictask_default_label(nil),
+                   :style => 'width: auto' %>
+  </td>
+  <td class="subject">
+    <%= text_field_tag "#{name}[subject]", row['subject'], :title => l(:subject_variables), :style => 'width: 99%' %>
+  </td>
+  <td class="assigned_to">
+    <%= select_tag "#{name}[assigned_to_id]",
+                   principals_options_for_select(@assignables, @assignables.find { |a| a.id == row['assigned_to_id'].presence&.to_i }),
+                   :include_blank => periodictask_default_label(nil), :style => 'width: auto' %>
+  </td>
+  <td class="estimated_hours">
+    <%= text_field_tag "#{name}[estimated_hours]", format_hours(row['estimated_hours'].presence&.to_f), :size => 6, :placeholder => 'h:mm' %>
+  </td>
+  <td class="buttons">
+    <%= link_to periodictask_sprite_icon('del', l(:button_delete), icon_only: true), '#',
+                :class => 'icon-only icon-del periodictask-remove-row', :title => l(:button_delete) %>
+  </td>
+</tr>

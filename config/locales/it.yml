@@ -60,3 +60,8 @@ it:
   label_periodictask_journal_update: Task periodico aggiornato
   label_periodictask_journal_delete: Task periodico eliminato
   label_periodictask_journal_run: Task periodico eseguito
+  label_subtasks_info: "Sotto-segnalazioni create sotto ogni segnalazione generata. Gli oggetti accettano le stesse variabili dell'oggetto della segnalazione."
+  label_relations_info: "Relazioni create da ogni segnalazione generata verso segnalazioni esistenti."
+  error_subtask_subject_blank: "L'oggetto della sotto-segnalazione non può essere vuoto"
+  error_relation_type_invalid: "Tipo di relazione non valido"
+  error_relation_issue_invalid: "La segnalazione correlata deve essere un numero di segnalazione"

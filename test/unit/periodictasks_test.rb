@@ -805,6 +805,101 @@ class PeriodictasksTest < ActiveSupport::TestCase
     end
   end
 
+  # --- Subtasks and relations ---
+
+  def test_subtasks_accepts_indexed_hash_and_drops_blank_rows
+    filled = { 'subject' => ' Prepare ', 'tracker_id' => '2', 'assigned_to_id' => '', 'estimated_hours' => '1:30' }
+    blank = { 'subject' => '', 'tracker_id' => '', 'assigned_to_id' => '', 'estimated_hours' => '' }
+    task = Periodictask.new(subtasks: { '0' => filled, '1' => blank })
+
+    expected = { 'subject' => 'Prepare', 'tracker_id' => '2', 'assigned_to_id' => nil, 'estimated_hours' => 1.5 }
+    assert_equal [expected], task.subtasks
+  end
+
+  def test_relations_drops_rows_without_issue
+    task = Periodictask.new(relations: [{ 'relation_type' => 'relates', 'issue_id' => '', 'delay' => '' },
+                                        { 'relation_type' => 'blocks', 'issue_id' => '7', 'delay' => '' }])
+    assert_equal [{ 'relation_type' => 'blocks', 'issue_id' => '7', 'delay' => nil }], task.relations
+  end
+
+  def test_subtask_without_subject_is_invalid
+    task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Parent',
+                            subtasks: [{ 'tracker_id' => '1', 'subject' => '' }])
+    assert_not task.valid?
+    assert_includes task.errors.full_messages, I18n.t(:error_subtask_subject_blank)
+  end
+
+  def test_relation_with_bad_type_or_issue_is_invalid
+    task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Parent',
+                            relations: [{ 'relation_type' => 'bogus', 'issue_id' => 'abc' }])
+    assert_not task.valid?
+    assert_includes task.errors.full_messages, I18n.t(:error_relation_type_invalid)
+    assert_includes task.errors.full_messages, I18n.t(:error_relation_issue_invalid)
+  end
+
+  def test_checker_creates_subtasks_and_relations
+    User.current = User.find(1)
+    related = Issue.create!(project: @project, tracker_id: 1, author_id: 1, subject: 'Existing',
+                            status_id: 1, priority_id: IssuePriority.default.id)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Parent **MONTH**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago,
+      subtasks: [
+        { 'subject' => 'Step one **YEAR**', 'tracker_id' => '2', 'assigned_to_id' => '3', 'estimated_hours' => '2' },
+        { 'subject' => 'Step two' }
+      ],
+      relations: [{ 'relation_type' => 'blocks', 'issue_id' => related.id.to_s }]
+    )
+
+    assert_difference('Issue.count', 3) do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    parent = Issue.where(subject: "Parent #{Time.current.strftime('%m')}").last
+    children = parent.children.order(:id).to_a
+    assert_equal ["Step one #{Time.current.year}", 'Step two'], children.map(&:subject)
+    assert_equal [2, 1], children.map(&:tracker_id)
+    assert_equal [3, 2], children.map(&:assigned_to_id)
+    assert_equal 2.0, children.first.estimated_hours
+    assert_equal 3, task.created_issues.count
+
+    relation = parent.relations_from.first
+    assert_equal 'blocks', relation.relation_type
+    assert_equal related.id, relation.issue_to_id
+
+    task.reload
+    assert_nil task.last_error
+  ensure
+    User.current = nil
+  end
+
+  def test_relation_to_missing_issue_is_reported_in_last_error
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Bad relation',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago,
+      relations: [{ 'relation_type' => 'relates', 'issue_id' => '999999' }]
+    )
+
+    assert_difference('Issue.count', 1) do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    task.reload
+    assert_match(/#999999/, task.last_error)
+    assert task.next_run_date > Time.current
+  end
+
   private
 
   # Mimics the API the RedmineUP Tags plugin adds to Issue (acts_as_taggable).

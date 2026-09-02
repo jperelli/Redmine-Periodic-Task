@@ -60,3 +60,8 @@ pt-BR:
   label_periodictask_journal_update: Tarefa periódica atualizada
   label_periodictask_journal_delete: Tarefa periódica excluída
   label_periodictask_journal_run: Tarefa periódica executada
+  label_subtasks_info: "Subtarefas criadas sob cada tarefa gerada. Os títulos aceitam as mesmas variáveis que o título da tarefa."
+  label_relations_info: "Relações criadas de cada tarefa gerada para tarefas existentes."
+  error_subtask_subject_blank: "O título da subtarefa não pode ficar em branco"
+  error_relation_type_invalid: "Tipo de relação inválido"
+  error_relation_issue_invalid: "A tarefa relacionada deve ser um número de tarefa"

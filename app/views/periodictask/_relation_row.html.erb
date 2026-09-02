@@ -1,0 +1,21 @@
+<% name = "periodictask[relations][#{index}]" %>
+<tr class="periodictask-relation-row">
+  <td class="relation_type">
+    <%= select_tag "#{name}[relation_type]",
+                   options_for_select(periodictask_relation_type_options, row['relation_type']),
+                   :style => 'width: auto' %>
+  </td>
+  <td class="issue_id">
+    <%= text_field_tag "#{name}[issue_id]", row['issue_id'], :size => 10, :class => 'periodictask-relation-issue',
+                       :data => { :autocomplete => auto_complete_issues_path(:project_id => @project, :scope => (Setting.cross_project_issue_relations? ? 'all' : nil)) } %>
+  </td>
+  <td class="delay">
+    <span class="periodictask-relation-delay">
+      <%= l(:field_delay) %>: <%= text_field_tag "#{name}[delay]", row['delay'], :size => 3 %> <%= l(:label_day_plural) %>
+    </span>
+  </td>
+  <td class="buttons">
+    <%= link_to periodictask_sprite_icon('del', l(:button_delete), icon_only: true), '#',
+                :class => 'icon-only icon-del periodictask-remove-row', :title => l(:button_delete) %>
+  </td>
+</tr>

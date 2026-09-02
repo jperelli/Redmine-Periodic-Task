@@ -144,10 +144,10 @@ class PeriodictaskController < ApplicationController
       flash[:error] = l(:flash_task_run_failed, error: l(:label_project_missing_or_closed))
     elsif issue.save
       @periodictask.log_activity('run')
-      @periodictask.fill_watchers(issue)
-      @periodictask.record_generated_issue(issue)
-      @periodictask.update(last_error: nil)
+      errors = @periodictask.complete_generated_issue(issue, Time.current)
+      @periodictask.update(last_error: errors.join(', ').presence)
       flash[:notice] = l(:flash_task_run_now, id: issue.id)
+      flash[:error] = l(:flash_task_run_failed, error: errors.join(', ')) if errors.any?
     else
       error = issue.errors.full_messages.join(', ')
       @periodictask.update(last_error: error)
@@ -206,6 +206,10 @@ class PeriodictaskController < ApplicationController
     if attrs[:next_run_date].present?
       attrs[:next_run_date] = helpers.periodictask_parse_time(attrs[:next_run_date].to_s)
     end
+    # Rows are only posted when present, so a form with all rows removed
+    # must still clear the stored ones.
+    attrs[:subtasks] ||= []
+    attrs[:relations] ||= []
     @periodictask.attributes = attrs
   end
 
@@ -216,7 +220,9 @@ class PeriodictaskController < ApplicationController
       :due_date_number, :due_date_units, :description, :issue_category_id,
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :tag_list,
       { custom_field_values: {} },
-      { watcher_user_ids: [] }
+      { watcher_user_ids: [] },
+      { subtasks: Periodictask::SUBTASK_KEYS },
+      { relations: Periodictask::RELATION_KEYS }
     )
   end
 end

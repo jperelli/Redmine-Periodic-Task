@@ -67,3 +67,8 @@ en:
   label_periodictask_journal_run: Periodic task run
   label_periodictask_plugin_name: Periodic Task plugin
   label_periodictask_credit_by: by
+  label_subtasks_info: "Child issues created under each generated issue. Subjects accept the same variables as the issue subject."
+  label_relations_info: "Relations created from each generated issue to existing issues."
+  error_subtask_subject_blank: "Subtask subject cannot be blank"
+  error_relation_type_invalid: "Invalid relation type"
+  error_relation_issue_invalid: "Related issue must be an issue number"

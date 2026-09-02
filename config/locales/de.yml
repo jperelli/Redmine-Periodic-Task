@@ -60,3 +60,8 @@ de:
   label_periodictask_journal_update: Periodische Aufgabe aktualisiert
   label_periodictask_journal_delete: Periodische Aufgabe gelöscht
   label_periodictask_journal_run: Periodische Aufgabe ausgeführt
+  label_subtasks_info: "Untertickets, die unter jedem erstellten Ticket angelegt werden. Die Themen akzeptieren dieselben Variablen wie das Ticket-Thema."
+  label_relations_info: "Beziehungen, die von jedem erstellten Ticket zu bestehenden Tickets angelegt werden."
+  error_subtask_subject_blank: "Das Thema des Untertickets darf nicht leer sein"
+  error_relation_type_invalid: "Ungültiger Beziehungstyp"
+  error_relation_issue_invalid: "Zugehöriges Ticket muss eine Ticketnummer sein"

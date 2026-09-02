@@ -1,0 +1,96 @@
+<% subtasks = periodictask.subtasks %>
+<% relations = periodictask.relations %>
+
+<div id="periodictask_subtasks" class="periodictask-rows">
+  <p>
+    <label><span class="field-description" title="<%= l(:label_subtasks_info) %>"><%= l(:label_subtask_plural) %></span></label>
+    <%= link_to periodictask_sprite_icon('add', l(:button_add)), '#', :class => 'icon icon-add periodictask-add-row' %>
+  </p>
+  <table class="list periodictask-subtasks" style="<%= 'display: none;' if subtasks.empty? %>">
+    <thead>
+      <tr>
+        <th><%= l(:label_tracker) %></th>
+        <th><%= l(:label_subject) %></th>
+        <th><%= l(:field_assigned_to) %></th>
+        <th><%= l(:label_estimated_hours) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% subtasks.each_with_index do |row, i| %>
+        <%= render :partial => 'subtask_row', :locals => { :index => i, :row => row } %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div id="periodictask_relations" class="periodictask-rows">
+  <p>
+    <label><span class="field-description" title="<%= l(:label_relations_info) %>"><%= l(:label_related_issues) %></span></label>
+    <%= link_to periodictask_sprite_icon('add', l(:button_add)), '#', :class => 'icon icon-add periodictask-add-row' %>
+  </p>
+  <table class="list periodictask-relations" style="<%= 'display: none;' if relations.empty? %>">
+    <thead>
+      <tr>
+        <th><%= l(:label_relation_new) %></th>
+        <th><%= l(:label_issue) %></th>
+        <th><%= l(:field_delay) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% relations.each_with_index do |row, i| %>
+        <%= render :partial => 'relation_row', :locals => { :index => i, :row => row } %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= javascript_tag do %>
+  $(document).ready(function() {
+    var templates = {
+      periodictask_subtasks: '<%= escape_javascript(render :partial => 'subtask_row', :locals => { :index => '__INDEX__', :row => {} }) %>',
+      periodictask_relations: '<%= escape_javascript(render :partial => 'relation_row', :locals => { :index => '__INDEX__', :row => {} }) %>'
+    };
+    var counters = { periodictask_subtasks: <%= subtasks.size %>, periodictask_relations: <%= relations.size %> };
+
+    function setupRelationRow(row) {
+      var $issue = $(row).find('.periodictask-relation-issue');
+      if ($issue.length && $.fn.autocomplete) {
+        $issue.autocomplete({
+          source: function(request, response) {
+            $.getJSON($issue.data('autocomplete'), { term: request.term }, response);
+          },
+          minLength: 2,
+          position: { collision: 'flipfit' },
+          select: function(event, ui) { $(this).val(ui.item.value); return false; }
+        });
+      }
+      function toggleDelay() {
+        var type = $(row).find('select').val();
+        $(row).find('.periodictask-relation-delay').toggle(type === 'precedes' || type === 'follows');
+      }
+      $(row).find('select').on('change', toggleDelay);
+      toggleDelay();
+    }
+
+    $('.periodictask-add-row').on('click', function(e) {
+      e.preventDefault();
+      var $container = $(this).closest('.periodictask-rows');
+      var id = $container.attr('id');
+      var $row = $(templates[id].replace(/__INDEX__/g, counters[id]++));
+      $container.find('table').show().find('tbody').append($row);
+      if (id === 'periodictask_relations') { setupRelationRow($row); }
+      $row.find('input[type=text]').first().focus();
+    });
+
+    $('.periodictask-rows').on('click', '.periodictask-remove-row', function(e) {
+      e.preventDefault();
+      var $table = $(this).closest('table');
+      $(this).closest('tr').remove();
+      if ($table.find('tbody tr').length === 0) { $table.hide(); }
+    });
+
+    $('#periodictask_relations tbody tr').each(function() { setupRelationRow(this); });
+  });
+<% end %>
