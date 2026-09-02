@@ -53,8 +53,9 @@ es:
   label_last_error: Último error
   label_issue_custom_fields: Campos personalizados de la incidencia
   label_priority: Prioridad
-  label_priority_default: (Predeterminada - Normal)
   label_watchers: Seguidores
+  label_tags: Etiquetas
+  label_tags_info: "Etiquetas separadas por comas que se añaden a cada incidencia creada (complemento RedmineUP Tags)."
   label_periodictask_template: Plantilla
   label_periodictask_history: Incidencias generadas
   label_periodictask_no_history: Esta tarea aún no ha generado ninguna incidencia
@@ -66,3 +67,8 @@ es:
   label_periodictask_journal_run: Tarea periódica corrida
   label_periodictask_plugin_name: Complemento Periodic Task
   label_periodictask_credit_by: por
+  label_subtasks_info: "Incidencias hijas creadas bajo cada incidencia generada. Los asuntos aceptan las mismas variables que el asunto de la incidencia."
+  label_relations_info: "Relaciones creadas desde cada incidencia generada hacia incidencias existentes."
+  error_subtask_subject_blank: "El asunto de la subtarea no puede estar en blanco"
+  error_relation_type_invalid: "Tipo de relación no válido"
+  error_relation_issue_invalid: "La incidencia relacionada debe ser un número de incidencia"
