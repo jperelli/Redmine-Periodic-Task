@@ -60,3 +60,8 @@ ru:
   label_periodictask_journal_update: Периодическая задача обновлена
   label_periodictask_journal_delete: Периодическая задача удалена
   label_periodictask_journal_run: Периодическая задача выполнена
+  label_subtasks_info: "Подзадачи, создаваемые под каждой созданной задачей. Темы принимают те же переменные, что и тема задачи."
+  label_relations_info: "Связи, создаваемые от каждой созданной задачи к существующим задачам."
+  error_subtask_subject_blank: "Тема подзадачи не может быть пустой"
+  error_relation_type_invalid: "Недопустимый тип связи"
+  error_relation_issue_invalid: "Связанная задача должна быть номером задачи"

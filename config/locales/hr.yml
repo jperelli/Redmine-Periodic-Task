@@ -60,3 +60,8 @@ hr:
   label_periodictask_journal_update: Periodički zadatak ažuriran
   label_periodictask_journal_delete: Periodički zadatak obrisan
   label_periodictask_journal_run: Periodički zadatak pokrenut
+  label_subtasks_info: "Podzadaci stvoreni pod svakim generiranim zadatkom. Naslovi prihvaćaju iste varijable kao i naslov zadatka."
+  label_relations_info: "Veze stvorene od svakog generiranog zadatka prema postojećim zadacima."
+  error_subtask_subject_blank: "Naslov podzadatka ne može biti prazan"
+  error_relation_type_invalid: "Nevažeći tip veze"
+  error_relation_issue_invalid: "Povezani zadatak mora biti broj zadatka"

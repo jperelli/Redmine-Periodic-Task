@@ -117,6 +117,51 @@
     <div class="wiki"><%= textilizable @periodictask, :description %></div>
   <% end %>
 
+  <% if @periodictask.subtasks.any? %>
+    <hr />
+    <div class="periodictask-subtasks">
+      <p><strong><%= l(:label_subtask_plural) %> (<%= @periodictask.subtasks.size %>)</strong></p>
+      <table class="list issues">
+        <thead>
+          <tr>
+            <th><%= l(:label_tracker) %></th>
+            <th><%= l(:label_subject) %></th>
+            <th><%= l(:field_assigned_to) %></th>
+            <th><%= l(:label_estimated_hours) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @periodictask.subtasks.each do |row| %>
+            <tr class="<%= cycle('odd', 'even') %>">
+              <td><%= row['tracker_id'].present? ? Tracker.find_by(id: row['tracker_id'])&.name : periodictask_default_label(@periodictask.tracker&.name) %></td>
+              <td><%= row['subject'] %></td>
+              <td><% assignee = row['assigned_to_id'].present? && Principal.find_by(id: row['assigned_to_id']) %><%= assignee ? link_to_principal(assignee) : '-' %></td>
+              <td><%= row['estimated_hours'].present? ? "#{format_hours(row['estimated_hours'].to_f)} #{l(:label_estimated_hours_after)}" : '-' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if @periodictask.relations.any? %>
+    <hr />
+    <div class="periodictask-relations">
+      <p><strong><%= l(:label_related_issues) %> (<%= @periodictask.relations.size %>)</strong></p>
+      <ul>
+        <% @periodictask.relations.each do |row| %>
+          <li>
+            <%= periodictask_relation_type_label(row['relation_type']) %>
+            <%= periodictask_issue_link(row['issue_id']) %>
+            <% if row['delay'].present? && %w[precedes follows].include?(row['relation_type']) %>
+              (<%= l(:field_delay).downcase %>: <%= row['delay'] %> <%= l(:label_day_plural) %>)
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <% watcher_users = User.where(id: @periodictask.watcher_user_ids).sorted.to_a %>
   <% if watcher_users.any? %>
     <hr />

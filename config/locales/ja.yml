@@ -60,3 +60,8 @@ ja:
   label_periodictask_journal_update: 定期タスクを更新しました
   label_periodictask_journal_delete: 定期タスクを削除しました
   label_periodictask_journal_run: 定期タスクを実行しました
+  label_subtasks_info: "生成される各チケットの下に作成される子チケット。題名にはチケットの題名と同じ変数を使用できます。"
+  label_relations_info: "生成される各チケットから既存のチケットへ作成される関連。"
+  error_subtask_subject_blank: "子チケットの題名を入力してください"
+  error_relation_type_invalid: "関連の種類が無効です"
+  error_relation_issue_invalid: "関連するチケットはチケット番号である必要があります"

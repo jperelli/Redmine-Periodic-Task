@@ -60,3 +60,8 @@ bg:
   label_periodictask_journal_update: Обновена периодична задача
   label_periodictask_journal_delete: Изтрита периодична задача
   label_periodictask_journal_run: Изпълнена периодична задача
+  label_subtasks_info: "Подзадачи, създавани под всяка генерирана задача. Темите приемат същите променливи като темата на задачата."
+  label_relations_info: "Връзки, създавани от всяка генерирана задача към съществуващи задачи."
+  error_subtask_subject_blank: "Темата на подзадачата не може да е празна"
+  error_relation_type_invalid: "Невалиден тип връзка"
+  error_relation_issue_invalid: "Свързаната задача трябва да е номер на задача"

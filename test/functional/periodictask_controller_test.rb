@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class PeriodictaskControllerTest < ActionController::TestCase
   fixtures :projects, :users, :email_addresses, :roles, :members, :member_roles,
            :trackers, :projects_trackers, :enabled_modules, :issue_statuses,
-           :enumerations, :issue_categories
+           :enumerations, :issue_categories, :issues
 
   def setup
     @project = Project.find(1)
@@ -314,6 +314,86 @@ class PeriodictaskControllerTest < ActionController::TestCase
     }
     assert_response :redirect
     assert_equal 'ops, weekly', Periodictask.find_by(subject: 'Tagged task').tag_list
+  end
+
+  def test_create_stores_subtasks_and_relations
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'With children', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'month',
+        subtasks: { '0' => { tracker_id: '2', subject: 'Child A', assigned_to_id: '3', estimated_hours: '0:30' },
+                    '1' => { tracker_id: '', subject: '', assigned_to_id: '', estimated_hours: '' } },
+        relations: { '0' => { relation_type: 'precedes', issue_id: '1', delay: '2' } }
+      }
+    }
+    assert_response :redirect
+
+    task = Periodictask.find_by(subject: 'With children')
+    expected = { 'tracker_id' => '2', 'subject' => 'Child A', 'assigned_to_id' => '3', 'estimated_hours' => 0.5 }
+    assert_equal [expected], task.subtasks
+    assert_equal [{ 'relation_type' => 'precedes', 'issue_id' => '1', 'delay' => '2' }], task.relations
+  end
+
+  def test_create_with_blank_subtask_subject_rerenders_form
+    assert_no_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Bad child', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+          interval_number: 1, interval_units: 'month',
+          subtasks: { '0' => { tracker_id: '1', subject: '', assigned_to_id: '2' } }
+        }
+      }
+    end
+    assert_response :success
+    assert_select '#errorExplanation', text: /#{I18n.t(:error_subtask_subject_blank)}/
+  end
+
+  def test_update_clears_subtasks_when_all_rows_removed
+    task = create_test_periodictask(subtasks: [{ 'subject' => 'Child' }])
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: { subject: 'No children', interval_number: 1, interval_units: 'month' }
+    }
+    assert_response :redirect
+    assert_equal [], task.reload.subtasks
+  end
+
+  def test_run_now_creates_subtasks_and_relations
+    task = create_test_periodictask(next_run_date: 1.month.from_now,
+                                    subtasks: [{ 'subject' => 'Child' }],
+                                    relations: [{ 'relation_type' => 'relates', 'issue_id' => '1' }])
+    assert_difference('Issue.count', 2) do
+      assert_difference('IssueRelation.count', 1) do
+        post :run_now, params: { project_id: 'ecookbook', id: task.id }
+      end
+    end
+    assert_nil task.reload.last_error
+    parent = task.created_issues.find_by(subject: task.subject)
+    assert_equal ['Child'], parent.children.map(&:subject)
+    assert_equal [1], parent.relations.map(&:issue_from_id)
+    assert_equal 2, task.created_issues.count
+  end
+
+  def test_edit_renders_subtask_and_relation_rows
+    task = create_test_periodictask(subtasks: [{ 'subject' => 'Child', 'tracker_id' => '2' }],
+                                    relations: [{ 'relation_type' => 'blocks', 'issue_id' => '1' }])
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'input[name=?][value=?]', 'periodictask[subtasks][0][subject]', 'Child'
+    assert_select 'select[name=?] option[selected][value="2"]', 'periodictask[subtasks][0][tracker_id]'
+    assert_select 'select[name=?] option[selected][value=blocks]', 'periodictask[relations][0][relation_type]'
+    assert_select 'input[name=?][value="1"]', 'periodictask[relations][0][issue_id]'
+  end
+
+  def test_show_lists_subtasks_and_relations
+    task = create_test_periodictask(subtasks: [{ 'subject' => 'Child' }],
+                                    relations: [{ 'relation_type' => 'blocks', 'issue_id' => '1' }])
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.periodictask-subtasks td', text: 'Child'
+    assert_select '.periodictask-relations li', text: /#{I18n.t(:label_blocks)}.*#1/m
   end
 
   def test_denies_member_without_permission

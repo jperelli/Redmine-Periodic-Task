@@ -60,3 +60,8 @@ pl:
   label_periodictask_journal_update: Zaktualizowano zadanie cykliczne
   label_periodictask_journal_delete: Usunięto zadanie cykliczne
   label_periodictask_journal_run: Uruchomiono zadanie cykliczne
+  label_subtasks_info: "Podzagadnienia tworzone pod każdym wygenerowanym zagadnieniem. Tematy akceptują te same zmienne co temat zagadnienia."
+  label_relations_info: "Powiązania tworzone od każdego wygenerowanego zagadnienia do istniejących zagadnień."
+  error_subtask_subject_blank: "Temat podzagadnienia nie może być pusty"
+  error_relation_type_invalid: "Nieprawidłowy typ powiązania"
+  error_relation_issue_invalid: "Powiązane zagadnienie musi być numerem zagadnienia"

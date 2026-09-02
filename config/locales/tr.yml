@@ -60,3 +60,8 @@ tr:
   label_periodictask_journal_update: Periyodik iş güncellendi
   label_periodictask_journal_delete: Periyodik iş silindi
   label_periodictask_journal_run: Periyodik iş çalıştırıldı
+  label_subtasks_info: "Oluşturulan her işin altında oluşturulan alt işler. Konular, iş konusuyla aynı değişkenleri kabul eder."
+  label_relations_info: "Oluşturulan her işten mevcut işlere oluşturulan ilişkiler."
+  error_subtask_subject_blank: "Alt iş konusu boş olamaz"
+  error_relation_type_invalid: "Geçersiz ilişki türü"
+  error_relation_issue_invalid: "İlişkili iş bir iş numarası olmalıdır"
