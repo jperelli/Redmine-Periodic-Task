@@ -12,6 +12,10 @@
 
 - Generate scheduled issues as the task author (`User.current`) so permission-based validations from other plugins, e.g. Luxury Buttons tracker roles, pass under cron/rake (#67)
 
+### Fixes
+
+- Use the user's time zone for `next run date` and show it next to the input (@jperelli, #137)
+
 ## v6.2.0 - 2026-06-30
 
 ### Features

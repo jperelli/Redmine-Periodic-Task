@@ -74,7 +74,7 @@ class PeriodictaskController < ApplicationController
       params[:periodictask][:next_run_date] = @periodictask.get_next_run_date(Time.current)
     end
 
-    @periodictask.attributes = periodictask_params
+    assign_periodictask_params
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('create')
@@ -95,7 +95,7 @@ class PeriodictaskController < ApplicationController
   def update
     @periodictask = Periodictask.accessible.find(params[:id])
     params[:periodictask][:project_id] = @project[:id]
-    @periodictask.attributes = periodictask_params
+    assign_periodictask_params
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('update')
@@ -176,7 +176,7 @@ class PeriodictaskController < ApplicationController
                     else
                       Periodictask.new(project: @project, author_id: User.current.id)
                     end
-    @periodictask.attributes = periodictask_params
+    assign_periodictask_params
     @issue = @periodictask.generate_issue
   end
 
@@ -197,6 +197,16 @@ class PeriodictaskController < ApplicationController
   def load_categories
     # Get the issue categories
     @categories = @project.issue_categories
+  end
+
+  # The form posts next_run_date as a wall-clock time without an offset; parse
+  # it in the same zone the list/show pages use to display it (format_time).
+  def assign_periodictask_params
+    attrs = periodictask_params
+    if attrs[:next_run_date].present?
+      attrs[:next_run_date] = helpers.periodictask_parse_time(attrs[:next_run_date].to_s)
+    end
+    @periodictask.attributes = attrs
   end
 
   def periodictask_params

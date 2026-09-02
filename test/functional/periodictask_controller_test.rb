@@ -171,6 +171,45 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 'week', task.interval_units
   end
 
+  def test_update_parses_next_run_date_in_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires') # UTC-3, no DST
+    task = create_test_periodictask
+    patch :update, params: {
+      project_id: 'ecookbook',
+      id: task.id,
+      periodictask: { next_run_date: '2026-08-20T09:00' }
+    }
+    task.reload
+    assert_equal Time.utc(2026, 8, 20, 12, 0), task.next_run_date.utc
+    assert_equal '2026-08-20 09:00', task.next_run_date.in_time_zone('Buenos Aires').strftime('%Y-%m-%d %H:%M')
+  end
+
+  def test_edit_shows_next_run_date_and_zone_in_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires')
+    task = create_test_periodictask(next_run_date: Time.utc(2026, 8, 20, 12, 0))
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '#periodictask_next_run_date[value="2026-08-20T09:00"]'
+    assert_select 'span.periodictask-time-zone a[href=?][target="_blank"]', '/my/account',
+                  text: '(GMT-03:00) Buenos Aires'
+  end
+
+  def test_next_run_date_round_trips_in_server_zone_without_user_time_zone
+    User.find(2).pref.update!(time_zone: '')
+    task = create_test_periodictask
+    patch :update, params: {
+      project_id: 'ecookbook',
+      id: task.id,
+      periodictask: { next_run_date: '2026-08-20T10:00' }
+    }
+    task.reload
+    assert_equal '2026-08-20 10:00', task.next_run_date.getlocal.strftime('%Y-%m-%d %H:%M')
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '#periodictask_next_run_date[value="2026-08-20T10:00"]'
+  end
+
   def test_show
     task = create_test_periodictask
     get :show, params: { project_id: 'ecookbook', id: task.id }

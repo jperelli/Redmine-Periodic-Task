@@ -12,7 +12,8 @@
   </p>
   <p>
     <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>
-    <%= f.datetime_field :next_run_date %>
+    <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
+    <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
   <p>
     <%= label(:periodictask, :author_id, l(:label_issue_author)) %>
@@ -197,5 +198,17 @@
     $('#watchers_inputs').closest('form').on('submit', function() {
       $(this).find('input[name="issue[watcher_user_ids][]"]').attr('name', 'periodictask[watcher_user_ids][]');
     });
+
+    <% if User.current.pref.warn_on_leaving_unsaved == '1' %>
+    // Redmine's warnLeavingUnsaved only watches textareas; also guard the
+    // rest of the form so navigating away mid-edit asks for confirmation.
+    var form = $('#periodictask_next_run_date').closest('form');
+    var unsaved = false;
+    form.on('change', ':input', function() { unsaved = true; });
+    form.on('submit', function() { unsaved = false; });
+    $(window).on('beforeunload', function() {
+      if (unsaved) { return '<%= escape_javascript l(:text_warn_on_leaving_unsaved) %>'; }
+    });
+    <% end %>
   });
 <% end %>
