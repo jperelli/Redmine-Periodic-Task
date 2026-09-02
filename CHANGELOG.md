@@ -7,6 +7,10 @@
 - Add configurable issue `status` **requires migration** (@jperelli)
 - Show the configured default `priority` in form and detail labels (@jperelli)
 
+### Fixes
+
+- Parse and render the `next run date` in the user's Redmine time zone, and show the applied zone next to the input with a link to change it (@jperelli, #137)
+
 ## v6.2.0 - 2026-06-30
 
 ### Features
