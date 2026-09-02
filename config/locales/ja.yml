@@ -47,7 +47,6 @@ ja:
   label_last_error: 最後のエラー
   label_issue_custom_fields: カスタムフィールド
   label_priority: 優先度
-  label_priority_default: (デフォルト - 通常)
   label_watchers: ウォッチャー
   label_periodictask_history: 作成されたチケット
   label_periodictask_no_history: このタスクではまだチケットが作成されていません

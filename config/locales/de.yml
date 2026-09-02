@@ -47,7 +47,6 @@ de:
   label_last_error: Letzter Fehler
   label_issue_custom_fields: Benutzerdefinierte Felder
   label_priority: Priorität
-  label_priority_default: (Standard - Normal)
   label_watchers: Beobachter
   label_periodictask_history: Erzeugte Tickets
   label_periodictask_no_history: Von dieser Aufgabe wurden noch keine Tickets erzeugt

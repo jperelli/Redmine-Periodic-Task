@@ -72,8 +72,11 @@
 
   <div class="attributes">
     <%= issue_fields_rows do |rows|
+      rows.left l(:field_status),
+                (@periodictask.status_id ? IssueStatus.find_by(id: @periodictask.status_id)&.name : periodictask_default_label(@periodictask.tracker&.default_status&.name)),
+                class: 'status'
       rows.left l(:label_priority),
-                (@periodictask.priority_id ? IssuePriority.find_by(id: @periodictask.priority_id)&.name : l(:label_priority_default)),
+                (@periodictask.priority_id ? IssuePriority.find_by(id: @periodictask.priority_id)&.name : periodictask_default_label(IssuePriority.default&.name)),
                 class: 'priority'
       rows.left l(:field_assigned_to),
                 (@periodictask.assigned_to ? link_to_principal(@periodictask.assigned_to) : '-'),

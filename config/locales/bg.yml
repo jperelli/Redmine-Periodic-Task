@@ -47,7 +47,6 @@ bg:
   label_last_error: Последна грешка
   label_issue_custom_fields: Потребителски полета на задачата
   label_priority: Приоритет
-  label_priority_default: (По подразбиране - Нормален)
   label_watchers: Наблюдатели
   label_periodictask_history: Създадени задачи
   label_periodictask_no_history: Тази задача все още не е създала задачи

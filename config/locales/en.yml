@@ -53,7 +53,6 @@ en:
   label_last_error: Last error
   label_issue_custom_fields: Issue custom fields
   label_priority: Priority
-  label_priority_default: (Default - Normal)
   label_watchers: Watchers
   label_periodictask_template: Template
   label_periodictask_history: Generated issues

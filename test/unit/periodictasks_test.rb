@@ -89,6 +89,21 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal @project.id, issue.project_id
     assert_equal 1, issue.tracker_id
     assert_equal 2, issue.assigned_to_id
+    assert_equal task.tracker.default_status_id, issue.status_id
+  end
+
+  def test_generate_issue_with_configured_status
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Completed monthly task',
+      status_id: 5,
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    assert_equal 5, task.generate_issue.status_id
   end
 
   def test_generate_issue_with_start_date

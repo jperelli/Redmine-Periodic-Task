@@ -193,7 +193,7 @@ class PeriodictaskController < ApplicationController
       :project_id, :tracker_id, :assigned_to_id, :author_id, :subject,
       :interval_number, :interval_units, :next_run_date, :set_start_date,
       :due_date_number, :due_date_units, :description, :issue_category_id,
-      :estimated_hours, :checklists_template_id, :parent_id, :priority_id,
+      :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id,
       { custom_field_values: {} },
       { watcher_user_ids: [] }
     )

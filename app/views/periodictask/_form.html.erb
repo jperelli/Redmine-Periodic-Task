@@ -32,7 +32,7 @@
   </p>
   <p>
     <%= label(:periodictask, :tracker_id, l(:label_tracker)) %>
-    <%= collection_select("periodictask", "tracker_id", @project.trackers, :id, :name ) %>
+    <%= f.select :tracker_id, options_for_select(@project.trackers.map { |tracker| [tracker.name, tracker.id, { 'data-default-status-label' => periodictask_default_label(tracker.default_status&.name) }] }, @periodictask.tracker_id) %>
   </p>
   <p>
     <%= label(:periodictask, :subject) do %><span class="field-description" title="<%= l(:subject_variables) %>"><%= l(:label_subject) %></span> <span class="required">*</span><% end %>
@@ -48,12 +48,12 @@
   <div class="splitcontent">
     <div class="splitcontentleft">
       <p>
-        <label><%= l(:field_status) %></label>
-        <%= select_tag '', options_for_select([(@issue.try(:status) || IssueStatus.default).try(:name)]), :disabled => true %>
+        <%= label(:periodictask, :status_id, l(:field_status)) %>
+        <%= f.select :status_id, IssueStatus.sorted.map { |s| [s.name, s.id] }, :include_blank => periodictask_default_label(@issue&.tracker&.default_status&.name) %>
       </p>
       <p>
         <%= label(:periodictask, :priority_id, l(:label_priority)) %>
-        <%= f.select :priority_id, IssuePriority.active.map { |p| [p.name, p.id] }, :include_blank => l(:label_priority_default) %>
+        <%= f.select :priority_id, IssuePriority.active.map { |p| [p.name, p.id] }, :include_blank => periodictask_default_label(IssuePriority.default&.name) %>
       </p>
       <p>
         <%= label(:periodictask, :assigned_to_id) do %><%= l(:field_assigned_to) %> <span class="required">*</span><% end %>
@@ -137,13 +137,20 @@
 
 <%= javascript_tag do %>
   $(document).ready(function() {
+    function updateDefaultStatusLabel() {
+      var label = $('#periodictask_tracker_id option:selected').attr('data-default-status-label');
+      $('#periodictask_status_id option[value=""]').text(label);
+    }
+
     $('#periodictask_tracker_id').change(function() {
+      updateDefaultStatusLabel();
       $.ajax({
         url: '<%= escape_javascript(periodictask_customfields_path(@project, :format => 'js')) %>',
         type: 'post',
         data: $(this).closest('form').serialize()
       });
     });
+    updateDefaultStatusLabel();
 
     var currentUserId = '<%= User.current.id %>';
     function toggleAssignToMe() {

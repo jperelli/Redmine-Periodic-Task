@@ -47,7 +47,6 @@ it:
   label_last_error: Ultimo errore
   label_issue_custom_fields: Campi personalizzati
   label_priority: Priorità
-  label_priority_default: (Predefinito - Normale)
   label_watchers: Osservatori
   label_periodictask_history: Issue generate
   label_periodictask_no_history: Questo task non ha ancora generato alcuna issue

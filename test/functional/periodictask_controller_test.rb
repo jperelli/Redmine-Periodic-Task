@@ -67,6 +67,27 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  def test_new_displays_tracker_default_status_option
+    status = IssueStatus.find(2)
+    Tracker.find(1).update!(default_status: status)
+
+    get :new, params: { project_id: 'ecookbook' }
+
+    assert_select '#periodictask_status_id option:first-child[value=""]',
+                  text: "(#{I18n.t(:label_default)}) - #{status.name}"
+  end
+
+  def test_new_displays_configured_default_priority_option
+    priority = IssuePriority.where.not(id: IssuePriority.default.id).first
+    IssuePriority.update_all(is_default: false)
+    priority.update!(is_default: true)
+
+    get :new, params: { project_id: 'ecookbook' }
+
+    assert_select '#periodictask_priority_id option:first-child[value=""]',
+                  text: "(#{I18n.t(:label_default)}) - #{priority.name}"
+  end
+
   def test_create_periodictask
     assert_difference('Periodictask.count') do
       post :create, params: {
@@ -75,6 +96,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
           subject: 'Test periodic task',
           description: 'A test description',
           tracker_id: 1,
+          status_id: 5,
           assigned_to_id: 2,
           interval_number: 1,
           interval_units: 'month',
@@ -89,6 +111,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 'A test description', task.description
     assert_equal 1, task.interval_number
     assert_equal 'month', task.interval_units
+    assert_equal 5, task.status_id
     assert_equal @project.id, task.project_id
   end
 
@@ -111,6 +134,14 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = create_test_periodictask
     get :edit, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
+  end
+
+  def test_edit_selects_configured_status
+    task = create_test_periodictask(status_id: 5)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '#periodictask_status_id option[selected="selected"][value="5"]'
   end
 
   def test_edit_with_nil_watcher_user_ids
@@ -144,6 +175,37 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = create_test_periodictask
     get :show, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
+  end
+
+  def test_show_displays_status_first_in_left_issue_attributes
+    task = create_test_periodictask(status_id: 5)
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '.periodictask-template .attributes .splitcontentleft > .status:first-child',
+                  text: /#{Regexp.escape(IssueStatus.find(5).name)}/
+  end
+
+  def test_show_displays_tracker_default_for_unconfigured_status
+    task = create_test_periodictask(status_id: nil)
+    task.tracker.update!(default_status_id: 2)
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '.periodictask-template .attributes .status .value',
+                  text: "(#{I18n.t(:label_default)}) - Assigned"
+  end
+
+  def test_show_displays_configured_default_for_unconfigured_priority
+    task = create_test_periodictask(priority_id: nil)
+    priority = IssuePriority.where.not(id: IssuePriority.default.id).first
+    IssuePriority.update_all(is_default: false)
+    priority.update!(is_default: true)
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '.periodictask-template .attributes .priority .value',
+                  text: "(#{I18n.t(:label_default)}) - #{priority.name}"
   end
 
   def test_show_lists_generated_issues

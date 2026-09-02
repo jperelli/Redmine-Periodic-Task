@@ -47,7 +47,6 @@ tr:
   label_last_error: Son hata
   label_issue_custom_fields: Özel alanlar
   label_priority: Öncelik
-  label_priority_default: (Varsayılan - Normal)
   label_watchers: İzleyenler
   label_periodictask_history: Oluşturulan iş kayıtları
   label_periodictask_no_history: Bu görev henüz hiç iş kaydı oluşturmadı

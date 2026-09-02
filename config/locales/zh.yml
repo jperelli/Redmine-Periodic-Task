@@ -49,7 +49,6 @@ zh:
   label_last_error: 最后错误
   label_issue_custom_fields: 自定义字段
   label_priority: 优先级
-  label_priority_default: (默认 - 正常)
   label_watchers: 关注者
   label_periodictask_history: 已生成的问题
   label_periodictask_no_history: 此任务尚未生成任何问题

@@ -13,6 +13,10 @@ module PeriodictaskHelper
     Periodictask.interval_units_options.find { |(_, v)| v == value }&.first || value
   end
 
+  def periodictask_default_label(value)
+    ["(#{l(:label_default)})", value].compact.join(' - ')
+  end
+
   # Formatted time for display, with the full ISO 8601 timestamp (including the
   # timezone offset) shown as a tooltip on hover.
   def periodictask_time_with_title(time)

@@ -71,6 +71,7 @@ class Periodictask < ActiveRecord::Base
                       assigned_to_id: assigned_to_id, author_id: author_id,
                       subject: subj, description: desc)
     issue.priority_id = priority_id if priority_id.present?
+    issue.status_id = status_id if status_id.present?
     issue.start_date ||= now.to_date if set_start_date?
     if due_date_number
       due_date_units ||= 'day'

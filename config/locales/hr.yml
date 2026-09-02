@@ -47,7 +47,6 @@ hr:
   label_last_error: Zadnja greška
   label_issue_custom_fields: Prilagođena polja
   label_priority: Prioritet
-  label_priority_default: (Zadano - Normalan)
   label_watchers: Promatrači
   label_periodictask_history: Stvoreni zadaci
   label_periodictask_no_history: Ovaj zadatak još nije stvorio nijedan zadatak

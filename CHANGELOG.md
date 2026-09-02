@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- Add configurable issue `status` **requires migration** (@jperelli)
+- Show the configured default `priority` in form and detail labels (@jperelli)
+
 ## v6.2.0 - 2026-06-30
 
 ### Features
