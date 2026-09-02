@@ -7,6 +7,10 @@
 - Add configurable issue `status` **requires migration** (@jperelli)
 - Show the configured default `priority` in form and detail labels (@jperelli)
 
+### Fixes
+
+- Generate scheduled issues as the task author (`User.current`) so permission-based validations from other plugins, e.g. Luxury Buttons tracker roles, pass under cron/rake (#67)
+
 ## v6.2.0 - 2026-06-30
 
 ### Features
