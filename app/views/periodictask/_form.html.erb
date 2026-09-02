@@ -13,7 +13,7 @@
   <p>
     <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>
     <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
-    <span class="periodictask-time-zone"><%= periodictask_time_zone_label %></span>
+    <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account) %></span>
   </p>
   <p>
     <%= label(:periodictask, :author_id, l(:label_issue_author)) %>
