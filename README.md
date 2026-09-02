@@ -1,3 +1,5 @@
+<p align="center"><img src="doc/logo.png" alt="Redmine Periodic Task logo" width="160"></p>
+
 # Redmine periodictask [![Test](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml/badge.svg)](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml)
 
 In some projects there are tasks that need to be assigned on a schedule. Such as check the ssl registration once per year or run security checks every 3 months
