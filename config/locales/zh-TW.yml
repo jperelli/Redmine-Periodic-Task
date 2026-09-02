@@ -1,0 +1,74 @@
+# Coding：UTF-8
+# Traditional Chinese strings go here for Rails i18n
+# Translated from Tomora's Simplified Chinese by chris85618.
+zh-TW:
+  label_tracker: 追蹤標籤
+  label_issue_author: '議題作者'
+  label_periodictask_configuration: '週期任務設定'
+  no_members_in_project: 該專案沒有成員
+  no_categories_in_project: 該專案沒有分類
+  label_subject: 主旨
+  label_next_run_date: 下一執行日
+  label_last_run: 上一執行日
+  label_edit_periodic_task: 編輯週期任務
+  label_new_periodic_task: 建立週期任務
+  label_periodic_tasks: 週期任務
+  label_create_periodic_task: 建立
+  label_save_periodic_task: 儲存
+  label_scheduled_tasks: 目前計劃的任務
+  label_no_project: 沒有提供專案標籤
+  label_no_periodic_tasks: 還沒有週期任務 — 建立一個開始吧。
+  label_remove_periodic_task: 刪除週期任務
+  label_interval: 間隔
+  label_set_start_date: 設定開始日期
+  label_set_start_date_info: '勾選後，每個建立的議題的開始日期將設定為其產生當天。'
+  label_due_date: '設定完成日期（之後）'
+  label_due_date_info: '每個建立的議題的完成日期，設定為其開始日期之後的這段時間。'
+  label_estimated_hours: 預估工時
+  label_estimated_hours_after: 小時
+  label_description: 概述
+  label_unit_day: 天
+  label_unit_business_day: 工作日
+  label_unit_week: 週
+  label_unit_month: 月
+  label_unit_year: 年
+  flash_task_created: 已建立週期任務
+  flash_task_saved: 週期任務已儲存
+  flash_task_run_now: '已建立議題 #%{id}'
+  flash_task_run_failed: '無法建立議題：%{error}'
+  button_run_now: 立即執行
+  text_run_now_confirm: 現在就從這個週期任務建立一個議題？排程不會改變。
+  label_project_missing_or_closed: 專案不存在或已關閉
+  subject_variables: |-
+    可選值：
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (一月 - 十二月)
+    **PREVIOUS_MONTHNAME** (一月 - 十二月)
+  label_variables_markdown_note: '注意：在概述中，由於 ** 是 Markdown 的粗體語法，它們在預覽中會顯示為粗體；建立議題時會替換為實際值。'
+  label_last_error: 最後錯誤
+  label_issue_custom_fields: 自訂欄位
+  label_priority: 優先權
+  label_watchers: 監看員
+  label_tags: 標籤
+  label_tags_info: "加入到每個建立的議題的標籤，以逗號分隔（RedmineUP Tags 外掛）。"
+  label_periodictask_history: 已產生的議題
+  label_periodictask_no_history: 此任務尚未產生任何議題
+  label_issue_created_by_periodictask: 由週期任務自動建立
+  label_periodic_task: 週期任務
+  label_periodictask_template: 範本
+  label_periodictask_plural: 週期任務
+  label_periodictask_journal_create: 已新增週期任務
+  label_periodictask_journal_update: 已更新週期任務
+  label_periodictask_journal_delete: 已刪除週期任務
+  label_periodictask_journal_run: 已執行週期任務
+  label_subtasks_info: "在每個建立的議題下建立的子議題。主旨支援與議題主旨相同的變數。"
+  label_relations_info: "從每個建立的議題到現有議題建立的關聯。"
+  error_subtask_subject_blank: "子議題主旨不能為空"
+  error_relation_type_invalid: "無效的關聯類型"
+  error_relation_issue_invalid: "關聯議題必須是議題編號"
