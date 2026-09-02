@@ -314,6 +314,30 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil task.last_error
   end
 
+  def test_checker_runs_as_task_author_and_restores_current_user
+    Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 2,
+      subject: 'Current user test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+
+    seen = nil
+    Periodictask.any_instance.expects(:fill_watchers).with do |_issue|
+      seen = User.current.id
+      true
+    end
+
+    User.current = nil
+    ScheduledTasksChecker.checktasks!
+
+    assert_equal 2, seen
+    assert User.current.anonymous?
+  end
+
   def test_checker_records_generated_issue_in_history
     task = Periodictask.create!(
       project: @project,
