@@ -191,7 +191,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     get :edit, params: { project_id: 'ecookbook', id: task.id }
 
     assert_select '#periodictask_next_run_date[value="2026-08-20T09:00"]'
-    assert_select 'span.periodictask-time-zone a[href=?]', '/my/account', text: '(GMT-03:00) Buenos Aires'
+    assert_select 'span.periodictask-time-zone a[href=?][target="_blank"]', '/my/account', text: '(GMT-03:00) Buenos Aires'
   end
 
   def test_next_run_date_round_trips_in_server_zone_without_user_time_zone
