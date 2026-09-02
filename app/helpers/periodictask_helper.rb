@@ -17,6 +17,25 @@ module PeriodictaskHelper
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end
 
+  # Zone in which Redmine's format_time renders times for the current user:
+  # the user's preference when set, otherwise the server's local zone.
+  def periodictask_time_zone
+    User.current.time_zone || ActiveSupport::TimeZone[Time.now.utc_offset]
+  end
+
+  # Value for the next_run_date datetime-local input, in the display zone.
+  def periodictask_next_run_date_input_value(time)
+    time&.in_time_zone(periodictask_time_zone)&.strftime('%Y-%m-%dT%H:%M')
+  end
+
+  # Zone name and UTC offset shown next to the next_run_date input.
+  def periodictask_time_zone_label
+    return User.current.time_zone.to_s if User.current.time_zone
+
+    now = Time.now
+    "(GMT#{now.formatted_offset}) #{now.zone}"
+  end
+
   # Formatted time for display, with the full ISO 8601 timestamp (including the
   # timezone offset) shown as a tooltip on hover.
   def periodictask_time_with_title(time)
