@@ -50,6 +50,8 @@ zh:
   label_issue_custom_fields: 自定义字段
   label_priority: 优先级
   label_watchers: 关注者
+  label_tags: 标签
+  label_tags_info: "添加到每个创建的问题的标签，以逗号分隔（RedmineUP Tags 插件）。"
   label_periodictask_history: 已生成的问题
   label_periodictask_no_history: 此任务尚未生成任何问题
   label_issue_created_by_periodictask: 由周期任务自动创建

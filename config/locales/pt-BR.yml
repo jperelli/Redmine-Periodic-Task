@@ -48,6 +48,8 @@ pt-BR:
   label_issue_custom_fields: Campos personalizados
   label_priority: Prioridade
   label_watchers: Observadores
+  label_tags: Tags
+  label_tags_info: "Tags separadas por vírgula adicionadas a cada tarefa criada (plugin RedmineUP Tags)."
   label_periodictask_history: Tarefas geradas
   label_periodictask_no_history: Nenhuma tarefa foi gerada por esta tarefa periódica ainda
   label_issue_created_by_periodictask: Criada automaticamente pela tarefa periódica

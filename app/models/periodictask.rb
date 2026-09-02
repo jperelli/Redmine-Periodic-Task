@@ -20,6 +20,26 @@ class Periodictask < ActiveRecord::Base
     super(Array(value).map(&:to_i).reject(&:zero?))
   end
 
+  # Tags are stored as a comma-separated string (the format the RedmineUP Tags
+  # plugin itself uses for `Issue#tag_list=`). Accepts a string or an array.
+  def tag_list=(value)
+    write_attribute :tag_list, self.class.normalize_tag_names(value).join(', ').presence
+  end
+
+  def tag_names
+    self.class.normalize_tag_names(tag_list)
+  end
+
+  def self.normalize_tag_names(value)
+    Array(value).flat_map { |v| v.to_s.split(',') }.map(&:strip).reject(&:blank?).uniq
+  end
+
+  # True when a tagging plugin (RedmineUP Tags or the older redmine_tags) has
+  # patched Issue with acts_as_taggable, whichever plugin id it registers under.
+  def self.tags_plugin_installed?
+    Issue.method_defined?(:tag_list=) && Issue.respond_to?(:available_tags)
+  end
+
   # Accept "h:mm" / "1h30" / decimal input like Redmine's issue estimated time.
   def estimated_hours=(hours)
     write_attribute :estimated_hours, (hours.is_a?(String) ? (hours.to_hours || hours) : hours)
@@ -87,6 +107,7 @@ class Periodictask < ActiveRecord::Base
     issue.estimated_hours = estimated_hours
 
     fill_checklists issue
+    fill_tags issue
     fill_custom_fields issue
 
     issue
@@ -180,6 +201,15 @@ class Periodictask < ActiveRecord::Base
         issue.checklists_attributes = checklists
       end
     end
+  end
+
+  # The tagging plugin persists tags from an after_save callback on Issue, so
+  # assigning the list before the issue is saved is all that is needed.
+  def fill_tags(issue)
+    return unless self.class.tags_plugin_installed?
+
+    names = tag_names
+    issue.tag_list = names if names.any?
   end
 
   def fill_custom_fields(issue)

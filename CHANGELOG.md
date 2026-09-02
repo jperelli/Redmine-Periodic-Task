@@ -6,6 +6,7 @@
 
 - Add configurable issue `status` **requires migration** (@jperelli)
 - Show the configured default `priority` in form and detail labels (@jperelli)
+- Add RedmineUP Tags plugin support: configured tags are added to generated issues **requires migration** (#138)
 
 ### Fixes
 

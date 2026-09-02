@@ -123,6 +123,12 @@
       <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %>
     </p>
   <% end %>
+  <% if Periodictask.tags_plugin_installed? %>
+    <p>
+      <%= label(:periodictask, :tag_list) do %><span class="field-description" title="<%= l(:label_tags_info) %>"><%= l(:label_tags) %></span><% end %>
+      <%= f.text_field :tag_list, :style => 'width: 99%', :autocomplete => 'off' %>
+    </p>
+  <% end %>
   <% if @periodictask.last_error.present? %>
     <p>
       <%= label_tag(nil, l(:label_last_error)) %>
@@ -158,6 +164,33 @@
     }
     $('#periodictask_assigned_to_id').change(toggleAssignToMe);
     toggleAssignToMe();
+
+    // Comma-separated tags with autocomplete on the term being typed.
+    var $tags = $('#periodictask_tag_list');
+    if ($tags.length && $.fn.autocomplete) {
+      function splitTags(val) { return val.split(/,\s*/); }
+      function lastTerm(val) { return splitTags(val).pop(); }
+      $tags.on('keydown', function(event) {
+        if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete('instance').menu.active) {
+          event.preventDefault();
+        }
+      }).autocomplete({
+        minLength: 1,
+        source: function(request, response) {
+          $.getJSON('<%= escape_javascript(periodictask_tags_path(@project)) %>', { term: lastTerm(request.term) }, response);
+        },
+        search: function() { return lastTerm(this.value).length >= 1; },
+        focus: function() { return false; },
+        select: function(event, ui) {
+          var terms = splitTags(this.value);
+          terms.pop();
+          terms.push(ui.item.value);
+          terms.push('');
+          this.value = terms.join(', ');
+          return false;
+        }
+      });
+    }
 
     // Redmine's watcher picker (modal + append.js) emits inputs named
     // 'issue[watcher_user_ids][]'; rename them so they post into this form.

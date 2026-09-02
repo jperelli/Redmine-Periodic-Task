@@ -48,6 +48,8 @@ hr:
   label_issue_custom_fields: Prilagođena polja
   label_priority: Prioritet
   label_watchers: Promatrači
+  label_tags: Oznake
+  label_tags_info: "Oznake odvojene zarezom koje se dodaju svakom stvorenom zadatku (RedmineUP Tags dodatak)."
   label_periodictask_history: Stvoreni zadaci
   label_periodictask_no_history: Ovaj zadatak još nije stvorio nijedan zadatak
   label_issue_created_by_periodictask: Automatski stvoreno periodičnim zadatkom

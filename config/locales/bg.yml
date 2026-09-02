@@ -48,6 +48,8 @@ bg:
   label_issue_custom_fields: Потребителски полета на задачата
   label_priority: Приоритет
   label_watchers: Наблюдатели
+  label_tags: Етикети
+  label_tags_info: "Етикети, разделени със запетая, добавяни към всяка създадена задача (плъгин RedmineUP Tags)."
   label_periodictask_history: Създадени задачи
   label_periodictask_no_history: Тази задача все още не е създала задачи
   label_issue_created_by_periodictask: Автоматично създадена от периодична задача

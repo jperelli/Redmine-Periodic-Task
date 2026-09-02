@@ -97,6 +97,12 @@
     end %>
   </div>
 
+  <% if Periodictask.tags_plugin_installed? && @periodictask.tag_names.any? %>
+    <hr />
+    <p><strong><%= l(:label_tags) %></strong></p>
+    <p class="periodictask-tags"><%= @periodictask.tag_names.join(', ') %></p>
+  <% end %>
+
   <% if @periodictask.last_error.present? %>
     <hr />
     <p>

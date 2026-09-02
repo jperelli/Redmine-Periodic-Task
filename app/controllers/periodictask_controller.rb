@@ -7,8 +7,8 @@ class PeriodictaskController < ApplicationController
 
   before_action :find_project
   before_action :authorize
-  before_action :load_users, except: %i[destroy run_now]
-  before_action :load_categories, except: %i[destroy run_now]
+  before_action :load_users, except: %i[destroy run_now tags]
+  before_action :load_categories, except: %i[destroy run_now tags]
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -159,6 +159,17 @@ class PeriodictaskController < ApplicationController
     redirect_back fallback_location: { controller: 'periodictask', action: 'index', project_id: params[:project_id] }
   end
 
+  # Autocomplete source for the tags field: names of tags already used on
+  # issues visible to the current user, filtered by the typed term.
+  def tags
+    names = if Periodictask.tags_plugin_installed?
+              Issue.available_tags(project: @project, name_like: params[:term].to_s, limit: 30).map(&:name)
+            else
+              []
+            end
+    render json: names
+  end
+
   def customfields
     @periodictask = if params[:periodictask][:id].present?
                       Periodictask.accessible.find(params[:periodictask][:id])
@@ -193,7 +204,7 @@ class PeriodictaskController < ApplicationController
       :project_id, :tracker_id, :assigned_to_id, :author_id, :subject,
       :interval_number, :interval_units, :next_run_date, :set_start_date,
       :due_date_number, :due_date_units, :description, :issue_category_id,
-      :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id,
+      :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :tag_list,
       { custom_field_values: {} },
       { watcher_user_ids: [] }
     )

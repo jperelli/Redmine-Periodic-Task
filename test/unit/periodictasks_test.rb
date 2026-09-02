@@ -770,4 +770,50 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert task.next_run_date > Time.current
     assert_nil task.last_error
   end
+
+  def test_tag_list_is_normalized_from_string_or_array
+    task = Periodictask.new(tag_list: ' ops, weekly ,,ops ')
+    assert_equal 'ops, weekly', task.tag_list
+    assert_equal %w[ops weekly], task.tag_names
+
+    task.tag_list = ['a', ' b ', '', nil]
+    assert_equal 'a, b', task.tag_list
+
+    task.tag_list = ''
+    assert_nil task.tag_list
+    assert_equal [], task.tag_names
+  end
+
+  def test_generate_issue_ignores_tags_without_tagging_plugin
+    skip 'a tagging plugin is installed' if Periodictask.tags_plugin_installed?
+
+    task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Tagged', tag_list: 'ops')
+    issue = task.generate_issue
+    assert_not issue.respond_to?(:tag_list)
+  end
+
+  def test_generate_issue_assigns_tags_when_tagging_plugin_present
+    skip 'a tagging plugin is installed' if Periodictask.tags_plugin_installed?
+
+    with_fake_tagging_plugin do
+      task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Tagged')
+      task.tag_list = 'ops, weekly'
+      assert_equal %w[ops weekly], task.generate_issue.tag_list
+
+      untagged = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Untagged')
+      assert_nil untagged.generate_issue.tag_list
+    end
+  end
+
+  private
+
+  # Mimics the API the RedmineUP Tags plugin adds to Issue (acts_as_taggable).
+  def with_fake_tagging_plugin
+    Issue.class_eval { attr_accessor :tag_list }
+    Issue.define_singleton_method(:available_tags) { |*| [] }
+    yield
+  ensure
+    Issue.send(:remove_method, :tag_list, :tag_list=)
+    Issue.singleton_class.send(:remove_method, :available_tags)
+  end
 end
