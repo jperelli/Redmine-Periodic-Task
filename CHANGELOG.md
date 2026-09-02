@@ -7,14 +7,17 @@
 - Add configurable issue `status` **requires migration** (@jperelli)
 - Show the configured default `priority` in form and detail labels (@jperelli)
 - Add RedmineUP Tags plugin support: configured tags are added to generated issues **requires migration** (#138)
+- Support Redmine 7.0 (Rails 8.1 / Ruby 4.0) (@jperelli)
 
 ### Fixes
 
 - Generate scheduled issues as the task author (`User.current`) so permission-based validations from other plugins, e.g. Luxury Buttons tracker roles, pass under cron/rake (#67)
-
-### Fixes
-
 - Use the user's time zone for `next run date` and show it next to the input (@jperelli, #137)
+
+### Chore
+
+- Add Redmine 7.0 to the CI test matrix and bump the dev docker image to 7.0 (@jperelli)
+- Replace the removed `bundle install --with` flag with `BUNDLE_WITH` in the Dockerfiles, required by Bundler 4 shipped with Redmine 7.0 (@jperelli)
 
 ## v6.2.0 - 2026-06-30
 
