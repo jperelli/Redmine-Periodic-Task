@@ -26,6 +26,13 @@ Login: admin / admin at http://localhost:3000/login (Redmine may force a passwor
   change is immediate.
 - The project tab uses `label_periodic_tasks`; the module checkbox and permission use
   `project_module_periodictask` / `permission_periodictask`. All three must exist in every locale.
+- `init.rb` and `config/locales/*.yml` are loaded at boot only. After switching branches or editing them,
+  run `docker compose restart redmine` (then wait for HTTP 200) or the old caption/keys keep rendering.
+- Module/permission names are checked at Project > Settings (Modules fieldset) and at the permissions report
+  http://localhost:3000/roles/permissions — sections are sorted alphabetically by translated name, so the
+  plugin section is between "News/Noticias" and "Repository/Repositorio", not at the bottom (press End, scroll up).
+- Chrome's omnibox autocompletes `localhost:3000/projects/<id>` to a previously visited deeper URL; press
+  Delete before Enter to drop the suggestion.
 - Tracker/status/priority names (Bug, New, Normal…) are DB data, not i18n — they stay English regardless of locale.
 - To trigger `error_subtask_subject_blank`, the subtask row must have some other field set (e.g. tracker);
   a fully blank subtask row is silently dropped by `Periodictask#subtasks=`.
