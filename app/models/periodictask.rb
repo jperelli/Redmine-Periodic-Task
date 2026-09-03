@@ -84,6 +84,18 @@ class Periodictask < ActiveRecord::Base
     Issue.method_defined?(:tag_list=) && Issue.respond_to?(:available_tags)
   end
 
+  # Tracker the generated issues will use: the configured one or the project's first.
+  def effective_tracker
+    tracker || project&.trackers&.first
+  end
+
+  # % Done is only usable when Redmine takes it from the issue field (not from
+  # the status) and the tracker has it enabled in its core fields.
+  def done_ratio_enabled?
+    Issue.use_field_for_done_ratio? && effective_tracker.present? &&
+      effective_tracker.core_fields.include?('done_ratio')
+  end
+
   # Accept "h:mm" / "1h30" / decimal input like Redmine's issue estimated time.
   def estimated_hours=(hours)
     write_attribute :estimated_hours, (hours.is_a?(String) ? (hours.to_hours || hours) : hours)
@@ -132,13 +144,13 @@ class Periodictask < ActiveRecord::Base
     desc = parse_macro(description.try(:dup), now)
 
     issue = Issue.new(project_id: project_id,
-                      tracker_id: tracker_id || project.trackers.first.try(:id),
+                      tracker_id: effective_tracker.try(:id),
                       category_id: issue_category_id, parent_id: parent_id,
                       assigned_to_id: assigned_to_id, author_id: author_id,
                       subject: subj, description: desc)
     issue.priority_id = priority_id if priority_id.present?
     issue.status_id = status_id if status_id.present?
-    issue.done_ratio = done_ratio if done_ratio.present? && Issue.use_field_for_done_ratio?
+    issue.done_ratio = done_ratio if done_ratio.present? && done_ratio_enabled?
     issue.start_date ||= now.to_date if set_start_date?
     if due_date_number
       due_date_units ||= 'day'

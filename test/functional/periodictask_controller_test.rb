@@ -164,6 +164,20 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.progress.attribute p.percent', text: '70%'
   end
 
+  def test_done_ratio_hidden_when_tracker_disables_it
+    tracker = Tracker.find(1)
+    tracker.core_fields = tracker.core_fields - ['done_ratio']
+    tracker.save!
+    task = create_test_periodictask(done_ratio: 70)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '#periodictask_done_ratio_field[style*="display: none"]'
+    assert_select '#periodictask_tracker_id option[value="1"][data-done-ratio-enabled="false"]'
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.progress.attribute', 0
+  end
+
   def test_edit_with_nil_watcher_user_ids
     task = create_test_periodictask
     task.update_column(:watcher_user_ids, nil)
