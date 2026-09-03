@@ -444,6 +444,20 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.periodictask-recurrence input[type=checkbox][checked]', count: 0
   end
 
+  def test_form_and_last_error_link_to_recurrence_documentation
+    task = create_test_periodictask(subject: 'Failed', last_error: 'Project is missing or closed')
+    doc_url = RedminePeriodictask::RECURRENCE_DOC_URL
+
+    get :new, params: { project_id: 'ecookbook' }
+    assert_select 'a.icon-help[href=?][title=?]', doc_url, 'How schedules are calculated'
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'a.icon-help[href=?][title=?]', doc_url, 'Why a task may not have run as expected'
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'a.icon-help[href=?]', doc_url, count: 2
+  end
+
   def test_new_orders_weekday_checkboxes_by_start_of_week
     with_settings start_of_week: '1' do
       get :new, params: { project_id: 'ecookbook' }

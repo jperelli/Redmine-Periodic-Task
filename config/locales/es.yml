@@ -105,3 +105,5 @@ es:
   label_recurrence_every_year:
     one: "cada año"
     other: "cada %{count} años"
+  label_recurrence_help: "Cómo se calculan las programaciones"
+  label_last_error_help: "Por qué una tarea puede no haberse ejecutado como se esperaba"

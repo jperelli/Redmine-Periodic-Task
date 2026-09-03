@@ -105,3 +105,5 @@ en:
   label_recurrence_every_year:
     one: "each year"
     other: "every %{count} years"
+  label_recurrence_help: "How schedules are calculated"
+  label_last_error_help: "Why a task may not have run as expected"

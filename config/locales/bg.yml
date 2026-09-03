@@ -105,3 +105,5 @@ bg:
   label_project_missing_or_closed: "Проектът липсва или е затворен"
   label_periodictask_plugin_name: "Приставка Periodic Task"
   label_periodictask_credit_by: "от"
+  label_recurrence_help: "Как се изчисляват графиците"
+  label_last_error_help: "Защо дадена задача може да не се е изпълнила според очакванията"

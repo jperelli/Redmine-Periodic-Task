@@ -110,3 +110,5 @@ ru:
   label_project_missing_or_closed: "Проект отсутствует или закрыт"
   label_periodictask_plugin_name: "Плагин Periodic Task"
   label_periodictask_credit_by: "автор"
+  label_recurrence_help: "Как рассчитывается расписание"
+  label_last_error_help: "Почему задача могла не выполниться, как ожидалось"

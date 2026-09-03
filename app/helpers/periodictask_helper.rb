@@ -46,6 +46,12 @@ module PeriodictaskHelper
     l(key, count: number.to_i)
   end
 
+  # Help icon linking to the recurrence design document on GitHub.
+  def periodictask_recurrence_help_link(title = l(:label_recurrence_help))
+    link_to periodictask_sprite_icon('help', title, icon_only: true), RedminePeriodictask::RECURRENCE_DOC_URL,
+            class: 'icon-only icon-help', title: title, target: '_blank', rel: 'noopener'
+  end
+
   def periodictask_default_label(value)
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end

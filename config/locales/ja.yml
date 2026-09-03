@@ -105,3 +105,5 @@ ja:
   label_project_missing_or_closed: "プロジェクトが存在しないか終了しています"
   label_periodictask_plugin_name: "Periodic Task プラグイン"
   label_periodictask_credit_by: "作者"
+  label_recurrence_help: "スケジュールの計算方法"
+  label_last_error_help: "タスクが期待どおりに実行されなかった理由"

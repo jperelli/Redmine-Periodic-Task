@@ -105,3 +105,5 @@ pt-BR:
   label_project_missing_or_closed: "O projeto não existe ou está fechado"
   label_periodictask_plugin_name: "Plugin Periodic Task"
   label_periodictask_credit_by: "por"
+  label_recurrence_help: "Como os agendamentos são calculados"
+  label_last_error_help: "Por que uma tarefa pode não ter sido executada como esperado"

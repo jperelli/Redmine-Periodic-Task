@@ -107,3 +107,5 @@ zh-TW:
     other: "每 %{count} 年"
   project_module_periodictask: "週期任務"
   permission_periodictask: "管理週期任務"
+  label_recurrence_help: "排程是如何計算的"
+  label_last_error_help: "任務為何可能沒有如預期執行"
