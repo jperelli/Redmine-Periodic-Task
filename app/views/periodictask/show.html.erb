@@ -94,6 +94,11 @@
       rows.right l(:label_estimated_hours),
                  (@periodictask.estimated_hours.present? ? "#{@periodictask.estimated_hours} #{l(:label_estimated_hours_after)}" : '-'),
                  class: 'estimated-hours'
+      if @periodictask.done_ratio_enabled?
+        rows.right l(:field_done_ratio),
+                   progress_bar(@periodictask.done_ratio.to_i, legend: "#{@periodictask.done_ratio.to_i}%"),
+                   class: 'progress'
+      end
     end %>
   </div>
 

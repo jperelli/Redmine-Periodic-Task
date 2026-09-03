@@ -106,6 +106,66 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal 5, task.generate_issue.status_id
   end
 
+  def test_generate_issue_with_configured_done_ratio
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Half done task',
+      done_ratio: 50,
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    with_settings issue_done_ratio: 'issue_field' do
+      assert_equal 50, task.generate_issue.done_ratio
+    end
+  end
+
+  def test_generate_issue_ignores_done_ratio_when_computed_from_status
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Status driven task',
+      done_ratio: 50,
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    with_settings issue_done_ratio: 'issue_status' do
+      assert_equal 0, task.generate_issue.done_ratio
+    end
+  end
+
+  def test_generate_issue_ignores_done_ratio_when_tracker_disables_it
+    tracker = Tracker.find(1)
+    tracker.core_fields = tracker.core_fields - ['done_ratio']
+    tracker.save!
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Tracker without progress',
+      done_ratio: 50,
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    with_settings issue_done_ratio: 'issue_field' do
+      assert_not task.done_ratio_enabled?
+      assert_equal 0, task.generate_issue.done_ratio
+    end
+  end
+
+  def test_done_ratio_must_be_between_0_and_100
+    task = Periodictask.new(project: @project, subject: 'x', interval_number: 1, interval_units: 'month')
+    task.done_ratio = 150
+    assert_not task.valid?
+    task.done_ratio = nil
+    assert task.valid?
+  end
+
   def test_generate_issue_with_start_date
     task = Periodictask.create!(
       project: @project,

@@ -97,6 +97,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
           description: 'A test description',
           tracker_id: 1,
           status_id: 5,
+          done_ratio: 40,
           assigned_to_id: 2,
           interval_number: 1,
           interval_units: 'month',
@@ -112,6 +113,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 1, task.interval_number
     assert_equal 'month', task.interval_units
     assert_equal 5, task.status_id
+    assert_equal 40, task.done_ratio
     assert_equal @project.id, task.project_id
   end
 
@@ -142,6 +144,38 @@ class PeriodictaskControllerTest < ActionController::TestCase
     get :edit, params: { project_id: 'ecookbook', id: task.id }
 
     assert_select '#periodictask_status_id option[selected="selected"][value="5"]'
+  end
+
+  def test_edit_selects_configured_done_ratio
+    task = create_test_periodictask(done_ratio: 70)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '#periodictask_done_ratio option[selected="selected"][value="70"]'
+  end
+
+  def test_show_renders_done_ratio_progress_bar
+    task = create_test_periodictask(done_ratio: 70)
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_response :success
+    assert_select '.progress.attribute table.progress td.closed[style*="width: 70%"]'
+    assert_select '.progress.attribute p.percent', text: '70%'
+  end
+
+  def test_done_ratio_hidden_when_tracker_disables_it
+    tracker = Tracker.find(1)
+    tracker.core_fields = tracker.core_fields - ['done_ratio']
+    tracker.save!
+    task = create_test_periodictask(done_ratio: 70)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '#periodictask_done_ratio_field[style*="display: none"]'
+    assert_select '#periodictask_tracker_id option[value="1"][data-done-ratio-enabled="false"]'
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.progress.attribute', 0
   end
 
   def test_edit_with_nil_watcher_user_ids
