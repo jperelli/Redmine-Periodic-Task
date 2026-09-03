@@ -33,6 +33,20 @@ en:
   label_unit_week: week(s)
   label_unit_month: month(s)
   label_unit_year: year(s)
+  label_next_run_date_info: "First run and anchor of the schedule (day of month, time of day). Leave blank to start at the next date matching the recurrence."
+  label_recurrence_repeat_on: Repeat on
+  label_recurrence_monthly_on: Monthly on
+  label_recurrence_day_of_month: The same day of the month as the next run date
+  label_recurrence_weekday: Selected weekdays
+  label_recurrence_occurrence: Occurrence
+  label_recurrence_ordinal_1: 1st
+  label_recurrence_ordinal_2: 2nd
+  label_recurrence_ordinal_3: 3rd
+  label_recurrence_ordinal_4: 4th
+  label_recurrence_ordinal_5: 5th (or last)
+  label_recurrence_on_weekdays: "on %{weekdays}"
+  label_recurrence_on_month_weekdays: "on the %{ordinals} %{weekdays}"
+  label_recurrence_on_day_of_month: "on day %{day}"
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
   flash_task_run_now: 'Issue #%{id} created'
@@ -74,3 +88,20 @@ en:
   error_subtask_subject_blank: "Subtask subject cannot be blank"
   error_relation_type_invalid: "Invalid relation type"
   error_relation_issue_invalid: "Related issue must be an issue number"
+  error_recurrence_weekdays_blank: "Select at least one weekday"
+  error_recurrence_month_weeks_blank: "Select at least one occurrence (1st to 5th)"
+  label_recurrence_every_day:
+    one: "each day"
+    other: "every %{count} days"
+  label_recurrence_every_business_day:
+    one: "each business day"
+    other: "every %{count} business days"
+  label_recurrence_every_week:
+    one: "each week"
+    other: "every %{count} weeks"
+  label_recurrence_every_month:
+    one: "each month"
+    other: "every %{count} months"
+  label_recurrence_every_year:
+    one: "each year"
+    other: "every %{count} years"

@@ -24,7 +24,7 @@
   <div class="attributes" style="margin-top: 0;">
     <%= issue_fields_rows do |rows|
       rows.left l(:label_interval),
-                "#{@periodictask.interval_number} #{periodictask_unit_label(@periodictask.interval_units)}",
+                periodictask_schedule_description(@periodictask),
                 class: 'interval'
       rows.right l(:label_next_run_date),
                  periodictask_time_with_title(@periodictask.next_run_date),

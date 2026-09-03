@@ -69,18 +69,20 @@ class PeriodictaskController < ApplicationController
   def create
     @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
     params[:periodictask][:project_id] = @project[:id]
-    # log values
-    if params[:periodictask][:next_run_date].blank?
-      params[:periodictask][:next_run_date] = @periodictask.get_next_run_date(Time.current)
-    end
-
     assign_periodictask_params
+    # A blank first run means "the next time the schedule matches", which
+    # depends on the recurrence options assigned just above.
+    blank_first_run = @periodictask.next_run_date.blank?
+    if blank_first_run && @periodictask.interval_number.to_i.positive?
+      @periodictask.next_run_date = @periodictask.get_next_run_date(Time.current)
+    end
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('create')
       flash[:notice] = l(:flash_task_created)
       redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
+      @periodictask.next_run_date = nil if blank_first_run
       render action: 'new'
     end
   end
@@ -210,6 +212,8 @@ class PeriodictaskController < ApplicationController
     # must still clear the stored ones.
     attrs[:subtasks] ||= []
     attrs[:relations] ||= []
+    attrs[:weekdays] ||= []
+    attrs[:month_weeks] ||= []
     @periodictask.attributes = attrs
   end
 
@@ -219,6 +223,9 @@ class PeriodictaskController < ApplicationController
       :interval_number, :interval_units, :next_run_date, :set_start_date,
       :due_date_number, :due_date_units, :description, :issue_category_id,
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :done_ratio, :tag_list,
+      :monthly_mode,
+      { weekdays: [] },
+      { month_weeks: [] },
       { custom_field_values: {} },
       { watcher_user_ids: [] },
       { subtasks: Periodictask::SUBTASK_KEYS },

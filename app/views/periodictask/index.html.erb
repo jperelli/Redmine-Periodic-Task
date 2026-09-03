@@ -32,7 +32,7 @@
       <% @tasks.each do |a| %>
         <tr class="<%= cycle('odd', 'even') %>">
           <td><%= link_to a.id, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %></td>
-          <td><%= "#{a.interval_number} #{periodictask_unit_label(a.interval_units)}" %></td>
+          <td class="interval"><%= periodictask_schedule_description(a) %></td>
           <td><%= periodictask_time_with_title(a.next_run_date) %></td>
           <td><%= a.tracker&.name %></td>
           <td><%= @priorities[a.priority_id]&.name %></td>
