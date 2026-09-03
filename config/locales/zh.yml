@@ -13,6 +13,8 @@ zh:
   label_edit_periodic_task: 编辑周期任务
   label_new_periodic_task: 新建周期任务
   label_periodic_tasks: 周期任务
+  project_module_periodictask: 周期任务
+  permission_periodictask: 管理周期任务
   label_create_periodic_task: 新建
   label_save_periodic_task: 保存
   label_scheduled_tasks: 当前计划的任务

@@ -9,6 +9,10 @@
 - Add spanish translation ([#136](https://github.com/jperelli/Redmine-Periodic-Task/pull/136)) (@lupa18)
 - Add Traditional Chinese (`zh-TW`) translation ([#135](https://github.com/jperelli/Redmine-Periodic-Task/pull/135)) (@chris85618)
 
+### Fixes
+
+- Localize the project menu tab, module name and permission name instead of hardcoding `Periodic Task` (@jperelli)
+
 ### Chore
 
 - Add Redmine 7.0 to the CI test matrix and bump the dev docker image to 7.0 (@jperelli)

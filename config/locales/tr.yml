@@ -11,6 +11,8 @@ tr:
   label_edit_periodic_task: Periyodik işi düzenle
   label_new_periodic_task: Yeni periyodik iş
   label_periodic_tasks: Periyodik İşler
+  project_module_periodictask: Periyodik işler
+  permission_periodictask: Periyodik işleri yönet
   label_create_periodic_task: Yeni
   label_save_periodic_task: Kaydet
   label_scheduled_tasks: Periyodik iş listesi

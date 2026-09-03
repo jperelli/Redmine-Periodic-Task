@@ -11,6 +11,8 @@ uk:
   label_edit_periodic_task: Редагувати періодичне завдання
   label_new_periodic_task: Нове періодичне завдання
   label_periodic_tasks: Періодичні завдання
+  project_module_periodictask: Періодичні завдання
+  permission_periodictask: Керування періодичними завданнями
   label_create_periodic_task: Створити
   label_save_periodic_task: Зберегти
   label_scheduled_tasks: Заплановані завдання

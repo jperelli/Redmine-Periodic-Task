@@ -11,6 +11,8 @@ bg:
   label_edit_periodic_task: Редактиране на периодична задача
   label_new_periodic_task: Нова периодична задача
   label_periodic_tasks: Периодични задачи
+  project_module_periodictask: Периодични задачи
+  permission_periodictask: Управление на периодични задачи
   label_create_periodic_task: Създаване
   label_save_periodic_task: Запис
   label_scheduled_tasks: Планирани задачи
