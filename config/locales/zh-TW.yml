@@ -67,6 +67,8 @@ zh-TW:
   label_periodictask_journal_update: 已更新週期任務
   label_periodictask_journal_delete: 已刪除週期任務
   label_periodictask_journal_run: 已執行週期任務
+  label_periodictask_plugin_name: 週期任務外掛
+  label_periodictask_credit_by: 作者：
   label_subtasks_info: "在每個建立的議題下建立的子議題。主旨支援與議題主旨相同的變數。"
   label_relations_info: "從每個建立的議題到現有議題建立的關聯。"
   error_subtask_subject_blank: "子議題主旨不能為空"
