@@ -1,143 +1,149 @@
 # Recurrence design
 
-How a periodic task decides *when* the next issue is created, and why it works
-that way. The implementation lives in `Periodictask#get_next_run_date`
-(`app/models/periodictask.rb`); the scheduler in
-`lib/scheduled_tasks_checker.rb` only calls that method and stores the result.
+This document explains how a periodic task decides when the next issue is
+created. The code is in `Periodictask#get_next_run_date`
+(`app/models/periodictask.rb`). The scheduler in
+`lib/scheduled_tasks_checker.rb` calls that method and stores the result.
 
-## Concepts
+## Fields
 
-| Term | Meaning |
+| Field | Meaning |
 |---|---|
-| `interval_number` / `interval_units` | The `Repeat every [N] [unit]` cadence. Units: `day`, `business_day`, `week`, `month`, `year`. |
-| `next_run_date` | The single next occurrence stored on the task. It is also the **anchor**: it fixes the time of day, the time zone and the origin of the every-N cadence. |
-| `weekdays` | JSON array of weekday numbers (`0` = Sunday .. `6` = Saturday). Used by weekly tasks and by monthly tasks in weekday mode. |
-| `monthly_mode` | `day_of_month` (default) or `weekday`. Only meaningful for `month`. |
-| `month_weeks` | JSON array of ordinals `1..5`: the *n*-th occurrence of each selected weekday in the month. |
+| `interval_number`, `interval_units` | The `Repeat every [N] [unit]` setting. Units are `day`, `business_day`, `week`, `month` and `year`. |
+| `next_run_date` | The next time the task runs. It is also the anchor: it sets the time of day, the time zone and the starting point for the every-N count. |
+| `weekdays` | JSON array of weekday numbers, `0` is Sunday and `6` is Saturday. Used by weekly tasks and by monthly tasks in weekday mode. |
+| `monthly_mode` | `day_of_month` (default) or `weekday`. Only used when the unit is `month`. |
+| `month_weeks` | JSON array of ordinals from `1` to `5`. `3` means the third occurrence of each selected weekday in the month. |
 
-The form only shows the controls that apply to the selected unit:
+The form shows extra controls only for some units:
 
 | Unit | Extra controls |
 |---|---|
 | day, business_day, year | none |
-| week | seven weekday checkboxes (multiple allowed) |
-| month | `day of month` / `weekday` radio; in weekday mode, ordinal checkboxes (1st..5th) and weekday checkboxes |
+| week | seven weekday checkboxes, more than one can be checked |
+| month | a `day of month` / `weekday` radio; in weekday mode, ordinal checkboxes (1st to 5th) and weekday checkboxes |
 
-Options that do not apply to the selected unit/mode are cleared on save
-(`clear_irrelevant_recurrence_options`), so a task switched from *week* to
-*day* does not keep stale weekdays around.
+When a task is saved, options that do not apply to its unit and mode are
+cleared (`clear_irrelevant_recurrence_options`). A task that is changed from
+week to day does not keep its old weekdays.
 
-## Which rule applies
+## Which rule is used
 
 ```
 get_next_run_date(now):
   anchor = next_run_date || now
-  business_day                                  -> step anchor N business days at a time until > now
-  week  and weekdays present                    -> next_weekday_occurrence
-  month and monthly_mode == weekday
-        and weekdays and month_weeks present    -> next_monthly_weekday_occurrence
-  otherwise                                     -> anchor + k * N units  (smallest k with result > now)
+  business_day                                  -> add N business days to the anchor until the result is after now
+  week, with weekdays selected                  -> next_weekday_occurrence
+  month, monthly_mode == weekday,
+        with weekdays and month_weeks selected  -> next_monthly_weekday_occurrence
+  anything else                                 -> anchor + k * N units, smallest k that is after now
 ```
 
-The last branch is the pre-existing behaviour and is what every task created
-before this feature uses (their `weekdays`/`month_weeks` are empty), so
-existing records keep running exactly as before. It also implements monthly
-*day-of-month* mode: the day is simply the anchor's day, as in Google Calendar
-("Monthly on day 15" is derived from the start date, not a separate field).
+The last rule is the old behaviour. Every task created before this feature
+has empty `weekdays` and `month_weeks`, so it keeps using this rule and runs
+as before. The same rule handles the monthly day-of-month mode: the day is
+the day of the anchor. Google Calendar works the same way, "Monthly on day
+15" comes from the start date and there is no separate field for it.
 
-## Weekly recurrence on selected weekdays
+## Weekly, on selected weekdays
 
-"Every N weeks on Monday and Wednesday":
+Example: every 2 weeks on Monday and Wednesday.
 
-1. Take the anchor's week (start of week follows Redmine's *Start calendars
-   on* setting, falling back to the locale default).
-2. Eligible weeks are that week plus every N-th week after it.
-3. In each eligible week, candidates are the selected weekdays at the
-   anchor's time of day. The first candidate that is due is the answer.
+1. Start from the week of the anchor. The first day of the week follows the
+   Redmine setting "Start calendars on", or the locale default when that is
+   not set.
+2. The task can run in that week and in every N-th week after it.
+3. In each of those weeks, the candidates are the selected weekdays at the
+   time of day of the anchor. The first candidate after now is the result.
 
-A blank first run date therefore means "the next selected weekday from now"
-(possibly today), and an explicit one is used literally, even if it is not on
-a selected weekday, with recurrence continuing on the selected weekdays from
-that week onward.
+With a blank first run date, the first run is the next selected weekday,
+which can be today. With an explicit first run date, that date is used as
+is, even when it is not on a selected weekday. Later runs follow the
+selected weekdays, counting weeks from the week of that date.
 
-## Monthly recurrence on the n-th weekday
+## Monthly, on the n-th weekday
 
-"Every N months on the 1st and 3rd Monday and Wednesday":
+Example: every month on the 1st and 3rd Monday and Wednesday.
 
-1. Eligible months are the anchor's month plus every N-th month after it.
-2. In each eligible month, candidates are the cartesian product
-   `month_weeks × weekdays`, each resolved with `nth_weekday_of_month`:
-   `1st, 3rd × Mon, Wed` gives 1st Mon, 1st Wed, 3rd Mon, 3rd Wed.
-3. Candidates are de-duplicated and sorted; the earliest one at the
-   anchor's time of day that is due is the answer.
+1. The task can run in the month of the anchor and in every N-th month
+   after it.
+2. In each of those months, every ordinal is combined with every weekday.
+   `1st, 3rd` and `Mon, Wed` give the 1st Monday, 1st Wednesday, 3rd Monday
+   and 3rd Wednesday. Each pair is turned into a date by
+   `nth_weekday_of_month`.
+3. Duplicate dates are removed, the dates are sorted, and the first one
+   after now, at the time of day of the anchor, is the result.
 
-Decisions:
+Details:
 
-- **"n-th weekday" means the n-th occurrence of that weekday**, not the
-  weekday in the n-th calendar row of the month. The 1st Monday of a month
-  whose 1st is a Wednesday is on the 6th.
-- **A missing 5th occurrence falls back to the last one.** Months have four
-  or five of each weekday; selecting *5th* means "the last one" in months
-  with only four. This is how `nth_weekday_of_month` works: it computes the
-  date and steps back a week while it overflows into the next month.
-- **Collisions are removed.** With *4th* and *5th* both selected, a month
-  with only four Mondays would otherwise yield the same date twice.
-- Monthly weekday mode requires at least one ordinal and one weekday
-  (`validate_recurrence`); the other modes have no extra validation.
+- "3rd Monday" means the third Monday of the month, not the Monday of the
+  third week. When the 1st of the month is a Wednesday, the 1st Monday is
+  on the 6th.
+- Some months have five of a weekday and some have four. When `5th` is
+  selected and the month has only four, the fourth one is used, so `5th`
+  behaves as "last". `nth_weekday_of_month` computes the date and moves it
+  back a week while it falls into the next month.
+- Duplicates are removed because `4th` and `5th` can point to the same date
+  in a month with four of that weekday.
+- In weekday mode at least one ordinal and one weekday must be selected
+  (`validate_recurrence`). The other modes need no extra validation.
 
-## Anchor, time of day and time zone
+## Time of day and time zone
 
-- All candidates are built with `anchor.change(year:, month:, day:)`, i.e.
-  the anchor's wall-clock time in the anchor's zone. A task set to 10:00
-  keeps running at 10:00 across DST changes and no matter how late the
-  scheduler runs.
-- Occurrences are derived from the anchor and never from `now`, so a
-  scheduler that runs at 10:04 does not drift the task to 10:04.
-- `due?` is strict (`> now`) when a `next_run_date` exists, because that
-  date has just run, and inclusive (`>= now`) when it is blank, so a blank
-  first run created on a matching day at a matching time can run "now".
+Every candidate date is built with `anchor.change(year:, month:, day:)`.
+This keeps the wall-clock time and the time zone of the anchor. A task set
+for 10:00 runs at 10:00 after a DST change, and it still runs at 10:00 when
+the scheduler is late.
+
+Candidates are computed from the anchor, not from now. A scheduler that runs
+at 10:04 does not move the task to 10:04.
+
+`due?` compares a candidate with now. When the task has a `next_run_date`,
+that date has already run, so the candidate must be later than now. When the
+first run date is blank, the candidate may be equal to now, so a task created
+on a matching day and time can run right away.
 
 ## First run date
 
-- **Explicit**: it is the literal first run and the anchor. It does not have
-  to satisfy the recurrence rule; later occurrences do.
-- **Blank**: the current time is the anchor and the first run is the next
-  occurrence that matches the rule. The controller assigns the submitted
-  recurrence options *before* computing this, and blanks it again if
-  validation fails so the user is not shown a computed date they never
-  entered.
+With an explicit first run date, that date is the first run and the anchor.
+It does not need to match the recurrence rule. Later runs do.
 
-## Catch-up after downtime
+With a blank first run date, the current time is the anchor and the first run
+is the next time that matches the rule. The controller assigns the submitted
+recurrence options before it computes this date. If validation fails, the
+computed date is cleared again so the form does not show a date the user
+never typed.
 
-If the scheduler was not running for a while, a task creates **one** issue
-and then advances to the next *future* occurrence. Missed occurrences are
-not back-filled. This is the pre-existing behaviour and applies to all
-units; `each_eligible_period` starts iterating close to `now` so a long
-downtime does not walk through every skipped period.
+## Missed runs
+
+When the scheduler was down for a while, a task creates one issue and then
+moves to the next run in the future. Missed runs are not created one by one.
+This is the old behaviour and it applies to all units.
+`each_eligible_period` starts counting close to now, so a long downtime does
+not loop over every skipped week or month.
 
 ## Storage and compatibility
 
-- `weekdays` and `month_weeks` are JSON columns, following the existing
-  `subtasks`/`relations` pattern; values are normalised on read and write
-  (integers only, within range, unique, sorted), so malformed or duplicated
-  form input cannot produce bad schedules.
-- Only the single earliest `next_run_date` is stored. There is no second
-  scheduler or expansion table; the scheduler's query and update loop is
-  unchanged.
-- Running the migration adds the three nullable columns; no data migration
-  is needed.
+- `weekdays` and `month_weeks` are JSON columns, like the existing `subtasks`
+  and `relations` columns. Values are normalised when read and when written:
+  only integers, only values in range, no duplicates, sorted. Bad or repeated
+  form input cannot produce a bad schedule.
+- Only one `next_run_date` is stored, the earliest one. There is no second
+  scheduler and no table of future runs. The scheduler query and update loop
+  did not change.
+- The migration adds three nullable columns. No data migration is needed.
 
-## Human-readable schedule
+## Schedule text
 
-Index and detail pages share `periodictask_schedule_description`
-(`app/helpers/periodictask_helper.rb`), so they cannot diverge. It uses
-pluralised locale keys:
+The list and the detail page both use `periodictask_schedule_description`
+in `app/helpers/periodictask_helper.rb`, so they always show the same text.
+The text uses pluralised locale keys. Examples:
 
 ```
-each day                     every 3 business days
-each week on Monday, Wednesday   every 2 weeks on Monday, Wednesday
-each month on day 15         each month on the 1st, 3rd Monday, Wednesday
-every 6 months on day 3      each year
+each day                          every 3 business days
+each week on Monday, Wednesday    every 2 weeks on Monday, Wednesday
+each month on day 15              each month on the 1st, 3rd Monday, Wednesday
+every 6 months on day 3           each year
 ```
 
-Weekday names are listed in the configured start-of-week order.
+Weekday names are listed in the order set by "Start calendars on".

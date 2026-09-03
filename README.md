@@ -140,7 +140,7 @@ Every 10 minutes:
 
 ### Recurrence
 
-Tasks repeat every N days, business days, weeks, months or years. Weekly tasks can additionally run on several weekdays, and monthly tasks either on a calendar day or on the 1st..5th (or last) occurrence of one or more weekdays, e.g. the 3rd Wednesday of every month. How the next run date is calculated (anchor, time zone, missing 5th weekday, catch-up after downtime) is described in [doc/recurrence-design.md](doc/recurrence-design.md).
+A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
 
 ### Variable interpolation
 
