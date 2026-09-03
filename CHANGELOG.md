@@ -9,6 +9,9 @@
 - Add spanish translation ([#136](https://github.com/jperelli/Redmine-Periodic-Task/pull/136)) (@lupa18)
 - Add Traditional Chinese (`zh-TW`) translation ([#135](https://github.com/jperelli/Redmine-Periodic-Task/pull/135)) (@chris85618)
 - Add configurable `% Done` shown with Redmine's progress bar in the detail page **requires migration** (@jperelli)
+- Add Google Calendar-style recurrence: weekly tasks can repeat on several weekdays and monthly tasks on the 1st..5th (or last) occurrence of one or more weekdays, e.g. the 3rd Wednesday of every month **requires migration** ([#50](https://github.com/jperelli/Redmine-Periodic-Task/issues/50)) (@jperelli)
+- Add [doc/recurrence-design.md](doc/recurrence-design.md) explaining how the next run date is calculated, linked with a help icon from the task form and from the last error message (@jperelli)
+- Add the missing translations for the `Run now` button and the plugin credit in all locales (@jperelli)
 
 ### Fixes
 

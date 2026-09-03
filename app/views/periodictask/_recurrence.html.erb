@@ -1,0 +1,28 @@
+<%# Recurrence options shown depending on the interval unit (see the form's JS). %>
+<% units = periodictask.interval_units %>
+<% weekday_mode = periodictask.monthly_mode == 'weekday' %>
+
+<p id="periodictask_monthly_mode_field" class="periodictask-recurrence" data-units="month"
+   style="<%= 'display: none;' unless units == 'month' %>">
+  <label><%= l(:label_recurrence_monthly_on) %></label>
+  <label class="block"><%= radio_button 'periodictask', 'monthly_mode', 'day_of_month' %> <%= l(:label_recurrence_day_of_month) %></label>
+  <label class="block"><%= radio_button 'periodictask', 'monthly_mode', 'weekday' %> <%= l(:label_recurrence_weekday) %></label>
+</p>
+
+<p id="periodictask_month_weeks_field" class="periodictask-recurrence" data-units="month" data-monthly-mode="weekday"
+   style="<%= 'display: none;' unless units == 'month' && weekday_mode %>">
+  <label><%= l(:label_recurrence_occurrence) %></label>
+  <%= hidden_field_tag 'periodictask[month_weeks][]', '', :id => nil %>
+  <% Periodictask::MONTH_WEEKS.each do |n| %>
+    <label class="inline"><%= check_box_tag 'periodictask[month_weeks][]', n, periodictask.month_weeks.include?(n), :id => "periodictask_month_weeks_#{n}" %> <%= l(:"label_recurrence_ordinal_#{n}") %></label>
+  <% end %>
+</p>
+
+<p id="periodictask_weekdays_field" class="periodictask-recurrence" data-units="week month" data-monthly-mode="weekday"
+   style="<%= 'display: none;' unless units == 'week' || (units == 'month' && weekday_mode) %>">
+  <label><%= l(:label_recurrence_repeat_on) %></label>
+  <%= hidden_field_tag 'periodictask[weekdays][]', '', :id => nil %>
+  <% Periodictask.ordered_weekdays.each do |wday| %>
+    <label class="inline"><%= check_box_tag 'periodictask[weekdays][]', wday, periodictask.weekdays.include?(wday), :id => "periodictask_weekdays_#{wday}" %> <%= day_name(wday) %></label>
+  <% end %>
+</p>

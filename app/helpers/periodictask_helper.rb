@@ -13,6 +13,45 @@ module PeriodictaskHelper
     Periodictask.interval_units_options.find { |(_, v)| v == value }&.first || value
   end
 
+  # Human-readable schedule, e.g. "every 2 weeks on Monday, Wednesday" or
+  # "each month on the 1st, 3rd Wednesday"; the single source for the list
+  # and detail pages.
+  def periodictask_schedule_description(task)
+    interval = periodictask_interval_label(task.interval_number, task.interval_units)
+    weekdays = Periodictask.ordered_weekdays.select { |d| task.weekdays.include?(d) }.map { |d| day_name(d) }.join(', ')
+    case task.interval_units
+    when 'week'
+      return interval if weekdays.blank?
+
+      "#{interval} #{l(:label_recurrence_on_weekdays, weekdays: weekdays)}"
+    when 'month'
+      if task.monthly_weekday_mode? && weekdays.present? && task.month_weeks.any?
+        ordinals = task.month_weeks.map { |n| l(:"label_recurrence_ordinal_#{n}") }.join(', ')
+        "#{interval} #{l(:label_recurrence_on_month_weekdays, ordinals: ordinals, weekdays: weekdays)}"
+      elsif task.next_run_date
+        "#{interval} #{l(:label_recurrence_on_day_of_month, day: periodictask_display_time(task.next_run_date).day)}"
+      else
+        interval
+      end
+    else
+      interval
+    end
+  end
+
+  # "each week" / "every 3 weeks", pluralized per locale.
+  def periodictask_interval_label(number, units)
+    key = :"label_recurrence_every_#{units}"
+    return "#{number} #{periodictask_unit_label(units)}" unless Periodictask::INTERVAL_UNITS.include?(units)
+
+    l(key, count: number.to_i)
+  end
+
+  # Help icon linking to the recurrence design document on GitHub.
+  def periodictask_recurrence_help_link(title = l(:label_recurrence_help))
+    link_to periodictask_sprite_icon('help', title, icon_only: true), RedminePeriodictask::RECURRENCE_DOC_URL,
+            class: 'icon-only icon-help', title: title, target: '_blank', rel: 'noopener'
+  end
+
   def periodictask_default_label(value)
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end
@@ -25,12 +64,17 @@ module PeriodictaskHelper
     zone ? zone.parse(value) : Time.parse(value)
   end
 
+  # +time+ in the zone Redmine's format_time uses for the current user.
+  def periodictask_display_time(time)
+    zone = User.current.time_zone
+    zone ? time.in_time_zone(zone) : time.getlocal
+  end
+
   # Value for the next_run_date datetime-local input, in the display zone.
   def periodictask_next_run_date_input_value(time)
     return if time.blank?
 
-    zone = User.current.time_zone
-    (zone ? time.in_time_zone(zone) : time.getlocal).strftime('%Y-%m-%dT%H:%M')
+    periodictask_display_time(time).strftime('%Y-%m-%dT%H:%M')
   end
 
   # Zone name and UTC offset shown next to the next_run_date input.

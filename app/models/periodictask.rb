@@ -13,6 +13,8 @@ class Periodictask < ActiveRecord::Base
   attribute :watcher_user_ids, :json, default: []
   attribute :subtasks, :json, default: []
   attribute :relations, :json, default: []
+  attribute :weekdays, :json, default: []
+  attribute :month_weeks, :json, default: []
 
   SUBTASK_KEYS = %w[tracker_id subject assigned_to_id estimated_hours].freeze
   RELATION_KEYS = %w[relation_type issue_id delay].freeze
@@ -54,6 +56,43 @@ class Periodictask < ActiveRecord::Base
       row.transform_values! { |v| v.is_a?(String) ? v.strip.presence : v }
       row
     end
+  end
+
+  # Weekdays (0 = Sunday .. 6 = Saturday, as Time#wday) the task recurs on when
+  # the interval unit is 'week', or monthly in 'weekday' mode. Empty means the
+  # plain "every N weeks" behaviour.
+  def weekdays
+    self.class.normalize_selection(super, WEEKDAYS)
+  end
+
+  def weekdays=(value)
+    super(self.class.normalize_selection(value, WEEKDAYS))
+  end
+
+  # Ordinal occurrences (1 = first .. 5 = fifth) of the selected weekdays within
+  # each month, for monthly 'weekday' mode. A fifth occurrence that does not
+  # exist in a month resolves to the last one.
+  def month_weeks
+    self.class.normalize_selection(super, MONTH_WEEKS)
+  end
+
+  def month_weeks=(value)
+    super(self.class.normalize_selection(value, MONTH_WEEKS))
+  end
+
+  # 'day_of_month' (same calendar day as the anchor, the historical behaviour)
+  # or 'weekday' (selected ordinals x selected weekdays).
+  def monthly_mode
+    value = super
+    MONTHLY_MODES.include?(value) ? value : MONTHLY_MODES.first
+  end
+
+  def monthly_weekday_mode?
+    interval_units == 'month' && monthly_mode == 'weekday'
+  end
+
+  def self.normalize_selection(value, allowed)
+    Array(value).filter_map { |v| Integer(v.to_s, 10, exception: false) }.select { |v| allowed.include?(v) }.uniq.sort
   end
 
   def watcher_user_ids
@@ -112,6 +151,8 @@ class Periodictask < ActiveRecord::Base
   validates :interval_units, presence: true
   validates :done_ratio, inclusion: { in: 0..100 }, allow_nil: true
   validate :validate_subtasks_and_relations
+  validate :validate_recurrence
+  before_validation :clear_irrelevant_recurrence_options
 
   scope :accessible, lambda {
     if User.current.allowed_to?(:periodictask, nil, global: true)
@@ -122,6 +163,27 @@ class Periodictask < ActiveRecord::Base
   }
 
   INTERVAL_UNITS = %w[day business_day week month year].freeze
+  WEEKDAYS = (0..6).to_a.freeze
+  MONTH_WEEKS = (1..5).to_a.freeze
+  MONTHLY_MODES = %w[day_of_month weekday].freeze
+
+  # First day of the week (as Time#wday) following Redmine's display setting,
+  # falling back to the current language's default like Redmine's calendar.
+  def self.first_weekday
+    start = Setting.start_of_week.to_i
+    start = ::I18n.t(:general_first_day_of_week, default: '1').to_i unless [1, 6, 7].include?(start)
+    start % 7
+  end
+
+  def self.week_start_day
+    Date::DAYNAMES[first_weekday].downcase.to_sym
+  end
+
+  # The seven weekdays starting on first_weekday, the order to display them in.
+  def self.ordered_weekdays
+    first = first_weekday
+    WEEKDAYS.map { |i| (first + i) % 7 }
+  end
 
   # Localized [label, value] pairs for select inputs.
   # Built per call so labels reflect the current user's locale instead of
@@ -259,11 +321,19 @@ class Periodictask < ActiveRecord::Base
     )
   end
 
+  # Earliest occurrence of the schedule after +now+. next_run_date is the
+  # anchor (first run, time of day and cadence origin); when blank, +now+ is
+  # the anchor and may itself be returned. Occurrences are derived from the
+  # anchor rather than from +now+ so late scheduler runs do not drift.
   def get_next_run_date(now = Time.current)
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
       val = interval_number.business_day.after(val) while val <= now
+    elsif units == 'week' && weekdays.any?
+      val = next_weekday_occurrence(val, now)
+    elsif monthly_weekday_mode? && weekdays.any? && month_weeks.any?
+      val = next_monthly_weekday_occurrence(val, now)
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
@@ -272,6 +342,75 @@ class Periodictask < ActiveRecord::Base
   end
 
   private
+
+  # Walks the eligible weeks (every interval_number weeks from the anchor's
+  # week) and returns the first selected weekday, at the anchor's time of day,
+  # that is due after +now+.
+  def next_weekday_occurrence(anchor, now)
+    week_start = anchor.beginning_of_week(self.class.week_start_day)
+    offsets = weekdays.map { |wday| (wday - week_start.wday) % 7 }.sort
+    each_eligible_period(anchor, now, 1.week) do |step|
+      base = week_start + (step * interval_number).weeks
+      candidates = offsets.map { |offset| at_anchor_time(base + offset.days, anchor) }
+      candidates.find { |candidate| due?(candidate, now) }
+    end
+  end
+
+  # Walks the eligible months (every interval_number months from the anchor's
+  # month) and returns the earliest selected ordinal weekday, at the anchor's
+  # time of day, that is due after +now+.
+  def next_monthly_weekday_occurrence(anchor, now)
+    each_eligible_period(anchor, now, 1.month) do |step|
+      month = anchor.advance(months: step * interval_number).to_date.beginning_of_month
+      candidates = month_weeks.product(weekdays).map { |ordinal, wday| nth_weekday_of_month(month, ordinal, wday) }
+      candidates.uniq.sort.map { |date| at_anchor_time(date, anchor) }.find { |candidate| due?(candidate, now) }
+    end
+  end
+
+  # Yields increasing period steps until the block returns an occurrence,
+  # starting close to +now+ so long downtimes do not iterate over every period.
+  def each_eligible_period(anchor, now, period)
+    step = [((now - anchor) / (interval_number * period.to_i)).floor - 1, 0].max
+    loop do
+      occurrence = yield(step)
+      return occurrence if occurrence
+
+      step += 1
+    end
+  end
+
+  # Date of the +ordinal+-th +wday+ in the month of +month+ (a first-of-month
+  # Date); a missing fifth occurrence yields the last one.
+  def nth_weekday_of_month(month, ordinal, wday)
+    date = month + ((wday - month.wday) % 7) + ((ordinal - 1) * 7)
+    date -= 7 while date.month != month.month
+    date
+  end
+
+  def at_anchor_time(date, anchor)
+    anchor.change(year: date.year, month: date.month, day: date.day)
+  end
+
+  # A stored next_run_date has already run, so the next one must be strictly
+  # later than now; a blank one may resolve to now itself.
+  def due?(candidate, now)
+    next_run_date ? candidate > now : candidate >= now
+  end
+
+  def validate_recurrence
+    return unless monthly_weekday_mode?
+
+    errors.add(:base, l(:error_recurrence_month_weeks_blank)) if month_weeks.empty?
+    errors.add(:base, l(:error_recurrence_weekdays_blank)) if weekdays.empty?
+  end
+
+  # Hidden recurrence inputs are still posted by the form; only keep the ones
+  # that apply to the selected unit and monthly mode.
+  def clear_irrelevant_recurrence_options
+    self.monthly_mode = nil unless interval_units == 'month'
+    self.month_weeks = [] unless monthly_weekday_mode?
+    self.weekdays = [] unless interval_units == 'week' || monthly_weekday_mode?
+  end
 
   def validate_subtasks_and_relations
     subtasks.each do |row|

@@ -9,9 +9,11 @@
     <%= label(:periodictask, :interval_number) do %><%= l(:label_interval) %> <span class="required">*</span><% end %>
     <%= f.number_field :interval_number, :required => true, :min => 1 %>
     <%= select 'periodictask', 'interval_units', Periodictask.interval_units_options %>
+    <%= periodictask_recurrence_help_link %>
   </p>
+  <%= render :partial => 'recurrence', :locals => { :periodictask => @periodictask } %>
   <p>
-    <%= label(:periodictask, :next_run_date, l(:label_next_run_date)) %>
+    <%= label(:periodictask, :next_run_date) do %><span class="field-description" title="<%= l(:label_next_run_date_info) %>"><%= l(:label_next_run_date) %></span><% end %>
     <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
@@ -137,6 +139,7 @@
     <p>
       <%= label_tag(nil, l(:label_last_error)) %>
       <%= content_tag('span', @periodictask.last_error, :class => 'icon icon-error') %>
+      <%= periodictask_recurrence_help_link(l(:label_last_error_help)) %>
     </p>
   <% end %>
 </fieldset>
@@ -167,6 +170,22 @@
       });
     });
     updateDefaultStatusLabel();
+
+    // Show only the recurrence options that apply to the selected unit
+    // (weekdays for weeks; monthly mode, and its occurrences/weekdays, for months).
+    function toggleRecurrenceFields() {
+      var units = $('#periodictask_interval_units').val();
+      var monthlyMode = $('input[name="periodictask[monthly_mode]"]:checked').val();
+      $('.periodictask-recurrence').each(function() {
+        var $field = $(this);
+        var visible = $.inArray(units, String($field.data('units')).split(' ')) !== -1;
+        var mode = $field.data('monthly-mode');
+        if (visible && units === 'month' && mode) { visible = mode === monthlyMode; }
+        $field.toggle(visible);
+      });
+    }
+    $('#periodictask_interval_units, input[name="periodictask[monthly_mode]"]').change(toggleRecurrenceFields);
+    toggleRecurrenceFields();
 
     var currentUserId = '<%= User.current.id %>';
     function toggleAssignToMe() {

@@ -5,6 +5,12 @@ require 'redmine'
 # does not reliably trigger autoloading.
 require_relative 'lib/redmine_periodictask/hooks'
 
+module RedminePeriodictask
+  # Explains how next run dates are calculated; linked from the form and the
+  # last-error display.
+  RECURRENCE_DOC_URL = 'https://github.com/jperelli/Redmine-Periodic-Task/blob/main/doc/recurrence-design.md'.freeze
+end
+
 Rails.configuration.to_prepare do
   unless Project.included_modules.include? RedminePeriodictask::ProjectPatch
     Project.include RedminePeriodictask::ProjectPatch

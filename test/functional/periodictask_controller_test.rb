@@ -430,6 +430,206 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.periodictask-relations li', text: /#{I18n.t(:label_blocks)}.*#1/m
   end
 
+  # ---- recurrence (issue #50) ----
+
+  def test_new_renders_recurrence_controls_as_checkboxes
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select '#periodictask_weekdays_field input[type=checkbox][name=?]', 'periodictask[weekdays][]', count: 7
+    assert_select '#periodictask_weekdays_field label', text: I18n.t('date.day_names')[1]
+    assert_select '#periodictask_monthly_mode_field input[type=radio][name=?]', 'periodictask[monthly_mode]', count: 2
+    assert_select '#periodictask_monthly_mode_field input[type=radio][value=day_of_month][checked]'
+    assert_select '#periodictask_month_weeks_field input[type=checkbox][name=?]', 'periodictask[month_weeks][]',
+                  count: 5
+    assert_select '.periodictask-recurrence input[type=checkbox][checked]', count: 0
+  end
+
+  def test_form_and_last_error_link_to_recurrence_documentation
+    task = create_test_periodictask(subject: 'Failed', last_error: 'Project is missing or closed')
+    doc_url = RedminePeriodictask::RECURRENCE_DOC_URL
+
+    get :new, params: { project_id: 'ecookbook' }
+    assert_select 'a.icon-help[href=?][title=?]', doc_url, 'How schedules are calculated'
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'a.icon-help[href=?][title=?]', doc_url, 'Why a task may not have run as expected'
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'a.icon-help[href=?]', doc_url, count: 2
+  end
+
+  def test_new_orders_weekday_checkboxes_by_start_of_week
+    with_settings start_of_week: '1' do
+      get :new, params: { project_id: 'ecookbook' }
+      assert_equal %w[1 2 3 4 5 6 0], rendered_weekday_values
+    end
+    with_settings start_of_week: '7' do
+      get :new, params: { project_id: 'ecookbook' }
+      assert_equal %w[0 1 2 3 4 5 6], rendered_weekday_values
+    end
+  end
+
+  def test_create_weekly_stores_weekdays_and_computes_blank_next_run_date_from_them
+    travel_to Time.utc(2026, 1, 6, 10, 0, 0) do # Tuesday
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Weekly on Mon/Wed', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+          interval_number: 1, interval_units: 'week', next_run_date: '',
+          weekdays: ['', '3', '1'], monthly_mode: 'weekday', month_weeks: ['', '2']
+        }
+      }
+    end
+    assert_response :redirect
+
+    task = Periodictask.find_by(subject: 'Weekly on Mon/Wed')
+    assert_equal [1, 3], task.weekdays
+    assert_equal [], task.month_weeks
+    assert_equal Time.utc(2026, 1, 7, 10, 0, 0), task.next_run_date
+  end
+
+  def test_create_monthly_weekday_stores_ordinals_and_weekdays
+    travel_to Time.utc(2026, 1, 8, 9, 30, 0) do # Thursday after the 1st Wednesday
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Third Wednesday', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+          interval_number: 1, interval_units: 'month', next_run_date: '',
+          monthly_mode: 'weekday', month_weeks: ['', '1', '3'], weekdays: ['', '3']
+        }
+      }
+    end
+    assert_response :redirect
+
+    task = Periodictask.find_by(subject: 'Third Wednesday')
+    assert_equal 'weekday', task.monthly_mode
+    assert_equal [1, 3], task.month_weeks
+    assert_equal [3], task.weekdays
+    assert_equal Time.utc(2026, 1, 21, 9, 30, 0), task.next_run_date
+  end
+
+  def test_create_uses_explicit_next_run_date_as_first_run_even_if_not_a_selected_weekday
+    User.find(2).pref.update!(time_zone: 'UTC')
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Explicit anchor', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'week', next_run_date: '2026-01-06T10:00', weekdays: ['1']
+      }
+    }
+    assert_response :redirect
+    task = Periodictask.find_by(subject: 'Explicit anchor')
+    assert_equal Time.utc(2026, 1, 6, 10, 0, 0), task.next_run_date # a Tuesday, kept as the literal first run
+    assert_equal [1], task.weekdays
+  end
+
+  def test_create_monthly_weekday_without_selection_rerenders_form_with_error
+    assert_no_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Incomplete', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+          interval_number: 1, interval_units: 'month',
+          monthly_mode: 'weekday', month_weeks: ['', '1'], weekdays: ['']
+        }
+      }
+    end
+    assert_response :success
+    assert_select '#errorExplanation', text: /#{I18n.t(:error_recurrence_weekdays_blank)}/
+    assert_select '#periodictask_monthly_mode_field input[value=weekday][checked]'
+    assert_select '#periodictask_month_weeks_field input[value="1"][checked]'
+    assert_select '#periodictask_next_run_date[value]', count: 0 # the blank first run stays blank
+  end
+
+  def test_edit_renders_persisted_recurrence_selections
+    task = create_test_periodictask(interval_units: 'month', monthly_mode: 'weekday',
+                                    month_weeks: [1, 5], weekdays: [0, 3])
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '#periodictask_monthly_mode_field input[value=weekday][checked]'
+    assert_select '#periodictask_month_weeks_field input[type=checkbox][checked]', count: 2
+    assert_select '#periodictask_month_weeks_field input[value="1"][checked]'
+    assert_select '#periodictask_month_weeks_field input[value="5"][checked]'
+    assert_select '#periodictask_weekdays_field input[type=checkbox][checked]', count: 2
+    assert_select '#periodictask_weekdays_field input[value="0"][checked]'
+    assert_select '#periodictask_weekdays_field input[value="3"][checked]'
+  end
+
+  def test_update_clears_recurrence_options_when_unit_changes
+    task = create_test_periodictask(interval_units: 'week', weekdays: [1, 3])
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: { interval_units: 'day', weekdays: ['', '1', '3'] }
+    }
+    assert_response :redirect
+    task.reload
+    assert_equal 'day', task.interval_units
+    assert_equal [], task.weekdays
+  end
+
+  def test_update_replaces_weekday_selection
+    task = create_test_periodictask(interval_units: 'week', weekdays: [1, 3])
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: { interval_units: 'week', weekdays: ['', '5'] }
+    }
+    task.reload
+    assert_equal [5], task.weekdays
+
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { interval_units: 'week' } }
+    task.reload
+    assert_equal [], task.weekdays
+  end
+
+  def test_index_and_show_describe_weekly_recurrence
+    task = create_test_periodictask(subject: 'Weekly described', interval_number: 2, interval_units: 'week',
+                                    weekdays: [3, 1])
+    expected = 'every 2 weeks on Monday, Wednesday'
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'td.interval', text: expected
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.interval .value', text: expected
+  end
+
+  def test_index_and_show_describe_monthly_weekday_recurrence
+    task = create_test_periodictask(subject: 'Monthly described', interval_units: 'month', monthly_mode: 'weekday',
+                                    month_weeks: [3, 1], weekdays: [3])
+    expected = 'each month on the 1st, 3rd Wednesday'
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'td.interval', text: expected
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.interval .value', text: expected
+  end
+
+  def test_index_and_show_describe_monthly_day_of_month_recurrence
+    task = create_test_periodictask(subject: 'Day of month', interval_units: 'month',
+                                    next_run_date: Time.utc(2026, 3, 15, 12, 0))
+    expected = 'each month on day 15'
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'td.interval', text: expected
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.interval .value', text: expected
+  end
+
+  def test_index_and_show_keep_plain_description_for_other_units
+    task = create_test_periodictask(subject: 'Plain', interval_number: 3, interval_units: 'business_day')
+    create_test_periodictask(subject: 'Daily', interval_number: 1, interval_units: 'day')
+    expected = 'every 3 business days'
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'td.interval', text: expected
+    assert_select 'td.interval', text: 'each day'
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.interval .value', text: expected
+  end
+
   def test_denies_member_without_permission
     # dlopez (user 3) is a Developer member of ecookbook but the Developer role
     # was not granted the :periodictask permission in setup.
@@ -439,6 +639,10 @@ class PeriodictaskControllerTest < ActionController::TestCase
   end
 
   private
+
+  def rendered_weekday_values
+    css_select('#periodictask_weekdays_field input[type=checkbox]').map { |i| i['value'] }
+  end
 
   def create_test_periodictask(attrs = {})
     Periodictask.create!({
