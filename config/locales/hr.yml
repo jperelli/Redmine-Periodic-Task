@@ -11,6 +11,8 @@ hr:
   label_edit_periodic_task: Uredi periodički zadatak
   label_new_periodic_task: Novi periodički zadatak
   label_periodic_tasks: Periodički zadaci
+  project_module_periodictask: Periodički zadaci
+  permission_periodictask: Upravljanje periodičkim zadacima
   label_create_periodic_task: Stvori
   label_save_periodic_task: Spremi
   label_scheduled_tasks: Trenutno zakazani zadaci

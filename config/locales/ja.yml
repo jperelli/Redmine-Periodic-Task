@@ -11,6 +11,8 @@ ja:
   label_edit_periodic_task: 繰り返しチケットの編集
   label_new_periodic_task: 新規繰り返しチケット
   label_periodic_tasks: 繰り返しチケット
+  project_module_periodictask: 繰り返しチケット
+  permission_periodictask: 繰り返しチケットの管理
   label_create_periodic_task: 作成
   label_save_periodic_task: 保存
   label_scheduled_tasks: 現在、スケジュールされているタスク

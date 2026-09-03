@@ -11,6 +11,8 @@ de:
   label_edit_periodic_task: Wiederholende Aufgaben bearbeiten
   label_new_periodic_task: Wiederholende Aufgabe erstellen
   label_periodic_tasks: Wiederholende Aufgaben
+  project_module_periodictask: Wiederholende Aufgaben
+  permission_periodictask: Wiederholende Aufgaben verwalten
   label_create_periodic_task: Erstellen
   label_save_periodic_task: Speichern
   label_scheduled_tasks: Nachfolgend die Liste der aktiven wiederholenden Aufgaben.

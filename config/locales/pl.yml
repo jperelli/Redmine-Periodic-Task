@@ -11,6 +11,8 @@ pl:
   label_edit_periodic_task: Edytuj zadanie cykliczne
   label_new_periodic_task: Nowe zadanie cykliczne
   label_periodic_tasks: Zadania cykliczne
+  project_module_periodictask: Zadania cykliczne
+  permission_periodictask: Zarządzanie zadaniami cyklicznymi
   label_create_periodic_task: Utwórz
   label_save_periodic_task: Zapisz
   label_scheduled_tasks: Aktualnie zaplanowane zadania

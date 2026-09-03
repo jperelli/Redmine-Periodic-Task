@@ -11,6 +11,8 @@ it:
   label_edit_periodic_task: Modifica Periodic Task
   label_new_periodic_task: Nuovo Periodic Task
   label_periodic_tasks: Periodic Tasks
+  project_module_periodictask: Attività periodiche
+  permission_periodictask: Gestisci attività periodiche
   label_create_periodic_task: Crea
   label_save_periodic_task: Salva
   label_scheduled_tasks: Attualmente non ci sono task schedulati

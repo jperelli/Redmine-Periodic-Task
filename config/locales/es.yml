@@ -11,6 +11,8 @@ es:
   label_edit_periodic_task: Editar tarea periódica
   label_new_periodic_task: Nueva tarea periódica
   label_periodic_tasks: Tareas periódicas
+  project_module_periodictask: Tareas periódicas
+  permission_periodictask: Gestionar tareas periódicas
   label_periodic_task: Tarea periódica
   label_create_periodic_task: Crear
   label_save_periodic_task: Guardar
