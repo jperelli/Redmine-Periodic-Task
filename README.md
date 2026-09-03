@@ -138,6 +138,10 @@ Every 10 minutes:
 
     */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
+### Recurrence
+
+Tasks repeat every N days, business days, weeks, months or years. Weekly tasks can additionally run on several weekdays, and monthly tasks either on a calendar day or on the 1st..5th (or last) occurrence of one or more weekdays, e.g. the 3rd Wednesday of every month. How the next run date is calculated (anchor, time zone, missing 5th weekday, catch-up after downtime) is described in [doc/recurrence-design.md](doc/recurrence-design.md).
+
 ### Variable interpolation
 
 You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.
