@@ -21,6 +21,16 @@
     <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
+  <p class="periodictask-if-previous-open">
+    <label><span class="field-description" title="<%= l(:label_if_previous_open_info) %>"><%= l(:label_if_previous_open) %></span></label>
+    <% Periodictask::IF_PREVIOUS_OPEN_MODES.each do |mode| %>
+      <label class="block">
+        <%= radio_button 'periodictask', 'if_previous_open', mode %>
+        <%= periodictask_if_previous_open_label(mode) %>
+        <em class="info" style="display: inline;"><%= periodictask_if_previous_open_description(mode) %></em>
+      </label>
+    <% end %>
+  </p>
   <p>
     <%= label(:periodictask, :author_id, l(:label_issue_author)) %>
     <% if @authors.length > 0 %>

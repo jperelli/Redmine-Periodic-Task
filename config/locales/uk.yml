@@ -148,3 +148,20 @@ uk:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_if_previous_open: "Якщо попередня задача ще відкрита"
+  label_if_previous_open_info: "Що робить запуск, коли задача, створена попереднім запуском, ще не закрита"
+  label_if_previous_open_create: "Усе одно створити нову задачу"
+  label_if_previous_open_create_info: "За замовчуванням: задачі накопичуються, доки хтось їх не закриє."
+  label_if_previous_open_skip: "Пропустити цей запуск"
+  label_if_previous_open_skip_info: "Задача не створюється, розклад переходить до наступного запуску."
+  label_if_previous_open_close_previous: "Закрити попередню задачу"
+  label_if_previous_open_close_previous_info: "Попередня задача закривається першим закритим статусом її робочого процесу, потім створюється нова."
+  label_if_previous_open_after_completion: "Чекати, доки її не закриють"
+  label_if_previous_open_after_completion_info: "Поки вона відкрита, нічого не створюється; після закриття наступна задача настає через один інтервал після дати закриття."
+  label_periodictask_close_previous_failed: "Не вдалося закрити попередню задачу"
+  error_no_closed_status: "немає доступного закритого статусу"
+  text_periodictask_closed_by_next_issue: "Закрито періодичною задачею: замінено задачею #%{id}."
+  text_periodictask_skipped_open_issue: "пропущено: #%{id} ще відкрита"
+  text_periodictask_rescheduled_after_completion: "#%{id} закрито, наступний запуск перенесено на %{time}"
+  text_periodictask_last_skipped: "Запуск від %{time} не створив задачу: %{issue} була ще відкрита."
+  field_periodictask_run_notes: "Примітки"

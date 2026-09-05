@@ -51,4 +51,17 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
     assert RedminePeriodictask::WebScheduler.enabled?
     assert_equal 15.minutes, RedminePeriodictask::WebScheduler.interval
   end
+
+  def test_plugin_settings_page_lists_skipped_tasks_as_notes_not_errors
+    PeriodictaskRun.record!(source: 'rake', started_at: 1.minute.ago, finished_at: Time.current,
+                            tasks_due: 1, issues_created: 0, errors: [], notes: ['#1 Foo: skipped: #12 is still open'])
+    get '/settings/plugin/periodictask'
+    assert_response :success
+    assert_select 'table.periodictask-runs thead th', text: I18n.t(:field_periodictask_run_notes)
+    assert_select 'table.periodictask-runs tbody tr.error', 0
+    assert_select 'table.periodictask-runs tbody tr', 1 do
+      assert_select 'td.notes', text: /skipped: #12 is still open/
+      assert_select 'td.error-messages', text: ''
+    end
+  end
 end
