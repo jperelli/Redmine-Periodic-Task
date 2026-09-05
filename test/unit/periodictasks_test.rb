@@ -865,6 +865,36 @@ class PeriodictasksTest < ActiveSupport::TestCase
     end
   end
 
+  # --- Checklists ---
+
+  def test_generate_issue_ignores_checklists_without_checklists_plugin
+    skip 'the checklists plugin is installed' if Periodictask.checklists_plugin_installed?
+
+    task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Checklist',
+                            checklists_template_id: 1)
+    assert_not task.generate_issue.respond_to?(:checklists_attributes)
+  end
+
+  def test_generate_issue_fills_checklists_when_plugin_present
+    with_fake_checklists_plugin("First\nSecond") do
+      task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Checklist',
+                              checklists_template_id: 1)
+
+      assert_equal [{ is_done: false, subject: 'First', position: 0 },
+                    { is_done: false, subject: 'Second', position: 1 }],
+                   task.generate_issue.checklists_attributes
+    end
+  end
+
+  def test_generate_issue_ignores_a_deleted_checklist_template
+    with_fake_checklists_plugin("First\nSecond") do
+      task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Checklist',
+                              checklists_template_id: 404)
+
+      assert_nil task.generate_issue.checklists_attributes
+    end
+  end
+
   # --- Subtasks and relations ---
 
   def test_subtasks_accepts_indexed_hash_and_drops_blank_rows
@@ -980,6 +1010,21 @@ class PeriodictasksTest < ActiveSupport::TestCase
   end
 
   private
+
+  # Mimics the redmine_checklists plugin: a ChecklistTemplate model holding the
+  # items as one string per line, and checklists_attributes= on Issue.
+  def with_fake_checklists_plugin(template_items)
+    template = Struct.new(:template_items).new(template_items)
+    Object.const_set(:ChecklistTemplate, Class.new do
+      define_singleton_method(:find_by) { |id:| id == 1 ? template : nil }
+    end)
+    Issue.class_eval { attr_accessor :checklists_attributes }
+    Periodictask.stubs(:checklists_plugin_installed?).returns(true)
+    yield
+  ensure
+    Object.send(:remove_const, :ChecklistTemplate)
+    Issue.send(:remove_method, :checklists_attributes, :checklists_attributes=)
+  end
 
   # Mimics the API the RedmineUP Tags plugin adds to Issue (acts_as_taggable).
   def with_fake_tagging_plugin

@@ -129,7 +129,7 @@ module PeriodictaskHelper
   end
 
   def checklist_plugin_installed?
-    Redmine::Plugin.all.any? { |p| p.id == :redmine_checklists } && Object.const_defined?('ChecklistTemplate')
+    Periodictask.checklists_plugin_installed?
   end
 
   def template_options_for_select(project = nil, selected_id = nil)
