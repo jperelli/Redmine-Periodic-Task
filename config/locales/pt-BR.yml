@@ -38,13 +38,22 @@ pt-BR:
     Variáveis possíveis:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Janeiro - Dezembro)
     **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
+    **NEXT_MONTHNAME** (Janeiro - Dezembro)
   label_variables_markdown_note: 'Observação: na descrição elas aparecem em negrito na pré-visualização porque ** é a sintaxe de negrito do Markdown; são substituídas pelo valor real quando a tarefa é criada.'
   label_last_error: Último erro
   label_issue_custom_fields: Campos personalizados

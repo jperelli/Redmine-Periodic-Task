@@ -10,11 +10,13 @@
 - Add an `Administration` > `Periodic Tasks` page listing the tasks of every project, inspired by [@rkteam](https://github.com/rkteam)'s fork (@jperelli)
 - Add a `Copy` action that opens the new task form prefilled from an existing task, inspired by [@vegaminer](https://github.com/vegaminer)'s fork (@jperelli)
 - Add Vietnamese (`vi`) translation, adapted from [@tq89](https://github.com/tq89)'s fork (@jperelli)
+- Add the shifted date macros `**NEXT_MONTH**`, `**NEXT_MONTHNAME**`, `**NEXT_WEEK**`, `**NEXT_WEEKISO**` and the year companions `**NEXT_MONTH_YEAR**`, `**NEXT_WEEK_YEAR**`, `**NEXT_WEEKISO_YEAR**`, `**PREVIOUS_MONTH_YEAR**`, `**WEEKISO_YEAR**` (idea and implementation from [tq89's fork](https://github.com/tq89/Redmine-Periodic-Task))
 
 ### Fixes
 
 - Apply the `Project` patch (`has_many :periodictasks, dependent: :destroy`) at plugin load; the nested `to_prepare` it used never ran outside code reloading (@jperelli)
 - `business day` intervals keep the scheduled time of day and no longer skip a day: the next run used to be moved to the start of the business day (09:00) whenever the task was scheduled outside business hours ([#79](https://github.com/jperelli/Redmine-Periodic-Task/issues/79), idea from [chris85618's fork](https://github.com/chris85618/Redmine-Periodic-Task))
+- A shifted month or an ISO week can now render a consistent year: `**PREVIOUS_MONTH**`/`**YEAR**` rendered `12/2026` when run in January 2026, and `**WEEKISO**`/`**YEAR**` was off by one around New Year
 
 ## v7.0.0 - 2026-09-03
 

@@ -38,13 +38,22 @@ ja:
     利用可能な変数:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (January - December)
     **PREVIOUS_MONTHNAME** (January - December)
+    **NEXT_MONTHNAME** (January - December)
   label_variables_markdown_note: '注: 説明欄では ** が Markdown の太字記法であるため、プレビューでは太字で表示されますが、チケット作成時に実際の値に置き換えられます。'
   label_last_error: 最後のエラー
   label_issue_custom_fields: カスタムフィールド

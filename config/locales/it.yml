@@ -38,13 +38,22 @@ it:
     I possibili valori:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Gennaio - Dicembre)
     **PREVIOUS_MONTHNAME** (Gennaio - Dicembre)
+    **NEXT_MONTHNAME** (Gennaio - Dicembre)
   label_variables_markdown_note: 'Nota: nella descrizione appaiono in grassetto nell''anteprima perché ** è la sintassi del grassetto di Markdown; vengono sostituite con il valore effettivo quando la richiesta viene creata.'
   label_last_error: Ultimo errore
   label_issue_custom_fields: Campi personalizzati

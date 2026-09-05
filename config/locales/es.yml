@@ -44,13 +44,22 @@ es:
     Variables disponibles:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (AAAA)
+    **WEEKISO_YEAR** (AAAA)
+    **NEXT_WEEK_YEAR** (AAAA)
+    **NEXT_WEEKISO_YEAR** (AAAA)
+    **PREVIOUS_MONTH_YEAR** (AAAA)
+    **NEXT_MONTH_YEAR** (AAAA)
     **MONTHNAME** (Enero - Diciembre)
     **PREVIOUS_MONTHNAME** (Enero - Diciembre)
+    **NEXT_MONTHNAME** (Enero - Diciembre)
   label_variables_markdown_note: 'Nota: en la descripción, estas variables aparecen en negrita en la vista previa porque ** es la sintaxis de negrita de Markdown; se reemplazan por el valor real cuando se crea la incidencia.'
   label_last_error: Último error
   label_issue_custom_fields: Campos personalizados de la incidencia

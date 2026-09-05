@@ -38,13 +38,22 @@ pl:
     Dostępne zmienne:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Styczeń - Grudzień)
     **PREVIOUS_MONTHNAME** (Styczeń - Grudzień)
+    **NEXT_MONTHNAME** (Styczeń - Grudzień)
   label_variables_markdown_note: 'Uwaga: w opisie są one wyświetlane pogrubioną czcionką w podglądzie, ponieważ ** to składnia pogrubienia w Markdown; przy tworzeniu zadania są zastępowane rzeczywistą wartością.'
   label_last_error: Ostatni błąd
   label_issue_custom_fields: Pola niestandardowe

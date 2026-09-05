@@ -38,13 +38,22 @@ de:
     Mögliche Variablen:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Januar - Dezember)
     **PREVIOUS_MONTHNAME** (Januar - Dezember)
+    **NEXT_MONTHNAME** (Januar - Dezember)
   label_variables_markdown_note: 'Hinweis: In der Beschreibung erscheinen diese in der Vorschau fett, da ** die Fett-Syntax von Markdown ist; sie werden beim Erstellen der Aufgabe durch den tatsächlichen Wert ersetzt.'
   label_last_error: Letzter Fehler
   label_issue_custom_fields: Benutzerdefinierte Felder

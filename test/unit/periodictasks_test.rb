@@ -653,6 +653,49 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal "Q3 W#{now.strftime('%V')} 06", issue.description
   end
 
+  def test_macro_shifted_month_and_week
+    now = Time.utc(2026, 7, 20, 10, 0, 0)
+    str = parse_macro(
+      'M**MONTH** P**PREVIOUS_MONTH** N**NEXT_MONTH** W**WEEK** NW**NEXT_WEEK** I**WEEKISO** NI**NEXT_WEEKISO**',
+      now
+    )
+    next_week = now + 1.week
+    assert_equal "M07 P06 N08 W#{now.strftime('%W')} NW#{next_week.strftime('%W')} " \
+                 "I#{now.strftime('%V')} NI#{next_week.strftime('%V')}", str
+  end
+
+  def test_macro_next_monthname
+    now = Time.utc(2026, 12, 20, 10, 0, 0)
+    assert_equal 'January', parse_macro('**NEXT_MONTHNAME**', now)
+  end
+
+  # **YEAR** is the year of the run, so a shifted month needs its own year macro
+  # to stay consistent across a year boundary.
+  def test_macro_shifted_month_year_across_year_boundary
+    assert_equal '12/2025',
+                 parse_macro('**PREVIOUS_MONTH**/**PREVIOUS_MONTH_YEAR**', Time.utc(2026, 1, 15, 10, 0, 0))
+    assert_equal '01/2027',
+                 parse_macro('**NEXT_MONTH**/**NEXT_MONTH_YEAR**', Time.utc(2026, 12, 15, 10, 0, 0))
+  end
+
+  # An ISO week number belongs to the ISO week-based year, which drifts from the
+  # calendar year around New Year in both directions.
+  def test_macro_weekiso_year_follows_iso_year
+    assert_equal '01/2026',
+                 parse_macro('**WEEKISO**/**WEEKISO_YEAR**', Time.utc(2025, 12, 29, 10, 0, 0))
+    assert_equal '53/2026',
+                 parse_macro('**WEEKISO**/**WEEKISO_YEAR**', Time.utc(2027, 1, 1, 10, 0, 0))
+    assert_equal '53/2026',
+                 parse_macro('**NEXT_WEEKISO**/**NEXT_WEEKISO_YEAR**', Time.utc(2026, 12, 25, 10, 0, 0))
+    # %W numbers weeks from the first Monday, so 2027-01-01 (a Friday) is week 00
+    assert_equal '00/2027',
+                 parse_macro('**NEXT_WEEK**/**NEXT_WEEK_YEAR**', Time.utc(2026, 12, 25, 10, 0, 0))
+  end
+
+  def parse_macro(str, now)
+    Periodictask.new.send(:parse_macro, str.dup, now)
+  end
+
   def test_fill_custom_fields_assigns_hash_loaded_from_db
     task = Periodictask.new(custom_field_values: { 10 => 'Stored value' })
     issue = Struct.new(:custom_field_values).new
