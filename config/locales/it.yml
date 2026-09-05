@@ -151,3 +151,4 @@ it:
   label_recurrence_weekend_adjustment_next_working_day: "giorni non lavorativi spostati al giorno lavorativo successivo"
   label_recurrence_weekend_adjustment_previous_working_day: "giorni non lavorativi spostati al giorno lavorativo precedente"
   label_weekend_adjustment_moved_from: "spostato da %{date}"
+  label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'

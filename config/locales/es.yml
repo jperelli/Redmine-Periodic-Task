@@ -151,3 +151,4 @@ es:
   label_recurrence_weekend_adjustment_next_working_day: "los días no laborables se mueven al siguiente día laborable"
   label_recurrence_weekend_adjustment_previous_working_day: "los días no laborables se mueven al día laborable anterior"
   label_weekend_adjustment_moved_from: "movido desde %{date}"
+  label_new_periodictask_from_issue: 'Crear tarea periódica a partir de esta petición'

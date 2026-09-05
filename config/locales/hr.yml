@@ -156,3 +156,4 @@ hr:
   label_recurrence_weekend_adjustment_next_working_day: "neradni dani pomaknuti na sljedeći radni dan"
   label_recurrence_weekend_adjustment_previous_working_day: "neradni dani pomaknuti na prethodni radni dan"
   label_weekend_adjustment_moved_from: "pomaknuto s %{date}"
+  label_new_periodictask_from_issue: 'Stvori periodički zadatak iz ovog zadatka'

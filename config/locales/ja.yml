@@ -151,3 +151,4 @@ ja:
   label_recurrence_weekend_adjustment_next_working_day: "休業日は次の稼働日に移動"
   label_recurrence_weekend_adjustment_previous_working_day: "休業日は前の稼働日に移動"
   label_weekend_adjustment_moved_from: "%{date} から移動"
+  label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'

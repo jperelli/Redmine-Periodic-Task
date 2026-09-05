@@ -153,3 +153,4 @@ zh-TW:
   label_recurrence_weekend_adjustment_next_working_day: "非工作日移至下一個工作日"
   label_recurrence_weekend_adjustment_previous_working_day: "非工作日移至上一個工作日"
   label_weekend_adjustment_moved_from: "自 %{date} 移動"
+  label_new_periodictask_from_issue: '從此議題建立週期任務'

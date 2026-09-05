@@ -151,3 +151,4 @@ pt-BR:
   label_recurrence_weekend_adjustment_next_working_day: "dias não úteis movidos para o próximo dia útil"
   label_recurrence_weekend_adjustment_previous_working_day: "dias não úteis movidos para o dia útil anterior"
   label_weekend_adjustment_moved_from: "movido de %{date}"
+  label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'

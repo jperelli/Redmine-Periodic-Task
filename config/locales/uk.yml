@@ -156,3 +156,4 @@ uk:
   label_recurrence_weekend_adjustment_next_working_day: "неробочі дні переносяться на наступний робочий день"
   label_recurrence_weekend_adjustment_previous_working_day: "неробочі дні переносяться на попередній робочий день"
   label_weekend_adjustment_moved_from: "перенесено з %{date}"
+  label_new_periodictask_from_issue: 'Створити періодичне завдання з цієї задачі'

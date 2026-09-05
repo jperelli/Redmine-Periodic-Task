@@ -155,3 +155,4 @@ pl:
   label_recurrence_weekend_adjustment_next_working_day: "dni wolne przeniesione na następny dzień roboczy"
   label_recurrence_weekend_adjustment_previous_working_day: "dni wolne przeniesione na poprzedni dzień roboczy"
   label_weekend_adjustment_moved_from: "przeniesione z %{date}"
+  label_new_periodictask_from_issue: 'Utwórz zadanie cykliczne z tego zagadnienia'
