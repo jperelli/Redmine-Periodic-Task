@@ -24,6 +24,7 @@ ja:
   label_set_start_date_info: 'オンにすると、作成される各チケットの開始日が生成された日に設定されます。'
   label_due_date: '期日を設定（開始後）'
   label_due_date_info: '作成される各チケットの期日。開始日からこの期間後に設定されます。'
+  label_assigned_to_info: '省略可。空欄の場合、作成される各チケットに Redmine の既定の担当者が適用されます。カテゴリの既定の担当者、なければプロジェクトの既定の担当者です。'
   label_estimated_hours: 予定工数
   label_estimated_hours_after: 時間
   label_description: 説明

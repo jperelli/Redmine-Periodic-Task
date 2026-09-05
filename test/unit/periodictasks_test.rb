@@ -93,6 +93,87 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal task.tracker.default_status_id, issue.status_id
   end
 
+  def test_assigned_to_is_optional
+    task = Periodictask.new(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: nil,
+      subject: 'Unassigned task',
+      interval_number: 1,
+      interval_units: 'month'
+    )
+    assert task.save
+    assert_nil task.reload.assigned_to
+  end
+
+  def test_generate_issue_without_assignee_leaves_issue_unassigned
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Unassigned issue test',
+      interval_number: 1,
+      interval_units: 'month'
+    )
+    @project.update!(default_assigned_to_id: nil)
+
+    issue = task.generate_issue
+    assert issue.save
+    assert_nil issue.reload.assigned_to_id
+  end
+
+  def test_generate_issue_without_assignee_applies_category_default_assignee
+    category = IssueCategory.create!(project: @project, name: 'Ops', assigned_to_id: 3)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      issue_category_id: category.id,
+      subject: 'Category default assignee test',
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    issue = task.generate_issue
+    assert issue.save
+    assert_equal 3, issue.reload.assigned_to_id
+  end
+
+  def test_generate_issue_without_assignee_applies_project_default_assignee
+    @project.update!(default_assigned_to_id: 3)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Project default assignee test',
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    issue = task.generate_issue
+    assert issue.save
+    assert_equal 3, issue.reload.assigned_to_id
+  end
+
+  def test_generate_issue_configured_assignee_overrides_category_default
+    category = IssueCategory.create!(project: @project, name: 'Ops', assigned_to_id: 3)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      issue_category_id: category.id,
+      subject: 'Explicit assignee test',
+      interval_number: 1,
+      interval_units: 'month'
+    )
+
+    issue = task.generate_issue
+    assert issue.save
+    assert_equal 2, issue.reload.assigned_to_id
+  end
+
   def test_generate_issue_with_configured_status
     task = Periodictask.create!(
       project: @project,
@@ -393,6 +474,28 @@ class PeriodictasksTest < ActiveSupport::TestCase
     task.reload
     assert task.next_run_date > Time.current
     assert_nil task.last_error
+  end
+
+  def test_scheduled_tasks_checker_creates_issue_for_task_without_assignee
+    category = IssueCategory.create!(project: @project, name: 'Ops', assigned_to_id: 3)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      issue_category_id: category.id,
+      subject: 'Unassigned checker test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+
+    assert_difference('Issue.count') do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    issue = Issue.where(subject: 'Unassigned checker test').last
+    assert_equal 3, issue.assigned_to_id
+    assert_nil task.reload.last_error
   end
 
   def test_checker_runs_as_task_author_and_restores_current_user

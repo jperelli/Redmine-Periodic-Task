@@ -17,8 +17,9 @@ Login: admin / admin at http://localhost:3000/login (Redmine may force a passwor
 
 ## Setting up a project for periodic tasks
 1. Create a project (Projects > New project) and tick the "Periodic tasks" module (`project_module_periodictask`).
-2. Add a member (Settings > Members > New member) — the form's required "Assignee" select is empty and the
-   task cannot be created until the project has at least one member.
+2. Add a member (Settings > Members > New member) if you want to pick an assignee; the "Assignee" select is
+   optional (blank = Redmine's category/project default assignee) and shows "This project has no members"
+   when the project has none.
 3. Index: /projects/<identifier>/periodictask ; New form: .../periodictask/new ; Detail: .../periodictask/<id>.
 
 ## Locale testing tips
