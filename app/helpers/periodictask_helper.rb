@@ -58,7 +58,7 @@ module PeriodictaskHelper
     version_options_for_select((versions + [periodictask.fixed_version]).compact.uniq, periodictask.fixed_version)
   end
 
-  # Marker shown next to a disabled task's subject in the list and detail pages.
+  # Marker shown next to a disabled task's subject in the project and admin lists.
   def periodictask_disabled_icon(periodictask)
     return if periodictask.is_active?
 

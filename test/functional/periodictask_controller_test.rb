@@ -699,6 +699,40 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
+  def test_task_of_another_project_is_not_reachable_through_this_project
+    other = create_test_periodictask(project: Project.find(2), subject: 'Onlinestore task')
+
+    get :show, params: { project_id: 'ecookbook', id: other.id }
+    assert_response 404
+    get :edit, params: { project_id: 'ecookbook', id: other.id }
+    assert_response 404
+    get :copy, params: { project_id: 'ecookbook', id: other.id }
+    assert_response 404
+    patch :update, params: { project_id: 'ecookbook', id: other.id, periodictask: { subject: 'Hijacked' } }
+    assert_response 404
+    assert_no_difference('Issue.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: other.id }
+    end
+    assert_response 404
+    assert_no_difference('Periodictask.count') do
+      delete :destroy, params: { project_id: 'ecookbook', id: other.id }
+    end
+    assert_response 404
+    assert_equal 2, other.reload.project_id
+    assert_equal 'Onlinestore task', other.subject
+  end
+
+  def test_index_sorts_business_day_intervals_by_duration
+    create_test_periodictask(subject: 'One week', interval_number: 1, interval_units: 'week')
+    create_test_periodictask(subject: 'Three business days', interval_number: 3, interval_units: 'business_day')
+    create_test_periodictask(subject: 'One day', interval_number: 1, interval_units: 'day')
+    get :index, params: { project_id: 'ecookbook', sort: 'interval:asc' }
+    assert_response :success
+    body = @response.body
+    assert_operator body.index('One day'), :<, body.index('Three business days')
+    assert_operator body.index('Three business days'), :<, body.index('One week')
+  end
+
   def test_denies_member_without_permission
     # dlopez (user 3) is a Developer member of ecookbook but the Developer role
     # was not granted the :periodictask permission in setup.

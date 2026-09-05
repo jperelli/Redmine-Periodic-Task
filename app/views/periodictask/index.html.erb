@@ -59,7 +59,7 @@
               {:controller => 'periodictask', :action => 'run_now', :id => a.id, :project_id => @project},
               :method => :post,
               :data => { :confirm => l(:text_run_now_confirm) },
-              :class => 'icon-only', :title => l(:button_run_now)
+              :class => 'icon-only icon-reload', :title => l(:button_run_now)
             ) %>
             <%= delete_link(
               {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},
