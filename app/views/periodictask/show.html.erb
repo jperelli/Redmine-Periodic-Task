@@ -5,6 +5,11 @@
     class: 'icon icon-edit'
   ) %>
   <%= link_to(
+    periodictask_sprite_icon('copy', l(:button_copy)),
+    { controller: 'periodictask', action: 'copy', id: @periodictask.id, project_id: @project },
+    class: 'icon icon-copy'
+  ) %>
+  <%= link_to(
     periodictask_sprite_icon('reload', l(:button_run_now)),
     { controller: 'periodictask', action: 'run_now', id: @periodictask.id, project_id: @project },
     method: :post,
