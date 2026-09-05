@@ -1,0 +1,7 @@
+api.array :periodictasks, api_meta(total_count: @task_count, offset: @offset, limit: @limit) do
+  @tasks.each do |task|
+    api.periodictask do
+      render_api_periodictask(api, task, @last_runs[task.id])
+    end
+  end
+end

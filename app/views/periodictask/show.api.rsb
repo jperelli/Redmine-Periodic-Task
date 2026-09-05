@@ -1,0 +1,3 @@
+api.periodictask do
+  render_api_periodictask(api, @periodictask, @last_run)
+end
