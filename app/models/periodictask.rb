@@ -241,6 +241,41 @@ class Periodictask < ActiveRecord::Base
     self
   end
 
+  # Builds the issue template from an existing issue, leaving the schedule
+  # untouched. The status is not taken over: an existing issue is often
+  # closed, while the generated ones should start in the tracker's default.
+  def copy_from_issue(issue)
+    self.subject = issue.subject
+    self.description = issue.description
+    self.tracker_id = issue.tracker_id
+    self.priority_id = issue.priority_id
+    self.issue_category_id = issue.category_id
+    self.fixed_version_id = issue.fixed_version_id
+    self.assigned_to_id = issue.assigned_to_id
+    self.parent_id = issue.parent_id
+    self.estimated_hours = issue.estimated_hours
+    self.done_ratio = issue.done_ratio if issue.done_ratio.to_i.positive?
+    self.custom_field_values = issue.custom_field_values.to_h { |v| [v.custom_field_id.to_s, v.value] }
+    self.watcher_user_ids = issue.watcher_user_ids
+    self.tag_list = issue.tag_list if self.class.tags_plugin_installed?
+    self.checklists_template_id = self.class.checklist_template_matching(issue)&.id
+    self
+  end
+
+  # The checklist template whose items are exactly the checklist of +issue+,
+  # so an issue created from a template maps back to it. Nil when the plugin
+  # is missing, the issue has no checklist or it was edited since.
+  def self.checklist_template_matching(issue)
+    return unless checklists_plugin_installed? && issue.respond_to?(:checklists)
+
+    subjects = issue.checklists.map { |item| item.subject.to_s.strip }
+    return if subjects.empty?
+
+    ChecklistTemplate.in_project_and_global(issue.project).find do |template|
+      template.template_items.to_s.split("\n").map(&:strip) == subjects
+    end
+  end
+
   def generate_issue(now = Time.current)
     return unless project.try(:active?)
 

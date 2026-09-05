@@ -147,3 +147,4 @@ zh:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_new_periodictask_from_issue: '从此问题新建周期任务'

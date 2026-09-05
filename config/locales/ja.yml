@@ -145,3 +145,4 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'

@@ -147,3 +147,4 @@ vi:
   label_periodictask_run_source_endpoint: "URL kiểm tra"
   label_periodictask_run_source_manual: "Thủ công"
   label_periodictask_run_until: "đến %{time}"
+  label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'

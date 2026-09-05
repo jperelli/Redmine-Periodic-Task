@@ -1,0 +1,12 @@
+<% if @issue&.persisted? && User.current.allowed_to?(:periodictask, @issue.project) %>
+  <% label = l(:label_new_periodictask_from_issue) %>
+  <h3><%= l(:label_periodic_tasks) %></h3>
+  <ul class="periodictask-sidebar">
+    <li>
+      <%# PeriodictaskHelper is not loaded in issue views, hence the inline sprite check %>
+      <%= link_to respond_to?(:sprite_icon) ? sprite_icon('add', label) : label,
+                  new_periodictask_path(project_id: @issue.project, from_issue_id: @issue.id),
+                  class: 'icon icon-add periodictask-new-from-issue' %>
+    </li>
+  </ul>
+<% end %>

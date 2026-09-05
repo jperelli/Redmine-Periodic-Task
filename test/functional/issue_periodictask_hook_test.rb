@@ -37,6 +37,37 @@ class IssuePeriodictaskHookTest < ActionController::TestCase
     assert_select 'p.periodictask-origin', count: 0
   end
 
+  def test_sidebar_links_to_new_periodictask_from_issue
+    issue = create_issue
+    get :show, params: { id: issue.id }
+    assert_response :success
+    assert_select '#sidebar a.periodictask-new-from-issue[href=?]',
+                  "/projects/#{@project.identifier}/periodictask/new?from_issue_id=#{issue.id}",
+                  text: /Create periodic task from this issue/
+  end
+
+  def test_no_sidebar_link_without_periodictask_permission
+    Role.find(1).remove_permission!(:periodictask)
+    issue = create_issue
+    get :show, params: { id: issue.id }
+    assert_response :success
+    assert_select 'a.periodictask-new-from-issue', count: 0
+  end
+
+  def test_no_sidebar_link_when_module_is_disabled
+    EnabledModule.where(project: @project, name: 'periodictask').delete_all
+    issue = create_issue
+    get :show, params: { id: issue.id }
+    assert_response :success
+    assert_select 'a.periodictask-new-from-issue', count: 0
+  end
+
+  def test_no_sidebar_link_on_issue_list
+    get :index, params: { project_id: @project.identifier }
+    assert_response :success
+    assert_select 'a.periodictask-new-from-issue', count: 0
+  end
+
   private
 
   def create_task
