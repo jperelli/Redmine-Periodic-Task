@@ -21,7 +21,8 @@
       <tr class="<%= cycle('odd', 'even') %>">
         <td><%= link_to task.project.name, project_path(task.project) %></td>
         <td class="subject">
-          <%= content_tag('span', '', :title => task.last_error, :class => 'icon-only icon-error') if task.last_error.present? %>
+          <%= periodictask_disabled_icon(task) %>
+          <%= periodictask_error_icon(task) %>
           <%= link_to task.subject, periodictask_path(:project_id => task.project, :id => task.id) %>
         </td>
         <td class="interval"><%= periodictask_schedule_description(task) %></td>

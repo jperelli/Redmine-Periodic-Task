@@ -179,6 +179,8 @@ The plugin configuration page (*Administration → Plugins → Redmine periodict
 
 The *Run checker now* button on the same page runs the checker immediately, which is handy to test a setup without waiting for the scheduler.
 
+*Administration → Periodic Tasks* lists the tasks of every project in one table (disabled tasks and tasks whose last run failed are marked), with links to each task's detail and edit pages.
+
 ![Scheduler log on the plugin settings page, with a highlighted failed run](doc/screenshots/scheduler_log.png)
 
 ### Recurrence
@@ -219,13 +221,15 @@ calendar year around New Year (2025-12-29 is already ISO week 01 of 2026).
 
 The offset shifts the whole date, so combining the variables keeps them consistent across month and year boundaries — on 2027-01-01, `**DAY-1**/**MONTH-1**/**YEAR-1**` renders `31/12/2026`.
 
-If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `vi`, `zh`) to the cronjob like this
+If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `vi`, `zh`, `zh-TW`) to the cronjob like this
 
     0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production LOCALE="de"
 
 ## Plugins supported
 
 redmine-periodictask supports [redminecrm checklist PRO](https://www.redmineup.com/pages/plugins/checklists) to be used when creating a periodic task.
+
+When a tagging plugin ([RedmineUP Tags](https://www.redmineup.com/pages/plugins/tags) or [redmine_tags](https://github.com/ixti/redmine_tags)) is installed, the task form also gets a *Tags* field and the generated issues are tagged with it.
 
 ## Development
 

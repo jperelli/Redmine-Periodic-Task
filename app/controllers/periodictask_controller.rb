@@ -7,6 +7,7 @@ class PeriodictaskController < ApplicationController
 
   before_action :find_project
   before_action :authorize
+  before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
   before_action :load_users, except: %i[destroy run_now tags]
   before_action :load_categories, except: %i[destroy run_now tags]
   before_action :load_versions, except: %i[destroy run_now tags]
@@ -36,6 +37,7 @@ class PeriodictaskController < ApplicationController
     # duration (1 week > 1 day) instead of just the raw number.
     interval_days_sql = "#{Periodictask.table_name}.interval_number * " \
                         "CASE #{Periodictask.table_name}.interval_units " \
+                        "WHEN 'business_day' THEN 1.4 " \
                         "WHEN 'week' THEN 7 " \
                         "WHEN 'month' THEN 30 " \
                         "WHEN 'year' THEN 365 " \
@@ -92,21 +94,17 @@ class PeriodictaskController < ApplicationController
   # Prefills the new task form from an existing task; nothing is stored until
   # the form is submitted.
   def copy
-    source = Periodictask.accessible.find(params[:id])
-    @periodictask = Periodictask.new(project: @project, author_id: User.current.id).copy_from(source)
+    @periodictask = Periodictask.new(project: @project, author_id: User.current.id).copy_from(@periodictask)
     @issue = @periodictask.generate_issue
     render action: 'new'
   end
 
   def edit
-    @periodictask = Periodictask.accessible.find(params[:id])
-    @periodictask.project = @project
     params[:project_id] = @project[:identifier]
     @issue = @periodictask.generate_issue
   end
 
   def update
-    @periodictask = Periodictask.accessible.find(params[:id])
     params[:periodictask][:project_id] = @project[:id]
     assign_periodictask_params
     @issue = @periodictask.generate_issue
@@ -120,9 +118,6 @@ class PeriodictaskController < ApplicationController
   end
 
   def show
-    @periodictask = Periodictask.accessible.find(params[:id])
-    @periodictask.project = @project
-
     issue_ids = @periodictask.issues.pluck(:id)
     return if issue_ids.empty?
 
@@ -139,17 +134,14 @@ class PeriodictaskController < ApplicationController
   end
 
   def destroy
-    @task = Periodictask.accessible.find(params[:id])
-    @task.destroy
-    @task.log_activity('delete')
+    @periodictask.destroy
+    @periodictask.log_activity('delete')
     redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
   end
 
   # Generate an issue right now from the task config, without touching the
   # schedule. Handy for testing a task before its next run date arrives.
   def run_now
-    @periodictask = Periodictask.accessible.find(params[:id])
-    @periodictask.project = @project
     issue = @periodictask.generate_issue(Time.current)
 
     if issue.nil?
@@ -185,7 +177,7 @@ class PeriodictaskController < ApplicationController
 
   def customfields
     @periodictask = if params[:periodictask][:id].present?
-                      Periodictask.accessible.find(params[:periodictask][:id])
+                      project_periodictasks.find(params[:periodictask][:id])
                     else
                       Periodictask.new(project: @project, author_id: User.current.id)
                     end
@@ -197,6 +189,18 @@ class PeriodictaskController < ApplicationController
 
   def find_project
     @project = Project.find(params[:project_id])
+  end
+
+  # Tasks are always addressed through their own project, so a task id from
+  # another project is a 404 even for a user with the permission there.
+  def find_periodictask
+    @periodictask = project_periodictasks.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
+  def project_periodictasks
+    @project.periodictasks.accessible
   end
 
   def load_users
