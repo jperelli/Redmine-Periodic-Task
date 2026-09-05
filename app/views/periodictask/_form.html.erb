@@ -2,6 +2,7 @@
 
 <%= f.hidden_field :id %>
 <%= f.hidden_field :project_id %>
+<%= hidden_field_tag 'copy_from', @copy_from.id if @copy_from %>
 
 <fieldset class="box tabular">
   <legend><%= l(:label_periodictask_configuration) %></legend>
@@ -155,6 +156,19 @@
 <div id="issue_custom_fields">
   <%= render :partial => 'customfields', :locals => { :issue => @issue } %>
 </div>
+
+<fieldset class="box" id="periodictask_attachments">
+  <legend><%= l(:label_attachment_plural) %></legend>
+  <p class="periodictask-attachments-info"><%= l(:label_attachments_info) %></p>
+  <% if @copy_from && @copy_from.attachments.any? %>
+    <p>
+      <%= check_box_tag 'copy_attachments', '1', params[:copy_attachments].present? || request.get? %>
+      <label for="copy_attachments"><%= l(:label_copy_attachments) %> (<%= @copy_from.attachments.size %>)</label>
+    </p>
+  <% end %>
+  <%= link_to_attachments @periodictask, :thumbnails => false if @periodictask.persisted? %>
+  <%= render :partial => 'attachments/form', :locals => { :container => @periodictask } %>
+</fieldset>
 
 <%= javascript_tag do %>
   $(document).ready(function() {

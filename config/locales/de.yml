@@ -143,3 +143,5 @@ de:
   label_periodictask_run_source_endpoint: 'Prüf-URL'
   label_periodictask_run_source_manual: 'Manuell'
   label_periodictask_run_until: 'bis %{time}'
+  label_attachments_info: "An die Vorlage angehängte Dateien werden auf jedes erstellte Ticket kopiert."
+  error_attachment_copy_failed: 'Der Anhang "%{filename}" konnte nicht kopiert werden: %{error}'

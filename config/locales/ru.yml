@@ -148,3 +148,5 @@ ru:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "Файлы, прикреплённые к шаблону, копируются в каждую созданную задачу."
+  error_attachment_copy_failed: 'Не удалось скопировать вложение "%{filename}": %{error}'

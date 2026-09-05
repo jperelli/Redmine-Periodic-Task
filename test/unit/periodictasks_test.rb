@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class PeriodictasksTest < ActiveSupport::TestCase
   fixtures :projects, :users, :trackers, :projects_trackers, :issue_statuses,
            :enumerations, :enabled_modules, :roles, :members, :member_roles,
-           :versions
+           :versions, :issues, :attachments
 
   def setup
     @project = Project.find(1)
@@ -436,6 +436,87 @@ class PeriodictasksTest < ActiveSupport::TestCase
     created = Issue.where(subject: 'History test').last
     assert_includes task.created_issues, created
     assert_equal 1, task.created_issues.count
+  end
+
+  def test_checker_copies_attachments_onto_the_generated_issue
+    set_fixtures_attachments_directory
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Attachments test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+    template_attachment = Attachment.find(4).copy(container: task, description: 'Checklist')
+    template_attachment.save!
+
+    assert_difference('Attachment.count', 1) do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    issue = Issue.where(subject: 'Attachments test').to_a.tap { |issues| assert_equal 1, issues.size }.first
+    copy = issue.attachments.to_a.tap { |copies| assert_equal 1, copies.size }.first
+    assert_not_equal template_attachment.id, copy.id
+    assert_equal %w[source.rb Checklist], [copy.filename, copy.description]
+    assert_equal template_attachment.author_id, copy.author_id
+    assert_equal template_attachment.disk_filename, copy.disk_filename
+    assert copy.readable?
+    assert_nil task.reload.last_error
+
+    # The copies are independent records: removing the issue's file keeps the
+    # template's, and vice versa.
+    issue.attachments.delete(copy)
+    assert Attachment.exists?(template_attachment.id)
+    assert template_attachment.reload.readable?
+  end
+
+  def test_checker_keeps_the_issue_and_records_the_error_when_an_attachment_cannot_be_copied
+    set_tmp_attachments_directory
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Missing file test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+    Attachment.find(4).copy(container: task).save! # file not present under the tmp storage path
+
+    assert_difference('Issue.count', 1) do
+      assert_no_difference('Attachment.count') do
+        ScheduledTasksChecker.checktasks!
+      end
+    end
+
+    task.reload
+    assert_equal 1, task.created_issues.count
+    assert_match(/source\.rb/, task.last_error)
+    assert_operator task.next_run_date, :>, Time.current
+  end
+
+  def test_destroy_deletes_the_attachments
+    set_fixtures_attachments_directory
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Destroy test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.from_now
+    )
+    attachment = Attachment.find(4).copy(container: task)
+    attachment.save!
+
+    assert_difference('Attachment.count', -1) { task.destroy }
+    assert_not Attachment.exists?(attachment.id)
+    assert Attachment.find(4).readable? # still referenced by issue 2, so the file stays
   end
 
   def test_record_generated_issue_is_idempotent
