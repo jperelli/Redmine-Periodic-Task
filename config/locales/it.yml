@@ -160,3 +160,4 @@ it:
   text_periodictask_rescheduled_after_completion: "#%{id} è stata chiusa, prossima esecuzione ripianificata al %{time}"
   text_periodictask_last_skipped: "L'esecuzione del %{time} non ha creato una segnalazione: %{issue} era ancora aperta."
   field_periodictask_run_notes: "Note"
+  label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'

@@ -15,6 +15,7 @@
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
 - Add a per-task `If the previous issue is still open` setting: create a new issue anyway (default), skip the occurrence, close the previous issue first, or wait and restart the schedule from its closing date (Todoist's `every!`). Skipped and waiting runs are shown on the task detail page and as notes in the scheduler log, not as errors **requires migration** (@jperelli)
+- Add a `Create periodic task from this issue` link to the issue sidebar that opens the new task form prefilled from the issue (template fields, custom fields, watchers, tags and checklist template; first run preset to a future due date) (@jperelli)
 
 ### Fixes
 

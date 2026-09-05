@@ -165,3 +165,4 @@ ru:
   text_periodictask_rescheduled_after_completion: "#%{id} закрыта, следующий запуск перенесён на %{time}"
   text_periodictask_last_skipped: "Запуск от %{time} не создал задачу: %{issue} была ещё открыта."
   field_periodictask_run_notes: "Примечания"
+  label_new_periodictask_from_issue: 'Создать периодическую задачу из этой задачи'

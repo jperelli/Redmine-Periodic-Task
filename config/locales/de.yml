@@ -160,3 +160,4 @@ de:
   text_periodictask_rescheduled_after_completion: "#%{id} wurde geschlossen, nächster Lauf verschoben auf %{time}"
   text_periodictask_last_skipped: "Der Lauf vom %{time} hat kein Ticket erstellt: %{issue} war noch offen."
   field_periodictask_run_notes: "Hinweise"
+  label_new_periodictask_from_issue: 'Wiederholende Aufgabe aus diesem Ticket erstellen'

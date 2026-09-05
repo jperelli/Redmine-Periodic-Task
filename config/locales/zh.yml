@@ -162,3 +162,4 @@ zh:
   text_periodictask_rescheduled_after_completion: "#%{id} 已关闭，下次运行改为 %{time}"
   text_periodictask_last_skipped: "%{time} 的运行未创建问题：%{issue} 当时仍未关闭。"
   field_periodictask_run_notes: "备注"
+  label_new_periodictask_from_issue: '从此问题新建周期任务'

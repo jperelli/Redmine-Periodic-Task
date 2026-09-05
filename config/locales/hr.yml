@@ -165,3 +165,4 @@ hr:
   text_periodictask_rescheduled_after_completion: "#%{id} je zatvoren, sljedeće izvršavanje pomaknuto na %{time}"
   text_periodictask_last_skipped: "Izvršavanje od %{time} nije stvorilo zadatak: %{issue} je još bio otvoren."
   field_periodictask_run_notes: "Napomene"
+  label_new_periodictask_from_issue: 'Stvori periodički zadatak iz ovog zadatka'

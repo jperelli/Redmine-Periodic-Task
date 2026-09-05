@@ -160,3 +160,4 @@ tr:
   text_periodictask_rescheduled_after_completion: "#%{id} kapatıldı, sonraki çalıştırma %{time} olarak yeniden planlandı"
   text_periodictask_last_skipped: "%{time} tarihli çalıştırma iş oluşturmadı: %{issue} hâlâ açıktı."
   field_periodictask_run_notes: "Notlar"
+  label_new_periodictask_from_issue: 'Bu işten periyodik iş oluştur'

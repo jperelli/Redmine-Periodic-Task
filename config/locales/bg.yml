@@ -160,3 +160,4 @@ bg:
   text_periodictask_rescheduled_after_completion: "#%{id} беше затворена, следващото изпълнение е пренасрочено за %{time}"
   text_periodictask_last_skipped: "Изпълнението от %{time} не създаде задача: %{issue} беше още отворена."
   field_periodictask_run_notes: "Бележки"
+  label_new_periodictask_from_issue: 'Създай периодична задача от тази задача'

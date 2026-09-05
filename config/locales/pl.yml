@@ -164,3 +164,4 @@ pl:
   text_periodictask_rescheduled_after_completion: "#%{id} zostało zamknięte, następne uruchomienie przełożono na %{time}"
   text_periodictask_last_skipped: "Uruchomienie z %{time} nie utworzyło zagadnienia: %{issue} było nadal otwarte."
   field_periodictask_run_notes: "Uwagi"
+  label_new_periodictask_from_issue: 'Utwórz zadanie cykliczne z tego zagadnienia'

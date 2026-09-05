@@ -160,3 +160,4 @@ pt-BR:
   text_periodictask_rescheduled_after_completion: "#%{id} foi fechada, próxima execução reagendada para %{time}"
   text_periodictask_last_skipped: "A execução de %{time} não criou uma tarefa: %{issue} ainda estava aberta."
   field_periodictask_run_notes: "Observações"
+  label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'

@@ -162,3 +162,4 @@ zh-TW:
   text_periodictask_rescheduled_after_completion: "#%{id} 已關閉，下次執行改為 %{time}"
   text_periodictask_last_skipped: "%{time} 的執行未建立議題：%{issue} 當時仍未關閉。"
   field_periodictask_run_notes: "備註"
+  label_new_periodictask_from_issue: '從此議題建立週期任務'
