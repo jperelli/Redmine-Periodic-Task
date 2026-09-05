@@ -65,7 +65,7 @@
       <p>
         <%= label(:periodictask, :assigned_to_id) do %><span class="field-description" title="<%= l(:label_assigned_to_info) %>"><%= l(:field_assigned_to) %></span><% end %>
         <% if @assignables.length > 0 %>
-          <%= f.select :assigned_to_id, principals_options_for_select(@assignables, @periodictask.assigned_to), :include_blank => true %>
+          <%= f.select :assigned_to_id, principals_options_for_select(@assignables, @periodictask.assigned_to), :include_blank => periodictask_default_label(nil) %>
           <% if @assignables.include?(User.current) %>
             <%= link_to l(:label_assign_to_me), '#', :class => 'assign-to-me-link', :style => 'padding-left: 5px;', :onclick => "$('#periodictask_assigned_to_id').val('#{User.current.id}').trigger('change'); return false;" %>
           <% end %>

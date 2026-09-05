@@ -121,7 +121,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     get :new, params: { project_id: 'ecookbook' }
 
     assert_select '#periodictask_assigned_to_id:not([required])'
-    assert_select '#periodictask_assigned_to_id option[value=""]'
+    assert_select '#periodictask_assigned_to_id option[value=""]', text: "(#{I18n.t(:label_default)})"
     assert_select 'label[for="periodictask_assigned_to_id"] span.required', count: 0
     assert_select 'a.assign-to-me-link'
   end
@@ -158,7 +158,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_nil task.reload.assigned_to_id
   end
 
-  def test_index_and_show_display_dash_for_task_without_assignee
+  def test_index_and_show_display_default_for_task_without_assignee
     task = create_test_periodictask(subject: 'Unassigned task', assigned_to_id: nil)
 
     get :index, params: { project_id: 'ecookbook' }
@@ -166,7 +166,9 @@ class PeriodictaskControllerTest < ActionController::TestCase
 
     get :show, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
-    assert_select '.periodictask-template .attributes .assigned-to .value', text: '-'
+    assert_select '.periodictask-template .attributes .assigned-to .value', text: /\A\(#{I18n.t(:label_default)}\)/
+    assert_select '.periodictask-template .attributes .assigned-to .value span.icon-help[title=?]',
+                  I18n.t(:label_assigned_to_info)
   end
 
   def test_run_now_without_assignee_applies_category_default_assignee
