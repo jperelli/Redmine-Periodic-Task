@@ -18,7 +18,11 @@ TimezoneTestTask = Struct.new(:next_run_date, :interval_number, :interval_units)
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      val = interval_number.business_day.after(val) while val <= now
+      date = val.to_date
+      while val <= now
+        date = interval_number.business_days.after(date)
+        val = val.change(year: date.year, month: date.month, day: date.day)
+      end
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)

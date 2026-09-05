@@ -321,6 +321,26 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal scheduled + 1.day, next_date
   end
 
+  def test_get_next_run_date_business_day_keeps_time_of_day
+    scheduled = Time.utc(2026, 4, 6, 20, 30, 0) # Monday, outside business hours
+    task = Periodictask.new(
+      interval_number: 1,
+      interval_units: 'business_day',
+      next_run_date: scheduled
+    )
+    assert_equal Time.utc(2026, 4, 7, 20, 30, 0), task.get_next_run_date(scheduled + 5.minutes)
+  end
+
+  def test_get_next_run_date_business_day_skips_weekend
+    scheduled = Time.utc(2026, 4, 10, 20, 30, 0) # Friday
+    task = Periodictask.new(
+      interval_number: 1,
+      interval_units: 'business_day',
+      next_run_date: scheduled
+    )
+    assert_equal Time.utc(2026, 4, 13, 20, 30, 0), task.get_next_run_date(scheduled + 5.minutes)
+  end
+
   def test_get_next_run_date_yearly
     scheduled = Time.utc(2026, 1, 1, 10, 0, 0)
     now = scheduled + 1.hour

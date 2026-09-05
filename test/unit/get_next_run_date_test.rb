@@ -17,7 +17,11 @@ GetNextRunDateTestTask = Struct.new(:next_run_date, :interval_number, :interval_
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      val = interval_number.business_day.after(val) while val <= now
+      date = val.to_date
+      while val <= now
+        date = interval_number.business_days.after(date)
+        val = val.change(year: date.year, month: date.month, day: date.day)
+      end
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
@@ -73,10 +77,10 @@ class GetNextRunDateTest < Minitest::Test
     end
   end
 
-  # For times outside business hours, business_time snaps to start of business
-  # day (09:00). Verify that once snapped, the time stays consistent and doesn't
-  # drift further. This is the exact scenario from issue #79 (user sets 06:00).
-  def test_business_day_outside_business_hours_stabilizes
+  # A schedule outside business hours keeps its time of day: only the date is
+  # walked over business days. This is the exact scenario from issue #79 (user
+  # sets 06:00), where the run used to be moved to 09:00.
+  def test_business_day_outside_business_hours_keeps_time_of_day
     # Task originally at 06:00 (before business hours)
     scheduled_time = Time.utc(2026, 4, 6, 6, 0, 0) # Monday 06:00
     task = GetNextRunDateTestTask.new(scheduled_time, 1, 'business_day')
@@ -84,25 +88,44 @@ class GetNextRunDateTest < Minitest::Test
     # First run: cron at 07:05
     execution_time = Time.utc(2026, 4, 6, 7, 5, 0)
     next_date = task.get_next_run_date(execution_time)
-    # business_time snaps to 09:00 (start of business day)
-    assert_equal 9, next_date.hour
-    assert_equal 0, next_date.min
-    assert next_date > execution_time
+    assert_equal Time.utc(2026, 4, 7, 6, 0, 0), next_date
 
-    # Simulate subsequent runs - time should stay at 09:00
+    # Simulate subsequent runs - time should stay at 06:00
     task.next_run_date = next_date
     3.times do |i|
       execution_time = task.next_run_date + 1800 + rand(300) # 30-35 min late
       next_date = task.get_next_run_date(execution_time)
 
-      assert_equal 9, next_date.hour,
-                   "Run #{i + 2}: Expected hour 09:00 (stable), got #{next_date.strftime('%H:%M')}"
+      assert_equal 6, next_date.hour,
+                   "Run #{i + 2}: Expected hour 06:00 (stable), got #{next_date.strftime('%H:%M')}"
       assert_equal 0, next_date.min,
                    "Run #{i + 2}: Expected minute 00, got #{next_date.strftime('%H:%M')}"
       assert next_date > execution_time
 
       task.next_run_date = next_date
     end
+  end
+
+  # An evening schedule must land on the very next business day, not skip one:
+  # counting business days from an after-hours instant first rolls forward to
+  # the next business morning and then adds the interval.
+  def test_business_day_evening_schedule_does_not_skip_a_day
+    scheduled_time = Time.utc(2026, 4, 6, 20, 30, 0) # Monday 20:30
+    task = GetNextRunDateTestTask.new(scheduled_time, 1, 'business_day')
+
+    next_date = task.get_next_run_date(Time.utc(2026, 4, 6, 20, 35, 0))
+
+    assert_equal Time.utc(2026, 4, 7, 20, 30, 0), next_date
+  end
+
+  # Weekends are still skipped when walking dates.
+  def test_business_day_skips_weekend
+    scheduled_time = Time.utc(2026, 4, 10, 20, 30, 0) # Friday 20:30
+    task = GetNextRunDateTestTask.new(scheduled_time, 1, 'business_day')
+
+    next_date = task.get_next_run_date(Time.utc(2026, 4, 10, 20, 35, 0))
+
+    assert_equal Time.utc(2026, 4, 13, 20, 30, 0), next_date # Monday
   end
 
   # Verify business_day with interval > 1
