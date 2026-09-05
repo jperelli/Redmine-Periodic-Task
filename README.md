@@ -173,6 +173,12 @@ Call it from whatever scheduler you have, for example:
 
 The endpoint works regardless of the **Scheduler** setting.
 
+### Scheduler log
+
+The plugin configuration page (*Administration → Plugins → Redmine periodictask → Configure*) shows the last 50 runs of the checker, whatever triggered them (cron/rake, web request, check URL or the *Run checker now* button): when it started, how many tasks were due, how many issues were created, how long it took and any errors. Use it to confirm that your cron/uptime monitor/CI schedule is actually firing. Consecutive runs that found nothing to do are grouped in a single row (with a run counter and the time of the last one), so the 50 rows cover days of history even with a 5-minute web-request interval.
+
+The *Run checker now* button on the same page runs the checker immediately, which is handy to test a setup without waiting for the scheduler.
+
 ### Recurrence
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.

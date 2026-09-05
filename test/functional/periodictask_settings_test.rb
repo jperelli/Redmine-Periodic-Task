@@ -20,6 +20,20 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
     end
     assert_select 'input[name=?]', 'settings[web_check_interval]'
     assert_select 'code', text: %r{/periodictask/check\?key=}
+    assert_select 'a[href=?][data-method=post]', '/admin/periodictask/run_checker'
+    assert_select 'p.nodata'
+  end
+
+  def test_plugin_settings_page_lists_recent_runs
+    PeriodictaskRun.delete_all
+    PeriodictaskRun.record!(source: 'endpoint', started_at: 1.minute.ago, finished_at: Time.current,
+                            tasks_due: 1, issues_created: 0, errors: ['#1 Foo: Project is missing or closed'])
+    get '/settings/plugin/periodictask'
+    assert_response :success
+    assert_select 'table.periodictask-runs tbody tr.error', 1 do
+      assert_select 'td', text: 'Check URL'
+      assert_select 'td', text: /Project is missing or closed/
+    end
   end
 
   def test_plugin_settings_can_switch_to_web_mode

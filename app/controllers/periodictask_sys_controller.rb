@@ -7,7 +7,7 @@ class PeriodictaskSysController < ActionController::Base
   before_action :check_enabled
 
   def check
-    count = ScheduledTasksChecker.checktasks!
+    count = ScheduledTasksChecker.checktasks!(source: 'endpoint')
     render plain: "Periodictask: #{count} task(s) run", status: :ok
   end
 

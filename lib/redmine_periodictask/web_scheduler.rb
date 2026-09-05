@@ -52,11 +52,11 @@ module RedminePeriodictask
 
       def run
         if synchronous
-          ScheduledTasksChecker.checktasks!
+          ScheduledTasksChecker.checktasks!(source: 'web')
         else
           Thread.new do
             Rails.application.executor.wrap do
-              ScheduledTasksChecker.checktasks!
+              ScheduledTasksChecker.checktasks!(source: 'web')
             rescue StandardError => e
               Rails.logger.error "Periodictask WebScheduler: #{e.class}: #{e.message}"
             end

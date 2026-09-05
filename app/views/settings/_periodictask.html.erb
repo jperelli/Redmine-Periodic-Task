@@ -17,3 +17,49 @@
   <code><%= url_for(controller: 'periodictask_sys', action: 'check', only_path: false) %>?key=&lt;<%= l(:setting_sys_api_key) %>&gt;</code>
   <em class="info"><%= l(:label_periodictask_check_url_info) %></em>
 </p>
+
+<fieldset class="box">
+  <legend><%= l(:label_periodictask_runs, count: PeriodictaskRun::KEEP) %></legend>
+  <p>
+    <%= link_to l(:button_periodictask_run_checker), periodictask_run_checker_path,
+                method: :post, class: 'icon icon-reload',
+                data: { confirm: l(:text_periodictask_run_checker_confirm) } %>
+    <em class="info"><%= l(:label_periodictask_runs_info) %></em>
+  </p>
+  <% runs = PeriodictaskRun.recent.limit(PeriodictaskRun::KEEP).to_a %>
+  <% if runs.empty? %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% else %>
+    <table class="list periodictask-runs">
+      <thead>
+        <tr>
+          <th><%= l(:field_periodictask_run_started_at) %></th>
+          <th><%= l(:field_periodictask_run_source) %></th>
+          <th><%= l(:field_periodictask_run_runs_count) %></th>
+          <th><%= l(:field_periodictask_run_tasks_due) %></th>
+          <th><%= l(:field_periodictask_run_issues_created) %></th>
+          <th><%= l(:field_periodictask_run_duration) %></th>
+          <th><%= l(:field_periodictask_run_errors) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% runs.each do |run| %>
+          <tr class="<%= cycle('odd', 'even') %> <%= 'error' if run.error_messages.present? %>">
+            <td><%= format_time(run.started_at) %></td>
+            <td><%= l("label_periodictask_run_source_#{run.source}") %></td>
+            <td>
+              <%= run.runs_count %>
+              <% if run.runs_count > 1 %>
+                <span class="info">(<%= l(:label_periodictask_run_until, time: format_time(run.last_run_at)) %>)</span>
+              <% end %>
+            </td>
+            <td><%= run.tasks_due %></td>
+            <td><%= run.issues_created %></td>
+            <td><%= run.duration_ms %> ms</td>
+            <td><%= simple_format(h(run.error_messages)) if run.error_messages.present? %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</fieldset>
