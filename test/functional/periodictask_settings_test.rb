@@ -4,8 +4,10 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
   fixtures :users, :email_addresses, :roles
 
   def setup
-    PeriodictaskRun.delete_all
+    Setting.plugin_periodictask = { 'scheduler_mode' => 'cron' }
+    RedminePeriodictask::WebScheduler.reset!
     log_user('admin', 'admin')
+    PeriodictaskRun.delete_all
   end
 
   def teardown
