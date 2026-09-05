@@ -667,7 +667,8 @@ class PeriodictaskControllerTest < ActionController::TestCase
   def test_new_renders_the_attachments_field
     get :new, params: { project_id: 'ecookbook' }
     assert_response :success
-    assert_select '#periodictask_attachments input[type=file][name=?]', 'attachments[dummy][file]'
+    assert_select 'form[enctype="multipart/form-data"] #periodictask_attachments input[type=file][name=?]',
+                  'attachments[dummy][file]'
     assert_select 'input[name=copy_attachments]', 0
   end
 
@@ -765,7 +766,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     get :edit, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
     assert_select '#periodictask_attachments div.attachments a', text: 'source.rb'
-    assert_select '#periodictask_attachments input[type=file]'
+    assert_select 'form[enctype="multipart/form-data"] #periodictask_attachments input[type=file]'
   end
 
   def test_attachment_of_a_task_is_visible_and_deletable_with_the_periodictask_permission
