@@ -154,3 +154,4 @@ de:
   label_periodictask_journal_ended_by_count: "Periodische Aufgabe beendet (maximale Anzahl Ausführungen erreicht)"
   error_end_date_before_next_run: "Das Enddatum muss nach dem nächsten Ausführungsdatum liegen"
   error_max_occurrences_not_positive: "Die maximale Anzahl Ausführungen muss größer als 0 sein"
+  label_new_periodictask_from_issue: 'Wiederholende Aufgabe aus diesem Ticket erstellen'

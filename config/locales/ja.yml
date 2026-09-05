@@ -154,3 +154,4 @@ ja:
   label_periodictask_journal_ended_by_count: "定期タスクが終了しました（最大実行回数に到達）"
   error_end_date_before_next_run: "終了日時は次回実行日時より後にしてください"
   error_max_occurrences_not_positive: "最大実行回数は 0 より大きくしてください"
+  label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'

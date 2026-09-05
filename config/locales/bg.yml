@@ -154,3 +154,4 @@ bg:
   label_periodictask_journal_ended_by_count: "Периодичната задача приключи (достигнат максимален брой изпълнения)"
   error_end_date_before_next_run: "Крайната дата трябва да е след датата на следващото изпълнение"
   error_max_occurrences_not_positive: "Максималният брой изпълнения трябва да е по-голям от 0"
+  label_new_periodictask_from_issue: 'Създай периодична задача от тази задача'

@@ -159,3 +159,4 @@ uk:
   label_periodictask_journal_ended_by_count: "Періодичне завдання завершено (досягнуто максимальну кількість запусків)"
   error_end_date_before_next_run: "Дата завершення має бути пізнішою за дату наступного запуску"
   error_max_occurrences_not_positive: "Максимальна кількість запусків має бути більшою за 0"
+  label_new_periodictask_from_issue: 'Створити періодичне завдання з цієї задачі'

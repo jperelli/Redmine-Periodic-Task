@@ -159,3 +159,4 @@ ru:
   label_periodictask_journal_ended_by_count: "Периодическая задача завершена (достигнуто максимальное число запусков)"
   error_end_date_before_next_run: "Дата окончания должна быть позже даты следующего запуска"
   error_max_occurrences_not_positive: "Максимальное число запусков должно быть больше 0"
+  label_new_periodictask_from_issue: 'Создать периодическую задачу из этой задачи'
