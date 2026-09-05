@@ -155,3 +155,4 @@ uk:
   label_rotation_not_assignable: "не можна призначити"
   label_rotation_move_up: "Вгору"
   label_rotation_move_down: "Вниз"
+  label_new_periodictask_from_issue: 'Створити періодичне завдання з цієї задачі'

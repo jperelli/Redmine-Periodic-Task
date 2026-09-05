@@ -150,3 +150,4 @@ en:
   label_rotation_not_assignable: "not assignable"
   label_rotation_move_up: "Move up"
   label_rotation_move_down: "Move down"
+  label_new_periodictask_from_issue: 'Create periodic task from this issue'

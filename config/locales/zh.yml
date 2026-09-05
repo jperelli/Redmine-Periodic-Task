@@ -152,3 +152,4 @@ zh:
   label_rotation_not_assignable: "无法指派"
   label_rotation_move_up: "上移"
   label_rotation_move_down: "下移"
+  label_new_periodictask_from_issue: '从此问题新建周期任务'

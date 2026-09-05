@@ -154,3 +154,4 @@ pl:
   label_rotation_not_assignable: "nie można przypisać"
   label_rotation_move_up: "Przenieś wyżej"
   label_rotation_move_down: "Przenieś niżej"
+  label_new_periodictask_from_issue: 'Utwórz zadanie cykliczne z tego zagadnienia'

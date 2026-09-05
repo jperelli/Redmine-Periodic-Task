@@ -152,3 +152,4 @@ vi:
   label_rotation_not_assignable: "không thể giao"
   label_rotation_move_up: "Chuyển lên"
   label_rotation_move_down: "Chuyển xuống"
+  label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'

@@ -150,3 +150,4 @@ pt-BR:
   label_rotation_not_assignable: "não atribuível"
   label_rotation_move_up: "Mover para cima"
   label_rotation_move_down: "Mover para baixo"
+  label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'

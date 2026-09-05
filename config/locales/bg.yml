@@ -150,3 +150,4 @@ bg:
   label_rotation_not_assignable: "не може да бъде възложен"
   label_rotation_move_up: "Нагоре"
   label_rotation_move_down: "Надолу"
+  label_new_periodictask_from_issue: 'Създай периодична задача от тази задача'

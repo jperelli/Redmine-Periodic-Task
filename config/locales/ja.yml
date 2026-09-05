@@ -150,3 +150,4 @@ ja:
   label_rotation_not_assignable: "割り当て不可"
   label_rotation_move_up: "上へ"
   label_rotation_move_down: "下へ"
+  label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'

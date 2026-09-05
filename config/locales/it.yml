@@ -150,3 +150,4 @@ it:
   label_rotation_not_assignable: "non assegnabile"
   label_rotation_move_up: "Sposta su"
   label_rotation_move_down: "Sposta giù"
+  label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'
