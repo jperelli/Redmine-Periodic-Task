@@ -178,6 +178,19 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.progress.attribute', 0
   end
 
+  def test_edit_lists_project_categories_and_selects_the_configured_one
+    task = create_test_periodictask(issue_category_id: 2)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+
+    assert_select '#periodictask_issue_category_id' do
+      assert_select 'option[value="1"]', text: 'Printing'
+      assert_select 'option[selected="selected"][value="2"]', text: 'Recipes'
+      assert_select 'option[value="3"]', 0
+      assert_select 'optgroup', 0
+    end
+  end
+
   def test_edit_with_nil_watcher_user_ids
     task = create_test_periodictask
     task.update_column(:watcher_user_ids, nil)
