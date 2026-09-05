@@ -630,6 +630,27 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.interval .value', text: expected
   end
 
+  def test_copy_prefills_the_new_form_without_saving
+    task = create_test_periodictask(subject: 'Weekly backup', interval_number: 3,
+                                    interval_units: 'week', description: 'Run the backup')
+
+    assert_no_difference('Periodictask.count') do
+      get :copy, params: { project_id: 'ecookbook', id: task.id }
+    end
+    assert_response :success
+    assert_select 'input#periodictask_subject[value=?]', 'Weekly backup'
+    assert_select 'input#periodictask_interval_number[value=?]', '3'
+    assert_select 'select#periodictask_interval_units option[value=week][selected=selected]'
+    assert_select 'textarea#periodictask_description', text: 'Run the backup'
+    assert_select 'input#periodictask_id[value]', 0 # a copy is a new record
+  end
+
+  def test_index_links_to_the_copy_action
+    task = create_test_periodictask
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'a[href=?]', copy_periodictask_path(project_id: 'ecookbook', id: task.id)
+  end
+
   def test_denies_member_without_permission
     # dlopez (user 3) is a Developer member of ecookbook but the Developer role
     # was not granted the :periodictask permission in setup.

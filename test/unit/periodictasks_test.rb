@@ -960,6 +960,25 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert task.next_run_date > Time.current
   end
 
+  def test_copy_from_takes_the_template_but_not_the_identity
+    source = Periodictask.create!(
+      project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
+      subject: 'Source task', interval_number: 2, interval_units: 'week',
+      weekdays: [1, 3], subtasks: [{ 'subject' => 'Child' }], last_error: 'boom'
+    )
+
+    copy = Periodictask.new(project: @project, author_id: 3).copy_from(source)
+
+    assert_equal 'Source task', copy.subject
+    assert_equal [2, 'week'], [copy.interval_number, copy.interval_units]
+    assert_equal [1, 3], copy.weekdays
+    assert_equal [{ 'subject' => 'Child' }], copy.subtasks
+    assert_nil copy.id
+    assert_nil copy.last_error
+    assert_equal 3, copy.author_id
+    assert copy.save
+  end
+
   private
 
   # Mimics the API the RedmineUP Tags plugin adds to Issue (acts_as_taggable).

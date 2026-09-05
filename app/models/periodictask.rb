@@ -19,6 +19,10 @@ class Periodictask < ActiveRecord::Base
   SUBTASK_KEYS = %w[tracker_id subject assigned_to_id estimated_hours].freeze
   RELATION_KEYS = %w[relation_type issue_id delay].freeze
 
+  # Identity, ownership and the outcome of past runs belong to the source task;
+  # everything else describes the template and is worth copying.
+  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error].freeze
+
   # Subtask templates: array of hashes with SUBTASK_KEYS, each becoming a child
   # issue of the generated issue. Accepts an array or an index-keyed hash as
   # posted by the form; blank rows are dropped.
@@ -196,6 +200,13 @@ class Periodictask < ActiveRecord::Base
       [l(:label_unit_month), 'month'],
       [l(:label_unit_year), 'year']
     ]
+  end
+
+  # Takes over the schedule and issue template of another task, leaving the
+  # project and author of this one untouched.
+  def copy_from(source)
+    self.attributes = source.attributes.except(*COPY_EXCLUDED_ATTRIBUTES)
+    self
   end
 
   def generate_issue(now = Time.current)

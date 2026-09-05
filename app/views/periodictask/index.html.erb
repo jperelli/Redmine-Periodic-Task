@@ -49,6 +49,11 @@
               :class => 'icon-only icon-edit', :title => l(:button_edit)
             ) %>
             <%= link_to(
+              periodictask_sprite_icon('copy', l(:button_copy), icon_only: true),
+              {:controller => 'periodictask', :action => 'copy', :id => a.id, :project_id => @project},
+              :class => 'icon-only icon-copy', :title => l(:button_copy)
+            ) %>
+            <%= link_to(
               periodictask_sprite_icon('reload', l(:button_run_now), icon_only: true),
               {:controller => 'periodictask', :action => 'run_now', :id => a.id, :project_id => @project},
               :method => :post,

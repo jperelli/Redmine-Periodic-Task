@@ -8,6 +8,7 @@
 - Add `GET|POST /periodictask/check?key=<sys API key>` to trigger the checker from an external scheduler (uptime monitor, CI cron, Windows Task Scheduler...) (@jperelli)
 - Scheduler log on the plugin configuration page: the last 50 checker runs (trigger, tasks due, issues created, duration, errors), with consecutive idle runs grouped in one row, plus a *Run checker now* button **requires migration** (@jperelli)
 - Add an `Administration` > `Periodic Tasks` page listing the tasks of every project, inspired by [@rkteam](https://github.com/rkteam)'s fork (@jperelli)
+- Add a `Copy` action that opens the new task form prefilled from an existing task, inspired by [@vegaminer](https://github.com/vegaminer)'s fork (@jperelli)
 - Add Vietnamese (`vi`) translation, adapted from [@tq89](https://github.com/tq89)'s fork (@jperelli)
 
 ### Fixes

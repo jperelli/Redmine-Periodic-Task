@@ -36,7 +36,7 @@ Redmine::Plugin.register :periodictask do
 
   project_module :periodictask do
     permission :periodictask,
-               { periodictask: %i[index show new create edit update destroy customfields run_now tags] }
+               { periodictask: %i[index show new create copy edit update destroy customfields run_now tags] }
   end
 
   # Surface create/update/delete of periodic tasks in the activity log, gated by
