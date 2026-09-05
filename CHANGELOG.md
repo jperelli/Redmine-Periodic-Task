@@ -20,6 +20,10 @@
 - Apply the `Project` patch (`has_many :periodictasks, dependent: :destroy`) at plugin load; the nested `to_prepare` it used never ran outside code reloading (@jperelli)
 - `business day` intervals keep the scheduled time of day and no longer skip a day: the next run used to be moved to the start of the business day (09:00) whenever the task was scheduled outside business hours ([#79](https://github.com/jperelli/Redmine-Periodic-Task/issues/79), idea from [chris85618's fork](https://github.com/chris85618/Redmine-Periodic-Task))
 - A shifted month or an ISO week can now render a consistent year: `**PREVIOUS_MONTH**`/`**YEAR**` rendered `12/2026` when run in January 2026, and `**WEEKISO**`/`**YEAR**` was off by one around New Year
+- Task pages only find tasks of the project in the URL: a user with the permission in one project could open, edit, copy, run or delete the tasks of any other project by id (@jperelli)
+- The checker restores the request locale after running, so the *Run checker now* flash message is shown in the admin's language instead of Redmine's default (@jperelli)
+- Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
+- The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 

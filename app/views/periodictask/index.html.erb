@@ -38,7 +38,7 @@
           <td><%= @priorities[a.priority_id]&.name %></td>
           <td>
             <%= periodictask_disabled_icon(a) %>
-            <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
+            <%= periodictask_error_icon(a) %>
             <%= link_to a.subject, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %>
           </td>
           <td><%= a.assigned_to ? link_to_principal(a.assigned_to) : '-' %></td>
@@ -59,7 +59,7 @@
               {:controller => 'periodictask', :action => 'run_now', :id => a.id, :project_id => @project},
               :method => :post,
               :data => { :confirm => l(:text_run_now_confirm) },
-              :class => 'icon-only', :title => l(:button_run_now)
+              :class => 'icon-only icon-reload', :title => l(:button_run_now)
             ) %>
             <%= delete_link(
               {:controller => 'periodictask', :action => 'destroy', :id => a.id, :project_id => @project},

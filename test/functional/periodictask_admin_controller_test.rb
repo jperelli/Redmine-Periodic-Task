@@ -24,6 +24,37 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_select 'table.list td.subject a', text: 'Task on onlinestore'
   end
 
+  def test_index_marks_disabled_tasks
+    create_test_periodictask(Project.find(1), subject: 'Paused task', is_active: false)
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'table.list td.subject', text: /Paused task/ do
+      assert_select 'span.icon-locked[title=?]', I18n.t(:label_disabled)
+      # Redmine 6+ draws icons from the SVG sprite; an empty span shows nothing.
+      assert_select 'span.icon-locked svg' if Redmine::VERSION::MAJOR >= 6
+    end
+    assert_select 'table.list td.subject', text: /Due task/ do
+      assert_select 'span.icon-locked', 0
+    end
+  end
+
+  def test_index_marks_tasks_whose_last_run_failed
+    create_test_periodictask(Project.find(1), subject: 'Broken task', last_error: 'Tracker cannot be blank')
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'table.list td.subject', text: /Broken task/ do
+      assert_select 'span.icon-error[title=?]', 'Tracker cannot be blank'
+      assert_select 'span.icon-error svg' if Redmine::VERSION::MAJOR >= 6
+    end
+    assert_select 'table.list td.subject', text: /Due task/ do
+      assert_select 'span.icon-error', 0
+    end
+  end
+
   def test_index_is_sortable_by_each_column
     log_user('admin', 'admin')
     %w[project subject next_run_date].each do |column|
@@ -60,6 +91,16 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_select 'div.flash.notice', text: /1 task/
     assert_select 'table.periodictask-runs tbody tr', 1
     assert_select 'table.periodictask-runs td', text: 'Manual'
+  end
+
+  def test_run_checker_flash_uses_the_admin_locale
+    User.find_by_login('admin').update!(language: 'es')
+
+    log_user('admin', 'admin')
+    post '/admin/periodictask/run_checker'
+    assert_redirected_to '/settings/plugin/periodictask'
+    follow_redirect!
+    assert_select 'div.flash.notice', text: I18n.t(:notice_periodictask_checker_run, count: 1, locale: :es)
   end
 
   def test_non_admin_is_forbidden

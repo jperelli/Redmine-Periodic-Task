@@ -8,33 +8,35 @@ class ScheduledTasksChecker
     issues_created = 0
     tasks = Periodictask.active.where('next_run_date <= ? ', now).to_a
 
-    tasks.each do |task|
-      # replace variables (set locale from shell)
-      I18n.locale = ENV['LOCALE'] || I18n.default_locale
-
-      as_user(task.author) do
-        issue = task.generate_issue(now)
-        if issue
-          begin
-            issue.save!
-            issues_created += 1
-            task_errors = task.complete_generated_issue(issue, now)
-            task_errors.each { |msg| Rails.logger.error "ScheduledTasksChecker: #{msg}" }
-            errors.concat(task_errors.map { |msg| "##{task.id} #{task.subject}: #{msg}" })
-            task.last_error = task_errors.join(', ').presence
-          rescue ActiveRecord::RecordInvalid => e
-            Rails.logger.error "ScheduledTasksChecker: #{e.message}"
-            errors << "##{task.id} #{task.subject}: #{e.message}"
-            task.last_error = e.message
+    # Macros render in the shell-configured locale (or Redmine's default). The
+    # checker also runs inside web requests, so the caller's locale must be
+    # restored afterwards.
+    I18n.with_locale(ENV['LOCALE'] || I18n.default_locale) do
+      tasks.each do |task|
+        as_user(task.author) do
+          issue = task.generate_issue(now)
+          if issue
+            begin
+              issue.save!
+              issues_created += 1
+              task_errors = task.complete_generated_issue(issue, now)
+              task_errors.each { |msg| Rails.logger.error "ScheduledTasksChecker: #{msg}" }
+              errors.concat(task_errors.map { |msg| "##{task.id} #{task.subject}: #{msg}" })
+              task.last_error = task_errors.join(', ').presence
+            rescue ActiveRecord::RecordInvalid => e
+              Rails.logger.error "ScheduledTasksChecker: #{e.message}"
+              errors << "##{task.id} #{task.subject}: #{e.message}"
+              task.last_error = e.message
+            end
+            task.next_run_date = task.get_next_run_date(now)
+          else
+            msg = 'Project is missing or closed'
+            Rails.logger.error "ScheduledTasksChecker: #{msg}"
+            errors << "##{task.id} #{task.subject}: #{msg}"
+            task.last_error = msg
           end
-          task.next_run_date = task.get_next_run_date(now)
-        else
-          msg = 'Project is missing or closed'
-          Rails.logger.error "ScheduledTasksChecker: #{msg}"
-          errors << "##{task.id} #{task.subject}: #{msg}"
-          task.last_error = msg
+          task.save
         end
-        task.save
       end
     end
     tasks.size
