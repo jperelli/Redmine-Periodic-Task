@@ -182,6 +182,12 @@ class Periodictask < ActiveRecord::Base
   MONTH_WEEKS = (1..5).to_a.freeze
   MONTHLY_MODES = %w[day_of_month weekday].freeze
 
+  # Date macros, optionally suffixed with a day offset: **DAY-1** renders the
+  # component of the date N days before the run, **MONTH+10** N days after it.
+  # Offsets shift the whole date, so **DAY-1**/**MONTH-1**/**YEAR-1** yields
+  # yesterday even across a month or year boundary.
+  DATE_MACRO = /\*\*(DAY|WEEKISO|WEEK|QUARTER|MONTHNAME|MONTH|YEAR)([+-]\d{1,4})?\*\*/
+
   # First day of the week (as Time#wday) following Redmine's display setting,
   # falling back to the current language's default like Redmine's calendar.
   def self.first_weekday
@@ -488,8 +494,23 @@ class Periodictask < ActiveRecord::Base
       str.gsub!('**PREVIOUS_MONTH**', previous_month_time.strftime('%m'))
       str.gsub!('**NEXT_MONTHNAME**', I18n.localize(next_month_time, format: '%B'))
       str.gsub!('**NEXT_MONTH**', next_month_time.strftime('%m'))
+      str.gsub!(DATE_MACRO) do
+        date_macro_value(Regexp.last_match(1), now + Regexp.last_match(2).to_i.days)
+      end
     end
     str
+  end
+
+  def date_macro_value(name, time)
+    case name
+    when 'DAY' then time.strftime('%d')
+    when 'WEEKISO' then time.strftime('%V')
+    when 'WEEK' then time.strftime('%W')
+    when 'QUARTER' then (((time.month - 1) / 3) + 1).to_s
+    when 'MONTHNAME' then I18n.localize(time, format: '%B')
+    when 'MONTH' then time.strftime('%m')
+    when 'YEAR' then time.strftime('%Y')
+    end
   end
 
   def fill_checklists(issue)

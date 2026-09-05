@@ -54,6 +54,7 @@ pt-BR:
     **MONTHNAME** (Janeiro - Dezembro)
     **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
     **NEXT_MONTHNAME** (Janeiro - Dezembro)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dias)
   label_variables_markdown_note: 'Observação: na descrição elas aparecem em negrito na pré-visualização porque ** é a sintaxe de negrito do Markdown; são substituídas pelo valor real quando a tarefa é criada.'
   label_last_error: Último erro
   label_issue_custom_fields: Campos personalizados

@@ -697,6 +697,47 @@ class PeriodictasksTest < ActiveSupport::TestCase
     Periodictask.new.send(:parse_macro, str.dup, now)
   end
 
+  def test_macro_day_offsets_shift_the_whole_date
+    now = Time.utc(2027, 1, 1, 10, 0, 0)
+
+    assert_equal '31/12/2026', parse_macro('**DAY-1**/**MONTH-1**/**YEAR-1**', now)
+    assert_equal '02/01/2027', parse_macro('**DAY+1**/**MONTH+1**/**YEAR+1**', now)
+    assert_equal '01/01/2027', parse_macro('**DAY**/**MONTH**/**YEAR**', now)
+  end
+
+  def test_macro_day_offsets_apply_to_every_date_macro
+    now = Time.utc(2026, 9, 30, 10, 0, 0) # Wednesday of ISO week 40
+
+    assert_equal 'October 4 41 40', parse_macro('**MONTHNAME+1** **QUARTER+1** **WEEKISO+7** **WEEK+7**', now)
+    assert_equal 'September 3 40 39', parse_macro('**MONTHNAME-1** **QUARTER-1** **WEEKISO-1** **WEEK-1**', now)
+  end
+
+  def test_macro_day_offsets_ignore_unsupported_forms
+    now = Time.utc(2026, 9, 30, 10, 0, 0)
+
+    assert_equal '**DAY+one**', parse_macro('**DAY+one**', now)
+    assert_equal '**DAY+10000**', parse_macro('**DAY+10000**', now)
+    assert_equal '**PREVIOUS_MONTH-1**', parse_macro('**PREVIOUS_MONTH-1**', now)
+  end
+
+  def test_macro_day_offset_in_generated_issue
+    now = Time.utc(2026, 3, 1, 10, 0, 0)
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Report **DAY-1**/**MONTH-1**',
+      description: 'Due **DAY+6**/**MONTH+6**',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: now
+    )
+
+    issue = task.generate_issue(now)
+    assert_equal 'Report 28/02', issue.subject
+    assert_equal 'Due 07/03', issue.description
+  end
+
   def test_fill_custom_fields_assigns_hash_loaded_from_db
     task = Periodictask.new(custom_field_values: { 10 => 'Stored value' })
     issue = Struct.new(:custom_field_values).new
@@ -1125,6 +1166,11 @@ class PeriodictasksTest < ActiveSupport::TestCase
   ensure
     Object.send(:remove_const, :ChecklistTemplate)
     Issue.send(:remove_method, :checklists_attributes, :checklists_attributes=)
+  end
+
+  # parse_macro mutates the string it is given, so always hand it a copy.
+  def parse_macro(str, now)
+    Periodictask.new.send(:parse_macro, str.dup, now)
   end
 
   # Mimics the API the RedmineUP Tags plugin adds to Issue (acts_as_taggable).

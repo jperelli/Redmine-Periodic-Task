@@ -216,6 +216,11 @@ when it runs in January 2026, and an ISO week number belongs to the ISO week-bas
 calendar year around New Year (2025-12-29 is already ISO week 01 of 2026).
 
 If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `vi`, `zh`) to the cronjob like this
+Every variable above except `**PREVIOUS_MONTH**` and `**PREVIOUS_MONTHNAME**` also accepts a day offset, written as `+N` or `-N` before the closing `**` (N up to 9999): `**DAY-1**` is the day of the month of the day before the issue is created, `**MONTHNAME+10**` the month name ten days later.
+
+The offset shifts the whole date, so combining the variables keeps them consistent across month and year boundaries — on 2027-01-01, `**DAY-1**/**MONTH-1**/**YEAR-1**` renders `31/12/2026`.
+
+If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `zh`) to the cronjob like this
 
     0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production LOCALE="de"
 

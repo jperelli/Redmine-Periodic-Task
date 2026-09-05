@@ -54,6 +54,7 @@ de:
     **MONTHNAME** (Januar - Dezember)
     **PREVIOUS_MONTHNAME** (Januar - Dezember)
     **NEXT_MONTHNAME** (Januar - Dezember)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N Tage)
   label_variables_markdown_note: 'Hinweis: In der Beschreibung erscheinen diese in der Vorschau fett, da ** die Fett-Syntax von Markdown ist; sie werden beim Erstellen der Aufgabe durch den tatsächlichen Wert ersetzt.'
   label_last_error: Letzter Fehler
   label_issue_custom_fields: Benutzerdefinierte Felder
