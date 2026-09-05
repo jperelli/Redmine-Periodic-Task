@@ -27,7 +27,7 @@
         </td>
         <td class="interval"><%= periodictask_schedule_description(task) %></td>
         <td><%= periodictask_time_with_title(task.next_run_date) %></td>
-        <td><%= task.assigned_to ? link_to_principal(task.assigned_to) : '-' %></td>
+        <td><%= periodictask_assignee(task) %></td>
         <td><%= periodictask_time_with_title(@last_runs[task.id]) %></td>
         <td class="buttons hide-when-print">
           <%= link_to(

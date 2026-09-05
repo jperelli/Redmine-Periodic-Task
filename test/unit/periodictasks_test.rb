@@ -1151,7 +1151,139 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil task.reload.last_error
   end
 
+  def test_rotation_ids_are_normalized_keeping_their_order
+    task = Periodictask.new(rotation_ids: ['3', '', '2', 'x', 3, '0', '-1'])
+
+    assert_equal [3, 2], task.rotation_ids
+    assert_equal 0, task.rotation_index
+    assert task.rotation?
+    assert_not Periodictask.new.rotation?
+  end
+
+  def test_rotation_candidates_are_the_assignable_users_of_the_project
+    task = Periodictask.new(project: @project)
+    candidates = task.rotation_candidates
+
+    assert_equal [2, 3], candidates.map(&:id).sort
+    assert candidates.all?(User)
+  end
+
+  def test_generated_issues_rotate_through_the_users_and_wrap_around
+    task = create_rotation_task(rotation_ids: [3, 2])
+
+    assignees = 3.times.map { run_task(task).assigned_to_id }
+
+    assert_equal [3, 2, 3], assignees
+    assert_equal 1, task.reload.rotation_index
+  end
+
+  def test_rotation_starts_at_the_stored_index
+    task = create_rotation_task(rotation_ids: [3, 2], rotation_index: 1)
+
+    assert_equal 2, task.next_rotation_user.id
+    assert_equal 2, run_task(task).assigned_to_id
+    assert_equal 0, task.rotation_index
+  end
+
+  def test_rotation_skips_users_no_longer_assignable_and_logs_it
+    # User 5 is a locked member of the project, user 4 is not a member at all.
+    task = create_rotation_task(rotation_ids: [5, 4, 3, 2])
+
+    Rails.logger.expects(:warn).with(regexp_matches(/rotation skipped user #5/))
+    Rails.logger.expects(:warn).with(regexp_matches(/rotation skipped user #4/))
+    assert_equal 3, run_task(task).assigned_to_id
+    assert_equal 3, task.rotation_index
+  end
+
+  def test_rotation_falls_back_to_the_assignee_when_nobody_is_assignable
+    task = create_rotation_task(rotation_ids: [5, 4], rotation_index: 1)
+
+    Rails.logger.expects(:warn).twice
+    issue = run_task(task)
+
+    assert_equal 2, issue.assigned_to_id
+    assert_equal 1, task.rotation_index
+  end
+
+  def test_rotation_index_is_not_advanced_when_the_issue_is_not_saved
+    task = create_rotation_task(rotation_ids: [3, 2])
+    issue = task.generate_issue
+
+    assert_equal 3, issue.assigned_to_id
+    assert_equal 0, task.reload.rotation_index
+  end
+
+  def test_checker_rotates_across_runs_and_persists_the_index
+    task = create_rotation_task(rotation_ids: [3, 2], next_run_date: 1.day.ago)
+
+    assignees = 3.times.map do
+      ScheduledTasksChecker.checktasks!
+      task.reload
+      task.update_column(:next_run_date, 1.day.ago)
+      task.created_issues.first.assigned_to_id
+    end
+
+    assert_equal [3, 2, 3], assignees
+    assert_equal 1, task.reload.rotation_index
+    assert_nil task.last_error
+  end
+
+  def test_checker_skips_a_rotation_user_who_got_locked_after_being_listed
+    task = create_rotation_task(rotation_ids: [3, 2], next_run_date: 1.day.ago)
+    User.find(3).lock!
+
+    ScheduledTasksChecker.checktasks!
+
+    task.reload
+    assert_equal 2, task.created_issues.first.assigned_to_id
+    assert_equal 0, task.rotation_index
+    assert_nil task.last_error
+  end
+
+  def test_editing_the_rotation_keeps_the_same_user_up_next
+    task = create_rotation_task(rotation_ids: [3, 2, 4], rotation_index: 1)
+
+    task.update!(rotation_ids: [2, 3])
+    assert_equal 0, task.rotation_index
+
+    task.update!(rotation_ids: [4, 3])
+    assert_equal 0, task.rotation_index
+    assert_equal 4, task.rotation_ids[task.rotation_index]
+
+    task.update!(rotation_ids: [])
+    assert_equal 0, task.rotation_index
+    assert_not task.rotation?
+  end
+
+  def test_copy_from_copies_the_rotation_and_restarts_it
+    source = create_rotation_task(rotation_ids: [3, 2], rotation_index: 1)
+
+    copy = Periodictask.new(project: @project, author_id: 3).copy_from(source)
+
+    assert_equal [3, 2], copy.rotation_ids
+    assert_equal 0, copy.rotation_index
+    assert copy.save
+    assert_equal 0, copy.reload.rotation_index
+  end
+
   private
+
+  def create_rotation_task(attrs = {})
+    Periodictask.create!({
+      project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
+      subject: 'Rotation task', interval_number: 1, interval_units: 'month',
+      next_run_date: 1.month.from_now
+    }.merge(attrs))
+  end
+
+  # What run_now and the checker do around generate_issue.
+  def run_task(task)
+    issue = task.generate_issue
+    issue.save!
+    task.complete_generated_issue(issue)
+    task.save!
+    issue
+  end
 
   # Mimics the redmine_checklists plugin: a ChecklistTemplate model holding the
   # items as one string per line, and checklists_attributes= on Issue.

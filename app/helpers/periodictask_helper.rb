@@ -80,6 +80,30 @@ module PeriodictaskHelper
     content_tag(:span, periodictask_sprite_icon(sprite), title: title, class: "icon-only #{css_class}")
   end
 
+  # Assignee cell of the lists: with a rotation, who is up next; otherwise the
+  # single assignee.
+  def periodictask_assignee(task)
+    return periodictask_rotation_next(task) if task.rotation?
+
+    task.assigned_to ? link_to_principal(task.assigned_to) : '-'
+  end
+
+  # "Next: <user>" for a task with a rotation, the whole roster as tooltip.
+  # When nobody in the rotation can be assigned issues anymore, says so and
+  # names the fallback assignee instead.
+  def periodictask_rotation_next(task)
+    roster = task.rotation_users.map(&:name).join(', ')
+    user = task.next_rotation_user
+    if user
+      content_tag(:span, l(:label_rotation_next, user: link_to_principal(user)).html_safe,
+                  title: roster, class: 'periodictask-rotation-next')
+    else
+      fallback = task.assigned_to ? link_to_principal(task.assigned_to) : '-'
+      content_tag(:span, l(:label_rotation_fallback, user: fallback).html_safe,
+                  title: roster, class: 'periodictask-rotation-fallback')
+    end
+  end
+
   def periodictask_default_label(value)
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end

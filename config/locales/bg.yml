@@ -143,3 +143,10 @@ bg:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Ротация на изпълнителите"
+  label_assignee_rotation_info: "Генерираните задачи се възлагат последователно на потребителите от този списък. Потребители, на които вече не могат да се възлагат задачи в проекта, се пропускат; ако списъкът е празен или никой от него не може да бъде възложен, се използва изпълнителят по-горе. „Изпълни сега“ също премества ротацията."
+  label_rotation_next: "Следващ: %{user}"
+  label_rotation_fallback: "Никой от ротацията не може да бъде възложен; използва се %{user}"
+  label_rotation_not_assignable: "не може да бъде възложен"
+  label_rotation_move_up: "Нагоре"
+  label_rotation_move_down: "Надолу"

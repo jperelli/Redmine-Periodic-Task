@@ -145,3 +145,10 @@ zh-TW:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "被分派者輪替"
+  label_assignee_rotation_info: "產生的議題會依序分派給此清單中的使用者。在專案中已無法被分派議題的使用者會被略過；若清單為空或其中無人可被分派，則使用上方的被分派者。「立即執行」也會推進輪替。"
+  label_rotation_next: "下一位：%{user}"
+  label_rotation_fallback: "輪替中無人可被分派；改用 %{user}"
+  label_rotation_not_assignable: "無法分派"
+  label_rotation_move_up: "上移"
+  label_rotation_move_down: "下移"

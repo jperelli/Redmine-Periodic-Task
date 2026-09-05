@@ -57,7 +57,7 @@ class PeriodictaskController < ApplicationController
 
     @tasks = Periodictask.where(project_id: @project[:id])
                          .left_outer_joins(:tracker, :assigned_to)
-                         .preload(:tracker, :assigned_to)
+                         .preload(:project, :tracker, :assigned_to)
                          .order(sort_clause)
     @priorities = IssuePriority.all.index_by(&:id)
     @last_runs = PeriodictaskIssue.where(periodictask_id: @tasks.map(&:id))
@@ -206,6 +206,8 @@ class PeriodictaskController < ApplicationController
   def load_users
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
+    # Users only: an assignee rotation is a roster of people
+    @rotation_candidates = @assignables.select { |p| p.is_a?(User) }
 
     # Get the users in the project (as authors)
     @authors = @project.members.map(&:user)
@@ -235,6 +237,7 @@ class PeriodictaskController < ApplicationController
     attrs[:relations] ||= []
     attrs[:weekdays] ||= []
     attrs[:month_weeks] ||= []
+    attrs[:rotation_ids] ||= []
     @periodictask.attributes = attrs
   end
 
@@ -250,6 +253,7 @@ class PeriodictaskController < ApplicationController
       { month_weeks: [] },
       { custom_field_values: {} },
       { watcher_user_ids: [] },
+      { rotation_ids: [] },
       { subtasks: Periodictask::SUBTASK_KEYS },
       { relations: Periodictask::RELATION_KEYS }
     )

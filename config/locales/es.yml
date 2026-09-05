@@ -143,3 +143,10 @@ es:
   label_periodictask_run_source_endpoint: 'URL de verificación'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'hasta %{time}'
+  label_assignee_rotation: "Rotación de asignados"
+  label_assignee_rotation_info: "Las peticiones generadas se asignan por turnos a los usuarios de esta lista. Se omiten los usuarios a los que ya no se les pueden asignar peticiones en el proyecto; si la lista está vacía o nadie de ella puede ser asignado, se usa el asignado de arriba. Ejecutar ahora también avanza la rotación."
+  label_rotation_next: "Siguiente: %{user}"
+  label_rotation_fallback: "Nadie de la rotación puede ser asignado; se usa %{user}"
+  label_rotation_not_assignable: "no asignable"
+  label_rotation_move_up: "Subir"
+  label_rotation_move_down: "Bajar"

@@ -143,3 +143,10 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "担当者ローテーション"
+  label_assignee_rotation_info: "生成されたチケットは、このリストのユーザーに順番に割り当てられます。プロジェクトで担当者になれなくなったユーザーはスキップされます。リストが空、または誰も担当者になれない場合は、上の担当者が使用されます。「今すぐ実行」でもローテーションは進みます。"
+  label_rotation_next: "次: %{user}"
+  label_rotation_fallback: "ローテーションの誰も担当者になれないため、%{user} が使用されます"
+  label_rotation_not_assignable: "割り当て不可"
+  label_rotation_move_up: "上へ"
+  label_rotation_move_down: "下へ"

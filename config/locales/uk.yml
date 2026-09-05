@@ -148,3 +148,10 @@ uk:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Ротація виконавців"
+  label_assignee_rotation_info: "Створені задачі призначаються по черзі користувачам із цього списку. Користувачі, яким більше не можна призначати задачі в проєкті, пропускаються; якщо список порожній або нікого з нього не можна призначити, використовується виконавець вище. «Виконати зараз» також зсуває ротацію."
+  label_rotation_next: "Наступний: %{user}"
+  label_rotation_fallback: "Нікого з ротації не можна призначити; використовується %{user}"
+  label_rotation_not_assignable: "не можна призначити"
+  label_rotation_move_up: "Вгору"
+  label_rotation_move_down: "Вниз"

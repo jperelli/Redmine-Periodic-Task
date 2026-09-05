@@ -143,3 +143,10 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Rotação de atribuídos"
+  label_assignee_rotation_info: "As tarefas geradas são atribuídas por turnos aos usuários desta lista. Usuários que não podem mais receber tarefas no projeto são ignorados; se a lista estiver vazia ou ninguém puder ser atribuído, o atribuído acima é usado. Executar agora também avança a rotação."
+  label_rotation_next: "Próximo: %{user}"
+  label_rotation_fallback: "Ninguém da rotação pode ser atribuído; %{user} é usado"
+  label_rotation_not_assignable: "não atribuível"
+  label_rotation_move_up: "Mover para cima"
+  label_rotation_move_down: "Mover para baixo"

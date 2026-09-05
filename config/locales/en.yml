@@ -143,3 +143,10 @@ en:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Assignee rotation"
+  label_assignee_rotation_info: "Generated issues are assigned to the users of this list in turn. Users who can no longer be assigned issues in the project are skipped; when the list is empty or nobody in it can be assigned, the assignee above is used. Run now also moves the rotation on."
+  label_rotation_next: "Next: %{user}"
+  label_rotation_fallback: "Nobody in the rotation can be assigned; %{user} is used"
+  label_rotation_not_assignable: "not assignable"
+  label_rotation_move_up: "Move up"
+  label_rotation_move_down: "Move down"

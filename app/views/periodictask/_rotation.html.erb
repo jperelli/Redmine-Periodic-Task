@@ -1,0 +1,85 @@
+<% rotation_users = periodictask.rotation_users %>
+<% next_user = periodictask.next_rotation_user %>
+<% candidate_ids = @rotation_candidates.map(&:id) %>
+<% content_for :header_tags do %>
+  <style>
+    #periodictask_rotation_list { display: block; counter-reset: rotation; }
+    #periodictask_rotation_list:empty { display: none; }
+    .periodictask-rotation-member { display: block; counter-increment: rotation; }
+    .periodictask-rotation-member::before { content: counter(rotation) ". "; }
+    .periodictask-rotation-member.periodictask-rotation-next .periodictask-rotation-name { font-weight: bold; }
+    .periodictask-rotation-member.periodictask-rotation-unassignable .periodictask-rotation-name { text-decoration: line-through; }
+    .periodictask-rotation-member a { margin-left: 4px; text-decoration: none; }
+    #periodictask_rotation_next { display: block; }
+    #periodictask_rotation_next:empty { display: none; }
+    #periodictask_rotation_candidate { width: auto; }
+  </style>
+<% end %>
+<p id="periodictask_rotation">
+  <%= label_tag 'periodictask_rotation_candidate' do %><span class="field-description" title="<%= l(:label_assignee_rotation_info) %>"><%= l(:label_assignee_rotation) %></span><% end %>
+  <%= hidden_field_tag 'periodictask[rotation_ids][]', '', :id => nil %>
+  <span id="periodictask_rotation_list"><% rotation_users.each do |user| %><%= render :partial => 'rotation_member',
+        :locals => { :user_id => user.id, :user_name => user.name, :assignable => candidate_ids.include?(user.id) } %><% end %></span>
+  <span id="periodictask_rotation_next" data-label="<%= l(:label_rotation_next, user: '__NAME__') %>" data-user-id="<%= next_user&.id %>"><%= l(:label_rotation_next, user: next_user.name) if next_user %></span>
+  <% if @rotation_candidates.any? %>
+    <%= select_tag 'periodictask_rotation_candidate',
+                   options_from_collection_for_select(@rotation_candidates.reject { |u| periodictask.rotation_ids.include?(u.id) }, :id, :name),
+                   :include_blank => true %>
+    <%= link_to periodictask_sprite_icon('add', l(:button_add)), '#', :class => 'icon icon-add', :id => 'periodictask_rotation_add' %>
+  <% else %>
+    <%= l(:no_members_in_project) %>
+  <% end %>
+</p>
+
+<%= javascript_tag do %>
+  $(document).ready(function() {
+    var $list = $('#periodictask_rotation_list');
+    var $next = $('#periodictask_rotation_next');
+    var $candidates = $('#periodictask_rotation_candidate');
+    var template = '<%= escape_javascript(render :partial => 'rotation_member', :locals => { :user_id => '__ID__', :user_name => '__NAME__', :assignable => true }) %>';
+
+    // The saved "next" user stays next while listed; otherwise the first user is.
+    function refreshNext() {
+      var $members = $list.children();
+      var $current = $members.filter('[data-user-id="' + $next.data('user-id') + '"]');
+      if (!$current.length) { $current = $members.first(); }
+      $members.removeClass('periodictask-rotation-next');
+      $current.addClass('periodictask-rotation-next');
+      $next.data('user-id', $current.data('user-id') || '');
+      $next.text($current.length ? $next.data('label').replace('__NAME__', $current.find('.periodictask-rotation-name').text()) : '');
+    }
+
+    $('#periodictask_rotation_add').on('click', function(e) {
+      e.preventDefault();
+      var $option = $candidates.find('option:selected');
+      if (!$option.val()) { return; }
+      var $member = $(template.replace(/__ID__/g, $option.val()));
+      $member.find('.periodictask-rotation-name').text($option.text());
+      $list.append($member);
+      $option.remove();
+      refreshNext();
+    });
+
+    $list.on('click', '.periodictask-rotation-remove', function(e) {
+      e.preventDefault();
+      var $member = $(this).closest('.periodictask-rotation-member');
+      $candidates.append($('<option>').val($member.data('user-id')).text($member.find('.periodictask-rotation-name').text()));
+      $member.remove();
+      refreshNext();
+    });
+
+    $list.on('click', '.periodictask-rotation-up', function(e) {
+      e.preventDefault();
+      var $member = $(this).closest('.periodictask-rotation-member');
+      $member.prev().before($member);
+    });
+
+    $list.on('click', '.periodictask-rotation-down', function(e) {
+      e.preventDefault();
+      var $member = $(this).closest('.periodictask-rotation-member');
+      $member.next().after($member);
+    });
+
+    refreshNext();
+  });
+<% end %>
