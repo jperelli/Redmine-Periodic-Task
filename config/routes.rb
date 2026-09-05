@@ -21,7 +21,9 @@ Rails.application.routes.draw do
   match 'periodictask/check', to: 'periodictask_sys#check', as: 'periodictask_check', via: %i[get post]
 end
 
-# Admin-only "Run checker now" button on the plugin settings page
+# Administration page listing every project's periodic tasks, and the admin-only
+# "Run checker now" button on the plugin settings page
 Rails.application.routes.draw do
+  get  'admin/periodictasks',            to: 'periodictask_admin#index',       as: 'admin_periodictasks'
   post 'admin/periodictask/run_checker', to: 'periodictask_admin#run_checker', as: 'periodictask_run_checker'
 end

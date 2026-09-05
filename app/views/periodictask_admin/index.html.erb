@@ -1,0 +1,44 @@
+<h2><%= l(:label_periodic_tasks) %></h2>
+<p><%= l(:label_scheduled_tasks) %></p>
+
+<% if @tasks.empty? %>
+  <p class="nodata"><%= l(:label_no_periodic_tasks) %></p>
+<% else %>
+<table class="list <%= sort_css_classes %>">
+  <thead>
+    <tr>
+      <%= sort_header_tag('project', :caption => l(:field_project)) %>
+      <%= sort_header_tag('subject', :caption => l(:label_subject)) %>
+      <th><%= l(:label_interval) %></th>
+      <%= sort_header_tag('next_run_date', :caption => l(:label_next_run_date)) %>
+      <th><%= l(:field_assigned_to) %></th>
+      <th><%= l(:label_last_run) %></th>
+      <th class="buttons hide-when-print"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tasks.each do |task| %>
+      <tr class="<%= cycle('odd', 'even') %>">
+        <td><%= link_to task.project.name, project_path(task.project) %></td>
+        <td class="subject">
+          <%= content_tag('span', '', :title => task.last_error, :class => 'icon-only icon-error') if task.last_error.present? %>
+          <%= link_to task.subject, periodictask_path(:project_id => task.project, :id => task.id) %>
+        </td>
+        <td class="interval"><%= periodictask_schedule_description(task) %></td>
+        <td><%= periodictask_time_with_title(task.next_run_date) %></td>
+        <td><%= task.assigned_to ? link_to_principal(task.assigned_to) : '-' %></td>
+        <td><%= periodictask_time_with_title(@last_runs[task.id]) %></td>
+        <td class="buttons hide-when-print">
+          <%= link_to(
+            periodictask_sprite_icon('edit', l(:button_edit), icon_only: true),
+            edit_periodictask_path(:project_id => task.project, :id => task.id),
+            :class => 'icon-only icon-edit', :title => l(:button_edit)
+          ) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>
+
+<%= render 'periodictask/credit' %>
