@@ -21,6 +21,10 @@
     <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
+  <p id="periodictask_upcoming_runs_field">
+    <label><span class="field-description" title="<%= l(:label_next_occurrences_info) %>"><%= l(:label_next_occurrences) %></span></label>
+    <span id="periodictask_upcoming_runs"><%= render :partial => 'upcoming_runs', :locals => { :dates => @periodictask.upcoming_run_dates } %></span>
+  </p>
   <p>
     <%= label(:periodictask, :author_id, l(:label_issue_author)) %>
     <% if @authors.length > 0 %>
@@ -194,6 +198,22 @@
     }
     $('#periodictask_interval_units, input[name="periodictask[monthly_mode]"]').change(toggleRecurrenceFields);
     toggleRecurrenceFields();
+
+    // Live preview of the next run dates, recomputed server-side (nothing is
+    // saved) whenever an interval or recurrence field changes.
+    var upcomingRunsTimer;
+    function refreshUpcomingRuns() {
+      clearTimeout(upcomingRunsTimer);
+      upcomingRunsTimer = setTimeout(function() {
+        $.ajax({
+          url: '<%= escape_javascript(periodictask_preview_path(@project, :format => 'js')) %>',
+          type: 'post',
+          data: $('#periodictask_upcoming_runs').closest('form').serialize()
+        });
+      }, 300);
+    }
+    $('#periodictask_interval_number, #periodictask_interval_units, #periodictask_next_run_date, .periodictask-recurrence :input').on('change', refreshUpcomingRuns);
+    $('#periodictask_interval_number, #periodictask_next_run_date').on('input', refreshUpcomingRuns);
 
     var currentUserId = '<%= User.current.id %>';
     function toggleAssignToMe() {

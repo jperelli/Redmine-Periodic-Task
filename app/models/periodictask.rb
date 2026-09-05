@@ -366,11 +366,37 @@ class Periodictask < ActiveRecord::Base
     else
       interval_steps = ((now - val) / interval_number.send(units)).ceil
       val += (interval_number * interval_steps).send(units)
+      val += interval_number.send(units) unless due?(val, now)
     end
     val
   end
 
+  # The next +count+ run dates: the stored next_run_date (or, when blank, the
+  # first date matching the recurrence from +now+) followed by the occurrences
+  # the scheduler would move to after each run. Missed runs collapse into the
+  # next future one, like the scheduler does. Computed on a copy of the task,
+  # nothing is persisted. Empty when the recurrence is incomplete or invalid.
+  def upcoming_run_dates(count = 5, now = Time.current)
+    return [] unless count.to_i.positive? && recurrence_computable?
+
+    preview = dup
+    dates = [next_run_date || preview.get_next_run_date(now)]
+    while dates.size < count
+      preview.next_run_date = dates.last
+      dates << preview.get_next_run_date([dates.last, now].max)
+    end
+    dates
+  end
+
   private
+
+  # A schedule can be walked when the interval is a positive number of a known
+  # unit and, in monthly weekday mode, ordinals and weekdays are selected.
+  def recurrence_computable?
+    return false unless interval_number.to_i.positive? && INTERVAL_UNITS.include?(interval_units.to_s.downcase)
+
+    !monthly_weekday_mode? || (weekdays.any? && month_weeks.any?)
+  end
 
   # Walks business days from the anchor's date and keeps the anchor's time of
   # day. business_time counts from the instant, so feeding it a time outside

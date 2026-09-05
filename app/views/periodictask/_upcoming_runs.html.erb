@@ -1,0 +1,8 @@
+<%# Phrasing content only: the form renders it inside a tabular <p>. %>
+<% if dates.any? %>
+  <% dates.each do |date| %>
+    <span class="periodictask-upcoming-run"><%= day_name(periodictask_display_time(date).wday) %> <%= periodictask_time_with_title(date) %></span><br />
+  <% end %>
+<% else %>
+  <em class="periodictask-upcoming-runs-unavailable"><%= l(:label_next_occurrences_unavailable) %></em>
+<% end %>

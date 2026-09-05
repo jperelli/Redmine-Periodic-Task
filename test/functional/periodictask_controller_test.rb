@@ -722,6 +722,131 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 'Onlinestore task', other.subject
   end
 
+  def test_show_lists_the_next_occurrences
+    task = create_test_periodictask(interval_units: 'week', weekdays: [1, 3],
+                                    next_run_date: Time.utc(2026, 1, 5, 10, 0))
+
+    travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_response :success
+    assert_select '.periodictask-upcoming-runs legend', text: 'Next occurrences'
+    assert_select '.periodictask-upcoming-runs .periodictask-upcoming-run', count: 5
+    assert_select '.periodictask-upcoming-runs .periodictask-upcoming-run', text: /\AWednesday /
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0),
+                  Time.utc(2026, 1, 14, 10, 0), Time.utc(2026, 1, 19, 10, 0)],
+                 rendered_upcoming_run_times('.periodictask-upcoming-runs')
+  end
+
+  def test_show_displays_next_occurrences_in_the_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires') # UTC-3
+    # Aug 20 01:00 UTC is Wednesday Aug 19, 22:00 in Buenos Aires
+    task = create_test_periodictask(interval_units: 'day', next_run_date: Time.utc(2026, 8, 20, 1, 0))
+
+    travel_to(Time.utc(2026, 8, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select '.periodictask-upcoming-runs .periodictask-upcoming-run',
+                  text: %r{\AWednesday .*08/19/2026 10:00 PM\z}
+    assert_equal Time.utc(2026, 8, 20, 1, 0), rendered_upcoming_run_times('.periodictask-upcoming-runs').first
+  end
+
+  def test_new_and_edit_render_the_next_occurrences_preview
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select '#periodictask_upcoming_runs_field label', text: 'Next occurrences'
+    assert_select '#periodictask_upcoming_runs .periodictask-upcoming-run', count: 5
+    assert_includes @response.body, periodictask_preview_path(project_id: 'ecookbook', format: 'js')
+
+    task = create_test_periodictask(interval_units: 'month', monthly_mode: 'weekday', month_weeks: [5], weekdays: [5],
+                                    next_run_date: Time.utc(2026, 1, 30, 9, 0))
+    travel_to(Time.utc(2026, 1, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
+    assert_response :success
+    assert_equal [Time.utc(2026, 1, 30, 9, 0), Time.utc(2026, 2, 27, 9, 0), Time.utc(2026, 3, 27, 9, 0),
+                  Time.utc(2026, 4, 24, 9, 0), Time.utc(2026, 5, 29, 9, 0)],
+                 rendered_upcoming_run_times('#periodictask_upcoming_runs')
+  end
+
+  def test_preview_returns_the_next_occurrences_of_the_posted_recurrence_without_saving
+    assert_no_difference('Periodictask.count') do
+      travel_to(Time.utc(2026, 1, 1)) do
+        post :preview, params: {
+          project_id: 'ecookbook',
+          format: 'js',
+          periodictask: {
+            subject: 'Not saved', tracker_id: 1, assigned_to_id: 2,
+            interval_number: '1', interval_units: 'month', monthly_mode: 'weekday',
+            month_weeks: ['5'], weekdays: ['5'], next_run_date: '2026-01-30T09:00'
+          }
+        }, xhr: true
+      end
+    end
+    assert_response :success
+    assert_equal 'text/javascript', @response.media_type
+    assert_match(/\A\$\('#periodictask_upcoming_runs'\)\.html\(/, @response.body)
+    assert_equal [Time.utc(2026, 1, 30, 9, 0), Time.utc(2026, 2, 27, 9, 0), Time.utc(2026, 3, 27, 9, 0),
+                  Time.utc(2026, 4, 24, 9, 0), Time.utc(2026, 5, 29, 9, 0)],
+                 previewed_upcoming_run_times
+    assert_equal 5, @response.body.scan('periodictask-upcoming-run\\"').size
+    assert_includes @response.body, 'Friday'
+    assert_nil Periodictask.find_by(subject: 'Not saved')
+  end
+
+  def test_preview_parses_the_next_run_date_in_the_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires') # UTC-3
+    travel_to(Time.utc(2026, 8, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-08-20T09:00' }
+      }, xhr: true
+    end
+    assert_response :success
+    assert_equal [Time.utc(2026, 8, 20, 12, 0), Time.utc(2026, 8, 21, 12, 0)], previewed_upcoming_run_times.first(2)
+    assert_includes @response.body, '08/20/2026 09:00 AM'
+  end
+
+  def test_preview_with_an_incomplete_recurrence_explains_instead_of_listing_dates
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'month', monthly_mode: 'weekday',
+                      next_run_date: '2026-01-30T09:00' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+    assert_empty previewed_upcoming_run_times
+
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '0', interval_units: 'day' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: 'abc', interval_units: 'fortnight', weekdays: %w[9 x] }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+  end
+
+  def test_preview_requires_the_periodictask_parameters
+    assert_raises(ActionController::ParameterMissing) do
+      post :preview, params: { project_id: 'ecookbook', format: 'js' }, xhr: true
+    end
+  end
+
+  def test_preview_is_scoped_to_the_project_and_its_permission
+    post :preview, params: {
+      project_id: 'onlinestore', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'day' }
+    }, xhr: true
+    assert_response 403 # periodictask module not enabled on onlinestore
+
+    @request.session[:user_id] = 3 # Developer without the periodictask permission
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'day' }
+    }, xhr: true
+    assert_response 403
+  end
+
   def test_index_marks_disabled_and_failed_tasks
     create_test_periodictask(subject: 'Paused task', is_active: false)
     create_test_periodictask(subject: 'Broken task', last_error: 'Tracker cannot be blank')
@@ -760,6 +885,18 @@ class PeriodictaskControllerTest < ActionController::TestCase
 
   def rendered_weekday_values
     css_select('#periodictask_weekdays_field input[type=checkbox]').map { |i| i['value'] }
+  end
+
+  # Instants of the listed occurrences (from the ISO 8601 tooltip), as UTC.
+  def rendered_upcoming_run_times(scope)
+    css_select("#{scope} .periodictask-upcoming-run span[title]").map { |s| Time.iso8601(s['title']).utc }
+  end
+
+  # Same, from the JavaScript response of the preview action (HTML is escaped
+  # into a JS string there, so quotes are backslash-escaped).
+  def previewed_upcoming_run_times
+    @response.body.scan(/class=\\"periodictask-upcoming-run\\">[^<]*<span[^>]*title=\\"([^"\\]+)\\"/).flatten
+             .map { |t| Time.iso8601(t).utc }
   end
 
   def create_test_periodictask(attrs = {})

@@ -187,6 +187,8 @@ The *Run checker now* button on the same page runs the checker immediately, whic
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
 
+To check a rule before saving it, the task form shows the next 5 occurrences under the next run date and refreshes them (in your time zone) whenever the interval, the weekdays, the ordinals or the next run date change; nothing is saved until you submit the form. The task page shows the same *Next occurrences* box for a saved task. The first date is the stored next run date, the following ones are the dates the scheduler will move to after each run, so runs missed while the scheduler was down collapse into the next future date.
+
 ### Variable interpolation
 
 You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.

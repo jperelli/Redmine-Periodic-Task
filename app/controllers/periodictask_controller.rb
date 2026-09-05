@@ -8,9 +8,9 @@ class PeriodictaskController < ApplicationController
   before_action :find_project
   before_action :authorize
   before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
-  before_action :load_users, except: %i[destroy run_now tags]
-  before_action :load_categories, except: %i[destroy run_now tags]
-  before_action :load_versions, except: %i[destroy run_now tags]
+  before_action :load_users, except: %i[destroy run_now tags preview]
+  before_action :load_categories, except: %i[destroy run_now tags preview]
+  before_action :load_versions, except: %i[destroy run_now tags preview]
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -183,6 +183,14 @@ class PeriodictaskController < ApplicationController
                     end
     assign_periodictask_params
     @issue = @periodictask.generate_issue
+  end
+
+  # Upcoming run dates for the recurrence currently entered in the form. The
+  # task is built from the posted attributes only and never saved.
+  def preview
+    @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
+    assign_periodictask_params
+    @upcoming_run_dates = @periodictask.upcoming_run_dates
   end
 
   private

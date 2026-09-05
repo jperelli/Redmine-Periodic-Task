@@ -41,6 +41,11 @@
   </div>
 </div>
 
+<fieldset class="box periodictask-upcoming-runs">
+  <legend><%= l(:label_next_occurrences) %></legend>
+  <p><%= render partial: 'upcoming_runs', locals: { dates: @periodictask.upcoming_run_dates } %></p>
+</fieldset>
+
 <fieldset class="box periodictask-template">
   <legend><%= l(:label_periodictask_template) %></legend>
 

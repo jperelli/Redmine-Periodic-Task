@@ -14,6 +14,7 @@
 - Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
+- Preview of the next occurrences: the task page lists the next 5 run dates and the task form shows them live while the recurrence is edited (`Periodictask#upcoming_run_dates`, `preview` action), so rules like *last Friday of every month* can be checked before saving (@jperelli)
 
 ### Fixes
 
@@ -23,6 +24,7 @@
 - Task pages only find tasks of the project in the URL: a user with the permission in one project could open, edit, copy, run or delete the tasks of any other project by id (@jperelli)
 - The checker restores the request locale after running, so the *Run checker now* flash message is shown in the admin's language instead of Redmine's default (@jperelli)
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
+- A `day`, `month` or `year` task checked at exactly its scheduled time moves to the following occurrence instead of being left due, like the other units already did (@jperelli)
 - The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
 
 ## v7.0.0 - 2026-09-03

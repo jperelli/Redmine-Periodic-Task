@@ -113,7 +113,9 @@ at 10:04 does not move the task to 10:04.
 `due?` compares a candidate with now. When the task has a `next_run_date`,
 that date has already run, so the candidate must be later than now. When the
 first run date is blank, the candidate may be equal to now, so a task created
-on a matching day and time can run right away.
+on a matching day and time can run right away. The plain `every N units`
+rule follows the same convention: a task checked at exactly its scheduled
+time moves to the following occurrence.
 
 ## First run date
 
@@ -133,6 +135,23 @@ moves to the next run in the future. Missed runs are not created one by one.
 This is the old behaviour and it applies to all units.
 `each_eligible_period` starts counting close to now, so a long downtime does
 not loop over every skipped week or month.
+
+## Preview of the next occurrences
+
+`Periodictask#upcoming_run_dates(count = 5, now = Time.current)` returns the
+next `count` run dates without saving anything. It works on a `dup` of the
+task and walks the schedule the way the scheduler does: the first date is
+`next_run_date` (or, when blank, the first date matching the rule from now),
+then each date becomes the anchor for `get_next_run_date`, evaluated at the
+later of that date and now. Missed runs therefore collapse into the next
+future date, exactly like a late scheduler would. The method returns an empty
+list when the schedule cannot be walked: interval not positive, unknown unit,
+or weekday mode without ordinals or weekdays.
+
+The task page and the task form render these dates with the same helpers as
+the next run date, so they appear in the user's time zone. The form refreshes
+them through the `preview` action, which builds an unsaved task from the
+submitted attributes, in the project of the URL, and renders the list.
 
 ## Storage and compatibility
 
