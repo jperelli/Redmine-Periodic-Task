@@ -13,7 +13,7 @@
 - Add the shifted date macros `**NEXT_MONTH**`, `**NEXT_MONTHNAME**`, `**NEXT_WEEK**`, `**NEXT_WEEKISO**` and the year companions `**NEXT_MONTH_YEAR**`, `**NEXT_WEEK_YEAR**`, `**NEXT_WEEKISO_YEAR**`, `**PREVIOUS_MONTH_YEAR**`, `**WEEKISO_YEAR**` (idea and implementation from [tq89's fork](https://github.com/tq89/Redmine-Periodic-Task))
 - Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
-
+- Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries (@jperelli)
 
 ### Fixes
 
