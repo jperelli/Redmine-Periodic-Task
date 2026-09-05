@@ -183,6 +183,12 @@ The *Run checker now* button on the same page runs the checker immediately, whic
 
 ![Scheduler log on the plugin settings page, with a highlighted failed run](doc/screenshots/scheduler_log.png)
 
+### Creating a periodic task from an existing issue
+
+On an issue page, the sidebar of a project with the module enabled shows *Periodic Tasks → Create periodic task from this issue* to users with the *Periodic tasks* permission. It opens the new task form prefilled from the issue (subject, description, tracker, priority, category, target version, assignee, parent, estimated hours, % done, custom fields, watchers, and tags/checklist template when those plugins are installed); the status is left at the tracker's default since the source issue is often closed. The recurrence keeps its defaults, and the first run is preset to the issue's due date when that is still in the future. Nothing is stored until the form is submitted.
+
+![Create periodic task from this issue link in the issue sidebar](doc/screenshots/new_from_issue_link.png)
+
 ### Recurrence
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
