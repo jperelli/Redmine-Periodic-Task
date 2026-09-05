@@ -45,3 +45,14 @@ Login: admin / admin at http://localhost:3000/login (Redmine may force a passwor
 
 ## Devin Secrets Needed
 None (local docker, default admin/admin).
+
+## Issue-template UI fixtures
+- To exercise copying a non-default issue status, create the issue first, then
+  use Edit to change its status. The initial New issue form may offer only New.
+- Redmine can auto-watch issues created by the signed-in user. When comparing
+  watcher copying, check the saved issue's Watchers list, not just the watcher
+  boxes you explicitly selected while creating it.
+- Keep a no-due-date fixture separate from the parent of a dated issue:
+  Redmine can roll child due dates up to the parent.
+- Custom fields may not be displayed on the periodic-task detail page. Reopen
+  Edit after saving to verify their persisted values without changing them.
