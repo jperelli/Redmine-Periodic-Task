@@ -65,6 +65,8 @@ uk:
   label_periodictask_history: Створені завдання
   label_periodictask_no_history: Це завдання ще не створило жодного завдання
   label_issue_created_by_periodictask: Автоматично створено періодичним завданням
+  field_periodictask: Періодичне завдання
+  label_periodictask_all_issues: Усі завдання, створені цим періодичним завданням
   label_periodic_task: Періодичне завдання
   label_periodictask_template: Шаблон
   label_periodictask_plural: Періодичні завдання

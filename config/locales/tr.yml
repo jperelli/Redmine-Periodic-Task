@@ -65,6 +65,8 @@ tr:
   label_periodictask_history: Oluşturulan iş kayıtları
   label_periodictask_no_history: Bu görev henüz hiç iş kaydı oluşturmadı
   label_issue_created_by_periodictask: Periyodik görev tarafından otomatik oluşturuldu
+  field_periodictask: Periyodik görev
+  label_periodictask_all_issues: Bu görev tarafından oluşturulan tüm iş kayıtları
   label_periodic_task: Periyodik görev
   label_periodictask_template: Şablon
   label_periodictask_plural: Periyodik işler

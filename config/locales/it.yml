@@ -65,6 +65,8 @@ it:
   label_periodictask_history: Issue generate
   label_periodictask_no_history: Questo task non ha ancora generato alcuna issue
   label_issue_created_by_periodictask: Creata automaticamente dal task periodico
+  field_periodictask: Task periodico
+  label_periodictask_all_issues: Tutte le issue generate da questo task
   label_periodic_task: Task periodico
   label_periodictask_template: Modello
   label_periodictask_plural: Task periodici

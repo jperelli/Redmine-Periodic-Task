@@ -65,6 +65,8 @@ hr:
   label_periodictask_history: Stvoreni zadaci
   label_periodictask_no_history: Ovaj zadatak još nije stvorio nijedan zadatak
   label_issue_created_by_periodictask: Automatski stvoreno periodičnim zadatkom
+  field_periodictask: Periodični zadatak
+  label_periodictask_all_issues: Svi zadaci stvoreni ovim periodičnim zadatkom
   label_periodic_task: Periodični zadatak
   label_periodictask_template: Predložak
   label_periodictask_plural: Periodički zadaci

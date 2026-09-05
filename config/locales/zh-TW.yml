@@ -70,6 +70,8 @@ zh-TW:
   label_periodictask_history: 已產生的議題
   label_periodictask_no_history: 此任務尚未產生任何議題
   label_issue_created_by_periodictask: 由週期任務自動建立
+  field_periodictask: 週期任務
+  label_periodictask_all_issues: 此任務產生的所有議題
   label_periodic_task: 週期任務
   label_periodictask_template: 範本
   label_periodictask_plural: 週期任務

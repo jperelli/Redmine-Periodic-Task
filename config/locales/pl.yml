@@ -65,6 +65,8 @@ pl:
   label_periodictask_history: Wygenerowane zagadnienia
   label_periodictask_no_history: To zadanie nie wygenerowało jeszcze żadnych zagadnień
   label_issue_created_by_periodictask: Utworzone automatycznie przez zadanie cykliczne
+  field_periodictask: Zadanie cykliczne
+  label_periodictask_all_issues: Wszystkie zagadnienia wygenerowane przez to zadanie
   label_periodic_task: Zadanie cykliczne
   label_periodictask_template: Szablon
   label_periodictask_plural: Zadania cykliczne
