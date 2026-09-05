@@ -6,11 +6,16 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
   def setup
     Setting.plugin_periodictask = { 'scheduler_mode' => 'cron' }
     RedminePeriodictask::WebScheduler.reset!
+    # A checker running in its own thread writes outside the test transaction,
+    # so its rows would survive into the next test.
+    RedminePeriodictask::WebScheduler.synchronous = true
     log_user('admin', 'admin')
     PeriodictaskRun.delete_all
   end
 
   def teardown
+    RedminePeriodictask::WebScheduler.synchronous = false
+    RedminePeriodictask::WebScheduler.reset!
     Setting.plugin_periodictask = { 'scheduler_mode' => 'cron' }
   end
 
