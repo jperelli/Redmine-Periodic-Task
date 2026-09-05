@@ -127,6 +127,12 @@ class Periodictask < ActiveRecord::Base
     Issue.method_defined?(:tag_list=) && Issue.respond_to?(:available_tags)
   end
 
+  # True when the redmine_checklists plugin is registered and its template
+  # model is loaded, so checklists can be copied onto generated issues.
+  def self.checklists_plugin_installed?
+    Redmine::Plugin.all.any? { |p| p.id == :redmine_checklists } && Object.const_defined?('ChecklistTemplate')
+  end
+
   # Tracker the generated issues will use: the configured one or the project's first.
   def effective_tracker
     tracker || project&.trackers&.first
@@ -450,21 +456,13 @@ class Periodictask < ActiveRecord::Base
   end
 
   def fill_checklists(issue)
-    if checklists_template_id && Redmine::Plugin.all.any? do |p|
-      p.id == :redmine_checklists
-    end && Object.const_defined?('ChecklistTemplate')
-      template = ChecklistTemplate.find(checklists_template_id)
-      if template
-        items = template.template_items.split("\n")
-        checklists = items.each_with_index.map do |x, i|
-          {
-            is_done: false,
-            subject: x,
-            position: i
-          }
-        end
-        issue.checklists_attributes = checklists
-      end
+    return unless checklists_template_id && self.class.checklists_plugin_installed?
+
+    template = ChecklistTemplate.find_by(id: checklists_template_id)
+    return unless template
+
+    issue.checklists_attributes = template.template_items.split("\n").each_with_index.map do |subject, position|
+      { is_done: false, subject: subject, position: position }
     end
   end
 
