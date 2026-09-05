@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   #  replaced put with match for action 'update', allowing both http-verb options 'put'
   #  and the new verb 'patch' for compatibility with Redmine 3 and below
 
+  get      'admin/periodictasks',                          to: 'periodictasks_admin#index',
+                                                           as: 'admin_periodictasks'
+
   match    'projects/:project_id/periodictask/customfields', to: 'periodictask#customfields',
                                                              as: 'periodictask_customfields', via: %i[post patch]
   get      'projects/:project_id/periodictask/tags',       to: 'periodictask#tags',   as: 'periodictask_tags'

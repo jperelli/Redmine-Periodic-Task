@@ -45,4 +45,7 @@ Redmine::Plugin.register :periodictask do
 
   menu :project_menu, :periodictask, { controller: 'periodictask', action: 'index' },
        caption: :label_periodic_tasks, after: :settings, param: :project_id
+
+  menu :admin_menu, :periodictask, { controller: 'periodictasks_admin', action: 'index' },
+       caption: :label_periodic_tasks, icon: 'time', html: { class: 'icon icon-time' }
 end
