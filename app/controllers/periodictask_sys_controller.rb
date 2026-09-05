@@ -15,8 +15,8 @@ class PeriodictaskSysController < ActionController::Base
 
   def check_enabled
     User.current = nil
-    unless Setting.sys_api_enabled? && params[:key].to_s == Setting.sys_api_key
-      render plain: 'Access denied. Repository management WS is disabled or key is invalid.', status: :forbidden
-    end
+    return if Setting.sys_api_enabled? && params[:key].to_s == Setting.sys_api_key
+
+    render plain: 'Access denied. Repository management WS is disabled or key is invalid.', status: :forbidden
   end
 end

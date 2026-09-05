@@ -6,7 +6,7 @@ class PeriodictaskSchedulerLock < ActiveRecord::Base
 
   # Atomically claims the lock if the last run is older than +interval+.
   # Returns true for exactly one caller per interval, across all processes.
-  def self.claim!(interval, now = Time.current)
+  def self.claim?(interval, now = Time.current)
     ensure_row!
     updated = where(id: ROW_ID)
               .where('last_run_at IS NULL OR last_run_at <= ?', now - interval)

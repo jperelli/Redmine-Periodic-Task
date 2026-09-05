@@ -35,7 +35,7 @@ module RedminePeriodictask
         return false if @next_check_at && now < @next_check_at
 
         @next_check_at = now + interval
-        return false unless PeriodictaskSchedulerLock.claim!(interval, now)
+        return false unless PeriodictaskSchedulerLock.claim?(interval, now)
 
         run
         true

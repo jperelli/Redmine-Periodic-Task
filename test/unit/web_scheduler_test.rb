@@ -52,9 +52,9 @@ class WebSchedulerTest < ActiveSupport::TestCase
   end
 
   def test_lock_claim_is_exclusive
-    assert PeriodictaskSchedulerLock.claim!(5.minutes)
-    assert_not PeriodictaskSchedulerLock.claim!(5.minutes)
-    assert PeriodictaskSchedulerLock.claim!(5.minutes, 6.minutes.from_now)
+    assert PeriodictaskSchedulerLock.claim?(5.minutes)
+    assert_not PeriodictaskSchedulerLock.claim?(5.minutes)
+    assert PeriodictaskSchedulerLock.claim?(5.minutes, 6.minutes.from_now)
   end
 
   def test_interval_defaults_when_setting_is_invalid
