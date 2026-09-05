@@ -143,3 +143,11 @@ de:
   label_periodictask_run_source_endpoint: 'Prüf-URL'
   label_periodictask_run_source_manual: 'Manuell'
   label_periodictask_run_until: 'bis %{time}'
+  label_weekend_adjustment: "Arbeitsfreie Tage"
+  label_weekend_adjustment_info: "Was passiert, wenn eine Ausführung auf einen arbeitsfreien Tag von Redmine fällt (Administration → Konfiguration → Ticket-Verfolgung). Der Zeitplan selbst verschiebt sich nicht, der 1. des Monats bleibt der 1."
+  label_weekend_adjustment_none: "An diesem Tag ausführen"
+  label_weekend_adjustment_next_working_day: "Auf den nächsten Arbeitstag verschieben"
+  label_weekend_adjustment_previous_working_day: "Auf den vorherigen Arbeitstag verschieben"
+  label_recurrence_weekend_adjustment_next_working_day: "arbeitsfreie Tage auf den nächsten Arbeitstag verschoben"
+  label_recurrence_weekend_adjustment_previous_working_day: "arbeitsfreie Tage auf den vorherigen Arbeitstag verschoben"
+  label_weekend_adjustment_moved_from: "verschoben von %{date}"

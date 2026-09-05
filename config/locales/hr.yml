@@ -148,3 +148,11 @@ hr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "Neradni dani"
+  label_weekend_adjustment_info: "Što se događa kada izvršavanje padne na neradni dan iz Redminea (Administracija → Postavke → Praćenje zadataka). Sam raspored se ne pomiče, 1. dan mjeseca ostaje 1. dan."
+  label_weekend_adjustment_none: "Izvrši tog dana"
+  label_weekend_adjustment_next_working_day: "Pomakni na sljedeći radni dan"
+  label_weekend_adjustment_previous_working_day: "Pomakni na prethodni radni dan"
+  label_recurrence_weekend_adjustment_next_working_day: "neradni dani pomaknuti na sljedeći radni dan"
+  label_recurrence_weekend_adjustment_previous_working_day: "neradni dani pomaknuti na prethodni radni dan"
+  label_weekend_adjustment_moved_from: "pomaknuto s %{date}"

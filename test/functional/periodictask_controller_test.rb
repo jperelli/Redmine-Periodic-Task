@@ -643,6 +643,76 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.interval .value', text: expected
   end
 
+  def test_new_renders_weekend_adjustment_select_with_none_selected
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'select#periodictask_weekend_adjustment' do
+      assert_select 'option', count: 3
+      assert_select 'option[value=none][selected=selected]', text: 'Run on that day'
+      assert_select 'option[value=next_working_day]', text: 'Move to the next working day'
+      assert_select 'option[value=previous_working_day]', text: 'Move to the previous working day'
+    end
+  end
+
+  def test_create_stores_weekend_adjustment_for_any_unit
+    assert_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Monthly report', tracker_id: 1, interval_number: 1, interval_units: 'month',
+          weekend_adjustment: 'previous_working_day', next_run_date: '2026-08-01T10:00'
+        }
+      }
+    end
+    task = Periodictask.order(:id).last
+    assert_equal 'previous_working_day', task.weekend_adjustment
+
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { interval_units: 'day' } }
+    assert_equal 'previous_working_day', task.reload.weekend_adjustment
+
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { weekend_adjustment: 'bogus' } }
+    assert_equal 'none', task.reload.weekend_adjustment
+  end
+
+  def test_edit_and_copy_select_the_persisted_weekend_adjustment
+    task = create_test_periodictask(weekend_adjustment: 'next_working_day')
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select#periodictask_weekend_adjustment option[value=next_working_day][selected=selected]'
+
+    get :copy, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select#periodictask_weekend_adjustment option[value=next_working_day][selected=selected]'
+  end
+
+  def test_index_and_show_describe_weekend_adjustment_and_moved_run
+    task = create_test_periodictask(subject: 'Moved', interval_units: 'month', weekend_adjustment: 'next_working_day',
+                                    next_run_date: Time.utc(2026, 8, 1, 10, 0)) # Saturday
+    plain = create_test_periodictask(subject: 'Plain', interval_units: 'month',
+                                     next_run_date: Time.utc(2026, 8, 1, 10, 0))
+    User.find(2).pref.update!(time_zone: 'UTC')
+    expected = 'each month on day 1, non-working days moved to the next working day'
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'td.interval', text: expected
+    assert_select 'td.interval', text: 'each month on day 1'
+    assert_select 'td span[title=?]', Time.utc(2026, 8, 3, 10, 0).iso8601, count: 1
+    assert_select 'td span[title=?]', Time.utc(2026, 8, 1, 10, 0).iso8601, count: 1
+    assert_select 'td .periodictask-moved-from', text: '(moved from 08/01/2026 10:00 AM)', count: 1
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.interval .value', text: expected
+    assert_select '.weekend-adjustment .value', text: 'Move to the next working day'
+    assert_select '.next-run-date .value span[title=?]', Time.utc(2026, 8, 3, 10, 0).iso8601
+    assert_select '.next-run-date .value .periodictask-moved-from', text: '(moved from 08/01/2026 10:00 AM)'
+
+    get :show, params: { project_id: 'ecookbook', id: plain.id }
+    assert_select '.weekend-adjustment .value', text: 'Run on that day'
+    assert_select '.next-run-date .value span[title=?]', Time.utc(2026, 8, 1, 10, 0).iso8601
+    assert_select '.periodictask-moved-from', count: 0
+  end
+
   def test_copy_prefills_the_new_form_without_saving
     task = create_test_periodictask(subject: 'Weekly backup', interval_number: 3,
                                     interval_units: 'week', description: 'Run the backup')

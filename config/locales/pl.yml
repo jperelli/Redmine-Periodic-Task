@@ -147,3 +147,11 @@ pl:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "Dni wolne od pracy"
+  label_weekend_adjustment_info: "Co się dzieje, gdy uruchomienie wypada w dzień wolny od pracy ustawiony w Redmine (Administracja → Ustawienia → Śledzenie zagadnień). Sam harmonogram się nie przesuwa – 1. dzień miesiąca pozostaje 1. dniem."
+  label_weekend_adjustment_none: "Uruchom w tym dniu"
+  label_weekend_adjustment_next_working_day: "Przenieś na następny dzień roboczy"
+  label_weekend_adjustment_previous_working_day: "Przenieś na poprzedni dzień roboczy"
+  label_recurrence_weekend_adjustment_next_working_day: "dni wolne przeniesione na następny dzień roboczy"
+  label_recurrence_weekend_adjustment_previous_working_day: "dni wolne przeniesione na poprzedni dzień roboczy"
+  label_weekend_adjustment_moved_from: "przeniesione z %{date}"

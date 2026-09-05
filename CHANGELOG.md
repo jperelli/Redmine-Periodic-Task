@@ -14,6 +14,7 @@
 - Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
+- Add a per-task `Non-working days` option for every interval unit: a run that falls on one of Redmine's non-working days can be moved to the next or to the previous working day, keeping the time of day; the schedule itself is not moved, so "every month on day 1" keeps meaning the 1st (like ClickUp's *Skip weekends* and Jira's business-day smart values) **requires migration** (@jperelli)
 
 ### Fixes
 
@@ -24,6 +25,7 @@
 - The checker restores the request locale after running, so the *Run checker now* flash message is shown in the admin's language instead of Redmine's default (@jperelli)
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
 - The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
+- `business day` intervals and due dates follow Redmine's *Non-working days* setting (`Administration` > `Settings` > `Issue tracking`) through `Redmine::Utils::DateCalculation` instead of the `business_time` gem's hard-coded Monday–Friday week; the gem dependency and the plugin `Gemfile` are gone. A due date in `business day(s)` was silently counted in calendar days (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 

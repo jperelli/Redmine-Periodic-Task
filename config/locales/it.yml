@@ -143,3 +143,11 @@ it:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "Giorni non lavorativi"
+  label_weekend_adjustment_info: "Cosa succede quando un'esecuzione cade in un giorno non lavorativo di Redmine (Amministrazione → Configurazione → Tracciamento segnalazioni). La pianificazione non si sposta: il giorno 1 del mese resta il giorno 1."
+  label_weekend_adjustment_none: "Esegui quel giorno"
+  label_weekend_adjustment_next_working_day: "Sposta al giorno lavorativo successivo"
+  label_weekend_adjustment_previous_working_day: "Sposta al giorno lavorativo precedente"
+  label_recurrence_weekend_adjustment_next_working_day: "giorni non lavorativi spostati al giorno lavorativo successivo"
+  label_recurrence_weekend_adjustment_previous_working_day: "giorni non lavorativi spostati al giorno lavorativo precedente"
+  label_weekend_adjustment_moved_from: "spostato da %{date}"

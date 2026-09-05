@@ -3,7 +3,19 @@ require 'logger' # activesupport 6.1 (Redmine 5) references Logger before requir
 require 'active_support'
 require 'active_support/core_ext/integer/time'
 require 'active_support/core_ext/numeric/time'
-require 'business_time'
+
+# Mirrors Redmine::Utils::DateCalculation#add_working_days with the default
+# non-working days (Saturday and Sunday). Redmine itself is not loaded here,
+# and loading its lib files early would break its autoloader.
+module DefaultWorkingDays
+  def self.add_working_days(date, working_days)
+    working_days.times do
+      date += 1
+      date += 1 while [6, 7].include?(date.cwday)
+    end
+    date
+  end
+end
 
 # Standalone test for get_next_run_date logic (no Redmine dependency needed).
 # Tests the fix for https://github.com/jperelli/Redmine-Periodic-Task/issues/79
@@ -19,7 +31,7 @@ GetNextRunDateTestTask = Struct.new(:next_run_date, :interval_number, :interval_
     if units == 'business_day'
       date = val.to_date
       while val <= now
-        date = interval_number.business_days.after(date)
+        date = DefaultWorkingDays.add_working_days(date, interval_number)
         val = val.change(year: date.year, month: date.month, day: date.day)
       end
     else

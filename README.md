@@ -187,6 +187,16 @@ The *Run checker now* button on the same page runs the checker immediately, whic
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
 
+Business days follow Redmine's own *Administration → Settings → Issue tracking → Non-working days* setting (Saturday and Sunday by default), the same one Redmine uses for issue dates. There are no extra gems and no separate holiday calendar.
+
+The `Non-working days` option of a task decides what happens when a run falls on one of those days, for any unit:
+
+- `Run on that day` (default): the issue is created on the non-working day.
+- `Move to the next working day`: Saturday August 1st is run on Monday August 3rd.
+- `Move to the previous working day`: Saturday August 1st is run on Friday July 31st.
+
+The time of day is kept and the schedule itself is not moved: "every month on day 1" still means the 1st, so the next run after a moved August 1st is September 1st. The task list and detail page show the day the task will actually run, with the original date next to it.
+
 ### Variable interpolation
 
 You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.

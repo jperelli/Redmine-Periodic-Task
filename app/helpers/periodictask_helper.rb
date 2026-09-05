@@ -17,6 +17,13 @@ module PeriodictaskHelper
   # "each month on the 1st, 3rd Wednesday"; the single source for the list
   # and detail pages.
   def periodictask_schedule_description(task)
+    description = periodictask_recurrence_description(task)
+    return description unless task.weekend_adjusted?
+
+    "#{description}, #{l(:"label_recurrence_weekend_adjustment_#{task.weekend_adjustment}")}"
+  end
+
+  def periodictask_recurrence_description(task)
     interval = periodictask_interval_label(task.interval_number, task.interval_units)
     weekdays = Periodictask.ordered_weekdays.select { |d| task.weekdays.include?(d) }.map { |d| day_name(d) }.join(', ')
     case task.interval_units
@@ -36,6 +43,22 @@ module PeriodictaskHelper
     else
       interval
     end
+  end
+
+  # Localized label of the task's weekend_adjustment option.
+  def periodictask_weekend_adjustment_label(task)
+    l(:"label_weekend_adjustment_#{task.weekend_adjustment}")
+  end
+
+  # When the task will actually run: the stored occurrence, or the working day
+  # it was moved to followed by the occurrence it was moved from.
+  def periodictask_next_run_with_title(task)
+    effective = task.effective_next_run_date
+    html = periodictask_time_with_title(effective)
+    return html if effective.blank? || effective == task.next_run_date
+
+    moved_from = l(:label_weekend_adjustment_moved_from, date: format_time(task.next_run_date))
+    safe_join([html, content_tag(:span, "(#{moved_from})", class: 'periodictask-moved-from')], ' ')
   end
 
   # "each week" / "every 3 weeks", pluralized per locale.

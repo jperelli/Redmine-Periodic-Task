@@ -6,7 +6,7 @@ class ScheduledTasksChecker
     now = Time.current
     errors = []
     issues_created = 0
-    tasks = Periodictask.active.where('next_run_date <= ? ', now).to_a
+    tasks = Periodictask.active.possibly_due(now).select { |task| task.due_by?(now) }
 
     # Macros render in the shell-configured locale (or Redmine's default). The
     # checker also runs inside web requests, so the caller's locale must be
@@ -28,7 +28,9 @@ class ScheduledTasksChecker
               errors << "##{task.id} #{task.subject}: #{e.message}"
               task.last_error = e.message
             end
-            task.next_run_date = task.get_next_run_date(now)
+            # A run moved to a previous working day fires before its stored
+            # occurrence; the next one must follow that occurrence, not now.
+            task.next_run_date = task.get_next_run_date([now, task.next_run_date].max)
           else
             msg = 'Project is missing or closed'
             Rails.logger.error "ScheduledTasksChecker: #{msg}"

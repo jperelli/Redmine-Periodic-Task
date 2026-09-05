@@ -143,3 +143,11 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "Dias não úteis"
+  label_weekend_adjustment_info: "O que acontece quando uma execução cai em um dia não útil do Redmine (Administração → Configurações → Acompanhamento de tarefas). O agendamento em si não muda: o dia 1º do mês continua sendo o dia 1º."
+  label_weekend_adjustment_none: "Executar nesse dia"
+  label_weekend_adjustment_next_working_day: "Mover para o próximo dia útil"
+  label_weekend_adjustment_previous_working_day: "Mover para o dia útil anterior"
+  label_recurrence_weekend_adjustment_next_working_day: "dias não úteis movidos para o próximo dia útil"
+  label_recurrence_weekend_adjustment_previous_working_day: "dias não úteis movidos para o dia útil anterior"
+  label_weekend_adjustment_moved_from: "movido de %{date}"

@@ -14,6 +14,7 @@ created. The code is in `Periodictask#get_next_run_date`
 | `weekdays` | JSON array of weekday numbers, `0` is Sunday and `6` is Saturday. Used by weekly tasks and by monthly tasks in weekday mode. |
 | `monthly_mode` | `day_of_month` (default) or `weekday`. Only used when the unit is `month`. |
 | `month_weeks` | JSON array of ordinals from `1` to `5`. `3` means the third occurrence of each selected weekday in the month. |
+| `weekend_adjustment` | `none` (default), `next_working_day` or `previous_working_day`. What happens when a run falls on one of Redmine's non-working days. Applies to every unit. |
 
 The form shows extra controls only for some units:
 
@@ -45,17 +46,72 @@ as before. The same rule handles the monthly day-of-month mode: the day is
 the day of the anchor. Google Calendar works the same way, "Monthly on day
 15" comes from the start date and there is no separate field for it.
 
+## Non-working days
+
+Both the `business_day` unit and the weekend adjustment use Redmine's own
+setting *Administration → Settings → Issue tracking → Non-working days*
+(`Setting.non_working_week_days`, Saturday and Sunday by default). The
+arithmetic is Redmine's `Redmine::Utils::DateCalculation`, the module Redmine
+uses for issue start and due dates, wrapped in
+`RedminePeriodictask::WorkingDays` (`lib/redmine_periodictask/working_days.rb`)
+which adds `working_day?` and `previous_working_date`. There are no holidays
+and no other calendar: an installation that works Sunday to Thursday sets
+Friday and Saturday as non-working days in Redmine and every plugin
+calculation follows.
+
 ## Business days
 
 Example: every 3 business days.
 
-Only the date is walked: N business days are added to the date of the anchor
-until the result is after now, and the time of day of the anchor is kept. The
-`business_time` gem counts from an instant, so counting from the anchor itself
-would move a task scheduled outside business hours to the start of a business
-day (09:00 by default) and, for an evening task, skip the next day: 20:30 on a
-Monday first rolls forward to Tuesday 09:00 and then adds the interval.
-Weekends and the gem's holidays are skipped either way.
+Only the date is walked: N working days are added to the date of the anchor
+(`add_working_days`) until the result is after now, and the time of day of the
+anchor is kept. A task scheduled at 20:30 stays at 20:30; the calculation
+never looks at business hours. The due date of a generated issue expressed in
+business days uses the same setting.
+
+## Weekend adjustment
+
+Example: every month on day 1, moved to the previous working day.
+
+The recurrence rules above compute the *occurrence* and never look at
+`weekend_adjustment`. It is applied afterwards, when the task is due and when
+the next run is displayed:
+
+```
+effective_next_run_date = adjust_to_working_day(next_run_date)
+
+adjust_to_working_day(time):
+  none                  -> time
+  next_working_day      -> first working day on or after time.to_date, at the time of day of time
+  previous_working_day  -> last working day on or before time.to_date, at the time of day of time
+```
+
+`next_run_date` keeps the unadjusted occurrence and stays the anchor, so
+"every month on day 1" keeps meaning the 1st: Saturday August 1st is run on
+Friday July 31st (or Monday August 3rd), and the next occurrence is
+Tuesday September 1st, not the 31st or the 3rd. A run on a working day is
+not moved at all. The adjustment is not part of the anchor, so it can never
+accumulate across runs.
+
+The scheduler (`ScheduledTasksChecker`) selects tasks with
+`Periodictask.possibly_due(now)`, which also loads tasks due within the next
+six days (the longest possible move backwards, since Redmine requires at
+least one working day per week), and keeps those whose `due_by?(now)` is
+true, that is whose effective run time has passed. After creating the issue
+it advances from `max(now, next_run_date)`: a run moved backwards fires
+before its occurrence, and the next occurrence must still be counted from
+that occurrence, not from the earlier moment the scheduler ran.
+
+With `next_working_day`, several occurrences can be moved to the same working
+day: a daily task moves Saturday to Monday and Sunday to Monday. The scheduler
+creates one issue on Monday and then moves on to Tuesday, like it does after
+downtime (see *Missed runs*). With `previous_working_day` the same daily task
+creates the Saturday and Sunday issues on Friday, one per checker run, since
+each occurrence becomes due on Friday as soon as the previous one has run.
+
+Business-day tasks are never on a non-working day, so the adjustment does
+nothing for them unless the non-working days setting changes after the next
+run was computed.
 
 ## Weekly, on selected weekdays
 
@@ -144,6 +200,9 @@ not loop over every skipped week or month.
   scheduler and no table of future runs. The scheduler query and update loop
   did not change.
 - The migration adds three nullable columns. No data migration is needed.
+- `weekend_adjustment` is a string column, `NOT NULL DEFAULT 'none'`. An
+  unknown value reads as `none`. Old records get the default, so nothing
+  changes for them.
 
 ## Schedule text
 
@@ -156,6 +215,11 @@ each day                          every 3 business days
 each week on Monday, Wednesday    every 2 weeks on Monday, Wednesday
 each month on day 15              each month on the 1st, 3rd Monday, Wednesday
 every 6 months on day 3           each year
+each month on day 1, non-working days moved to the previous working day
 ```
+
+The `Next run date` column and field show the effective run time,
+`periodictask_next_run_with_title`, followed by "moved from <occurrence>"
+when the two differ.
 
 Weekday names are listed in the order set by "Start calendars on".
