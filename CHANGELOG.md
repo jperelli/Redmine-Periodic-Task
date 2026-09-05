@@ -10,6 +10,7 @@
 - Add an `Administration` > `Periodic Tasks` page listing the tasks of every project, inspired by [@rkteam](https://github.com/rkteam)'s fork (@jperelli)
 - Add a `Copy` action that opens the new task form prefilled from an existing task, inspired by [@vegaminer](https://github.com/vegaminer)'s fork (@jperelli)
 
+
 ### Fixes
 
 - Apply the `Project` patch (`has_many :periodictasks, dependent: :destroy`) at plugin load; the nested `to_prepare` it used never ran outside code reloading (@jperelli)

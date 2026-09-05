@@ -201,7 +201,7 @@ You can use the following variables in the subject and description of a periodic
 | `**PREVIOUS_MONTH**` | Previous month, zero-padded (01..12) |
 | `**PREVIOUS_MONTHNAME**` | Full name of the previous month, localized |
 
-If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `zh`) to the cronjob like this
+If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `vi`, `zh`) to the cronjob like this
 
     0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production LOCALE="de"
 
