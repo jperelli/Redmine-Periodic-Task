@@ -32,7 +32,7 @@ week to day does not keep its old weekdays.
 ```
 get_next_run_date(now):
   anchor = next_run_date || now
-  business_day                                  -> add N business days to the anchor until the result is after now
+  business_day                                  -> next_business_day_occurrence
   week, with weekdays selected                  -> next_weekday_occurrence
   month, monthly_mode == weekday,
         with weekdays and month_weeks selected  -> next_monthly_weekday_occurrence
@@ -44,6 +44,18 @@ has empty `weekdays` and `month_weeks`, so it keeps using this rule and runs
 as before. The same rule handles the monthly day-of-month mode: the day is
 the day of the anchor. Google Calendar works the same way, "Monthly on day
 15" comes from the start date and there is no separate field for it.
+
+## Business days
+
+Example: every 3 business days.
+
+Only the date is walked: N business days are added to the date of the anchor
+until the result is after now, and the time of day of the anchor is kept. The
+`business_time` gem counts from an instant, so counting from the anchor itself
+would move a task scheduled outside business hours to the start of a business
+day (09:00 by default) and, for an evening task, skip the next day: 20:30 on a
+Monday first rolls forward to Tuesday 09:00 and then adds the interval.
+Weekends and the gem's holidays are skipped either way.
 
 ## Weekly, on selected weekdays
 

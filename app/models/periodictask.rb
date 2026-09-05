@@ -346,7 +346,7 @@ class Periodictask < ActiveRecord::Base
     units = interval_units.downcase
     val = next_run_date || now
     if units == 'business_day'
-      val = interval_number.business_day.after(val) while val <= now
+      val = next_business_day_occurrence(val, now)
     elsif units == 'week' && weekdays.any?
       val = next_weekday_occurrence(val, now)
     elsif monthly_weekday_mode? && weekdays.any? && month_weeks.any?
@@ -359,6 +359,20 @@ class Periodictask < ActiveRecord::Base
   end
 
   private
+
+  # Walks business days from the anchor's date and keeps the anchor's time of
+  # day. business_time counts from the instant, so feeding it a time outside
+  # business hours would move the occurrence to the start of a business day
+  # (09:00 by default) and lose the scheduled time.
+  def next_business_day_occurrence(anchor, now)
+    date = anchor.to_date
+    val = anchor
+    while val <= now
+      date = interval_number.business_days.after(date)
+      val = at_anchor_time(date, anchor)
+    end
+    val
+  end
 
   # Walks the eligible weeks (every interval_number weeks from the anchor's
   # week) and returns the first selected weekday, at the anchor's time of day,

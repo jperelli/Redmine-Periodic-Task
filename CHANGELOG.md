@@ -14,6 +14,7 @@
 ### Fixes
 
 - Apply the `Project` patch (`has_many :periodictasks, dependent: :destroy`) at plugin load; the nested `to_prepare` it used never ran outside code reloading (@jperelli)
+- `business day` intervals keep the scheduled time of day and no longer skip a day: the next run used to be moved to the start of the business day (09:00) whenever the task was scheduled outside business hours ([#79](https://github.com/jperelli/Redmine-Periodic-Task/issues/79), idea from [chris85618's fork](https://github.com/chris85618/Redmine-Periodic-Task))
 
 ## v7.0.0 - 2026-09-03
 
