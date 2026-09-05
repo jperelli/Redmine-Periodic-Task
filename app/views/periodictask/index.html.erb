@@ -37,6 +37,7 @@
           <td><%= a.tracker&.name %></td>
           <td><%= @priorities[a.priority_id]&.name %></td>
           <td>
+            <%= periodictask_disabled_icon(a) %>
             <%= content_tag('span', '', :title => a.last_error, :class => 'icon-only icon-error') if a.last_error.present? %>
             <%= link_to a.subject, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %>
           </td>

@@ -7,6 +7,7 @@ class Periodictask < ActiveRecord::Base
   belongs_to :assigned_to, class_name: 'Principal', foreign_key: 'assigned_to_id'
   belongs_to :tracker, optional: true
   belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
+  belongs_to :fixed_version, class_name: 'Version', foreign_key: 'fixed_version_id', optional: true
   has_many :periodictask_issues, dependent: :delete_all
   has_many :issues, through: :periodictask_issues
   attribute :custom_field_values, :json
@@ -164,6 +165,10 @@ class Periodictask < ActiveRecord::Base
   validate :validate_recurrence
   before_validation :clear_irrelevant_recurrence_options
 
+  # Tasks the scheduler picks up. A disabled task keeps its schedule and can
+  # still be run by hand from the list or detail page.
+  scope :active, -> { where(is_active: true) }
+
   scope :accessible, lambda {
     if User.current.allowed_to?(:periodictask, nil, global: true)
       all
@@ -227,6 +232,7 @@ class Periodictask < ActiveRecord::Base
                       category_id: issue_category_id, parent_id: parent_id,
                       assigned_to_id: assigned_to_id, author_id: author_id,
                       subject: subj, description: desc)
+    issue.fixed_version_id = fixed_version_id if fixed_version_id.present?
     issue.priority_id = priority_id if priority_id.present?
     issue.status_id = status_id if status_id.present?
     issue.done_ratio = done_ratio if done_ratio.present? && done_ratio_enabled?

@@ -6,6 +6,10 @@
 <fieldset class="box tabular">
   <legend><%= l(:label_periodictask_configuration) %></legend>
   <p>
+    <%= label(:periodictask, :is_active, l(:field_active)) %>
+    <%= f.check_box :is_active %>
+  </p>
+  <p>
     <%= label(:periodictask, :interval_number) do %><%= l(:label_interval) %> <span class="required">*</span><% end %>
     <%= f.number_field :interval_number, :required => true, :min => 1 %>
     <%= select 'periodictask', 'interval_units', Periodictask.interval_units_options %>
@@ -80,6 +84,10 @@
     </div>
 
     <div class="splitcontentright">
+      <p>
+        <%= label(:periodictask, :fixed_version_id, l(:field_fixed_version)) %>
+        <%= f.select :fixed_version_id, periodictask_version_options(@versions, @periodictask), :include_blank => true %>
+      </p>
       <p>
         <%= label(:periodictask, :parent_id, l(:field_parent_issue)) %><%= f.text_field :parent_id, :size => 10 %>
       </p>

@@ -6,7 +6,7 @@ class ScheduledTasksChecker
     now = Time.current
     errors = []
     issues_created = 0
-    tasks = Periodictask.where('next_run_date <= ? ', now).to_a
+    tasks = Periodictask.active.where('next_run_date <= ? ', now).to_a
 
     tasks.each do |task|
       # replace variables (set locale from shell)

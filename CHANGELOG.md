@@ -11,6 +11,8 @@
 - Add a `Copy` action that opens the new task form prefilled from an existing task, inspired by [@vegaminer](https://github.com/vegaminer)'s fork (@jperelli)
 - Add Vietnamese (`vi`) translation, adapted from [@tq89](https://github.com/tq89)'s fork (@jperelli)
 - Add the shifted date macros `**NEXT_MONTH**`, `**NEXT_MONTHNAME**`, `**NEXT_WEEK**`, `**NEXT_WEEKISO**` and the year companions `**NEXT_MONTH_YEAR**`, `**NEXT_WEEK_YEAR**`, `**NEXT_WEEKISO_YEAR**`, `**PREVIOUS_MONTH_YEAR**`, `**WEEKISO_YEAR**` (idea and implementation from [tq89's fork](https://github.com/tq89/Redmine-Periodic-Task))
+- Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
+- Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 
 ### Fixes
 
