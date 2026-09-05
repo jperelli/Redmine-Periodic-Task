@@ -13,6 +13,40 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
                                      next_run_date: 1.hour.ago)
   end
 
+  def test_index_lists_tasks_of_every_project
+    create_test_periodictask(Project.find(1), subject: 'Task on ecookbook')
+    create_test_periodictask(Project.find(2), subject: 'Task on onlinestore')
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'table.list td.subject a', text: 'Task on ecookbook'
+    assert_select 'table.list td.subject a', text: 'Task on onlinestore'
+  end
+
+  def test_index_is_sortable_by_each_column
+    log_user('admin', 'admin')
+    %w[project subject next_run_date].each do |column|
+      get '/admin/periodictasks', params: { sort: "#{column}:desc" }
+      assert_response :success, "sorting by #{column} should not error"
+    end
+  end
+
+  def test_index_shows_an_empty_state
+    Periodictask.delete_all
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'p.nodata'
+  end
+
+  def test_index_requires_admin
+    log_user('jsmith', 'jsmith')
+    get '/admin/periodictasks'
+    assert_response :forbidden
+  end
+
   def test_admin_can_run_checker_from_settings
     log_user('admin', 'admin')
     post '/admin/periodictask/run_checker'
@@ -40,5 +74,20 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     post '/admin/periodictask/run_checker'
     assert_response :redirect
     assert_equal 0, PeriodictaskRun.count
+  end
+
+  private
+
+  def create_test_periodictask(project, attrs = {})
+    Periodictask.create!({
+      project: project,
+      tracker_id: 1,
+      assigned_to_id: 2,
+      author_id: 2,
+      subject: 'Test task',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.month.from_now
+    }.merge(attrs))
   end
 end
