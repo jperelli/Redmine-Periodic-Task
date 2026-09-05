@@ -12,6 +12,7 @@
 - Add Vietnamese (`vi`) translation, adapted from [@tq89](https://github.com/tq89)'s fork (@jperelli)
 - Add the shifted date macros `**NEXT_MONTH**`, `**NEXT_MONTHNAME**`, `**NEXT_WEEK**`, `**NEXT_WEEKISO**` and the year companions `**NEXT_MONTH_YEAR**`, `**NEXT_WEEK_YEAR**`, `**NEXT_WEEKISO_YEAR**`, `**PREVIOUS_MONTH_YEAR**`, `**WEEKISO_YEAR**` (idea and implementation from [tq89's fork](https://github.com/tq89/Redmine-Periodic-Task))
 
+
 ### Fixes
 
 - Apply the `Project` patch (`has_many :periodictasks, dependent: :destroy`) at plugin load; the nested `to_prepare` it used never ran outside code reloading (@jperelli)

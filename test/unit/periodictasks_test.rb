@@ -2,7 +2,8 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 class PeriodictasksTest < ActiveSupport::TestCase
   fixtures :projects, :users, :trackers, :projects_trackers, :issue_statuses,
-           :enumerations, :enabled_modules, :roles, :members, :member_roles
+           :enumerations, :enabled_modules, :roles, :members, :member_roles,
+           :versions
 
   def setup
     @project = Project.find(1)
@@ -1070,6 +1071,43 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil copy.last_error
     assert_equal 3, copy.author_id
     assert copy.save
+  end
+
+  def test_task_is_active_by_default
+    task = Periodictask.create!(
+      project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
+      subject: 'Active by default', interval_number: 1, interval_units: 'month'
+    )
+
+    assert task.reload.is_active?
+  end
+
+  def test_checker_ignores_disabled_tasks
+    Periodictask.create!(
+      project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
+      subject: 'Disabled task', interval_number: 1, interval_units: 'month',
+      next_run_date: 1.day.ago, is_active: false
+    )
+
+    assert_no_difference('Issue.count') do
+      ScheduledTasksChecker.checktasks!
+    end
+  end
+
+  def test_generated_issue_gets_the_target_version
+    version = Version.find(3)
+    task = Periodictask.create!(
+      project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
+      subject: 'Versioned task', interval_number: 1, interval_units: 'month',
+      next_run_date: 1.day.ago, fixed_version_id: version.id
+    )
+
+    assert_difference('Issue.count') do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    assert_equal version, Issue.where(subject: 'Versioned task').last.fixed_version
+    assert_nil task.reload.last_error
   end
 
   private

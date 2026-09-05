@@ -9,11 +9,13 @@ class PeriodictaskController < ApplicationController
   before_action :authorize
   before_action :load_users, except: %i[destroy run_now tags]
   before_action :load_categories, except: %i[destroy run_now tags]
+  before_action :load_versions, except: %i[destroy run_now tags]
 
   helper :custom_fields
   include CustomFieldsHelper
 
   helper :issues
+  helper :projects
   helper :watchers
   helper :queries
   helper :sort
@@ -210,6 +212,12 @@ class PeriodictaskController < ApplicationController
     @categories = @project.issue_categories
   end
 
+  # Versions that can be set on a new issue: the project's own and the ones
+  # shared with it, closed ones excluded like Redmine's issue form.
+  def load_versions
+    @versions = @project.shared_versions.open.to_a
+  end
+
   # The form posts next_run_date as a wall-clock time without an offset; parse
   # it in the same zone the list/show pages use to display it (format_time).
   def assign_periodictask_params
@@ -232,6 +240,7 @@ class PeriodictaskController < ApplicationController
       :interval_number, :interval_units, :next_run_date, :set_start_date,
       :due_date_number, :due_date_units, :description, :issue_category_id,
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :done_ratio, :tag_list,
+      :fixed_version_id, :is_active,
       :monthly_mode,
       { weekdays: [] },
       { month_weeks: [] },

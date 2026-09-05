@@ -52,6 +52,19 @@ module PeriodictaskHelper
             class: 'icon-only icon-help', title: title, target: '_blank', rel: 'noopener'
   end
 
+  # Target version options: the project's open versions plus the task's own
+  # one, so editing a task whose version has since been closed keeps it.
+  def periodictask_version_options(versions, periodictask)
+    version_options_for_select((versions + [periodictask.fixed_version]).compact.uniq, periodictask.fixed_version)
+  end
+
+  # Marker shown next to a disabled task's subject in the list and detail pages.
+  def periodictask_disabled_icon(periodictask)
+    return if periodictask.is_active?
+
+    content_tag(:span, '', title: l(:label_disabled), class: 'icon-only icon-locked')
+  end
+
   def periodictask_default_label(value)
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end

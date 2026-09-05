@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class PeriodictaskControllerTest < ActionController::TestCase
   fixtures :projects, :users, :email_addresses, :roles, :members, :member_roles,
            :trackers, :projects_trackers, :enabled_modules, :issue_statuses,
-           :enumerations, :issue_categories, :issues
+           :enumerations, :issue_categories, :issues, :versions
 
   def setup
     @project = Project.find(1)
@@ -662,6 +662,41 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = create_test_periodictask
     get :index, params: { project_id: 'ecookbook' }
     assert_select 'a[href=?]', copy_periodictask_path(project_id: 'ecookbook', id: task.id)
+  end
+
+  def test_edit_offers_open_versions_and_keeps_the_configured_one
+    # Version 1 is closed, 2 is locked, 3 is open (all on ecookbook).
+    task = create_test_periodictask(fixed_version_id: 1)
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select#periodictask_fixed_version_id' do
+      assert_select 'option[value=?]', '3'
+      assert_select 'option[value=?]', '2', 0
+      assert_select 'option[selected=selected][value=?]', '1'
+    end
+  end
+
+  def test_create_stores_target_version_and_disabled_state
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Versioned task', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'month', fixed_version_id: '3', is_active: '0'
+      }
+    }
+    assert_response :redirect
+
+    task = Periodictask.find_by(subject: 'Versioned task')
+    assert_equal 3, task.fixed_version_id
+    assert_not task.is_active?
+  end
+
+  def test_run_now_works_on_a_disabled_task
+    task = create_test_periodictask(is_active: false)
+    assert_difference('Issue.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    assert_response :redirect
   end
 
   def test_denies_member_without_permission

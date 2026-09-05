@@ -34,6 +34,9 @@
       rows.right l(:label_next_run_date),
                  periodictask_time_with_title(@periodictask.next_run_date),
                  class: 'next-run-date'
+      rows.left l(:field_active),
+                checked_image(@periodictask.is_active?),
+                class: 'active'
     end %>
   </div>
 </div>
@@ -89,6 +92,9 @@
       rows.left l(:field_category),
                 (@periodictask.issue_category&.name || '-'),
                 class: 'category'
+      rows.left l(:field_fixed_version),
+                (@periodictask.fixed_version ? link_to_version(@periodictask.fixed_version) : '-'),
+                class: 'fixed-version'
 
       rows.right l(:label_set_start_date),
                  checked_image(@periodictask.set_start_date?),
