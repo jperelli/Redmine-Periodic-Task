@@ -9,6 +9,9 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
     # A checker running in its own thread writes outside the test transaction,
     # so its rows would survive into the next test.
     RedminePeriodictask::WebScheduler.synchronous = true
+    # Requests made in web mode would otherwise run the checker in a thread of
+    # their own, which writes its run outside the test transaction.
+    RedminePeriodictask::WebScheduler.synchronous = true
     log_user('admin', 'admin')
     PeriodictaskRun.delete_all
   end
@@ -16,6 +19,7 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
   def teardown
     RedminePeriodictask::WebScheduler.synchronous = false
     RedminePeriodictask::WebScheduler.reset!
+    RedminePeriodictask::WebScheduler.synchronous = false
     Setting.plugin_periodictask = { 'scheduler_mode' => 'cron' }
   end
 
