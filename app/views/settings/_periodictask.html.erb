@@ -30,6 +30,12 @@
   <% if runs.empty? %>
     <p class="nodata"><%= l(:label_no_data) %></p>
   <% else %>
+    <% content_for :header_tags do %>
+      <style>
+        table.periodictask-runs tr.error td { background-color: #ffe3e3; color: #880000; }
+        table.periodictask-runs td.error-messages { white-space: pre-line; }
+      </style>
+    <% end %>
     <table class="list periodictask-runs">
       <thead>
         <tr>
@@ -56,7 +62,7 @@
             <td><%= run.tasks_due %></td>
             <td><%= run.issues_created %></td>
             <td><%= run.duration_ms %> ms</td>
-            <td><%= simple_format(h(run.error_messages)) if run.error_messages.present? %></td>
+            <td class="error-messages"><%= run.error_messages %></td>
           </tr>
         <% end %>
       </tbody>
