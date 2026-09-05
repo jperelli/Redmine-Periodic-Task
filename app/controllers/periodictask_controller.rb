@@ -222,12 +222,13 @@ class PeriodictaskController < ApplicationController
     @versions = @project.shared_versions.open.to_a
   end
 
-  # The form posts next_run_date as a wall-clock time without an offset; parse
-  # it in the same zone the list/show pages use to display it (format_time).
+  # The form posts next_run_date and end_date as wall-clock times without an
+  # offset; parse them in the same zone the list/show pages use to display
+  # them (format_time).
   def assign_periodictask_params
     attrs = periodictask_params
-    if attrs[:next_run_date].present?
-      attrs[:next_run_date] = helpers.periodictask_parse_time(attrs[:next_run_date].to_s)
+    %i[next_run_date end_date].each do |field|
+      attrs[field] = helpers.periodictask_parse_time(attrs[field].to_s) if attrs[field].present?
     end
     # Rows are only posted when present, so a form with all rows removed
     # must still clear the stored ones.
@@ -244,7 +245,7 @@ class PeriodictaskController < ApplicationController
       :interval_number, :interval_units, :next_run_date, :set_start_date,
       :due_date_number, :due_date_units, :description, :issue_category_id,
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :done_ratio, :tag_list,
-      :fixed_version_id, :is_active,
+      :fixed_version_id, :is_active, :end_date, :max_occurrences,
       :monthly_mode,
       { weekdays: [] },
       { month_weeks: [] },

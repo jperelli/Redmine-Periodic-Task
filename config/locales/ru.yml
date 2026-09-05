@@ -148,3 +148,14 @@ ru:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Завершается"
+  label_end_condition_info: "Необязательно. Отметьте «В дату» и/или «После N запусков»; задача отключается при достижении первого из условий. «Запустить сейчас» не учитывается."
+  label_end_on_date: "В дату"
+  label_end_after: "После"
+  label_end_runs: "запусков"
+  label_ends_on_date: "Завершается %{date}"
+  label_end_runs_progress: "%{count} из %{max} запусков"
+  label_periodictask_journal_ended_by_date: "Периодическая задача завершена (достигнута дата окончания)"
+  label_periodictask_journal_ended_by_count: "Периодическая задача завершена (достигнуто максимальное число запусков)"
+  error_end_date_before_next_run: "Дата окончания должна быть позже даты следующего запуска"
+  error_max_occurrences_not_positive: "Максимальное число запусков должно быть больше 0"

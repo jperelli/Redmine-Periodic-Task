@@ -14,6 +14,9 @@ created. The code is in `Periodictask#get_next_run_date`
 | `weekdays` | JSON array of weekday numbers, `0` is Sunday and `6` is Saturday. Used by weekly tasks and by monthly tasks in weekday mode. |
 | `monthly_mode` | `day_of_month` (default) or `weekday`. Only used when the unit is `month`. |
 | `month_weeks` | JSON array of ordinals from `1` to `5`. `3` means the third occurrence of each selected weekday in the month. |
+| `end_date` | Optional. The task ends once its next run would fall after this time (see [End condition](#end-condition)). |
+| `max_occurrences` | Optional. The task ends once the scheduler has created this many issues for it. |
+| `occurrences_count` | Number of issues the scheduler created for the task so far; `Run now` does not increment it. Reset to 0 on copy. |
 
 The form shows extra controls only for some units:
 
@@ -134,6 +137,40 @@ This is the old behaviour and it applies to all units.
 `each_eligible_period` starts counting close to now, so a long downtime does
 not loop over every skipped week or month.
 
+## End condition
+
+A task repeats forever unless `end_date` and/or `max_occurrences` is set.
+The form's `Ends` control has two independent boxes, `On date` and `After N
+runs`; both may be ticked, and the first condition reached ends the task.
+
+After every scheduled run the checker increments `occurrences_count`,
+computes the next run and then checks `Periodictask#end_reason`:
+
+- `ended_by_count` when `occurrences_count >= max_occurrences`;
+- `ended_by_date` when the new `next_run_date` is strictly after `end_date`.
+  A run that falls exactly on `end_date` still happens.
+
+When a reason is found the task is saved with `is_active = false` and a
+`PeriodictaskJournal` entry with that action is written, so the project
+activity shows *Periodic task ended (end date reached)* or *(maximum number of
+runs reached)*. The lists show the usual disabled marker. `next_run_date` is
+left as computed, so re-ticking `Active` (after moving the end date or
+raising the maximum) resumes the schedule at its natural next slot. Lowering
+`max_occurrences` below the runs already made ends the task on its next due
+date without creating another issue.
+
+Only scheduled runs count. `Run now` creates an issue and records it in the
+task history, but it does not advance the schedule and it does not increment
+`occurrences_count`: a manual extra issue is not one of the N planned
+occurrences, and counting it would silently shorten the series. The count is
+therefore a column of its own rather than `periodictask_issues.count`, which
+also includes manual runs and generated subtasks.
+
+Validation: `end_date` must not be before `next_run_date` (for active tasks;
+an ended task keeps a next run past its end date, and a next run exactly on
+the end date is the last one) and `max_occurrences` must be greater than 0.
+Both are cleared when their box is unticked in the form.
+
 ## Storage and compatibility
 
 - `weekdays` and `month_weeks` are JSON columns, like the existing `subtasks`
@@ -144,6 +181,8 @@ not loop over every skipped week or month.
   scheduler and no table of future runs. The scheduler query and update loop
   did not change.
 - The migration adds three nullable columns. No data migration is needed.
+- The end condition adds `end_date` and `max_occurrences` (nullable) and
+  `occurrences_count` (default 0). Existing tasks keep repeating forever.
 
 ## Schedule text
 
@@ -159,3 +198,7 @@ every 6 months on day 3           each year
 ```
 
 Weekday names are listed in the order set by "Start calendars on".
+
+A task with an end condition shows it under the schedule text
+(`periodictask_end_condition_note`): `Ends on 12/31/2026 12:00 PM`,
+`2 of 5 runs`, or both separated by a comma.

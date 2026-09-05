@@ -143,3 +143,14 @@ es:
   label_periodictask_run_source_endpoint: 'URL de verificación'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'hasta %{time}'
+  label_end_condition: "Termina"
+  label_end_condition_info: "Opcional. Marque \"En fecha\" y/o \"Después de N ejecuciones\"; la tarea se desactiva al alcanzar la primera. \"Ejecutar ahora\" no cuenta."
+  label_end_on_date: "En fecha"
+  label_end_after: "Después de"
+  label_end_runs: "ejecuciones"
+  label_ends_on_date: "Termina el %{date}"
+  label_end_runs_progress: "%{count} de %{max} ejecuciones"
+  label_periodictask_journal_ended_by_date: "Tarea periódica finalizada (fecha de fin alcanzada)"
+  label_periodictask_journal_ended_by_count: "Tarea periódica finalizada (número máximo de ejecuciones alcanzado)"
+  error_end_date_before_next_run: "La fecha de fin debe ser posterior a la fecha de próxima ejecución"
+  error_max_occurrences_not_positive: "El número máximo de ejecuciones debe ser mayor que 0"

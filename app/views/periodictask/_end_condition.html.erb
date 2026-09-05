@@ -1,0 +1,15 @@
+<%# "Ends" control: neither box ticked means the task repeats forever. Both may be ticked; whichever is reached first ends the task (see the form's JS). %>
+<p id="periodictask_end_condition_field">
+  <label><span class="field-description" title="<%= l(:label_end_condition_info) %>"><%= l(:label_end_condition) %></span></label>
+  <label class="inline"><%= check_box_tag 'periodictask_end_on_date', '1', periodictask.end_date.present?, :class => 'periodictask-end-toggle', :data => { :target => 'periodictask_end_date_inputs' } %> <%= l(:label_end_on_date) %></label>
+  <span id="periodictask_end_date_inputs" style="<%= 'display: none;' if periodictask.end_date.blank? %>">
+    <%= f.datetime_field :end_date, :value => periodictask_time_input_value(periodictask.end_date) %>
+    <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
+  </span>
+  <br />
+  <label class="inline"><%= check_box_tag 'periodictask_end_after_runs', '1', periodictask.max_occurrences.present?, :class => 'periodictask-end-toggle', :data => { :target => 'periodictask_max_occurrences_inputs' } %> <%= l(:label_end_after) %></label>
+  <span id="periodictask_max_occurrences_inputs" style="<%= 'display: none;' if periodictask.max_occurrences.blank? %>">
+    <%= f.number_field :max_occurrences, :min => 1, :style => 'width: 5em;' %>
+    <%= l(:label_end_runs) %>
+  </span>
+</p>

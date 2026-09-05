@@ -38,6 +38,26 @@ module PeriodictaskHelper
     end
   end
 
+  # "Ends on <date>" and/or "<n> of <max> runs", or nil for a task that
+  # repeats forever.
+  def periodictask_end_description(task)
+    parts = []
+    parts << l(:label_ends_on_date, date: format_time(task.end_date)) if task.end_date
+    if task.max_occurrences
+      parts << l(:label_end_runs_progress, count: task.occurrences_count.to_i, max: task.max_occurrences)
+    end
+    parts.join(', ').presence
+  end
+
+  # The end condition as a note under the schedule text in the lists and on
+  # the detail page; empty for a task that repeats forever.
+  def periodictask_end_condition_note(task)
+    text = periodictask_end_description(task)
+    return if text.nil?
+
+    content_tag(:em, text, class: 'info periodictask-end-condition')
+  end
+
   # "each week" / "every 3 weeks", pluralized per locale.
   def periodictask_interval_label(number, units)
     key = :"label_recurrence_every_#{units}"
@@ -98,8 +118,8 @@ module PeriodictaskHelper
     zone ? time.in_time_zone(zone) : time.getlocal
   end
 
-  # Value for the next_run_date datetime-local input, in the display zone.
-  def periodictask_next_run_date_input_value(time)
+  # Value for the next_run_date / end_date datetime-local inputs, in the display zone.
+  def periodictask_time_input_value(time)
     return if time.blank?
 
     periodictask_display_time(time).strftime('%Y-%m-%dT%H:%M')

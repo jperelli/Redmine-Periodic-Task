@@ -55,6 +55,25 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     end
   end
 
+  def test_index_shows_the_end_condition_and_keeps_the_disabled_marker_on_an_ended_task
+    User.find(1).pref.update!(time_zone: 'UTC')
+    ended = create_test_periodictask(Project.find(1), subject: 'Ended task', is_active: false, max_occurrences: 3,
+                                                      next_run_date: Time.utc(2026, 10, 1, 12, 0),
+                                                      end_date: Time.utc(2026, 12, 31, 12, 0))
+    ended.update_columns(occurrences_count: 3)
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'table.list tr', text: /Ended task/ do
+      assert_select 'td.subject span.icon-locked[title=?]', I18n.t(:label_disabled)
+      assert_select 'td.interval em.periodictask-end-condition', text: 'Ends on 12/31/2026 12:00 PM, 3 of 3 runs'
+    end
+    assert_select 'table.list tr', text: /Due task/ do
+      assert_select 'td.interval em.periodictask-end-condition', 0
+    end
+  end
+
   def test_index_is_sortable_by_each_column
     log_user('admin', 'admin')
     %w[project subject next_run_date].each do |column|

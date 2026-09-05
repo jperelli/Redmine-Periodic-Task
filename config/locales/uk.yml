@@ -148,3 +148,14 @@ uk:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Завершується"
+  label_end_condition_info: "Необов'язково. Позначте «У дату» та/або «Після N запусків»; завдання вимикається, коли досягнуто першу з умов. «Запустити зараз» не враховується."
+  label_end_on_date: "У дату"
+  label_end_after: "Після"
+  label_end_runs: "запусків"
+  label_ends_on_date: "Завершується %{date}"
+  label_end_runs_progress: "%{count} з %{max} запусків"
+  label_periodictask_journal_ended_by_date: "Періодичне завдання завершено (досягнуто дату завершення)"
+  label_periodictask_journal_ended_by_count: "Періодичне завдання завершено (досягнуто максимальну кількість запусків)"
+  error_end_date_before_next_run: "Дата завершення має бути пізнішою за дату наступного запуску"
+  error_max_occurrences_not_positive: "Максимальна кількість запусків має бути більшою за 0"

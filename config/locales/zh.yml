@@ -145,3 +145,14 @@ zh:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "结束"
+  label_end_condition_info: "可选。勾选“在日期”和/或“运行 N 次后”；先达到的条件会停用该任务。“立即运行”不计入次数。"
+  label_end_on_date: "在日期"
+  label_end_after: "运行"
+  label_end_runs: "次后"
+  label_ends_on_date: "%{date} 结束"
+  label_end_runs_progress: "已运行 %{count} / %{max} 次"
+  label_periodictask_journal_ended_by_date: "周期任务已结束（已到结束日期）"
+  label_periodictask_journal_ended_by_count: "周期任务已结束（已达到最大运行次数）"
+  error_end_date_before_next_run: "结束日期必须晚于下次运行日期"
+  error_max_occurrences_not_positive: "最大运行次数必须大于 0"

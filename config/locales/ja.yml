@@ -143,3 +143,14 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "終了"
+  label_end_condition_info: "任意。「日時で終了」や「N回実行後に終了」をチェックすると、先に到達した条件でタスクが無効になります。「今すぐ実行」は回数に含まれません。"
+  label_end_on_date: "日時で終了"
+  label_end_after: "実行回数"
+  label_end_runs: "回で終了"
+  label_ends_on_date: "%{date} に終了"
+  label_end_runs_progress: "%{max} 回中 %{count} 回実行"
+  label_periodictask_journal_ended_by_date: "定期タスクが終了しました（終了日時に到達）"
+  label_periodictask_journal_ended_by_count: "定期タスクが終了しました（最大実行回数に到達）"
+  error_end_date_before_next_run: "終了日時は次回実行日時より後にしてください"
+  error_max_occurrences_not_positive: "最大実行回数は 0 より大きくしてください"

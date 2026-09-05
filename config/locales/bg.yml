@@ -143,3 +143,14 @@ bg:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Приключва"
+  label_end_condition_info: "По избор. Отметнете „На дата“ и/или „След N изпълнения“; задачата се деактивира при достигане на първото. „Изпълни сега“ не се брои."
+  label_end_on_date: "На дата"
+  label_end_after: "След"
+  label_end_runs: "изпълнения"
+  label_ends_on_date: "Приключва на %{date}"
+  label_end_runs_progress: "%{count} от %{max} изпълнения"
+  label_periodictask_journal_ended_by_date: "Периодичната задача приключи (достигната крайна дата)"
+  label_periodictask_journal_ended_by_count: "Периодичната задача приключи (достигнат максимален брой изпълнения)"
+  error_end_date_before_next_run: "Крайната дата трябва да е след датата на следващото изпълнение"
+  error_max_occurrences_not_positive: "Максималният брой изпълнения трябва да е по-голям от 0"

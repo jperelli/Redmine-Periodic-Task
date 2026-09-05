@@ -21,8 +21,9 @@ class Periodictask < ActiveRecord::Base
   RELATION_KEYS = %w[relation_type issue_id delay].freeze
 
   # Identity, ownership and the outcome of past runs belong to the source task;
-  # everything else describes the template and is worth copying.
-  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error].freeze
+  # everything else (including the end condition) describes the template and
+  # is worth copying.
+  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error occurrences_count].freeze
 
   # Subtask templates: array of hashes with SUBTASK_KEYS, each becoming a child
   # issue of the generated issue. Accepts an array or an index-keyed hash as
@@ -163,6 +164,7 @@ class Periodictask < ActiveRecord::Base
   validates :done_ratio, inclusion: { in: 0..100 }, allow_nil: true
   validate :validate_subtasks_and_relations
   validate :validate_recurrence
+  validate :validate_end_condition
   before_validation :clear_irrelevant_recurrence_options
 
   # Tasks the scheduler picks up. A disabled task keeps its schedule and can
@@ -336,6 +338,30 @@ class Periodictask < ActiveRecord::Base
     end
   end
 
+  # Journal action explaining why the schedule has run its course, or nil
+  # while it has not: the next run falls after end_date, or max_occurrences
+  # scheduled runs have created their issue. A run scheduled exactly at
+  # end_date still happens.
+  def end_reason
+    if max_occurrences.present? && occurrences_count >= max_occurrences
+      'ended_by_count'
+    elsif end_date.present? && next_run_date.present? && next_run_date > end_date
+      'ended_by_date'
+    end
+  end
+
+  def end_reached?
+    end_reason.present?
+  end
+
+  # Disables the task and records the reason in the activity log; the caller
+  # saves. The schedule is kept, so the task can be reactivated after its end
+  # condition is changed.
+  def mark_ended(reason, user = User.current)
+    self.is_active = false
+    log_activity(reason, user)
+  end
+
   # Records a create/update/delete in the activity log. Called from the
   # controller (not a model callback) so the scheduler's own writes to
   # next_run_date / last_error are not logged as user edits.
@@ -445,6 +471,17 @@ class Periodictask < ActiveRecord::Base
 
     errors.add(:base, l(:error_recurrence_month_weeks_blank)) if month_weeks.empty?
     errors.add(:base, l(:error_recurrence_weekdays_blank)) if weekdays.empty?
+  end
+
+  # An active task whose end date is before its next run would never run
+  # again; a next run exactly on the end date is the last one. Disabled tasks
+  # are exempt: the scheduler stores a next run past the end date when it ends
+  # a task, and that task must stay editable.
+  def validate_end_condition
+    errors.add(:base, l(:error_max_occurrences_not_positive)) if max_occurrences.present? && max_occurrences < 1
+    return unless is_active? && end_date.present? && next_run_date.present? && end_date < next_run_date
+
+    errors.add(:base, l(:error_end_date_before_next_run))
   end
 
   # Hidden recurrence inputs are still posted by the form; only keep the ones

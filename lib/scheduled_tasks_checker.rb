@@ -14,27 +14,10 @@ class ScheduledTasksChecker
     I18n.with_locale(ENV['LOCALE'] || I18n.default_locale) do
       tasks.each do |task|
         as_user(task.author) do
-          issue = task.generate_issue(now)
-          if issue
-            begin
-              issue.save!
-              issues_created += 1
-              task_errors = task.complete_generated_issue(issue, now)
-              task_errors.each { |msg| Rails.logger.error "ScheduledTasksChecker: #{msg}" }
-              errors.concat(task_errors.map { |msg| "##{task.id} #{task.subject}: #{msg}" })
-              task.last_error = task_errors.join(', ').presence
-            rescue ActiveRecord::RecordInvalid => e
-              Rails.logger.error "ScheduledTasksChecker: #{e.message}"
-              errors << "##{task.id} #{task.subject}: #{e.message}"
-              task.last_error = e.message
-            end
-            task.next_run_date = task.get_next_run_date(now)
-          else
-            msg = 'Project is missing or closed'
-            Rails.logger.error "ScheduledTasksChecker: #{msg}"
-            errors << "##{task.id} #{task.subject}: #{msg}"
-            task.last_error = msg
-          end
+          # A task edited past its end (e.g. max_occurrences lowered below the
+          # runs already made) ends without creating another issue.
+          issues_created += run_task(task, now, errors) unless task.end_reached?
+          finish(task) if task.end_reached?
           task.save
         end
       end
@@ -46,6 +29,47 @@ class ScheduledTasksChecker
   ensure
     record_run(source, now, tasks, issues_created, errors)
   end
+
+  # Creates the issue of one due task and moves it to its next run. Returns
+  # the number of issues created (0 or 1); failures go to +errors+ and to the
+  # task's last_error.
+  def self.run_task(task, now, errors)
+    issue = task.generate_issue(now)
+    unless issue
+      msg = 'Project is missing or closed'
+      Rails.logger.error "ScheduledTasksChecker: #{msg}"
+      errors << "##{task.id} #{task.subject}: #{msg}"
+      task.last_error = msg
+      return 0
+    end
+
+    created = 0
+    begin
+      issue.save!
+      created = 1
+      task.occurrences_count += 1
+      task_errors = task.complete_generated_issue(issue, now)
+      task_errors.each { |msg| Rails.logger.error "ScheduledTasksChecker: #{msg}" }
+      errors.concat(task_errors.map { |msg| "##{task.id} #{task.subject}: #{msg}" })
+      task.last_error = task_errors.join(', ').presence
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error "ScheduledTasksChecker: #{e.message}"
+      errors << "##{task.id} #{task.subject}: #{e.message}"
+      task.last_error = e.message
+    end
+    task.next_run_date = task.get_next_run_date(now)
+    created
+  end
+  private_class_method :run_task
+
+  # Disables a task whose end condition is met and records why in the
+  # activity log; the schedule is left untouched so no further run is queued.
+  def self.finish(task)
+    reason = task.end_reason
+    Rails.logger.info "ScheduledTasksChecker: ##{task.id} #{task.subject} #{reason.tr('_', ' ')}"
+    task.mark_ended(reason)
+  end
+  private_class_method :finish
 
   def self.record_run(source, now, tasks, issues_created, errors)
     PeriodictaskRun.record!(source: source, started_at: now, finished_at: Time.current,

@@ -143,3 +143,14 @@ de:
   label_periodictask_run_source_endpoint: 'Prüf-URL'
   label_periodictask_run_source_manual: 'Manuell'
   label_periodictask_run_until: 'bis %{time}'
+  label_end_condition: "Endet"
+  label_end_condition_info: "Optional. \"Am Datum\" und/oder \"Nach N Ausführungen\" ankreuzen; die Aufgabe wird deaktiviert, sobald das erste davon erreicht ist. \"Jetzt ausführen\" zählt nicht."
+  label_end_on_date: "Am Datum"
+  label_end_after: "Nach"
+  label_end_runs: "Ausführungen"
+  label_ends_on_date: "Endet am %{date}"
+  label_end_runs_progress: "%{count} von %{max} Ausführungen"
+  label_periodictask_journal_ended_by_date: "Periodische Aufgabe beendet (Enddatum erreicht)"
+  label_periodictask_journal_ended_by_count: "Periodische Aufgabe beendet (maximale Anzahl Ausführungen erreicht)"
+  error_end_date_before_next_run: "Das Enddatum muss nach dem nächsten Ausführungsdatum liegen"
+  error_max_occurrences_not_positive: "Die maximale Anzahl Ausführungen muss größer als 0 sein"

@@ -14,6 +14,7 @@
 - Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
+- Add an end condition to a task: `Ends` on a date and/or after N scheduled runs; whichever comes first disables the task and the reason is recorded in the activity log. `Run now` does not count. The task lists and detail page show `Ends on <date>` / `<n> of <max> runs` next to the schedule **requires migration** (@jperelli)
 
 ### Fixes
 
