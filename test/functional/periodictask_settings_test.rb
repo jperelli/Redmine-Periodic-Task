@@ -4,6 +4,7 @@ class PeriodictaskSettingsTest < Redmine::IntegrationTest
   fixtures :users, :email_addresses, :roles
 
   def setup
+    PeriodictaskRun.delete_all
     log_user('admin', 'admin')
   end
 
