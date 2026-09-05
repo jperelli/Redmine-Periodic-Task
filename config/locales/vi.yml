@@ -60,13 +60,22 @@ vi:
     Các biến có thể dùng:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (tên tháng)
     **PREVIOUS_MONTHNAME** (tên tháng trước)
+    **NEXT_MONTHNAME** (tên tháng sau)
   label_variables_markdown_note: 'Lưu ý: ở phần mô tả, các biến này hiện đậm trong khung xem trước vì ** là cú pháp in đậm của Markdown; chúng sẽ được thay bằng giá trị thật khi vấn đề được tạo.'
   label_last_error: Lỗi gần nhất
   label_issue_custom_fields: Trường tùy chỉnh của vấn đề
