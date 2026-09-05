@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- Cron-less scheduling: a plugin setting *Scheduler → Automatic on web requests* runs the checker in the background from ordinary Redmine requests, throttled by a configurable interval and a DB lock so only one process runs it **requires migration** (@jperelli)
+- Add `GET|POST /periodictask/check?key=<sys API key>` to trigger the checker from an external scheduler (uptime monitor, CI cron, Windows Task Scheduler...) (@jperelli)
+- Scheduler log on the plugin configuration page: the last 50 checker runs (trigger, tasks due, issues created, duration, errors), with consecutive idle runs grouped in one row, plus a *Run checker now* button **requires migration** (@jperelli)
+
+### Fixes
+
+- Apply the `Project` patch (`has_many :periodictasks, dependent: :destroy`) at plugin load; the nested `to_prepare` it used never ran outside code reloading (@jperelli)
+
 ## v7.0.0 - 2026-09-03
 
 ### Features

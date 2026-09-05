@@ -15,3 +15,13 @@ Rails.application.routes.draw do
   match    'projects/:project_id/periodictask/:id',        to: 'periodictask#update', via: %i[put patch]
   delete   'projects/:project_id/periodictask/:id',        to: 'periodictask#destroy'
 end
+
+# Cron-less trigger for external schedulers, protected by Redmine's sys API key
+Rails.application.routes.draw do
+  match 'periodictask/check', to: 'periodictask_sys#check', as: 'periodictask_check', via: %i[get post]
+end
+
+# Admin-only "Run checker now" button on the plugin settings page
+Rails.application.routes.draw do
+  post 'admin/periodictask/run_checker', to: 'periodictask_admin#run_checker', as: 'periodictask_run_checker'
+end

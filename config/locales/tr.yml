@@ -103,7 +103,33 @@ tr:
   button_run_now: "Şimdi çalıştır"
   text_run_now_confirm: "Bu periyodik görevden şimdi bir iş oluşturulsun mu? Zamanlama değişmeyecek."
   label_project_missing_or_closed: "Proje bulunamadı veya kapalı"
-  label_periodictask_plugin_name: "Periodic Task eklentisi"
-  label_periodictask_credit_by: "yazan"
+  label_periodictask_plugin_name: 'Periodic Task eklentisi'
+  label_periodictask_credit_by: 'yazan'
   label_recurrence_help: "Zamanlamalar nasıl hesaplanır"
   label_last_error_help: "Bir görev neden beklendiği gibi çalışmamış olabilir"
+  label_periodictask_scheduler_mode: 'Scheduler'
+  label_periodictask_scheduler_mode_cron: 'Cron / rake task (rake redmine:check_periodictasks)'
+  label_periodictask_scheduler_mode_web: 'Automatic on web requests (no cron needed)'
+  label_periodictask_scheduler_mode_info: 'With "Automatic on web requests" due tasks are checked in the background whenever someone uses Redmine, so no cron job is needed. Nothing runs while nobody visits; the issues are created on the next visit.'
+  label_periodictask_web_check_interval: 'Check interval'
+  label_periodictask_web_check_interval_info: 'Minimum time between two automatic checks.'
+  label_periodictask_minutes: 'minutes'
+  label_periodictask_check_url: 'Check URL'
+  label_periodictask_check_url_info: 'Call this URL from any external scheduler (uptime monitor, CI cron, Windows Task Scheduler...) to run the checker on demand. Requires "Enable WS for repository management" and its API key (Administration > Settings > Repositories).'
+  label_periodictask_runs: 'Scheduler log (last %{count} runs)'
+  label_periodictask_runs_info: 'Every run of the checker is recorded here, whatever triggered it (rake/cron, web requests, check URL or this button). Consecutive runs with nothing to do are grouped in a single row.'
+  button_periodictask_run_checker: 'Run checker now'
+  text_periodictask_run_checker_confirm: 'Run the periodic task checker now? All due tasks will create their issues.'
+  notice_periodictask_checker_run: 'Checker run: %{count} task(s) processed.'
+  field_periodictask_run_started_at: 'Started'
+  field_periodictask_run_source: 'Triggered by'
+  field_periodictask_run_runs_count: 'Runs'
+  field_periodictask_run_tasks_due: 'Tasks due'
+  field_periodictask_run_issues_created: 'Issues created'
+  field_periodictask_run_duration: 'Duration'
+  field_periodictask_run_errors: 'Errors'
+  label_periodictask_run_source_rake: 'Cron / rake'
+  label_periodictask_run_source_web: 'Web request'
+  label_periodictask_run_source_endpoint: 'Check URL'
+  label_periodictask_run_source_manual: 'Manual'
+  label_periodictask_run_until: 'until %{time}'
