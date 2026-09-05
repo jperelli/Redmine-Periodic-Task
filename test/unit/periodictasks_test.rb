@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class PeriodictasksTest < ActiveSupport::TestCase
   fixtures :projects, :users, :trackers, :projects_trackers, :issue_statuses,
            :enumerations, :enabled_modules, :roles, :members, :member_roles,
-           :versions, :issues, :attachments
+           :versions, :issue_categories, :issues, :attachments
 
   def setup
     @project = Project.find(1)
@@ -1193,6 +1193,47 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil copy.last_error
     assert_equal 3, copy.author_id
     assert copy.save
+  end
+
+  def test_copy_from_issue_takes_the_issue_fields_but_not_status_or_schedule
+    field = IssueCustomField.create!(name: 'Environment', field_format: 'string', is_for_all: true,
+                                     trackers: Tracker.all)
+    parent = Issue.create!(project: @project, tracker_id: 1, author_id: 2, subject: 'Parent',
+                           status_id: 1, priority_id: 4)
+    issue = Issue.new(
+      project: @project, tracker_id: 1, author_id: 2, subject: 'Renew certificate',
+      description: 'Run certbot', status_id: 2, priority_id: 5, assigned_to_id: 3,
+      category_id: 1, fixed_version_id: 3, parent_issue_id: parent.id,
+      estimated_hours: 1.5, done_ratio: 40, due_date: Date.current + 7
+    )
+    issue.custom_field_values = { field.id.to_s => 'production' }
+    issue.save!
+    issue.add_watcher(User.find(3))
+
+    task = Periodictask.new(project: @project, author_id: 2).copy_from_issue(issue)
+
+    assert_equal 'Renew certificate', task.subject
+    assert_equal 'Run certbot', task.description
+    assert_equal [1, 5, 3, 1, 3, parent.id],
+                 [task.tracker_id, task.priority_id, task.assigned_to_id,
+                  task.issue_category_id, task.fixed_version_id, task.parent_id]
+    assert_in_delta 1.5, task.estimated_hours
+    assert_equal 40, task.done_ratio
+    assert_equal 'production', task.custom_field_values[field.id.to_s]
+    assert_equal [3], task.watcher_user_ids
+    assert_nil task.status_id
+    assert_nil task.next_run_date
+    assert_equal [1, 'day'], [task.interval_number, task.interval_units]
+    assert_nil task.id
+    assert task.save
+    assert_equal 'production', task.generate_issue.custom_field_value(field)
+  end
+
+  def test_copy_from_issue_leaves_a_zero_done_ratio_at_the_default
+    issue = Issue.create!(project: @project, tracker_id: 1, author_id: 2, subject: 'Plain',
+                          status_id: 1, priority_id: 4)
+    task = Periodictask.new(project: @project, author_id: 2).copy_from_issue(issue)
+    assert_nil task.done_ratio
   end
 
   def test_task_is_active_by_default

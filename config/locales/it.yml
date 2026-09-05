@@ -145,3 +145,4 @@ it:
   label_periodictask_run_until: 'until %{time}'
   label_attachments_info: "I file allegati al modello vengono copiati su ogni segnalazione generata."
   error_attachment_copy_failed: "Impossibile copiare l'allegato \"%{filename}\": %{error}"
+  label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'

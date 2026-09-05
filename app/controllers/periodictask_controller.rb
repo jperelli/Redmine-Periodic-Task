@@ -8,6 +8,7 @@ class PeriodictaskController < ApplicationController
   before_action :find_project
   before_action :authorize
   before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
+  before_action :find_source_issue, only: :new
   before_action :load_users, except: %i[destroy run_now tags]
   before_action :load_categories, except: %i[destroy run_now tags]
   before_action :load_versions, except: %i[destroy run_now tags]
@@ -65,14 +66,22 @@ class PeriodictaskController < ApplicationController
                                   .group(:periodictask_id).maximum(:created_at)
   end
 
+  # With from_issue_id, the template is prefilled from that issue and the
+  # first run defaults to its due date when that is still ahead.
   def new
-    @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
-    @periodictask.interval_number = 1
+    @periodictask = build_periodictask
+    if @source_issue
+      @periodictask.copy_from_issue(@source_issue)
+      due_date = @source_issue.due_date
+      if due_date && due_date > User.current.today
+        @periodictask.next_run_date = helpers.periodictask_parse_time(due_date.to_s)
+      end
+    end
     @issue = @periodictask.generate_issue
   end
 
   def create
-    @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
+    @periodictask = build_periodictask
     params[:periodictask][:project_id] = @project[:id]
     assign_periodictask_params
     # A blank first run means "the next time the schedule matches", which
@@ -100,7 +109,7 @@ class PeriodictaskController < ApplicationController
   # the form is submitted.
   def copy
     @copy_from = @periodictask
-    @periodictask = Periodictask.new(project: @project, author_id: User.current.id).copy_from(@copy_from)
+    @periodictask = build_periodictask.copy_from(@copy_from)
     @issue = @periodictask.generate_issue
     render action: 'new'
   end
@@ -187,7 +196,7 @@ class PeriodictaskController < ApplicationController
     @periodictask = if params[:periodictask][:id].present?
                       project_periodictasks.find(params[:periodictask][:id])
                     else
-                      Periodictask.new(project: @project, author_id: User.current.id)
+                      build_periodictask
                     end
     assign_periodictask_params
     @issue = @periodictask.generate_issue
@@ -216,6 +225,19 @@ class PeriodictaskController < ApplicationController
   # the form was not a copy.
   def find_copy_source
     @copy_from = project_periodictasks.find_by(id: params[:copy_from]) if params[:copy_from].present?
+  end
+
+  # Issue the new task is prefilled from (new?from_issue_id=). Like tasks, it
+  # is only reachable through its own project, and only when visible.
+  def find_source_issue
+    return if params[:from_issue_id].blank?
+
+    @source_issue = @project.issues.find_by(id: params[:from_issue_id])
+    render_404 unless @source_issue&.visible?
+  end
+
+  def build_periodictask
+    Periodictask.new(project: @project, author_id: User.current.id)
   end
 
   def load_users

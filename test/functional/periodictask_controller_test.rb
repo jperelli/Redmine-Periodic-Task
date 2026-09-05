@@ -658,6 +658,98 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select 'input#periodictask_id[value]', 0 # a copy is a new record
   end
 
+  def test_new_from_issue_prefills_the_issue_template_without_saving
+    # Issue 1: tracker 1, priority 4, category 1, 200h, due in 10 days, no assignee.
+    issue = Issue.find(1)
+    issue.update_columns(assigned_to_id: 3, fixed_version_id: 3)
+    Issue.create!(project: @project, tracker_id: 1, author_id: 2, subject: 'Child',
+                  status_id: 1, priority_id: 4, parent_issue_id: issue.id)
+    child = Issue.find_by(subject: 'Child')
+
+    assert_no_difference('Periodictask.count') do
+      get :new, params: { project_id: 'ecookbook', from_issue_id: child.id }
+    end
+    assert_response :success
+    assert_select 'input#periodictask_subject[value=?]', 'Child'
+    assert_select 'select#periodictask_tracker_id option[value="1"][selected=selected]'
+    assert_select 'select#periodictask_priority_id option[value="4"][selected=selected]'
+    assert_select 'input#periodictask_parent_id[value=?]', issue.id.to_s
+    assert_select 'input#periodictask_id[value]', 0
+
+    get :new, params: { project_id: 'ecookbook', from_issue_id: issue.id }
+    assert_response :success
+    assert_select 'input#periodictask_subject[value=?]', 'Cannot print recipes'
+    assert_select 'textarea#periodictask_description', text: 'Unable to print recipes'
+    assert_select 'select#periodictask_issue_category_id option[value="1"][selected=selected]'
+    assert_select 'select#periodictask_fixed_version_id option[value="3"][selected=selected]'
+    assert_select 'select#periodictask_assigned_to_id option[value="3"][selected=selected]'
+    assert_select 'input#periodictask_estimated_hours[value=?]', '200:00'
+    assert_select 'input#periodictask_parent_id[value]', 0
+  end
+
+  def test_new_from_issue_prefills_done_ratio_custom_fields_and_watchers
+    field = IssueCustomField.create!(name: 'Environment', field_format: 'string', is_for_all: true,
+                                     trackers: Tracker.all)
+    issue = Issue.find(2) # tracker 2, done ratio 30 %
+    issue.custom_field_values = { field.id.to_s => 'staging' }
+    issue.save!
+    issue.add_watcher(User.find(3))
+
+    get :new, params: { project_id: 'ecookbook', from_issue_id: issue.id }
+    assert_response :success
+    assert_select 'select#periodictask_done_ratio option[value="30"][selected=selected]'
+    assert_select 'input[name=?][value=?]', "periodictask[custom_field_values][#{field.id}]", 'staging'
+    assert_select '#watchers_inputs input[value="3"][checked=checked]'
+  end
+
+  def test_new_from_issue_keeps_recurrence_defaults_and_uses_a_future_due_date_as_first_run
+    issue = Issue.find(1) # due in 10 days
+    get :new, params: { project_id: 'ecookbook', from_issue_id: issue.id }
+    assert_response :success
+    assert_select 'input#periodictask_interval_number[value=?]', '1'
+    assert_select 'select#periodictask_interval_units option[value=day][selected=selected]'
+    assert_select 'input#periodictask_next_run_date[value=?]', "#{issue.due_date.strftime('%Y-%m-%d')}T00:00"
+  end
+
+  def test_new_from_issue_ignores_a_past_or_missing_due_date
+    [3, 2].each do |id| # 3: due 5 days ago, 2: no due date
+      get :new, params: { project_id: 'ecookbook', from_issue_id: id }
+      assert_response :success
+      assert_select 'input#periodictask_next_run_date[value]', 0
+    end
+  end
+
+  def test_new_from_issue_does_not_copy_the_status
+    issue = Issue.find(2) # status 2 (Assigned)
+    get :new, params: { project_id: 'ecookbook', from_issue_id: issue.id }
+    assert_select 'select#periodictask_status_id option[selected=selected]', 0
+  end
+
+  def test_new_from_issue_of_another_project_returns_404
+    get :new, params: { project_id: 'ecookbook', from_issue_id: 4 } # issue 4 is on onlinestore
+    assert_response :not_found
+  end
+
+  def test_new_from_unknown_issue_returns_404
+    get :new, params: { project_id: 'ecookbook', from_issue_id: 999_999 }
+    assert_response :not_found
+  end
+
+  def test_new_from_issue_not_visible_to_the_user_returns_404
+    issue = Issue.find(1)
+    issue.update_columns(is_private: true, author_id: 3, assigned_to_id: nil)
+    Role.find(1).update!(issues_visibility: 'default') # own + public only
+
+    get :new, params: { project_id: 'ecookbook', from_issue_id: issue.id }
+    assert_response :not_found
+  end
+
+  def test_new_from_issue_requires_the_periodictask_permission
+    Role.find(1).remove_permission!(:periodictask)
+    get :new, params: { project_id: 'ecookbook', from_issue_id: 1 }
+    assert_response :forbidden
+  end
+
   def test_index_links_to_the_copy_action
     task = create_test_periodictask
     get :index, params: { project_id: 'ecookbook' }

@@ -150,3 +150,4 @@ hr:
   label_periodictask_run_until: 'until %{time}'
   label_attachments_info: "Datoteke priložene predlošku kopiraju se na svaki stvoreni zadatak."
   error_attachment_copy_failed: 'Privitak "%{filename}" nije moguće kopirati: %{error}'
+  label_new_periodictask_from_issue: 'Stvori periodički zadatak iz ovog zadatka'

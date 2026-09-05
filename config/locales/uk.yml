@@ -150,3 +150,4 @@ uk:
   label_periodictask_run_until: 'until %{time}'
   label_attachments_info: "Файли, прикріплені до шаблону, копіюються в кожну створену задачу."
   error_attachment_copy_failed: 'Не вдалося скопіювати вкладення "%{filename}": %{error}'
+  label_new_periodictask_from_issue: 'Створити періодичне завдання з цієї задачі'
