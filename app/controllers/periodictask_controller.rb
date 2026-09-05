@@ -87,6 +87,15 @@ class PeriodictaskController < ApplicationController
     end
   end
 
+  # Prefills the new task form from an existing task; nothing is stored until
+  # the form is submitted.
+  def copy
+    source = Periodictask.accessible.find(params[:id])
+    @periodictask = Periodictask.new(project: @project, author_id: User.current.id).copy_from(source)
+    @issue = @periodictask.generate_issue
+    render action: 'new'
+  end
+
   def edit
     @periodictask = Periodictask.accessible.find(params[:id])
     @periodictask.project = @project
