@@ -1,0 +1,137 @@
+# Vietnamese strings go here for Rails i18n
+# Terminology follows Redmine core's Vietnamese locale
+# (vấn đề / kiểu vấn đề / mức ưu tiên / người quan sát / thẻ).
+vi:
+  label_tracker: Kiểu vấn đề
+  label_issue_author: Người tạo vấn đề
+  label_periodictask_configuration: Cấu hình việc định kỳ
+  no_members_in_project: Dự án này chưa có thành viên
+  no_categories_in_project: Dự án này chưa có chủ đề
+  label_subject: Chủ đề
+  label_next_run_date: Lần chạy kế tiếp
+  label_last_run: Lần chạy gần nhất
+  label_edit_periodic_task: Sửa việc định kỳ
+  label_new_periodic_task: Thêm việc định kỳ
+  label_periodic_tasks: Việc định kỳ
+  project_module_periodictask: Việc định kỳ
+  permission_periodictask: Quản lý việc định kỳ
+  label_periodic_task: Việc định kỳ
+  label_create_periodic_task: Tạo
+  label_save_periodic_task: Lưu
+  label_scheduled_tasks: Đây là các việc đang được lên lịch
+  label_no_project: Không có mã dự án
+  label_no_periodic_tasks: Chưa có việc định kỳ nào — hãy tạo một việc để bắt đầu.
+  label_remove_periodic_task: xóa việc định kỳ
+  label_interval: Chu kỳ
+  label_set_start_date: Đặt ngày bắt đầu
+  label_set_start_date_info: Khi được chọn, ngày bắt đầu của mỗi vấn đề được tạo sẽ là ngày sinh ra vấn đề đó.
+  label_due_date: 'Đặt hạn chót sau'
+  label_due_date_info: 'Hạn chót của mỗi vấn đề được tạo, tính bằng khoảng thời gian này kể từ ngày bắt đầu của nó.'
+  label_estimated_hours: Thời gian ước lượng
+  label_estimated_hours_after: Giờ
+  label_description: Mô tả
+  label_unit_day: ngày
+  label_unit_business_day: ngày làm việc
+  label_unit_week: tuần
+  label_unit_month: tháng
+  label_unit_year: năm
+  label_next_run_date_info: "Lần chạy đầu tiên và cũng là mốc của lịch chạy (ngày trong tháng, giờ trong ngày). Để trống để bắt đầu từ ngày kế tiếp khớp với chu kỳ lặp."
+  label_recurrence_repeat_on: Lặp vào
+  label_recurrence_monthly_on: Hằng tháng vào
+  label_recurrence_day_of_month: Cùng ngày trong tháng với lần chạy kế tiếp
+  label_recurrence_weekday: Các ngày đã chọn trong tuần
+  label_recurrence_occurrence: Lần xuất hiện
+  label_recurrence_ordinal_1: tuần 1
+  label_recurrence_ordinal_2: tuần 2
+  label_recurrence_ordinal_3: tuần 3
+  label_recurrence_ordinal_4: tuần 4
+  label_recurrence_ordinal_5: tuần 5 (hoặc tuần cuối)
+  label_recurrence_on_weekdays: "vào %{weekdays}"
+  label_recurrence_on_month_weekdays: "vào %{weekdays} của %{ordinals}"
+  label_recurrence_on_day_of_month: "vào ngày %{day}"
+  flash_task_created: Đã tạo việc định kỳ
+  flash_task_saved: Đã lưu việc định kỳ
+  flash_task_run_now: 'Đã tạo vấn đề #%{id}'
+  flash_task_run_failed: 'Không tạo được vấn đề: %{error}'
+  button_run_now: Chạy ngay
+  text_run_now_confirm: Tạo ngay một vấn đề từ việc định kỳ này? Lịch chạy sẽ không thay đổi.
+  label_project_missing_or_closed: Dự án không tồn tại hoặc đã đóng
+  subject_variables: |-
+    Các biến có thể dùng:
+    **DAY** (01-31)
+    **WEEK** (00-53)
+    **WEEKISO** (01-53)
+    **MONTH** (01-12)
+    **PREVIOUS_MONTH** (01-12)
+    **QUARTER** (1-4)
+    **YEAR** (YYYY)
+    **MONTHNAME** (tên tháng)
+    **PREVIOUS_MONTHNAME** (tên tháng trước)
+  label_variables_markdown_note: 'Lưu ý: ở phần mô tả, các biến này hiện đậm trong khung xem trước vì ** là cú pháp in đậm của Markdown; chúng sẽ được thay bằng giá trị thật khi vấn đề được tạo.'
+  label_last_error: Lỗi gần nhất
+  label_issue_custom_fields: Trường tùy chỉnh của vấn đề
+  label_priority: Mức ưu tiên
+  label_watchers: Người quan sát
+  label_tags: Thẻ
+  label_tags_info: "Các thẻ cách nhau bằng dấu phẩy, được thêm vào mỗi vấn đề được tạo (plugin RedmineUP Tags)."
+  label_periodictask_template: Mẫu
+  label_periodictask_history: Vấn đề đã tạo
+  label_periodictask_no_history: Việc định kỳ này chưa tạo vấn đề nào
+  label_issue_created_by_periodictask: Được tạo tự động bởi việc định kỳ
+  label_periodictask_plural: Việc định kỳ
+  label_periodictask_journal_create: Đã thêm việc định kỳ
+  label_periodictask_journal_update: Đã cập nhật việc định kỳ
+  label_periodictask_journal_delete: Đã xóa việc định kỳ
+  label_periodictask_journal_run: Đã chạy việc định kỳ
+  label_periodictask_plugin_name: Plugin Việc định kỳ
+  label_periodictask_credit_by: bởi
+  label_subtasks_info: "Các vấn đề con được tạo dưới mỗi vấn đề sinh ra. Chủ đề của chúng dùng được các biến giống như chủ đề của vấn đề."
+  label_relations_info: "Các liên kết được tạo từ mỗi vấn đề sinh ra tới những vấn đề đã có."
+  error_subtask_subject_blank: "Chủ đề của vấn đề con không được để trống"
+  error_relation_type_invalid: "Loại liên kết không hợp lệ"
+  error_relation_issue_invalid: "Vấn đề liên quan phải là một số hiệu vấn đề"
+  error_recurrence_weekdays_blank: "Hãy chọn ít nhất một ngày trong tuần"
+  error_recurrence_month_weeks_blank: "Hãy chọn ít nhất một lần xuất hiện (tuần 1 đến tuần 5)"
+  label_recurrence_every_day:
+    one: "mỗi ngày"
+    other: "mỗi %{count} ngày"
+  label_recurrence_every_business_day:
+    one: "mỗi ngày làm việc"
+    other: "mỗi %{count} ngày làm việc"
+  label_recurrence_every_week:
+    one: "mỗi tuần"
+    other: "mỗi %{count} tuần"
+  label_recurrence_every_month:
+    one: "mỗi tháng"
+    other: "mỗi %{count} tháng"
+  label_recurrence_every_year:
+    one: "mỗi năm"
+    other: "mỗi %{count} năm"
+  label_recurrence_help: "Cách tính lịch chạy"
+  label_last_error_help: "Vì sao một việc có thể không chạy như mong đợi"
+  label_periodictask_scheduler_mode: "Bộ lập lịch"
+  label_periodictask_scheduler_mode_cron: "Cron / tác vụ rake (rake redmine:check_periodictasks)"
+  label_periodictask_scheduler_mode_web: "Tự động theo yêu cầu web (không cần cron)"
+  label_periodictask_scheduler_mode_info: 'Với "Tự động theo yêu cầu web", các việc đến hạn được kiểm tra ở chế độ nền mỗi khi có người dùng Redmine, nên không cần cron. Sẽ không có gì chạy khi không ai truy cập; các vấn đề được tạo ở lần truy cập kế tiếp.'
+  label_periodictask_web_check_interval: "Khoảng thời gian kiểm tra"
+  label_periodictask_web_check_interval_info: "Thời gian tối thiểu giữa hai lần kiểm tra tự động."
+  label_periodictask_minutes: "phút"
+  label_periodictask_check_url: "URL kiểm tra"
+  label_periodictask_check_url_info: 'Gọi URL này từ bất kỳ bộ lập lịch bên ngoài nào (công cụ theo dõi uptime, cron của CI, Windows Task Scheduler...) để chạy trình kiểm tra theo yêu cầu. Cần bật "Enable WS for repository management" và khóa API của nó (Quản trị > Cấu hình > Kho lưu trữ).'
+  label_periodictask_runs: "Nhật ký bộ lập lịch (%{count} lần chạy gần nhất)"
+  label_periodictask_runs_info: "Mọi lần chạy của trình kiểm tra đều được ghi lại ở đây, bất kể nguồn kích hoạt (rake/cron, yêu cầu web, URL kiểm tra hay nút này). Các lần chạy liên tiếp không có việc gì được nhóm vào một dòng."
+  button_periodictask_run_checker: "Chạy trình kiểm tra ngay"
+  text_periodictask_run_checker_confirm: "Chạy trình kiểm tra việc định kỳ ngay? Mọi việc đến hạn sẽ tạo vấn đề của nó."
+  notice_periodictask_checker_run: "Đã chạy trình kiểm tra: đã xử lý %{count} việc."
+  field_periodictask_run_started_at: "Bắt đầu"
+  field_periodictask_run_source: "Kích hoạt bởi"
+  field_periodictask_run_runs_count: "Số lần chạy"
+  field_periodictask_run_tasks_due: "Việc đến hạn"
+  field_periodictask_run_issues_created: "Vấn đề đã tạo"
+  field_periodictask_run_duration: "Thời lượng"
+  field_periodictask_run_errors: "Lỗi"
+  label_periodictask_run_source_rake: "Cron / rake"
+  label_periodictask_run_source_web: "Yêu cầu web"
+  label_periodictask_run_source_endpoint: "URL kiểm tra"
+  label_periodictask_run_source_manual: "Thủ công"
+  label_periodictask_run_until: "đến %{time}"
