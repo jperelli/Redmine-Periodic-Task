@@ -122,6 +122,18 @@ How you reload Redmine depends on how it's served:
 
 ## Configuration
 
+Something has to periodically check which tasks are due and create their issues. Pick one of:
+
+| Mode | Needs | Timing | Best for |
+|---|---|---|---|
+| [Cron](#option-a-cron-default) (default) | shell access to the server, cron | exact | classic Linux installs |
+| [Automatic on web requests](#option-b-automatic-on-web-requests-no-cron) | nothing | on the first visit after a task is due | Windows, Docker, shared hosting, anyone who can't or doesn't want to set up cron |
+| [Check URL](#option-c-check-url-external-scheduler) | an external scheduler that can call a URL | as exact as the external scheduler | punctual runs without cron on the Redmine host |
+
+The modes can be combined; running the checker more than once is harmless, a task is only generated when its next run date has passed.
+
+### Option A: cron (default)
+
 Periodic tasks are created by a rake task that you run from cron. Cron has a minimal `PATH`, so use the absolute path to `bundle`. Find it with `which bundle` (e.g. with rbenv it's something like `/home/redmine/.rbenv/shims/bundle`, with a system Ruby `/usr/local/bin/bundle`).
 
 Edit the crontab of the user that owns your Redmine install (`crontab -e`) and add one of the following. Replace `/opt/redmine` with your Redmine root and `/usr/local/bin/bundle` with the path from `which bundle`.
@@ -137,6 +149,29 @@ Once per hour:
 Every 10 minutes:
 
     */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
+
+### Option B: automatic on web requests (no cron)
+
+Go to *Administration → Plugins → Redmine Periodictask plugin → Configure* and set **Scheduler** to *Automatic on web requests*. From then on every request to Redmine (any page, any user, including the API) checks whether the configured **Check interval** (default 5 minutes) has elapsed since the last check and, if so, runs the checker in a background thread of the web process, so the request itself is not slowed down. A row in `periodictask_scheduler_locks` makes sure only one process runs the check per interval even with several Puma/Passenger workers or several application servers.
+
+Things to know:
+
+- Nothing happens while nobody uses Redmine. Issues due on Saturday are created on the first visit on Monday morning; their start/due dates are still computed from the scheduled date, see [doc/recurrence-design.md](doc/recurrence-design.md) for how late runs are handled.
+- Issues are created with Redmine's default language (the `LOCALE` variable below only applies to the rake task).
+- You can still run the rake task manually or from cron at the same time.
+
+### Option C: check URL (external scheduler)
+
+The plugin exposes `GET|POST /periodictask/check?key=<API key>`, which runs the checker immediately and answers `Periodictask: N task(s) run`. It is protected like Redmine's own `/sys` endpoints: enable *Administration → Settings → Repositories → Enable WS for repository management* and use the API key shown there. The full URL is also shown in the plugin configuration page.
+
+Call it from whatever scheduler you have, for example:
+
+- an uptime monitor (UptimeRobot, healthchecks.io, ...) pinging the URL every 5 minutes
+- a GitHub Actions / GitLab CI scheduled workflow running `curl -fsS "https://redmine.example.com/periodictask/check?key=..."`
+- Windows Task Scheduler running `curl.exe -fsS "https://redmine.example.com/periodictask/check?key=..."`
+- a Kubernetes `CronJob` with a `curlimages/curl` container
+
+The endpoint works regardless of the **Scheduler** setting.
 
 ### Recurrence
 
@@ -178,7 +213,7 @@ Then go to http://127.0.0.1:3000/ and login with
 
 You should have a project named *project1* with `periodictask` installed
 
-In order to run the "cron checker": `docker compose exec redmine bundle exec rake redmine:check_periodictasks RAILS_ENV=development`
+In order to run the "cron checker": `docker compose exec redmine bundle exec rake redmine:check_periodictasks RAILS_ENV=development`, or enable *Automatic on web requests* in the plugin configuration and reload any page.
 
 ## Authors
 

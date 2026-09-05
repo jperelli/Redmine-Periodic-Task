@@ -15,3 +15,8 @@ Rails.application.routes.draw do
   match    'projects/:project_id/periodictask/:id',        to: 'periodictask#update', via: %i[put patch]
   delete   'projects/:project_id/periodictask/:id',        to: 'periodictask#destroy'
 end
+
+# Cron-less trigger for external schedulers, protected by Redmine's sys API key
+Rails.application.routes.draw do
+  match 'periodictask/check', to: 'periodictask_sys#check', as: 'periodictask_check', via: %i[get post]
+end

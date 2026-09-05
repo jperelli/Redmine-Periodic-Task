@@ -1,7 +1,9 @@
 class ScheduledTasksChecker
+  # Runs every due task and returns how many were processed.
   def self.checktasks!
     now = Time.current
-    Periodictask.where('next_run_date <= ? ', now).each do |task|
+    tasks = Periodictask.where('next_run_date <= ? ', now).to_a
+    tasks.each do |task|
       # replace variables (set locale from shell)
       I18n.locale = ENV['LOCALE'] || I18n.default_locale
 
@@ -26,6 +28,7 @@ class ScheduledTasksChecker
         task.save
       end
     end
+    tasks.size
   end
 
   # Runs the block with User.current set to +user+ so permission-based

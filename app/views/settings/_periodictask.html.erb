@@ -1,0 +1,19 @@
+<p>
+  <label><%= l(:label_periodictask_scheduler_mode) %></label>
+  <%= select_tag 'settings[scheduler_mode]',
+                 options_for_select(RedminePeriodictask::WebScheduler::MODES.map { |m| [l("label_periodictask_scheduler_mode_#{m}"), m] },
+                                    @settings['scheduler_mode'].to_s.presence || 'cron') %>
+  <em class="info"><%= l(:label_periodictask_scheduler_mode_info) %></em>
+</p>
+<p>
+  <label><%= l(:label_periodictask_web_check_interval) %></label>
+  <%= number_field_tag 'settings[web_check_interval]',
+                       @settings['web_check_interval'].to_i > 0 ? @settings['web_check_interval'].to_i : RedminePeriodictask::WebScheduler::DEFAULT_INTERVAL_MINUTES,
+                       min: 1, size: 5 %> <%= l(:label_periodictask_minutes) %>
+  <em class="info"><%= l(:label_periodictask_web_check_interval_info) %></em>
+</p>
+<p>
+  <label><%= l(:label_periodictask_check_url) %></label>
+  <code><%= url_for(controller: 'periodictask_sys', action: 'check', only_path: false) %>?key=&lt;<%= l(:setting_sys_api_key) %>&gt;</code>
+  <em class="info"><%= l(:label_periodictask_check_url_info) %></em>
+</p>

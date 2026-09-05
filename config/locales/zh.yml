@@ -105,7 +105,16 @@ zh:
   button_run_now: "立即运行"
   text_run_now_confirm: "立即从此周期任务创建一个问题？计划不会改变。"
   label_project_missing_or_closed: "项目不存在或已关闭"
-  label_periodictask_plugin_name: "Periodic Task 插件"
-  label_periodictask_credit_by: "作者"
+  label_periodictask_plugin_name: 'Periodic Task 插件'
+  label_periodictask_credit_by: '作者'
   label_recurrence_help: "计划是如何计算的"
   label_last_error_help: "任务为何可能没有按预期运行"
+  label_periodictask_scheduler_mode: 'Scheduler'
+  label_periodictask_scheduler_mode_cron: 'Cron / rake task (rake redmine:check_periodictasks)'
+  label_periodictask_scheduler_mode_web: 'Automatic on web requests (no cron needed)'
+  label_periodictask_scheduler_mode_info: 'With "Automatic on web requests" due tasks are checked in the background whenever someone uses Redmine, so no cron job is needed. Nothing runs while nobody visits; the issues are created on the next visit.'
+  label_periodictask_web_check_interval: 'Check interval'
+  label_periodictask_web_check_interval_info: 'Minimum time between two automatic checks.'
+  label_periodictask_minutes: 'minutes'
+  label_periodictask_check_url: 'Check URL'
+  label_periodictask_check_url_info: 'Call this URL from any external scheduler (uptime monitor, CI cron, Windows Task Scheduler...) to run the checker on demand. Requires "Enable WS for repository management" and its API key (Administration > Settings > Repositories).'

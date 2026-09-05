@@ -4,6 +4,7 @@ require 'redmine'
 # an autoload reference in to_prepare) because a bare constant in void context
 # does not reliably trigger autoloading.
 require_relative 'lib/redmine_periodictask/hooks'
+require_relative 'lib/redmine_periodictask/web_scheduler'
 
 module RedminePeriodictask
   # Explains how next run dates are calculated; linked from the form and the
@@ -11,10 +12,13 @@ module RedminePeriodictask
   RECURRENCE_DOC_URL = 'https://github.com/jperelli/Redmine-Periodic-Task/blob/main/doc/recurrence-design.md'.freeze
 end
 
-Rails.configuration.to_prepare do
-  unless Project.included_modules.include? RedminePeriodictask::ProjectPatch
-    Project.include RedminePeriodictask::ProjectPatch
-  end
+# Redmine already runs init.rb inside a to_prepare callback, so patches are
+# applied directly (a nested to_prepare would never fire outside code reloading).
+unless Project.included_modules.include? RedminePeriodictask::ProjectPatch
+  Project.include RedminePeriodictask::ProjectPatch
+end
+unless ApplicationController.include? RedminePeriodictask::WebSchedulerControllerPatch
+  ApplicationController.prepend RedminePeriodictask::WebSchedulerControllerPatch
 end
 
 Redmine::Plugin.register :periodictask do
@@ -24,6 +28,11 @@ Redmine::Plugin.register :periodictask do
   version '7.0.0'
   url 'https://github.com/jperelli/Redmine-Periodic-Task/'
   author_url 'https://jperelli.com.ar/'
+
+  # Scheduler: 'cron' (rake task, default) or 'web' (run from web requests, no cron needed).
+  settings default: { 'scheduler_mode' => 'cron',
+                      'web_check_interval' => RedminePeriodictask::WebScheduler::DEFAULT_INTERVAL_MINUTES },
+           partial: 'settings/periodictask'
 
   project_module :periodictask do
     permission :periodictask,
