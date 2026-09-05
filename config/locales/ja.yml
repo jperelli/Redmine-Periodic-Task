@@ -54,6 +54,7 @@ ja:
     **MONTHNAME** (January - December)
     **PREVIOUS_MONTHNAME** (January - December)
     **NEXT_MONTHNAME** (January - December)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N 日)
   label_variables_markdown_note: '注: 説明欄では ** が Markdown の太字記法であるため、プレビューでは太字で表示されますが、チケット作成時に実際の値に置き換えられます。'
   label_last_error: 最後のエラー
   label_issue_custom_fields: カスタムフィールド

@@ -54,6 +54,7 @@ bg:
     **MONTHNAME** (Януари - Декември)
     **PREVIOUS_MONTHNAME** (Януари - Декември)
     **NEXT_MONTHNAME** (Януари - Декември)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N дни)
   label_variables_markdown_note: 'Забележка: в описанието те се показват получер в прегледа, тъй като ** е синтаксисът за получер текст в Markdown; при създаване на задачата се заменят с действителната стойност.'
   label_last_error: Последна грешка
   label_issue_custom_fields: Потребителски полета на задачата

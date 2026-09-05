@@ -54,6 +54,7 @@ it:
     **MONTHNAME** (Gennaio - Dicembre)
     **PREVIOUS_MONTHNAME** (Gennaio - Dicembre)
     **NEXT_MONTHNAME** (Gennaio - Dicembre)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N giorni)
   label_variables_markdown_note: 'Nota: nella descrizione appaiono in grassetto nell''anteprima perché ** è la sintassi del grassetto di Markdown; vengono sostituite con il valore effettivo quando la richiesta viene creata.'
   label_last_error: Ultimo errore
   label_issue_custom_fields: Campi personalizzati

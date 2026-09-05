@@ -54,6 +54,7 @@ ru:
     **MONTHNAME** (Январь - Декабрь)
     **PREVIOUS_MONTHNAME** (Январь - Декабрь)
     **NEXT_MONTHNAME** (Январь - Декабрь)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N дней)
   label_variables_markdown_note: 'Примечание: в описании они отображаются полужирным в предпросмотре, так как ** — это синтаксис полужирного начертания в Markdown; при создании задачи они заменяются фактическим значением.'
   label_last_error: Последняя ошибка
   label_issue_custom_fields: Настраиваемые поля задачи

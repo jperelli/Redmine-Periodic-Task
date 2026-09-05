@@ -76,6 +76,7 @@ vi:
     **MONTHNAME** (tên tháng)
     **PREVIOUS_MONTHNAME** (tên tháng trước)
     **NEXT_MONTHNAME** (tên tháng sau)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N ngày)
   label_variables_markdown_note: 'Lưu ý: ở phần mô tả, các biến này hiện đậm trong khung xem trước vì ** là cú pháp in đậm của Markdown; chúng sẽ được thay bằng giá trị thật khi vấn đề được tạo.'
   label_last_error: Lỗi gần nhất
   label_issue_custom_fields: Trường tùy chỉnh của vấn đề

@@ -54,6 +54,7 @@ tr:
     **MONTHNAME** (Ocak - Aralık)
     **PREVIOUS_MONTHNAME** (Ocak - Aralık)
     **NEXT_MONTHNAME** (Ocak - Aralık)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N gün)
   label_variables_markdown_note: 'Not: açıklamada önizlemede kalın görünürler çünkü ** Markdown''ın kalın yazı söz dizimidir; iş kaydı oluşturulduğunda gerçek değerleriyle değiştirilirler.'
   label_last_error: Son hata
   label_issue_custom_fields: Özel alanlar

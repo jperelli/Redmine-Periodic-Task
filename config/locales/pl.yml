@@ -54,6 +54,7 @@ pl:
     **MONTHNAME** (Styczeń - Grudzień)
     **PREVIOUS_MONTHNAME** (Styczeń - Grudzień)
     **NEXT_MONTHNAME** (Styczeń - Grudzień)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dni)
   label_variables_markdown_note: 'Uwaga: w opisie są one wyświetlane pogrubioną czcionką w podglądzie, ponieważ ** to składnia pogrubienia w Markdown; przy tworzeniu zadania są zastępowane rzeczywistą wartością.'
   label_last_error: Ostatni błąd
   label_issue_custom_fields: Pola niestandardowe

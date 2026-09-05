@@ -56,6 +56,7 @@ zh:
     **MONTHNAME** (一月 - 十二月)
     **PREVIOUS_MONTHNAME** (一月 - 十二月)
     **NEXT_MONTHNAME** (一月 - 十二月)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N 天)
   label_variables_markdown_note: '注意：在描述中，由于 ** 是 Markdown 的加粗语法，它们在预览中显示为加粗；创建问题时会替换为实际值。'
   label_last_error: 最后错误
   label_issue_custom_fields: 自定义字段

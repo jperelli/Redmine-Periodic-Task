@@ -54,6 +54,7 @@ hr:
     **MONTHNAME** (Siječanj - Prosinac)
     **PREVIOUS_MONTHNAME** (Siječanj - Prosinac)
     **NEXT_MONTHNAME** (Siječanj - Prosinac)
+    **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dana)
   label_variables_markdown_note: 'Napomena: u opisu se u pregledu prikazuju podebljano jer je ** Markdown sintaksa za podebljani tekst; zamjenjuju se stvarnom vrijednošću pri kreiranju zadatka.'
   label_last_error: Zadnja greška
   label_issue_custom_fields: Prilagođena polja
