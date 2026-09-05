@@ -23,6 +23,7 @@
 - Task pages only find tasks of the project in the URL: a user with the permission in one project could open, edit, copy, run or delete the tasks of any other project by id (@jperelli)
 - The checker restores the request locale after running, so the *Run checker now* flash message is shown in the admin's language instead of Redmine's default (@jperelli)
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
+- The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 

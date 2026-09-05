@@ -62,7 +62,22 @@ module PeriodictaskHelper
   def periodictask_disabled_icon(periodictask)
     return if periodictask.is_active?
 
-    content_tag(:span, '', title: l(:label_disabled), class: 'icon-only icon-locked')
+    periodictask_marker_icon('lock', 'icon-locked', l(:label_disabled))
+  end
+
+  # Marker shown next to a task's subject in the lists when its last run failed;
+  # the error message is the tooltip.
+  def periodictask_error_icon(periodictask)
+    return if periodictask.last_error.blank?
+
+    periodictask_marker_icon('warning', 'icon-error', periodictask.last_error)
+  end
+
+  # Icon-only marker with a tooltip. Redmine 6+ needs the SVG sprite inside the
+  # span (an empty `icon-*` span renders nothing since 7.0); Redmine 5 draws the
+  # icon from the CSS class.
+  def periodictask_marker_icon(sprite, css_class, title)
+    content_tag(:span, periodictask_sprite_icon(sprite), title: title, class: "icon-only #{css_class}")
   end
 
   def periodictask_default_label(value)

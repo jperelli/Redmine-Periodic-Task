@@ -722,6 +722,21 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 'Onlinestore task', other.subject
   end
 
+  def test_index_marks_disabled_and_failed_tasks
+    create_test_periodictask(subject: 'Paused task', is_active: false)
+    create_test_periodictask(subject: 'Broken task', last_error: 'Tracker cannot be blank')
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'td', text: /Paused task/ do
+      assert_select 'span.icon-locked[title=?]', I18n.t(:label_disabled)
+      assert_select 'span.icon-locked svg' if Redmine::VERSION::MAJOR >= 6
+    end
+    assert_select 'td', text: /Broken task/ do
+      assert_select 'span.icon-error[title=?]', 'Tracker cannot be blank'
+      assert_select 'span.icon-error svg' if Redmine::VERSION::MAJOR >= 6
+    end
+  end
+
   def test_index_sorts_business_day_intervals_by_duration
     create_test_periodictask(subject: 'One week', interval_number: 1, interval_units: 'week')
     create_test_periodictask(subject: 'Three business days', interval_number: 3, interval_units: 'business_day')

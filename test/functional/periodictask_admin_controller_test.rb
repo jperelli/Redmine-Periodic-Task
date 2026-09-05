@@ -31,10 +31,27 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     get '/admin/periodictasks'
     assert_response :success
     assert_select 'table.list td.subject', text: /Paused task/ do
-      assert_select 'span.icon-locked'
+      assert_select 'span.icon-locked[title=?]', I18n.t(:label_disabled)
+      # Redmine 6+ draws icons from the SVG sprite; an empty span shows nothing.
+      assert_select 'span.icon-locked svg' if Redmine::VERSION::MAJOR >= 6
     end
     assert_select 'table.list td.subject', text: /Due task/ do
       assert_select 'span.icon-locked', 0
+    end
+  end
+
+  def test_index_marks_tasks_whose_last_run_failed
+    create_test_periodictask(Project.find(1), subject: 'Broken task', last_error: 'Tracker cannot be blank')
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'table.list td.subject', text: /Broken task/ do
+      assert_select 'span.icon-error[title=?]', 'Tracker cannot be blank'
+      assert_select 'span.icon-error svg' if Redmine::VERSION::MAJOR >= 6
+    end
+    assert_select 'table.list td.subject', text: /Due task/ do
+      assert_select 'span.icon-error', 0
     end
   end
 
