@@ -40,13 +40,22 @@ zh:
     可选值：
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (一月 - 十二月)
     **PREVIOUS_MONTHNAME** (一月 - 十二月)
+    **NEXT_MONTHNAME** (一月 - 十二月)
   label_variables_markdown_note: '注意：在描述中，由于 ** 是 Markdown 的加粗语法，它们在预览中显示为加粗；创建问题时会替换为实际值。'
   label_last_error: 最后错误
   label_issue_custom_fields: 自定义字段

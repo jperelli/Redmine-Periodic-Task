@@ -456,15 +456,32 @@ class Periodictask < ActiveRecord::Base
   def parse_macro(str, now)
     if str.respond_to?(:gsub!) && str.present?
       previous_month_time = now - 1.month
+      next_month_time = now + 1.month
+      next_week_time = now + 1.week
       str.gsub!('**DAY**', now.strftime('%d'))
+      # The two week numbering systems do not share a year macro: %W counts weeks
+      # within the calendar year and pairs with %Y, while %V counts ISO 8601 weeks
+      # and pairs with the ISO year %G. The two drift apart around New Year, so
+      # pairing an ISO week with **YEAR** is off by one on those dates.
+      str.gsub!('**NEXT_WEEKISO_YEAR**', next_week_time.strftime('%G'))
+      str.gsub!('**NEXT_WEEKISO**', next_week_time.strftime('%V'))
+      str.gsub!('**NEXT_WEEK_YEAR**', next_week_time.strftime('%Y'))
+      str.gsub!('**NEXT_WEEK**', next_week_time.strftime('%W'))
+      str.gsub!('**WEEKISO_YEAR**', now.strftime('%G'))
       str.gsub!('**WEEKISO**', now.strftime('%V'))
       str.gsub!('**WEEK**', now.strftime('%W'))
       str.gsub!('**QUARTER**', (((now.month - 1) / 3) + 1).to_s)
       str.gsub!('**MONTHNAME**', I18n.localize(now, format: '%B'))
       str.gsub!('**MONTH**', now.strftime('%m'))
+      # Year of the shifted month, not of the run time: **YEAR** next to a shifted
+      # month macro is off by one in January and December.
+      str.gsub!('**NEXT_MONTH_YEAR**', next_month_time.strftime('%Y'))
+      str.gsub!('**PREVIOUS_MONTH_YEAR**', previous_month_time.strftime('%Y'))
       str.gsub!('**YEAR**', now.strftime('%Y'))
       str.gsub!('**PREVIOUS_MONTHNAME**', I18n.localize(previous_month_time, format: '%B'))
       str.gsub!('**PREVIOUS_MONTH**', previous_month_time.strftime('%m'))
+      str.gsub!('**NEXT_MONTHNAME**', I18n.localize(next_month_time, format: '%B'))
+      str.gsub!('**NEXT_MONTH**', next_month_time.strftime('%m'))
     end
     str
   end

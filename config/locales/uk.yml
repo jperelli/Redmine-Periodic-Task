@@ -38,13 +38,22 @@ uk:
     Можливі змінні:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Січень - Грудень)
     **PREVIOUS_MONTHNAME** (Січень - Грудень)
+    **NEXT_MONTHNAME** (Січень - Грудень)
   label_variables_markdown_note: 'Примітка: в описі вони відображаються жирним у попередньому перегляді, оскільки ** — це синтаксис жирного шрифту в Markdown; під час створення завдання вони замінюються фактичним значенням.'
   label_last_error: Остання помилка
   label_issue_custom_fields: Налаштовувані поля завдання

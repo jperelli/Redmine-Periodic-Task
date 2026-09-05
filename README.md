@@ -193,13 +193,27 @@ You can use the following variables in the subject and description of a periodic
 |---|---|
 | `**DAY**` | Day of the month, zero-padded (01..31) |
 | `**WEEK**` | Week number of the year, starting with the first Monday as the first day of the first week (00..53) |
+| `**NEXT_WEEK**` | Same as `**WEEK**` for next week (00..53) |
 | `**WEEKISO**` | ISO 8601 week number of the year (01..53) |
+| `**NEXT_WEEKISO**` | Same as `**WEEKISO**` for next week (01..53) |
 | `**MONTH**` | Month of the year, zero-padded (01..12) |
+| `**PREVIOUS_MONTH**` | Previous month, zero-padded (01..12) |
+| `**NEXT_MONTH**` | Next month, zero-padded (01..12) |
 | `**MONTHNAME**` | Full month name (e.g. January), localized |
+| `**PREVIOUS_MONTHNAME**` | Full name of the previous month, localized |
+| `**NEXT_MONTHNAME**` | Full name of the next month, localized |
 | `**QUARTER**` | Quarter of the year (1..4) |
 | `**YEAR**` | Four-digit year |
-| `**PREVIOUS_MONTH**` | Previous month, zero-padded (01..12) |
-| `**PREVIOUS_MONTHNAME**` | Full name of the previous month, localized |
+| `**WEEKISO_YEAR**` | ISO 8601 week-based year of `**WEEKISO**` |
+| `**NEXT_WEEK_YEAR**` | Four-digit year of `**NEXT_WEEK**` |
+| `**NEXT_WEEKISO_YEAR**` | ISO 8601 week-based year of `**NEXT_WEEKISO**` |
+| `**PREVIOUS_MONTH_YEAR**` | Four-digit year of `**PREVIOUS_MONTH**` |
+| `**NEXT_MONTH_YEAR**` | Four-digit year of `**NEXT_MONTH**` |
+
+Each shifted macro has its own year companion, and `**WEEKISO**` has a week-based one, because the year of the
+shifted instant is not always the year of the run: pairing `**PREVIOUS_MONTH**` with `**YEAR**` yields `12/2026`
+when it runs in January 2026, and an ISO week number belongs to the ISO week-based year, which differs from the
+calendar year around New Year (2025-12-29 is already ISO week 01 of 2026).
 
 If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `vi`, `zh`) to the cronjob like this
 

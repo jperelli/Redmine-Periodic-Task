@@ -38,13 +38,22 @@ hr:
     Moguće varijable:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Siječanj - Prosinac)
     **PREVIOUS_MONTHNAME** (Siječanj - Prosinac)
+    **NEXT_MONTHNAME** (Siječanj - Prosinac)
   label_variables_markdown_note: 'Napomena: u opisu se u pregledu prikazuju podebljano jer je ** Markdown sintaksa za podebljani tekst; zamjenjuju se stvarnom vrijednošću pri kreiranju zadatka.'
   label_last_error: Zadnja greška
   label_issue_custom_fields: Prilagođena polja

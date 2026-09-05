@@ -43,13 +43,22 @@ zh-TW:
     可選值：
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (一月 - 十二月)
     **PREVIOUS_MONTHNAME** (一月 - 十二月)
+    **NEXT_MONTHNAME** (一月 - 十二月)
   label_variables_markdown_note: '注意：在概述中，由於 ** 是 Markdown 的粗體語法，它們在預覽中會顯示為粗體；建立議題時會替換為實際值。'
   label_last_error: 最後錯誤
   label_issue_custom_fields: 自訂欄位

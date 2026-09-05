@@ -38,13 +38,22 @@ ru:
     Возможные переменные:
     **DAY** (01-31)
     **WEEK** (00-53)
+    **NEXT_WEEK** (00-53)
     **WEEKISO** (01-53)
+    **NEXT_WEEKISO** (01-53)
     **MONTH** (01-12)
     **PREVIOUS_MONTH** (01-12)
+    **NEXT_MONTH** (01-12)
     **QUARTER** (1-4)
     **YEAR** (YYYY)
+    **WEEKISO_YEAR** (YYYY)
+    **NEXT_WEEK_YEAR** (YYYY)
+    **NEXT_WEEKISO_YEAR** (YYYY)
+    **PREVIOUS_MONTH_YEAR** (YYYY)
+    **NEXT_MONTH_YEAR** (YYYY)
     **MONTHNAME** (Январь - Декабрь)
     **PREVIOUS_MONTHNAME** (Январь - Декабрь)
+    **NEXT_MONTHNAME** (Январь - Декабрь)
   label_variables_markdown_note: 'Примечание: в описании они отображаются полужирным в предпросмотре, так как ** — это синтаксис полужирного начертания в Markdown; при создании задачи они заменяются фактическим значением.'
   label_last_error: Последняя ошибка
   label_issue_custom_fields: Настраиваемые поля задачи
