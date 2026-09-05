@@ -847,7 +847,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     get :copy, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
     assert_equal %w[3 2], rendered_rotation_ids
-    assert_select '#periodictask_rotation_next[data-user-id=?]', '3'
+    assert_select '#periodictask_rotation_next[data-user-id=""]', text: "Next: #{User.find(3).name}"
   end
 
   def test_denies_member_without_permission

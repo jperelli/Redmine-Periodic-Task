@@ -1255,6 +1255,17 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_not task.rotation?
   end
 
+  def test_editing_the_rotation_follows_the_user_actually_up_next_past_locked_ones
+    # Index points at locked user 5, so user 2 is the one actually up next.
+    task = create_rotation_task(rotation_ids: [3, 5, 2], rotation_index: 1)
+    assert_equal 2, task.next_rotation_user.id
+
+    task.update!(rotation_ids: [3, 2, 5])
+
+    assert_equal 1, task.rotation_index
+    assert_equal 2, task.next_rotation_user.id
+  end
+
   def test_copy_from_copies_the_rotation_and_restarts_it
     source = create_rotation_task(rotation_ids: [3, 2], rotation_index: 1)
 

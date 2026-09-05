@@ -20,7 +20,9 @@
   <%= hidden_field_tag 'periodictask[rotation_ids][]', '', :id => nil %>
   <span id="periodictask_rotation_list"><% rotation_users.each do |user| %><%= render :partial => 'rotation_member',
         :locals => { :user_id => user.id, :user_name => user.name, :assignable => candidate_ids.include?(user.id) } %><% end %></span>
-  <span id="periodictask_rotation_next" data-label="<%= l(:label_rotation_next, user: '__NAME__') %>" data-user-id="<%= next_user&.id %>"><%= l(:label_rotation_next, user: next_user.name) if next_user %></span>
+  <span id="periodictask_rotation_next" data-label="<%= l(:label_rotation_next, user: '__NAME__') %>"
+        data-fallback-label="<%= l(:label_rotation_fallback, user: '__NAME__') %>"
+        data-user-id="<%= next_user&.id if periodictask.persisted? %>"><%= l(:label_rotation_next, user: next_user.name) if next_user %></span>
   <% if @rotation_candidates.any? %>
     <%= select_tag 'periodictask_rotation_candidate',
                    options_from_collection_for_select(@rotation_candidates.reject { |u| periodictask.rotation_ids.include?(u.id) }, :id, :name),
@@ -38,15 +40,25 @@
     var $candidates = $('#periodictask_rotation_candidate');
     var template = '<%= escape_javascript(render :partial => 'rotation_member', :locals => { :user_id => '__ID__', :user_name => '__NAME__', :assignable => true }) %>';
 
-    // The saved "next" user stays next while listed; otherwise the first user is.
+    // Mirrors Periodictask#keep_rotation_position and #next_rotation_user: the
+    // saved "next" user stays next while listed and assignable, otherwise the
+    // first assignable user is; with nobody assignable the assignee above is used.
+    var savedNextId = String($next.data('user-id') || '');
     function refreshNext() {
       var $members = $list.children();
-      var $current = $members.filter('[data-user-id="' + $next.data('user-id') + '"]');
-      if (!$current.length) { $current = $members.first(); }
+      var $assignable = $members.not('.periodictask-rotation-unassignable');
+      var $current = savedNextId ? $assignable.filter('[data-user-id="' + savedNextId + '"]') : $();
+      if (!$current.length) { $current = $assignable.first(); }
       $members.removeClass('periodictask-rotation-next');
       $current.addClass('periodictask-rotation-next');
-      $next.data('user-id', $current.data('user-id') || '');
-      $next.text($current.length ? $next.data('label').replace('__NAME__', $current.find('.periodictask-rotation-name').text()) : '');
+      if ($current.length) {
+        $next.text($next.data('label').replace('__NAME__', $current.find('.periodictask-rotation-name').text()));
+      } else if ($members.length) {
+        var fallback = $('#periodictask_assigned_to_id option:selected').text() || '-';
+        $next.text($next.data('fallback-label').replace('__NAME__', fallback));
+      } else {
+        $next.text('');
+      }
     }
 
     $('#periodictask_rotation_add').on('click', function(e) {
@@ -72,14 +84,17 @@
       e.preventDefault();
       var $member = $(this).closest('.periodictask-rotation-member');
       $member.prev().before($member);
+      refreshNext();
     });
 
     $list.on('click', '.periodictask-rotation-down', function(e) {
       e.preventDefault();
       var $member = $(this).closest('.periodictask-rotation-member');
       $member.next().after($member);
+      refreshNext();
     });
 
+    $('#periodictask_assigned_to_id').on('change', refreshNext);
     refreshNext();
   });
 <% end %>

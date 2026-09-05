@@ -453,7 +453,11 @@ class Periodictask < ActiveRecord::Base
     return if new_record? || !rotation_ids_changed? || rotation_index_changed?
 
     previous = self.class.normalize_user_ids(rotation_ids_was)
-    next_id = previous[rotation_index_was.to_i % previous.size] unless previous.empty?
+    unless previous.empty?
+      in_turn = previous.rotate(rotation_index_was.to_i % previous.size)
+      assignable = rotation_candidates.map(&:id)
+      next_id = in_turn.find { |uid| assignable.include?(uid) } || in_turn.first
+    end
     self.rotation_index = rotation_ids.index(next_id) || 0
   end
 
