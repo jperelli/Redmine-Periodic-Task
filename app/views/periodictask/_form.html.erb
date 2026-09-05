@@ -72,7 +72,7 @@
       <p>
         <%= label(:periodictask, :issue_category_id) do %><%= l(:field_category) %> <span class="required">*</span><% end %>
         <% if @categories.length > 0 %>
-          <%= f.select :issue_category_id, principals_options_for_select(@categories, @periodictask.issue_category), :include_blank => true, :required => true %>
+          <%= f.select :issue_category_id, @categories.pluck(:name, :id), :include_blank => true, :required => true %>
         <% else %>
           <%= l(:no_categories_in_project) %>
         <% end %>
