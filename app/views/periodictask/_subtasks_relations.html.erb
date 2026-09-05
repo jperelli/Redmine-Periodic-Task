@@ -67,11 +67,17 @@
         });
       }
       function toggleDelay() {
-        var type = $(row).find('select').val();
+        var type = $(row).find('select[name$="[relation_type]"]').val();
         $(row).find('.periodictask-relation-delay').toggle(type === 'precedes' || type === 'follows');
       }
-      $(row).find('select').on('change', toggleDelay);
+      function toggleIssue() {
+        var target = $(row).find('.periodictask-relation-target').val();
+        $issue.toggle(target !== '<%= Periodictask::RELATION_PREVIOUS_ISSUE %>');
+      }
+      $(row).find('select[name$="[relation_type]"]').on('change', toggleDelay);
+      $(row).find('.periodictask-relation-target').on('change', toggleIssue);
       toggleDelay();
+      toggleIssue();
     }
 
     $('.periodictask-add-row').on('click', function(e) {

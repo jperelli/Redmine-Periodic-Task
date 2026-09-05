@@ -61,6 +61,7 @@ es:
     **PREVIOUS_MONTHNAME** (Enero - Diciembre)
     **NEXT_MONTHNAME** (Enero - Diciembre)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N días)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#id de la incidencia creada en la ejecución anterior / N ejecuciones antes, vacío en la primera ejecución)
   label_variables_markdown_note: 'Nota: en la descripción, estas variables aparecen en negrita en la vista previa porque ** es la sintaxis de negrita de Markdown; se reemplazan por el valor real cuando se crea la incidencia.'
   label_last_error: Último error
   label_issue_custom_fields: Campos personalizados de la incidencia
@@ -80,7 +81,8 @@ es:
   label_periodictask_plugin_name: Complemento Periodic Task
   label_periodictask_credit_by: por
   label_subtasks_info: "Incidencias hijas creadas bajo cada incidencia generada. Los asuntos aceptan las mismas variables que el asunto de la incidencia."
-  label_relations_info: "Relaciones creadas desde cada incidencia generada hacia incidencias existentes."
+  label_relations_info: "Relaciones creadas desde cada incidencia generada hacia incidencias existentes o hacia la incidencia generada en la ejecución anterior."
+  label_relation_previous_issue: "Incidencia generada anterior"
   error_subtask_subject_blank: "El asunto de la subtarea no puede estar en blanco"
   error_relation_type_invalid: "Tipo de relación no válido"
   error_relation_issue_invalid: "La incidencia relacionada debe ser un número de incidencia"

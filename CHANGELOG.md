@@ -14,6 +14,7 @@
 - Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
+- Link each generated issue to the previous occurrence: the `**PREVIOUS_ISSUE**` variable renders `#<id>` of the issue the task created on its previous run (`**PREVIOUS_ISSUE-2**` the one before, empty on the first run), and a relation target *Previous generated issue* creates a relation of any type (`relates`, `follows`, `precedes`...) from each new issue to the previous one, skipped on the first run (@jperelli)
 
 ### Fixes
 

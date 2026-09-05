@@ -55,6 +55,7 @@ hr:
     **PREVIOUS_MONTHNAME** (Siječanj - Prosinac)
     **NEXT_MONTHNAME** (Siječanj - Prosinac)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dana)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#broj zadatka stvorenog u prethodnom / N-tom prethodnom pokretanju, prazno pri prvom pokretanju)
   label_variables_markdown_note: 'Napomena: u opisu se u pregledu prikazuju podebljano jer je ** Markdown sintaksa za podebljani tekst; zamjenjuju se stvarnom vrijednošću pri kreiranju zadatka.'
   label_last_error: Zadnja greška
   label_issue_custom_fields: Prilagođena polja
@@ -73,7 +74,8 @@ hr:
   label_periodictask_journal_delete: Periodički zadatak obrisan
   label_periodictask_journal_run: Periodički zadatak pokrenut
   label_subtasks_info: "Podzadaci stvoreni pod svakim generiranim zadatkom. Naslovi prihvaćaju iste varijable kao i naslov zadatka."
-  label_relations_info: "Veze stvorene od svakog generiranog zadatka prema postojećim zadacima."
+  label_relations_info: "Veze stvorene od svakog generiranog zadatka prema postojećim zadacima ili prema zadatku generiranom u prethodnom pokretanju."
+  label_relation_previous_issue: "Prethodno generirani zadatak"
   error_subtask_subject_blank: "Naslov podzadatka ne može biti prazan"
   error_relation_type_invalid: "Nevažeći tip veze"
   error_relation_issue_invalid: "Povezani zadatak mora biti broj zadatka"
