@@ -730,6 +730,33 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal [], task.watcher_user_ids
   end
 
+  # The json columns have no database default (MySQL rejects a default on a
+  # json column), so a row written outside the model - an old row, a raw
+  # update, another plugin - can hold NULL and every reader must cope.
+  def test_json_columns_handle_persisted_nil
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      subject: 'Nil json columns test',
+      interval_number: 1,
+      interval_units: 'week',
+      subtasks: [{ 'subject' => 'child' }],
+      relations: [{ 'relation_type' => 'relates', 'issue_id' => '1' }],
+      weekdays: [1],
+      month_weeks: [1]
+    )
+    %i[subtasks relations weekdays month_weeks].each { |column| task.update_column(column, nil) }
+    task.reload
+
+    assert_equal [], task.subtasks
+    assert_equal [], task.relations
+    assert_equal [], task.weekdays
+    assert_equal [], task.month_weeks
+    assert_nothing_raised { task.get_next_run_date(Time.current) }
+    assert_nothing_raised { task.generate_issue(Time.current) }
+  end
+
   def test_periodictask_stores_watcher_user_ids
     task = Periodictask.create!(
       project: @project,

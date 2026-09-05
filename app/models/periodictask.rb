@@ -9,6 +9,9 @@ class Periodictask < ActiveRecord::Base
   belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
   has_many :periodictask_issues, dependent: :delete_all
   has_many :issues, through: :periodictask_issues
+  # The json columns default here rather than in the schema: MySQL does not
+  # accept a default on a json column, so the stored value can be NULL and the
+  # readers below normalize it.
   attribute :custom_field_values, :json
   attribute :watcher_user_ids, :json, default: []
   attribute :subtasks, :json, default: []
