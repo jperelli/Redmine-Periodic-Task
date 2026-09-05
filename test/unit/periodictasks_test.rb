@@ -1168,11 +1168,6 @@ class PeriodictasksTest < ActiveSupport::TestCase
     Issue.send(:remove_method, :checklists_attributes, :checklists_attributes=)
   end
 
-  # parse_macro mutates the string it is given, so always hand it a copy.
-  def parse_macro(str, now)
-    Periodictask.new.send(:parse_macro, str.dup, now)
-  end
-
   # Mimics the API the RedmineUP Tags plugin adds to Issue (acts_as_taggable).
   def with_fake_tagging_plugin
     Issue.class_eval { attr_accessor :tag_list }
