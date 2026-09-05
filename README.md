@@ -179,6 +179,8 @@ The plugin configuration page (*Administration → Plugins → Redmine periodict
 
 The *Run checker now* button on the same page runs the checker immediately, which is handy to test a setup without waiting for the scheduler.
 
+![Scheduler log on the plugin settings page, with a highlighted failed run](doc/screenshots/scheduler_log.png)
+
 ### Recurrence
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
