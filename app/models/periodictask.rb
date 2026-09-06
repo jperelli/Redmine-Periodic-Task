@@ -219,6 +219,17 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     end
   }
 
+  # Tasks of the projects where +user+ may manage periodic tasks (module
+  # enabled, project active); offered as values of the issue list filter.
+  scope :visible, lambda { |user = User.current|
+    joins(:project).where(Project.allowed_to_condition(user, :periodictask))
+  }
+
+  # Shown where the task stands for itself: issue list group headers, CSV/PDF.
+  def to_s
+    subject.to_s
+  end
+
   INTERVAL_UNITS = %w[day business_day week month year].freeze
   WEEKDAYS = (0..6).to_a.freeze
   MONTH_WEEKS = (1..5).to_a.freeze
