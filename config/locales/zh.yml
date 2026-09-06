@@ -150,6 +150,14 @@ zh:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "非工作日"
+  label_weekend_adjustment_info: "当执行日落在 Redmine 的非工作日（管理 → 设置 → 问题跟踪）时的处理方式。计划本身不会移动，每月 1 日仍是 1 日。"
+  label_weekend_adjustment_none: "当天执行"
+  label_weekend_adjustment_next_working_day: "移至下一个工作日"
+  label_weekend_adjustment_previous_working_day: "移至上一个工作日"
+  label_recurrence_weekend_adjustment_next_working_day: "非工作日移至下一个工作日"
+  label_recurrence_weekend_adjustment_previous_working_day: "非工作日移至上一个工作日"
+  label_weekend_adjustment_moved_from: "从 %{date} 移动"
   label_if_previous_open: "上一个问题未关闭"
   label_if_previous_open_info: "当上一次运行创建的问题尚未关闭时，本次运行的行为"
   label_if_previous_open_help: "各模式的含义与示例"

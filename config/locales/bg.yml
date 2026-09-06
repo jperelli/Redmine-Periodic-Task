@@ -148,6 +148,14 @@ bg:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "Неработни дни"
+  label_weekend_adjustment_info: "Какво се случва, когато изпълнението попадне на неработен ден на Redmine (Администрация → Настройки → Проследяване на задачи). Самият график не се мества – 1-во число си остава 1-во число."
+  label_weekend_adjustment_none: "Изпълнение в същия ден"
+  label_weekend_adjustment_next_working_day: "Преместване на следващия работен ден"
+  label_weekend_adjustment_previous_working_day: "Преместване на предишния работен ден"
+  label_recurrence_weekend_adjustment_next_working_day: "неработните дни се местят на следващия работен ден"
+  label_recurrence_weekend_adjustment_previous_working_day: "неработните дни се местят на предишния работен ден"
+  label_weekend_adjustment_moved_from: "преместено от %{date}"
   label_if_previous_open: "Отворена предишна задача"
   label_if_previous_open_info: "Какво прави изпълнението, когда задачата, създадена от предишното изпълнение, още не е затворена"
   label_if_previous_open_help: "Какво означават режимите, с примери"

@@ -153,6 +153,14 @@ ru:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_weekend_adjustment: "Нерабочие дни"
+  label_weekend_adjustment_info: "Что происходит, если запуск выпадает на нерабочий день Redmine (Администрирование → Настройки → Учёт задач). Само расписание не сдвигается: 1-е число месяца остаётся 1-м."
+  label_weekend_adjustment_none: "Запускать в этот день"
+  label_weekend_adjustment_next_working_day: "Перенести на следующий рабочий день"
+  label_weekend_adjustment_previous_working_day: "Перенести на предыдущий рабочий день"
+  label_recurrence_weekend_adjustment_next_working_day: "нерабочие дни переносятся на следующий рабочий день"
+  label_recurrence_weekend_adjustment_previous_working_day: "нерабочие дни переносятся на предыдущий рабочий день"
+  label_weekend_adjustment_moved_from: "перенесено с %{date}"
   label_if_previous_open: "Предыдущая ещё открыта"
   label_if_previous_open_info: "Что делает запуск, когда задача, созданная предыдущим запуском, ещё не закрыта"
   label_if_previous_open_help: "Что означают режимы, с примерами"

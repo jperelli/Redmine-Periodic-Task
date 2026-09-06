@@ -148,6 +148,14 @@ es:
   label_periodictask_run_source_endpoint: 'URL de verificación'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'hasta %{time}'
+  label_weekend_adjustment: "Días no laborables"
+  label_weekend_adjustment_info: "Qué ocurre cuando una ejecución cae en un día no laborable de Redmine (Administración → Configuración → Seguimiento de peticiones). La programación no se mueve: el día 1 del mes sigue siendo el día 1."
+  label_weekend_adjustment_none: "Ejecutar ese día"
+  label_weekend_adjustment_next_working_day: "Mover al siguiente día laborable"
+  label_weekend_adjustment_previous_working_day: "Mover al día laborable anterior"
+  label_recurrence_weekend_adjustment_next_working_day: "los días no laborables se mueven al siguiente día laborable"
+  label_recurrence_weekend_adjustment_previous_working_day: "los días no laborables se mueven al día laborable anterior"
+  label_weekend_adjustment_moved_from: "movido desde %{date}"
   label_if_previous_open: "Petición anterior abierta"
   label_if_previous_open_info: "Qué hace una ejecución cuando la petición creada por la ejecución anterior aún no se ha cerrado"
   label_if_previous_open_help: "Qué significa cada modo, con ejemplos"
