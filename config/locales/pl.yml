@@ -24,6 +24,7 @@ pl:
   label_set_start_date_info: 'Po zaznaczeniu data rozpoczęcia każdego utworzonego zadania jest ustawiana na dzień jego wygenerowania.'
   label_due_date: 'Ustaw termin po'
   label_due_date_info: 'Termin każdego utworzonego zadania, ustawiony o ten okres po jego dacie rozpoczęcia.'
+  label_assigned_to_info: 'Opcjonalne. Gdy puste, do każdego utworzonego zadania stosuje się domyślnego przypisanego z Redmine: domyślnego przypisanego kategorii, a w przeciwnym razie projektu.'
   label_estimated_hours: Szacowany czas
   label_estimated_hours_after: godzin
   label_description: Opis

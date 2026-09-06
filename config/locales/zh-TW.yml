@@ -24,6 +24,7 @@ zh-TW:
   label_set_start_date_info: '勾選後，每個建立的議題的開始日期將設定為其產生當天。'
   label_due_date: '設定完成日期（之後）'
   label_due_date_info: '每個建立的議題的完成日期，設定為其開始日期之後的這段時間。'
+  label_assigned_to_info: '選填。留空時，每個建立的議題將套用 Redmine 的預設被指派者：分類的預設被指派者，否則為專案的預設被指派者。'
   label_estimated_hours: 預估工時
   label_estimated_hours_after: 小時
   label_description: 概述

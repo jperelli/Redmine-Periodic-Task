@@ -199,6 +199,10 @@ A periodic task can carry files (a checklist PDF, a form, a template spreadsheet
 
 ![Periodic task form with the Files field](doc/screenshots/attachments_form.png)
 
+### Assignee
+
+The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
+
 ### Variable interpolation
 
 You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.

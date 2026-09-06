@@ -6,7 +6,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
 
   belongs_to :project
   belongs_to :author, class_name: 'User', foreign_key: 'author_id', optional: true
-  belongs_to :assigned_to, class_name: 'Principal', foreign_key: 'assigned_to_id'
+  belongs_to :assigned_to, class_name: 'Principal', foreign_key: 'assigned_to_id', optional: true
   belongs_to :tracker, optional: true
   belongs_to :issue_category, class_name: 'IssueCategory', foreign_key: 'issue_category_id'
   belongs_to :fixed_version, class_name: 'Version', foreign_key: 'fixed_version_id', optional: true
