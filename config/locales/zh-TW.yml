@@ -151,11 +151,16 @@ zh-TW:
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
   label_end_condition: "結束"
-  label_end_condition_info: "可選。勾選「在日期」和/或「執行 N 次後」；先達到的條件會停用該任務。「立即執行」不計入次數。"
+  label_end_condition_info: "可選。勾選「在日期」和/或「執行 N 次後」；先達到的條件會結束該任務。「立即執行」不計入次數。"
   label_end_on_date: "在日期"
   label_end_after: "執行"
   label_end_runs: "次後"
   label_ends_on_date: "%{date} 結束"
+  label_periodictask_state: "狀態"
+  label_periodictask_state_active: "啟用"
+  label_periodictask_state_inactive: "停用"
+  label_periodictask_state_ended: "已結束"
+  label_ended_on_date: "已於 %{date} 結束"
   label_end_runs_progress: "已執行 %{count} / %{max} 次"
   label_periodictask_journal_ended_by_date: "週期任務已結束（已到結束日期）"
   label_periodictask_journal_ended_by_count: "週期任務已結束（已達到最大執行次數）"

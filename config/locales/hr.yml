@@ -154,11 +154,16 @@ hr:
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
   label_end_condition: "Završava"
-  label_end_condition_info: "Neobavezno. Označite \"Na datum\" i/ili \"Nakon N izvršavanja\"; zadatak se onemogućuje kada se dosegne prvo od toga. \"Pokreni sada\" se ne broji."
+  label_end_condition_info: "Neobavezno. Označite \"Na datum\" i/ili \"Nakon N izvršavanja\"; zadatak završava kada se dosegne prvo od toga. \"Pokreni sada\" se ne broji."
   label_end_on_date: "Na datum"
   label_end_after: "Nakon"
   label_end_runs: "izvršavanja"
   label_ends_on_date: "Završava %{date}"
+  label_periodictask_state: "Stanje"
+  label_periodictask_state_active: "Aktivan"
+  label_periodictask_state_inactive: "Neaktivan"
+  label_periodictask_state_ended: "Završen"
+  label_ended_on_date: "Završio %{date}"
   label_end_runs_progress: "%{count} od %{max} izvršavanja"
   label_periodictask_journal_ended_by_date: "Periodični zadatak završen (dosegnut krajnji datum)"
   label_periodictask_journal_ended_by_count: "Periodični zadatak završen (dosegnut najveći broj izvršavanja)"

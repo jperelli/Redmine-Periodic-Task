@@ -149,11 +149,16 @@ it:
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
   label_end_condition: "Termina"
-  label_end_condition_info: "Opzionale. Spunta \"In data\" e/o \"Dopo N esecuzioni\"; l'attività viene disattivata al raggiungimento della prima. \"Esegui ora\" non conta."
+  label_end_condition_info: "Opzionale. Spunta \"In data\" e/o \"Dopo N esecuzioni\"; l'attività termina al raggiungimento della prima. \"Esegui ora\" non conta."
   label_end_on_date: "In data"
   label_end_after: "Dopo"
   label_end_runs: "esecuzioni"
   label_ends_on_date: "Termina il %{date}"
+  label_periodictask_state: "Stato"
+  label_periodictask_state_active: "Attiva"
+  label_periodictask_state_inactive: "Inattiva"
+  label_periodictask_state_ended: "Terminata"
+  label_ended_on_date: "Terminata il %{date}"
   label_end_runs_progress: "%{count} di %{max} esecuzioni"
   label_periodictask_journal_ended_by_date: "Attività periodica terminata (data di fine raggiunta)"
   label_periodictask_journal_ended_by_count: "Attività periodica terminata (numero massimo di esecuzioni raggiunto)"

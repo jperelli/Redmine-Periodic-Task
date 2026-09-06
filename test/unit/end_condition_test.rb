@@ -38,11 +38,11 @@ class EndConditionTest < ActiveSupport::TestCase
     assert build_task(next_run_date: nil, end_date: 1.year.from_now).valid?
   end
 
-  def test_disabled_task_may_keep_a_next_run_past_its_end_date
+  def test_inactive_and_ended_tasks_may_keep_a_next_run_past_their_end_date
     anchor = Time.utc(2026, 3, 1, 10, 0, 0)
-    task = build_task(next_run_date: anchor, end_date: anchor - 1.day, is_active: false)
-
-    assert task.valid?
+    %w[inactive ended].each do |state|
+      assert build_task(next_run_date: anchor, end_date: anchor - 1.day, state: state).valid?, state
+    end
   end
 
   def test_max_occurrences_must_be_positive
@@ -64,7 +64,7 @@ class EndConditionTest < ActiveSupport::TestCase
 
   def test_end_reason_by_date_only_when_next_run_is_strictly_after_end_date
     end_date = Time.utc(2026, 3, 1, 10, 0, 0)
-    task = build_task(is_active: false, end_date: end_date)
+    task = build_task(state: 'inactive', end_date: end_date)
 
     task.next_run_date = end_date - 1.second
     assert_nil task.end_reason
@@ -86,7 +86,7 @@ class EndConditionTest < ActiveSupport::TestCase
   end
 
   def test_end_reason_prefers_count_when_both_conditions_are_met
-    task = build_task(is_active: false, max_occurrences: 1, occurrences_count: 1,
+    task = build_task(state: 'inactive', max_occurrences: 1, occurrences_count: 1,
                       end_date: Time.utc(2026, 3, 1), next_run_date: Time.utc(2026, 4, 1))
 
     assert_equal 'ended_by_count', task.end_reason
@@ -94,18 +94,36 @@ class EndConditionTest < ActiveSupport::TestCase
 
   # ---- checker ----
 
-  def test_checker_disables_task_when_next_run_would_be_after_end_date
+  def test_checker_ends_task_when_next_run_would_be_after_end_date
     task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago,
                        end_date: 2.hours.from_now)
 
     assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
-    assert_not task.is_active?
+    assert task.ended?
+    assert_in_delta Time.current, task.ended_at, 60
     assert task.next_run_date > task.end_date
     assert_equal 1, task.occurrences_count
     assert_nil task.last_error
     assert_equal ['ended_by_date'], journal_actions(task)
+  end
+
+  def test_ended_task_resumes_when_set_back_to_active_with_a_new_end_condition
+    task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago, max_occurrences: 1)
+    ScheduledTasksChecker.checktasks!
+    assert task.reload.ended?
+
+    task.state = 'active'
+    assert task.valid?
+    task.update!(max_occurrences: 2, next_run_date: 1.hour.ago)
+    assert_nil task.ended_at
+
+    assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+    task.reload
+    assert task.ended?
+    assert_equal 2, task.occurrences_count
+    assert_equal %w[ended_by_count ended_by_count], journal_actions(task)
   end
 
   def test_checker_keeps_task_active_while_next_run_is_not_after_end_date
@@ -115,7 +133,7 @@ class EndConditionTest < ActiveSupport::TestCase
     ScheduledTasksChecker.checktasks!
 
     task.reload
-    assert task.is_active?
+    assert task.active?
     assert task.next_run_date > Time.current
     assert_empty journal_actions(task)
   end
@@ -128,21 +146,21 @@ class EndConditionTest < ActiveSupport::TestCase
 
     task.reload
     assert_equal task.end_date, task.next_run_date
-    assert task.is_active?
+    assert task.active?
   end
 
-  def test_checker_disables_task_when_max_occurrences_reached
+  def test_checker_ends_task_when_max_occurrences_reached
     task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago, max_occurrences: 2)
 
     assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
-    assert task.reload.is_active?
+    assert task.reload.active?
     assert_equal 1, task.occurrences_count
 
     task.update!(next_run_date: 1.hour.ago)
     assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
-    assert_not task.is_active?
+    assert task.ended?
     assert_equal 2, task.occurrences_count
     assert_equal ['ended_by_count'], journal_actions(task)
 
@@ -161,7 +179,7 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
-    assert task.is_active?
+    assert task.active?
     assert_equal 1, task.occurrences_count
     assert task.last_skipped_issue_id.present?
     assert_equal [], journal_actions(task)
@@ -173,7 +191,7 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
-    assert_not task.is_active?
+    assert task.ended?
     assert_equal 1, task.occurrences_count
   end
 
@@ -187,8 +205,8 @@ class EndConditionTest < ActiveSupport::TestCase
 
     assert_equal ['ended_by_date'], journal_actions(by_date.reload)
     assert_equal ['ended_by_count'], journal_actions(by_count.reload)
-    assert_not by_date.is_active?
-    assert_not by_count.is_active?
+    assert by_date.ended?
+    assert by_count.ended?
   end
 
   def test_checker_ends_task_without_running_when_max_was_lowered_below_past_runs
@@ -198,7 +216,7 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
-    assert_not task.is_active?
+    assert task.ended?
     assert_equal ['ended_by_count'], journal_actions(task)
   end
 
@@ -210,7 +228,7 @@ class EndConditionTest < ActiveSupport::TestCase
 
     task.reload
     assert_equal 1, task.occurrences_count
-    assert_not task.is_active?
+    assert task.ended?
     assert_match(/Child/, task.last_error)
   end
 
@@ -222,7 +240,7 @@ class EndConditionTest < ActiveSupport::TestCase
 
     task.reload
     assert_equal 0, task.occurrences_count
-    assert task.is_active?
+    assert task.active?
     assert task.next_run_date > Time.current
   end
 
@@ -256,6 +274,17 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_equal source.end_date.to_i, copy.end_date.to_i
     assert_equal 5, copy.max_occurrences
     assert_equal 0, copy.occurrences_count
+  end
+
+  def test_copy_of_an_ended_task_starts_active_while_an_inactive_one_stays_inactive
+    ended = create_task(state: 'ended', max_occurrences: 1)
+    ended.update_columns(occurrences_count: 1)
+    copy = Periodictask.new(project: @project, author_id: 3).copy_from(ended)
+    assert copy.active?
+    assert_nil copy.ended_at
+
+    inactive = create_task(state: 'inactive')
+    assert Periodictask.new(project: @project, author_id: 3).copy_from(inactive).inactive?
   end
 
   private

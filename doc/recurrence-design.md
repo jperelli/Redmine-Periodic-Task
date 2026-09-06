@@ -151,14 +151,30 @@ computes the next run and then checks `Periodictask#end_reason`:
 - `ended_by_date` when the new `next_run_date` is strictly after `end_date`.
   A run that falls exactly on `end_date` still happens.
 
-When a reason is found the task is saved with `is_active = false` and a
-`PeriodictaskJournal` entry with that action is written, so the project
-activity shows *Periodic task ended (end date reached)* or *(maximum number of
-runs reached)*. The lists show the usual disabled marker. `next_run_date` is
-left as computed, so re-ticking `Active` (after moving the end date or
+When a reason is found the task is saved with `state = 'ended'` and
+`ended_at = now`, and a `PeriodictaskJournal` entry with that action is
+written, so the project activity shows *Periodic task ended (end date
+reached)* or *(maximum number of runs reached)*. `next_run_date` is left as
+computed, so setting the state back to `Active` (after moving the end date or
 raising the maximum) resumes the schedule at its natural next slot. Lowering
 `max_occurrences` below the runs already made ends the task on its next due
 date without creating another issue.
+
+### States
+
+`Periodictask#state` is one of:
+
+| State | Set by | Scheduler | Lists |
+|---|---|---|---|
+| `active` (default) | the user | picks it up | normal row |
+| `inactive` | the user (pause without deleting) | skips it | greyed row |
+| `ended` | the checker, when the end condition is reached | skips it | greyed row, `#id` and subject struck through like a closed issue |
+
+`Run now` works in every state and never changes it. The form's `State`
+select offers `Active` and `Inactive`; `Ended` is listed only while the task
+is ended, so it can be left as is. `ended_at` is kept only while the state is
+`ended` (`sync_ended_at`). A copy of an ended task starts `active` with
+`occurrences_count = 0`; a copy of an inactive task stays inactive.
 
 Only scheduled runs count. `Run now` creates an issue and records it in the
 task history, but it does not advance the schedule and it does not increment
@@ -171,8 +187,9 @@ created nothing because the previous issue was still open (`skip`,
 `next_run_date` the run leaves behind, rescheduled or not.
 
 Validation: `end_date` must not be before `next_run_date` (for active tasks;
-an ended task keeps a next run past its end date, and a next run exactly on
-the end date is the last one) and `max_occurrences` must be greater than 0.
+an inactive or ended task keeps a next run past its end date, and a next run
+exactly on the end date is the last one) and `max_occurrences` must be
+greater than 0.
 Both are cleared when their box is unticked in the form.
 
 ## Previous issue still open
@@ -241,6 +258,9 @@ occurrence is counted from the rescheduled anchor as usual. A task without
 - The migration adds three nullable columns. No data migration is needed.
 - The end condition adds `end_date` and `max_occurrences` (nullable) and
   `occurrences_count` (default 0). Existing tasks keep repeating forever.
+  The same migration replaces the unreleased `is_active` boolean with the
+  `state` string (`active`/`inactive`/`ended`, indexed with `next_run_date`)
+  and adds `ended_at`; `is_active = false` rows become `inactive`.
 - `if_previous_open` is a `NOT NULL` string column defaulting to `create`, so
   existing tasks keep the old behaviour; `last_skipped_issue_id` and
   `last_skipped_at` are nullable scheduler state and are not copied by

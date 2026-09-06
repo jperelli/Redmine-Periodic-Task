@@ -149,11 +149,16 @@ en:
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
   label_end_condition: "Ends"
-  label_end_condition_info: "Optional. Tick \"On date\" and/or \"After N runs\"; the task is disabled when the first of them is reached. Manual \"Run now\" does not count."
+  label_end_condition_info: "Optional. Tick \"On date\" and/or \"After N runs\"; the task ends when the first of them is reached. Manual \"Run now\" does not count."
   label_end_on_date: "On date"
   label_end_after: "After"
   label_end_runs: "runs"
   label_ends_on_date: "Ends on %{date}"
+  label_periodictask_state: "State"
+  label_periodictask_state_active: "Active"
+  label_periodictask_state_inactive: "Inactive"
+  label_periodictask_state_ended: "Ended"
+  label_ended_on_date: "Ended on %{date}"
   label_end_runs_progress: "%{count} of %{max} runs"
   label_periodictask_journal_ended_by_date: "Periodic task ended (end date reached)"
   label_periodictask_journal_ended_by_count: "Periodic task ended (maximum number of runs reached)"

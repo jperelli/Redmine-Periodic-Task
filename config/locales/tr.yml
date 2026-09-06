@@ -149,11 +149,16 @@ tr:
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
   label_end_condition: "Bitiş"
-  label_end_condition_info: "İsteğe bağlı. \"Tarihte\" ve/veya \"N çalıştırmadan sonra\" seçeneğini işaretleyin; ilkine ulaşıldığında görev devre dışı bırakılır. \"Şimdi çalıştır\" sayılmaz."
+  label_end_condition_info: "İsteğe bağlı. \"Tarihte\" ve/veya \"N çalıştırmadan sonra\" seçeneğini işaretleyin; ilkine ulaşıldığında görev sona erer. \"Şimdi çalıştır\" sayılmaz."
   label_end_on_date: "Tarihte"
   label_end_after: "En fazla"
   label_end_runs: "çalıştırma"
   label_ends_on_date: "%{date} tarihinde biter"
+  label_periodictask_state: "Durum"
+  label_periodictask_state_active: "Etkin"
+  label_periodictask_state_inactive: "Devre dışı"
+  label_periodictask_state_ended: "Sona erdi"
+  label_ended_on_date: "%{date} tarihinde sona erdi"
   label_end_runs_progress: "%{max} çalıştırmanın %{count} tanesi"
   label_periodictask_journal_ended_by_date: "Periyodik görev sona erdi (bitiş tarihine ulaşıldı)"
   label_periodictask_journal_ended_by_count: "Periyodik görev sona erdi (en fazla çalıştırma sayısına ulaşıldı)"

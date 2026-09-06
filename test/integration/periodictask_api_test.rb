@@ -44,7 +44,8 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal 1, t['interval_number']
     assert_equal 'week', t['interval_units']
     assert_equal [1, 3], t['weekdays']
-    assert_equal true, t['is_active']
+    assert_equal 'active', t['state']
+    assert_nil t['ended_at']
     assert_equal task.next_run_date.xmlschema(0), t['next_run_date']
     assert_equal '2026-01-05T08:00:00Z', t['last_run']
     assert_nil t['last_error']
@@ -62,7 +63,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
         assert_select 'subject', text: 'XML listed'
         assert_select 'project[id="1"][name=eCookbook]'
         assert_select 'author[id="2"]'
-        assert_select 'is_active', text: 'true'
+        assert_select 'state', text: 'active'
       end
     end
   end
@@ -110,9 +111,10 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
       watcher_user_ids: [3], custom_field_values: { '1' => 'MySQL' },
       subtasks: [{ 'tracker_id' => '2', 'subject' => 'Sub', 'assigned_to_id' => '3', 'estimated_hours' => '2' }],
       relations: [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }],
-      last_error: 'boom', is_active: false,
+      last_error: 'boom', state: 'ended',
       end_date: Time.utc(2031, 1, 1, 9), max_occurrences: 5, occurrences_count: 2
     )
+    task.update_columns(ended_at: Time.utc(2026, 9, 5, 12))
 
     get "/projects/ecookbook/periodictask/#{task.id}.json", headers: api_headers
     assert_response :success
@@ -140,7 +142,8 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
                  t['subtasks']
     assert_equal [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }], t['relations']
     assert_equal 'boom', t['last_error']
-    assert_equal false, t['is_active']
+    assert_equal 'ended', t['state']
+    assert_equal '2026-09-05T12:00:00Z', t['ended_at']
     assert_equal '2031-01-01T09:00:00Z', t['end_date']
     assert_equal 5, t['max_occurrences']
     assert_equal 2, t['occurrences_count']
@@ -190,7 +193,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
         done_ratio: 10, watcher_user_ids: [3], custom_fields: [{ id: 1, value: 'PostgreSQL' }],
         subtasks: [{ subject: 'Child', tracker_id: 2 }],
         relations: [{ relation_type: 'relates', issue_id: 1 }],
-        is_active: false, end_date: '2030-12-31T09:00:00Z', max_occurrences: 12
+        state: 'inactive', end_date: '2030-12-31T09:00:00Z', max_occurrences: 12
       }
     }
     assert_difference('Periodictask.count') do
@@ -220,7 +223,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal '2', task.subtasks.first['tracker_id'].to_s
     assert_equal 'relates', task.relations.first['relation_type']
     assert_equal '1', task.relations.first['issue_id'].to_s
-    assert_equal false, task.is_active
+    assert_equal 'inactive', task.state
     assert_equal Time.utc(2030, 12, 31, 9), task.end_date
     assert_equal 12, task.max_occurrences
     assert_equal 0, task.occurrences_count
@@ -304,13 +307,13 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
                                     subtasks: [{ 'subject' => 'Keep me' }])
 
     put "/projects/ecookbook/periodictask/#{task.id}.json",
-        params: { periodictask: { subject: 'Renamed', is_active: false } }.to_json, headers: json_headers
+        params: { periodictask: { subject: 'Renamed', state: 'inactive' } }.to_json, headers: json_headers
     assert_response :no_content
     assert_equal '', @response.body
 
     task.reload
     assert_equal 'Renamed', task.subject
-    assert_equal false, task.is_active
+    assert_equal 'inactive', task.state
     assert_equal [1, 3], task.weekdays, 'attributes that are not sent are left unchanged'
     assert_equal 'Keep me', task.subtasks.first['subject']
   end

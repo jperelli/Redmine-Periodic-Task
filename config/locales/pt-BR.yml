@@ -149,11 +149,16 @@ pt-BR:
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
   label_end_condition: "Termina"
-  label_end_condition_info: "Opcional. Marque \"Na data\" e/ou \"Após N execuções\"; a tarefa é desativada ao atingir a primeira. \"Executar agora\" não conta."
+  label_end_condition_info: "Opcional. Marque \"Na data\" e/ou \"Após N execuções\"; a tarefa é encerrada ao atingir a primeira. \"Executar agora\" não conta."
   label_end_on_date: "Na data"
   label_end_after: "Após"
   label_end_runs: "execuções"
   label_ends_on_date: "Termina em %{date}"
+  label_periodictask_state: "Estado"
+  label_periodictask_state_active: "Ativa"
+  label_periodictask_state_inactive: "Inativa"
+  label_periodictask_state_ended: "Encerrada"
+  label_ended_on_date: "Encerrada em %{date}"
   label_end_runs_progress: "%{count} de %{max} execuções"
   label_periodictask_journal_ended_by_date: "Tarefa periódica encerrada (data final atingida)"
   label_periodictask_journal_ended_by_count: "Tarefa periódica encerrada (número máximo de execuções atingido)"

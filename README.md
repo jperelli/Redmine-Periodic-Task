@@ -179,7 +179,7 @@ The plugin configuration page (*Administration → Plugins → Redmine periodict
 
 The *Run checker now* button on the same page runs the checker immediately, which is handy to test a setup without waiting for the scheduler.
 
-*Administration → Periodic Tasks* lists the tasks of every project in one table (disabled tasks and tasks whose last run failed are marked), with links to each task's detail and edit pages.
+*Administration → Periodic Tasks* lists the tasks of every project in one table (inactive and ended tasks are greyed out, tasks whose last run failed are marked), with links to each task's detail and edit pages.
 
 ![Scheduler log on the plugin settings page, with a highlighted failed run](doc/screenshots/scheduler_log.png)
 
@@ -195,7 +195,11 @@ A task repeats every N days, business days, weeks, months or years. A weekly tas
 
 ### End condition
 
-By default a task repeats forever. The `Ends` control of the form can stop it *on a date* and/or *after N runs*; when both are set, whichever comes first applies. Once the scheduler creates a run and the next one would fall after the end date, or the number of scheduled runs reaches N, the task is disabled (the `Active` flag is unticked, so the lock marker appears in the lists) and an entry such as *Periodic task ended (maximum number of runs reached)* is written to the project activity. The task lists and detail page show `Ends on <date>` and `<n> of <max> runs` next to the schedule. `Run now` does not count towards N, nor does an occurrence skipped because the previous issue was still open (see [Previous issue open](#previous-issue-open)). Re-tick `Active` (after moving the end date or raising N) to resume the task; the copy action keeps the end condition and starts the count at 0.
+By default a task repeats forever. The `Ends` control of the form can stop it *on a date* and/or *after N runs*; when both are set, whichever comes first applies. Once the scheduler creates a run and the next one would fall after the end date, or the number of scheduled runs reaches N, the task's state becomes *Ended* and an entry such as *Periodic task ended (maximum number of runs reached)* is written to the project activity. The task lists and detail page show `Ends on <date>` and `<n> of <max> runs` next to the schedule. `Run now` does not count towards N, nor does an occurrence skipped because the previous issue was still open (see [Previous issue open](#previous-issue-open)). Set the state back to *Active* (after moving the end date or raising N) to resume the task; the copy action keeps the end condition, starts the count at 0 and starts active.
+
+### State
+
+Each task is *Active*, *Inactive* or *Ended*. *Active* tasks are picked up by the scheduler. *Inactive* is a pause you set yourself in the form to stop a task without deleting it. *Ended* is set by the scheduler when the end condition is reached; the detail page shows *Ended on <date>*. Inactive and ended tasks are skipped by the scheduler but keep their schedule and can still be run with `Run now`. In the task lists inactive tasks are greyed out and ended tasks are greyed out and struck through, like closed issues.
 
 ### Previous issue open
 
@@ -285,7 +289,7 @@ Periodic tasks can be listed, created, updated, deleted and run through Redmine'
 
 `:project_id` is the project's numeric id or identifier. Replace `.json` with `.xml` for XML. Add `include=issues` to `GET` requests to list the issues each task generated (`issues: [{id, created_at}]`). A task from another project answers `404`, a missing permission `403`, validation errors `422` with `{"errors": ["Subject cannot be blank", ...]}`; the same rules that the form applies (the task is validated as the issue it would create).
 
-A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `is_active`, `next_run_date`, `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
+A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `state` (`active`, `inactive` or `ended`), `ended_at`, `next_run_date`, `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
 
 Attributes accepted on create/update, under a `periodictask` key (the same the form posts):
 
@@ -300,7 +304,8 @@ Attributes accepted on create/update, under a `periodictask` key (the same the f
 | `end_date`, `max_occurrences` | End condition: ISO 8601 time and/or a positive integer; blank for none (see *End condition*) |
 | `set_start_date` | Boolean, set the issue start date to the generation date |
 | `due_date_number`, `due_date_units` | Due date as an offset from the generation date |
-| `estimated_hours`, `done_ratio`, `is_active` | Number, integer 0-100, boolean |
+| `estimated_hours`, `done_ratio` | Number, integer 0-100 |
+| `state` | `active` or `inactive` (`ended` is set by the scheduler; sending `active` resumes an ended task) |
 | `custom_fields` or `custom_field_values` | `[{"id": 1, "value": "MySQL"}]` like the core issues API, or a `{"1": "MySQL"}` hash |
 | `watcher_user_ids` | Array of user ids |
 | `subtasks` | Array of `{tracker_id, subject, assigned_to_id, estimated_hours}` |

@@ -36,8 +36,13 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   # Identity, ownership and the outcome of past runs belong to the source task;
   # everything else (including the end condition) describes the template and
   # is worth copying.
-  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error occurrences_count
+  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error occurrences_count ended_at
                                 last_skipped_issue_id last_skipped_at].freeze
+
+  # active: picked up by the scheduler. inactive: paused by a user. ended: the
+  # scheduler reached the end condition; the user can set it back to active
+  # (or inactive) after changing that condition.
+  STATES = %w[active inactive ended].freeze
 
   # Subtask templates: array of hashes with SUBTASK_KEYS, each becoming a child
   # issue of the generated issue. Accepts an array or an index-keyed hash as
@@ -188,12 +193,26 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   validate :validate_subtasks_and_relations
   validate :validate_recurrence
   validate :validate_end_condition
+  validates :state, inclusion: { in: STATES }
   before_validation :clear_irrelevant_recurrence_options
+  before_validation :sync_ended_at
   before_validation { self.if_previous_open = IF_PREVIOUS_OPEN_MODES.first if if_previous_open.blank? }
 
-  # Tasks the scheduler picks up. A disabled task keeps its schedule and can
-  # still be run by hand from the list or detail page.
-  scope :active, -> { where(is_active: true) }
+  # Tasks the scheduler picks up. An inactive or ended task keeps its schedule
+  # and can still be run by hand from the list or detail page.
+  scope :active, -> { where(state: 'active') }
+
+  def active?
+    state == 'active'
+  end
+
+  def inactive?
+    state == 'inactive'
+  end
+
+  def ended?
+    state == 'ended'
+  end
 
   scope :accessible, lambda {
     if User.current.allowed_to?(:periodictask, nil, global: true)
@@ -274,6 +293,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   # project and author of this one untouched.
   def copy_from(source)
     self.attributes = source.attributes.except(*COPY_EXCLUDED_ATTRIBUTES)
+    self.state = 'active' if ended?
     self
   end
 
@@ -545,11 +565,12 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     end_reason.present?
   end
 
-  # Disables the task and records the reason in the activity log; the caller
-  # saves. The schedule is kept, so the task can be reactivated after its end
-  # condition is changed.
+  # Moves the task to the ended state and records the reason in the activity
+  # log; the caller saves. The schedule is kept, so the task can be
+  # reactivated after its end condition is changed.
   def mark_ended(reason, user = User.current)
-    self.is_active = false
+    self.state = 'ended'
+    self.ended_at = Time.current
     log_activity(reason, user)
   end
 
@@ -693,14 +714,18 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   end
 
   # An active task whose end date is before its next run would never run
-  # again; a next run exactly on the end date is the last one. Disabled tasks
-  # are exempt: the scheduler stores a next run past the end date when it ends
-  # a task, and that task must stay editable.
+  # again; a next run exactly on the end date is the last one. Inactive and
+  # ended tasks are exempt: the scheduler stores a next run past the end date
+  # when it ends a task, and that task must stay editable.
   def validate_end_condition
     errors.add(:base, l(:error_max_occurrences_not_positive)) if max_occurrences.present? && max_occurrences < 1
-    return unless is_active? && end_date.present? && next_run_date.present? && end_date < next_run_date
+    return unless active? && end_date.present? && next_run_date.present? && end_date < next_run_date
 
     errors.add(:base, l(:error_end_date_before_next_run))
+  end
+
+  def sync_ended_at
+    self.ended_at = ended? ? (ended_at || Time.current) : nil
   end
 
   # Hidden recurrence inputs are still posted by the form; only keep the ones

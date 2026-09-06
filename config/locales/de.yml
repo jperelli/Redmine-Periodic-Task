@@ -149,11 +149,16 @@ de:
   label_periodictask_run_source_manual: 'Manuell'
   label_periodictask_run_until: 'bis %{time}'
   label_end_condition: "Endet"
-  label_end_condition_info: "Optional. \"Am Datum\" und/oder \"Nach N Ausführungen\" ankreuzen; die Aufgabe wird deaktiviert, sobald das erste davon erreicht ist. \"Jetzt ausführen\" zählt nicht."
+  label_end_condition_info: "Optional. \"Am Datum\" und/oder \"Nach N Ausführungen\" ankreuzen; die Aufgabe endet, sobald das erste davon erreicht ist. \"Jetzt ausführen\" zählt nicht."
   label_end_on_date: "Am Datum"
   label_end_after: "Nach"
   label_end_runs: "Ausführungen"
   label_ends_on_date: "Endet am %{date}"
+  label_periodictask_state: "Status"
+  label_periodictask_state_active: "Aktiv"
+  label_periodictask_state_inactive: "Inaktiv"
+  label_periodictask_state_ended: "Beendet"
+  label_ended_on_date: "Beendet am %{date}"
   label_end_runs_progress: "%{count} von %{max} Ausführungen"
   label_periodictask_journal_ended_by_date: "Periodische Aufgabe beendet (Enddatum erreicht)"
   label_periodictask_journal_ended_by_count: "Periodische Aufgabe beendet (maximale Anzahl Ausführungen erreicht)"

@@ -34,9 +34,9 @@
       rows.right l(:label_next_run_date),
                  periodictask_time_with_title(@periodictask.next_run_date),
                  class: 'next-run-date'
-      rows.left l(:field_active),
-                checked_image(@periodictask.is_active?),
-                class: 'active'
+      rows.left l(:label_periodictask_state),
+                content_tag(:span, periodictask_state_description(@periodictask), class: "periodictask-state #{@periodictask.state}"),
+                class: 'state'
       rows.right l(:label_if_previous_open),
                  content_tag(:span, periodictask_if_previous_open_label(@periodictask.if_previous_open),
                              title: periodictask_if_previous_open_description(@periodictask.if_previous_open)),

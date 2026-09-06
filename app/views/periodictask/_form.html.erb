@@ -7,8 +7,11 @@
 <fieldset class="box tabular">
   <legend><%= l(:label_periodictask_configuration) %></legend>
   <p>
-    <%= label(:periodictask, :is_active, l(:field_active)) %>
-    <%= f.check_box :is_active %>
+    <%= label(:periodictask, :state, l(:label_periodictask_state)) %>
+    <%= f.select :state, periodictask_state_options(@periodictask), {}, { :style => 'width: auto' } %>
+    <% if @periodictask.ended? && @periodictask.ended_at %>
+      <em class="info periodictask-ended-at"><%= l(:label_ended_on_date, date: format_time(@periodictask.ended_at)) %></em>
+    <% end %>
   </p>
   <p>
     <%= label(:periodictask, :interval_number) do %><%= l(:label_interval) %> <span class="required">*</span><% end %>
