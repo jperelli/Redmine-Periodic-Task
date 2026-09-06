@@ -175,7 +175,7 @@
         <% @periodictask.relations.each do |row| %>
           <li>
             <%= periodictask_relation_type_label(row['relation_type']) %>
-            <%= periodictask_issue_link(row['issue_id']) %>
+            <%= periodictask_relation_target(row) %>
             <% if row['delay'].present? && %w[precedes follows].include?(row['relation_type']) %>
               (<%= l(:field_delay).downcase %>: <%= row['delay'] %> <%= l(:label_day_plural) %>)
             <% end %>

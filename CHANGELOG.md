@@ -15,6 +15,7 @@
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
 - Attachments on periodic tasks: files attached to a task (Redmine's standard *Files* field) are copied onto every generated issue as the issue's own attachments; the `Copy` action can copy them onto the new task, and they are deleted with the task (@jperelli)
+- Link each generated issue to the previous occurrence: the `**PREVIOUS_ISSUE**` variable renders `#<id>` of the issue the task created on its previous run (`**PREVIOUS_ISSUE-2**` the one before, empty on the first run), and a relation target *Previous generated issue* creates a relation of any type (`relates`, `follows`, `precedes`...) from each new issue to the previous one, skipped on the first run (@jperelli)
 - Add a `Create periodic task from this issue` link to the issue sidebar that opens the new task form prefilled from the issue (template fields, custom fields, watchers, tags and checklist template; first run preset to a future due date) (@jperelli)
 
 ### Fixes
