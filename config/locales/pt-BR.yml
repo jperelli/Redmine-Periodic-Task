@@ -67,6 +67,8 @@ pt-BR:
   label_periodictask_history: Tarefas geradas
   label_periodictask_no_history: Nenhuma tarefa foi gerada por esta tarefa periódica ainda
   label_issue_created_by_periodictask: Criada automaticamente pela tarefa periódica
+  field_periodictask: Tarefa periódica
+  label_periodictask_all_issues: Todas as tarefas geradas por esta tarefa periódica
   label_periodic_task: Tarefa periódica
   label_periodictask_template: Modelo
   label_periodictask_plural: Tarefas periódicas

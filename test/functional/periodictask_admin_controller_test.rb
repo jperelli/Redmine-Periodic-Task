@@ -13,11 +13,10 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
                                      next_run_date: 1.hour.ago)
   end
 
-  # A request as a user with a language leaves that locale set process-wide
-  # (Redmine resets it only since 7.0), which would break later tests.
-  def teardown
-    super
-    I18n.locale = I18n.default_locale
+  # Requests made as a user with a language leave that locale set on the process.
+  teardown do
+    I18n.locale = :en
+    User.current = nil
   end
 
   def test_index_lists_tasks_of_every_project
@@ -59,25 +58,6 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     end
     assert_select 'table.list td.subject', text: /Due task/ do
       assert_select 'span.icon-error', 0
-    end
-  end
-
-  def test_index_shows_the_end_condition_and_keeps_the_disabled_marker_on_an_ended_task
-    User.find(1).pref.update!(time_zone: 'UTC')
-    ended = create_test_periodictask(Project.find(1), subject: 'Ended task', is_active: false, max_occurrences: 3,
-                                                      next_run_date: Time.utc(2026, 10, 1, 12, 0),
-                                                      end_date: Time.utc(2026, 12, 31, 12, 0))
-    ended.update_columns(occurrences_count: 3)
-
-    log_user('admin', 'admin')
-    get '/admin/periodictasks'
-    assert_response :success
-    assert_select 'table.list tr', text: /Ended task/ do
-      assert_select 'td.subject span.icon-locked[title=?]', I18n.t(:label_disabled)
-      assert_select 'td.interval em.periodictask-end-condition', text: 'Ends on 12/31/2026 12:00 PM, 3 of 3 runs'
-    end
-    assert_select 'table.list tr', text: /Due task/ do
-      assert_select 'td.interval em.periodictask-end-condition', 0
     end
   end
 

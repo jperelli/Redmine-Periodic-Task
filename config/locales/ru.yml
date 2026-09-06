@@ -67,6 +67,8 @@ ru:
   label_periodictask_history: Созданные задачи
   label_periodictask_no_history: Эта задача ещё не создала ни одной задачи
   label_issue_created_by_periodictask: Автоматически создано периодической задачей
+  field_periodictask: Периодическая задача
+  label_periodictask_all_issues: Все задачи, созданные этой периодической задачей
   label_periodic_task: Периодическая задача
   label_periodictask_template: Шаблон
   label_periodictask_plural: Периодические задачи
