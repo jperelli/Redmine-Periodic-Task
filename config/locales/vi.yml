@@ -156,4 +156,6 @@ vi:
   label_recurrence_weekend_adjustment_next_working_day: "ngày không làm việc được chuyển sang ngày làm việc tiếp theo"
   label_recurrence_weekend_adjustment_previous_working_day: "ngày không làm việc được chuyển sang ngày làm việc trước đó"
   label_weekend_adjustment_moved_from: "chuyển từ %{date}"
+  label_attachments_info: "Các tệp đính kèm vào mẫu được sao chép vào mỗi vấn đề được tạo."
+  error_attachment_copy_failed: 'Không thể sao chép tệp đính kèm "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'

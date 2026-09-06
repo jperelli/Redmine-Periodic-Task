@@ -154,4 +154,6 @@ bg:
   label_recurrence_weekend_adjustment_next_working_day: "неработните дни се местят на следващия работен ден"
   label_recurrence_weekend_adjustment_previous_working_day: "неработните дни се местят на предишния работен ден"
   label_weekend_adjustment_moved_from: "преместено от %{date}"
+  label_attachments_info: "Файловете, прикачени към шаблона, се копират във всяка създадена задача."
+  error_attachment_copy_failed: 'Прикаченият файл "%{filename}" не можа да бъде копиран: %{error}'
   label_new_periodictask_from_issue: 'Създай периодична задача от тази задача'

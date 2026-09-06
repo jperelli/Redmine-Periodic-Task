@@ -154,4 +154,6 @@ tr:
   label_recurrence_weekend_adjustment_next_working_day: "çalışılmayan günler sonraki iş gününe taşınır"
   label_recurrence_weekend_adjustment_previous_working_day: "çalışılmayan günler önceki iş gününe taşınır"
   label_weekend_adjustment_moved_from: "%{date} tarihinden taşındı"
+  label_attachments_info: "Şablona eklenen dosyalar oluşturulan her işe kopyalanır."
+  error_attachment_copy_failed: '"%{filename}" eki kopyalanamadı: %{error}'
   label_new_periodictask_from_issue: 'Bu işten periyodik iş oluştur'

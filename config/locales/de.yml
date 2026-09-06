@@ -154,4 +154,6 @@ de:
   label_recurrence_weekend_adjustment_next_working_day: "arbeitsfreie Tage auf den nächsten Arbeitstag verschoben"
   label_recurrence_weekend_adjustment_previous_working_day: "arbeitsfreie Tage auf den vorherigen Arbeitstag verschoben"
   label_weekend_adjustment_moved_from: "verschoben von %{date}"
+  label_attachments_info: "An die Vorlage angehängte Dateien werden auf jedes erstellte Ticket kopiert."
+  error_attachment_copy_failed: 'Der Anhang "%{filename}" konnte nicht kopiert werden: %{error}'
   label_new_periodictask_from_issue: 'Wiederholende Aufgabe aus diesem Ticket erstellen'

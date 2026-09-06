@@ -203,6 +203,12 @@ The `Non-working days` option of a task decides what happens when a run falls on
 
 The time of day is kept and the schedule itself is not moved: "every month on day 1" still means the 1st, so the next run after a moved August 1st is September 1st. The task list and detail page show the day the task will actually run, with the original date next to it.
 
+### Attachments
+
+A periodic task can carry files (a checklist PDF, a form, a template spreadsheet...): the task form has Redmine's standard *Files* field, and the detail page lists the attached files with the usual download and delete links. Every issue the task generates gets its own copy of each file, with the same author and description, so deleting a file on a generated issue never touches the template (nor the copies on other issues). Copying a task offers to copy its attachments onto the new task, and deleting a task deletes its attachments. A file that cannot be copied (for example because it is missing from the file system) does not prevent the issue from being created; the failure is shown in the task's *Last error*. Viewing, adding and deleting files is governed by the *Periodic tasks* permission of the project.
+
+![Periodic task form with the Files field](doc/screenshots/attachments_form.png)
+
 ### Assignee
 
 The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
