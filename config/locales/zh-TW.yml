@@ -155,4 +155,6 @@ zh-TW:
   label_rotation_not_assignable: "無法分派"
   label_rotation_move_up: "上移"
   label_rotation_move_down: "下移"
+  label_attachments_info: "附加到範本的檔案會複製到每個建立的議題。"
+  error_attachment_copy_failed: '無法複製附件「%{filename}」：%{error}'
   label_new_periodictask_from_issue: '從此議題建立週期任務'

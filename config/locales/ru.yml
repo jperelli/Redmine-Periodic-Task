@@ -158,4 +158,6 @@ ru:
   label_rotation_not_assignable: "нельзя назначить"
   label_rotation_move_up: "Вверх"
   label_rotation_move_down: "Вниз"
+  label_attachments_info: "Файлы, прикреплённые к шаблону, копируются в каждую созданную задачу."
+  error_attachment_copy_failed: 'Не удалось скопировать вложение "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Создать периодическую задачу из этой задачи'

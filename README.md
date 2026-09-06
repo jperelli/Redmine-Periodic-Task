@@ -193,6 +193,12 @@ On an issue page, the sidebar of a project with the module enabled shows *Period
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
 
+### Attachments
+
+A periodic task can carry files (a checklist PDF, a form, a template spreadsheet...): the task form has Redmine's standard *Files* field, and the detail page lists the attached files with the usual download and delete links. Every issue the task generates gets its own copy of each file, with the same author and description, so deleting a file on a generated issue never touches the template (nor the copies on other issues). Copying a task offers to copy its attachments onto the new task, and deleting a task deletes its attachments. A file that cannot be copied (for example because it is missing from the file system) does not prevent the issue from being created; the failure is shown in the task's *Last error*. Viewing, adding and deleting files is governed by the *Periodic tasks* permission of the project.
+
+![Periodic task form with the Files field](doc/screenshots/attachments_form.png)
+
 ### Assignee
 
 The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.

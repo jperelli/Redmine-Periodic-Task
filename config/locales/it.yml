@@ -153,4 +153,6 @@ it:
   label_rotation_not_assignable: "non assegnabile"
   label_rotation_move_up: "Sposta su"
   label_rotation_move_down: "Sposta giù"
+  label_attachments_info: "I file allegati al modello vengono copiati su ogni segnalazione generata."
+  error_attachment_copy_failed: "Impossibile copiare l'allegato \"%{filename}\": %{error}"
   label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'
