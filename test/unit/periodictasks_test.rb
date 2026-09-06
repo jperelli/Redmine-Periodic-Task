@@ -5,9 +5,23 @@ class PeriodictasksTest < ActiveSupport::TestCase
            :enumerations, :enabled_modules, :roles, :members, :member_roles,
            :versions, :issue_categories, :issues, :attachments
 
+  # Runs before_lock right before the row lock the checker takes on a task,
+  # standing in for another trigger that gets to the task first.
+  cattr_accessor :before_lock
+  Periodictask.prepend(Module.new do
+    def lock!(*args)
+      PeriodictasksTest.before_lock&.call(self)
+      super
+    end
+  end)
+
   def setup
     @project = Project.find(1)
     EnabledModule.create!(project: @project, name: 'periodictask')
+  end
+
+  def teardown
+    self.class.before_lock = nil
   end
 
   def test_create_valid_periodictask
@@ -1573,6 +1587,38 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil task.last_error
   end
 
+  def test_checker_uses_the_rotation_position_read_under_the_row_lock
+    task = create_rotation_task(rotation_ids: [3, 2], next_run_date: 1.day.ago)
+
+    # Another trigger moved the rotation on between the due-task query and the lock.
+    while_locking(task) { Periodictask.where(id: task.id).update_all(rotation_index: 1) }
+    ScheduledTasksChecker.checktasks!
+
+    task.reload
+    assert_equal 2, task.created_issues.first.assigned_to_id
+    assert_equal 0, task.rotation_index
+  end
+
+  def test_checker_skips_a_task_another_trigger_ran_before_the_row_lock
+    task = create_rotation_task(rotation_ids: [3, 2], next_run_date: 1.day.ago)
+
+    while_locking(task) do
+      Periodictask.where(id: task.id).update_all(rotation_index: 1, next_run_date: 1.day.from_now)
+    end
+    assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+
+    assert_equal 1, task.reload.rotation_index
+  end
+
+  def test_checker_skips_a_task_deactivated_before_the_row_lock
+    task = create_rotation_task(rotation_ids: [3, 2], next_run_date: 1.day.ago)
+
+    while_locking(task) { Periodictask.where(id: task.id).update_all(is_active: false) }
+    assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+
+    assert_equal 0, task.reload.rotation_index
+  end
+
   def test_checker_skips_a_rotation_user_who_got_locked_after_being_listed
     task = create_rotation_task(rotation_ids: [3, 2], next_run_date: 1.day.ago)
     User.find(3).lock!
@@ -1630,6 +1676,10 @@ class PeriodictasksTest < ActiveSupport::TestCase
       subject: 'Rotation task', interval_number: 1, interval_units: 'month',
       next_run_date: 1.month.from_now
     }.merge(attrs))
+  end
+
+  def while_locking(task, &block)
+    self.class.before_lock = ->(locked) { block.call if locked.id == task.id }
   end
 
   # What run_now and the checker do around generate_issue.

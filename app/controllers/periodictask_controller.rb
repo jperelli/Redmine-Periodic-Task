@@ -179,19 +179,24 @@ class PeriodictaskController < ApplicationController
   # Generate an issue right now from the task config, without touching the
   # schedule. Handy for testing a task before its next run date arrives.
   def run_now
-    @issue = @periodictask.generate_issue(Time.current)
+    now = Time.current
     @run_errors = []
 
-    if @issue.nil?
-      @run_errors << l(:label_project_missing_or_closed)
-      @periodictask.update(last_error: @run_errors.join(', '))
-    elsif @issue.save
-      @periodictask.log_activity('run')
-      @run_errors = @periodictask.complete_generated_issue(@issue, Time.current)
-      @periodictask.update(last_error: @run_errors.join(', ').presence)
-    else
-      @run_errors = @issue.errors.full_messages
-      @periodictask.update(last_error: @run_errors.join(', '))
+    # Same row lock as the scheduler: the task (rotation position, last_error)
+    # is saved before another trigger can generate from it.
+    @periodictask.with_lock do
+      @issue = @periodictask.generate_issue(now)
+      if @issue.nil?
+        @run_errors << l(:label_project_missing_or_closed)
+        @periodictask.update(last_error: @run_errors.join(', '))
+      elsif @issue.save
+        @periodictask.log_activity('run')
+        @run_errors = @periodictask.complete_generated_issue(@issue, now)
+        @periodictask.update(last_error: @run_errors.join(', ').presence)
+      else
+        @run_errors = @issue.errors.full_messages
+        @periodictask.update(last_error: @run_errors.join(', '))
+      end
     end
 
     respond_to do |format|

@@ -1378,6 +1378,16 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 0, task.reload.rotation_index
   end
 
+  def test_run_now_generates_and_saves_under_the_task_row_lock
+    task = create_test_periodictask(rotation_ids: [3, 2])
+    Periodictask.any_instance.expects(:with_lock).once.yields
+
+    assert_difference('Issue.count') { post :run_now, params: { project_id: 'ecookbook', id: task.id } }
+
+    assert_response :redirect
+    assert_equal 1, task.reload.rotation_index
+  end
+
   def test_copy_prefills_the_rotation_and_restarts_it
     task = create_test_periodictask(rotation_ids: [3, 2], rotation_index: 1)
 

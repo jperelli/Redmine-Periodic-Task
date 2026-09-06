@@ -15,12 +15,20 @@ class ScheduledTasksChecker
     I18n.with_locale(ENV['LOCALE'] || I18n.default_locale) do
       tasks.each do |task|
         as_user(task.author) do
-          run = TaskRun.new(task, now)
-          run.execute
-          issues_created += 1 if run.issue_created?
-          errors.concat(run.errors)
-          notes.concat(run.notes)
-          task.save
+          # Cron, the web scheduler, the endpoint and Run now can fire together:
+          # the row is locked from generating the issue until the task (schedule,
+          # rotation position) is saved. lock! reloads the task, so re-check that
+          # another trigger has not just run it.
+          task.with_lock do
+            next unless task.is_active && task.due_by?(now)
+
+            run = TaskRun.new(task, now)
+            run.execute
+            issues_created += 1 if run.issue_created?
+            errors.concat(run.errors)
+            notes.concat(run.notes)
+            task.save
+          end
         end
       end
     end
