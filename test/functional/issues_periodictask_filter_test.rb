@@ -57,6 +57,9 @@ class IssuesPeriodictaskFilterTest < ActionController::TestCase
     assert_response :success
     assert_select "tr#issue-#{@generated.id} td.subject span.periodictask-generated[title=?]",
                   "Automatically created by periodic task ##{@task.id}"
+    marker = "tr#issue-#{@generated.id} td.subject span.periodictask-generated"
+    assert_select "#{marker} + a", text: @generated.subject
+    assert_select "#{marker} svg.s14" if Redmine::VERSION::MAJOR >= 6
     assert_select "tr#issue-#{@manual.id} td.subject span.periodictask-generated", count: 0
   end
 
