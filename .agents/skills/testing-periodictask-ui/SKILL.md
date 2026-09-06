@@ -32,6 +32,20 @@ Login: admin / admin at http://localhost:3000/login (Redmine may force a passwor
   `/settings?tab=integrations` rather than an API tab.
 - The project REST collection uses the singular path `/projects/<identifier>/periodictask.json`.
   Use REST API authentication (API key or local admin basic auth), not copied browser cookies.
+- The admin collection is `/admin/periodictasks` (Administration > Periodic Tasks).
+  It has a subject column but no task-ID column.
+
+### Browser evidence and Redmine conventions
+- Redmine core styles `em.info` as a block field hint with normal font style. Do not
+  infer an italic/inline rendering from the element name alone.
+- Core `label_disabled` can render lowercase `disabled` in English. Check the
+  acceptance criteria with the lead before reporting capitalization as a defect.
+- For Chrome `datetime-local` fields, click each month/day/year/hour/minute segment
+  and type digits. Two-digit entries may auto-advance, so an extra Right key can
+  skip a segment. Verify the complete visible date/time before saving.
+- For CDP full-page screenshots, discover Chrome's actual `--remote-debugging-port`
+  from its running process rather than assuming port 9222; verify the capture
+  helper before starting the feature recording.
 
 ## Setting up a project for periodic tasks
 1. Create a project (Projects > New project) and tick the "Periodic tasks" module (`project_module_periodictask`).
