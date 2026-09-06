@@ -41,6 +41,10 @@ Redmine::Plugin.register :periodictask do
                { periodictask: %i[index show new create copy edit update destroy customfields run_now tags] }
   end
 
+  # Lets Redmine's attachments controller (edit all / download all) address
+  # the files of a task through attachments/periodictasks/:id.
+  attachment_object_type Periodictask
+
   # Surface create/update/delete of periodic tasks in the activity log, gated by
   # the :periodictask permission (see PeriodictaskJournal).
   activity_provider :periodictasks, class_name: 'PeriodictaskJournal'

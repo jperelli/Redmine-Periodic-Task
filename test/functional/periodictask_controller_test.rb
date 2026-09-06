@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class PeriodictaskControllerTest < ActionController::TestCase
   fixtures :projects, :users, :email_addresses, :roles, :members, :member_roles,
            :trackers, :projects_trackers, :enabled_modules, :issue_statuses,
-           :enumerations, :issue_categories, :issues, :versions
+           :enumerations, :issue_categories, :issues, :versions, :attachments
 
   def setup
     @project = Project.find(1)
@@ -876,6 +876,250 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = create_test_periodictask
     get :index, params: { project_id: 'ecookbook' }
     assert_select 'a[href=?]', copy_periodictask_path(project_id: 'ecookbook', id: task.id)
+  end
+
+  def test_new_renders_the_attachments_field
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'form[enctype="multipart/form-data"] #periodictask_attachments input[type=file][name=?]',
+                  'attachments[dummy][file]'
+    assert_select 'input[name=copy_attachments]', 0
+  end
+
+  def test_create_with_attachment
+    set_tmp_attachments_directory
+    assert_difference('Periodictask.count') do
+      assert_difference('Attachment.count') do
+        post :create, params: {
+          project_id: 'ecookbook',
+          periodictask: { subject: 'With file', tracker_id: 1, assigned_to_id: 2,
+                          interval_number: 1, interval_units: 'month', next_run_date: 1.month.from_now.to_s },
+          attachments: { '1' => { 'file' => uploaded_test_file('testfile.txt', 'text/plain'),
+                                  'description' => 'Checklist' } }
+        }
+      end
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    task = Periodictask.find_by(subject: 'With file')
+    attachment = task.attachments.to_a.tap { |files| assert_equal 1, files.size }.first
+    assert_equal 'testfile.txt', attachment.filename
+    assert_equal 'Checklist', attachment.description
+    assert_equal 2, attachment.author_id
+    assert attachment.readable?
+  end
+
+  def test_create_with_invalid_task_keeps_the_upload_for_the_rerendered_form
+    set_tmp_attachments_directory
+    assert_no_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: { subject: 'Bad task', tracker_id: 1, interval_number: nil, interval_units: 'month' },
+        attachments: { '1' => { 'file' => uploaded_test_file('testfile.txt', 'text/plain') } }
+      }
+    end
+    assert_response :success
+    attachment = Attachment.order(:id).last
+    assert_nil attachment.container_id
+    assert_select 'input[name=?][value=?]', 'attachments[p0][token]', attachment.token
+  end
+
+  def test_update_with_attachment
+    set_tmp_attachments_directory
+    task = create_test_periodictask
+    assert_difference('Attachment.count') do
+      patch :update, params: {
+        project_id: 'ecookbook',
+        id: task.id,
+        periodictask: { subject: 'Updated subject' },
+        attachments: { '1' => { 'file' => uploaded_test_file('testfile.txt', 'text/plain') } }
+      }
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    task.reload
+    assert_equal 'Updated subject', task.subject
+    assert_equal ['testfile.txt'], task.attachments.map(&:filename)
+  end
+
+  def test_update_with_rejected_attachment_saves_the_task_and_warns
+    set_tmp_attachments_directory
+    task = create_test_periodictask
+    with_settings attachment_extensions_denied: 'txt' do
+      assert_no_difference('Attachment.count') do
+        patch :update, params: {
+          project_id: 'ecookbook',
+          id: task.id,
+          periodictask: { subject: 'Updated subject' },
+          attachments: { '1' => { 'file' => uploaded_test_file('testfile.txt', 'text/plain') } }
+        }
+      end
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    assert_equal 'Updated subject', task.reload.subject
+    assert_match(/1 file\(s\) could not be saved/, flash[:warning])
+  end
+
+  def test_show_lists_attachments_with_delete_links
+    set_fixtures_attachments_directory
+    task = create_test_periodictask
+    attachment = Attachment.find(4).copy(container: task)
+    attachment.save!
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'div.attachments' do
+      assert_select 'a[href^=?]', "/attachments/#{attachment.id}", text: 'source.rb'
+      assert_select 'a.delete[href=?][data-method=delete]', "/attachments/#{attachment.id}"
+    end
+  end
+
+  def test_edit_lists_attachments
+    set_fixtures_attachments_directory
+    task = create_test_periodictask
+    Attachment.find(4).copy(container: task).save!
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '#periodictask_attachments div.attachments a', text: 'source.rb'
+    assert_select 'form[enctype="multipart/form-data"] #periodictask_attachments input[type=file]'
+  end
+
+  def test_attachment_of_a_task_is_visible_and_deletable_with_the_periodictask_permission
+    set_fixtures_attachments_directory
+    task = create_test_periodictask
+    attachment = Attachment.find(4).copy(container: task)
+    attachment.save!
+
+    user = User.find(2)
+    assert attachment.visible?(user)
+    assert attachment.deletable?(user)
+
+    Role.find(1).remove_permission!(:periodictask)
+    user.reload
+    assert_not attachment.visible?(user)
+    assert_not attachment.deletable?(user)
+  end
+
+  def test_copy_form_offers_to_copy_the_attachments
+    set_fixtures_attachments_directory
+    task = create_test_periodictask
+    Attachment.find(4).copy(container: task).save!
+
+    get :copy, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'input[type=hidden][name=copy_from][value=?]', task.id.to_s
+    assert_select 'input[type=checkbox][name=copy_attachments][value="1"][checked=checked]'
+  end
+
+  def test_create_from_copy_copies_the_attachments
+    set_fixtures_attachments_directory
+    source = create_test_periodictask(subject: 'Source')
+    Attachment.find(4).copy(container: source, description: 'Form to fill in').save!
+
+    assert_difference('Attachment.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        copy_from: source.id,
+        copy_attachments: '1',
+        periodictask: { subject: 'Copied', tracker_id: 1, assigned_to_id: 2,
+                        interval_number: 1, interval_units: 'month', next_run_date: 1.month.from_now.to_s }
+      }
+    end
+    copy = Periodictask.find_by(subject: 'Copied')
+    attachment = copy.attachments.to_a.tap { |files| assert_equal 1, files.size }.first
+    assert_equal 'source.rb', attachment.filename
+    assert_equal 'Form to fill in', attachment.description
+    assert_equal 2, attachment.author_id
+    assert_not_equal source.attachments.first.id, attachment.id
+    assert_equal 1, source.attachments.count
+  end
+
+  def test_create_from_copy_without_copy_attachments_copies_nothing
+    set_fixtures_attachments_directory
+    source = create_test_periodictask(subject: 'Source')
+    Attachment.find(4).copy(container: source).save!
+
+    assert_no_difference('Attachment.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        copy_from: source.id,
+        periodictask: { subject: 'Copied', tracker_id: 1, assigned_to_id: 2,
+                        interval_number: 1, interval_units: 'month', next_run_date: 1.month.from_now.to_s }
+      }
+    end
+    assert_empty Periodictask.find_by(subject: 'Copied').attachments
+  end
+
+  def test_create_from_copy_ignores_a_source_from_another_project
+    set_fixtures_attachments_directory
+    other = Project.find(2)
+    EnabledModule.create!(project: other, name: 'periodictask')
+    source = Periodictask.create!(project: other, tracker_id: 1, assigned_to_id: 2, author_id: 2,
+                                  subject: 'Elsewhere', interval_number: 1, interval_units: 'month',
+                                  next_run_date: 1.month.from_now)
+    Attachment.find(4).copy(container: source).save!
+
+    assert_no_difference('Attachment.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        copy_from: source.id,
+        copy_attachments: '1',
+        periodictask: { subject: 'Copied', tracker_id: 1, assigned_to_id: 2,
+                        interval_number: 1, interval_units: 'month', next_run_date: 1.month.from_now.to_s }
+      }
+    end
+    assert_empty Periodictask.find_by(subject: 'Copied').attachments
+  end
+
+  def test_run_now_copies_the_attachments_onto_the_issue
+    set_fixtures_attachments_directory
+    task = create_test_periodictask(next_run_date: 1.month.from_now)
+    template_attachment = Attachment.find(4).copy(container: task, description: 'Checklist')
+    template_attachment.save!
+
+    assert_difference('Issue.count', 1) do
+      assert_difference('Attachment.count', 1) do
+        post :run_now, params: { project_id: 'ecookbook', id: task.id }
+      end
+    end
+    assert_nil task.reload.last_error
+    issue = task.created_issues.to_a.tap { |issues| assert_equal 1, issues.size }.first
+    copy = issue.attachments.to_a.tap { |copies| assert_equal 1, copies.size }.first
+    assert_not_equal template_attachment.id, copy.id
+    assert_equal 'source.rb', copy.filename
+    assert_equal 'Checklist', copy.description
+    assert_equal template_attachment.author_id, copy.author_id
+
+    issue.attachments.delete(copy)
+    assert Attachment.exists?(template_attachment.id)
+    assert template_attachment.reload.readable?
+  end
+
+  def test_run_now_records_attachment_copy_failures_in_last_error
+    set_tmp_attachments_directory
+    task = create_test_periodictask(next_run_date: 1.month.from_now)
+    Attachment.find(4).copy(container: task).save! # file not present under the tmp storage path
+
+    assert_difference('Issue.count', 1) do
+      assert_no_difference('Attachment.count') do
+        post :run_now, params: { project_id: 'ecookbook', id: task.id }
+      end
+    end
+    assert_match(/source\.rb/, task.reload.last_error)
+    assert_match(/source\.rb/, flash[:error])
+    assert_equal 1, task.created_issues.count
+  end
+
+  def test_destroy_deletes_the_attachments
+    set_fixtures_attachments_directory
+    task = create_test_periodictask
+    attachment = Attachment.find(4).copy(container: task)
+    attachment.save!
+
+    assert_difference('Attachment.count', -1) do
+      delete :destroy, params: { project_id: 'ecookbook', id: task.id }
+    end
+    assert_not Attachment.exists?(attachment.id)
+    assert Attachment.exists?(4) # the source record on issue 2 is untouched
   end
 
   def test_edit_offers_open_versions_and_keeps_the_configured_one

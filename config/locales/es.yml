@@ -164,4 +164,6 @@ es:
   text_periodictask_rescheduled_after_completion: "#%{id} se cerró, próxima ejecución reprogramada para %{time}"
   text_periodictask_last_skipped: "La ejecución del %{time} no creó ninguna petición: %{issue} seguía abierta."
   field_periodictask_run_notes: "Notas"
+  label_attachments_info: "Los archivos adjuntos a la plantilla se copian en cada incidencia generada."
+  error_attachment_copy_failed: 'No se pudo copiar el adjunto "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Crear tarea periódica a partir de esta petición'

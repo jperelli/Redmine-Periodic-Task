@@ -166,4 +166,6 @@ vi:
   text_periodictask_rescheduled_after_completion: "#%{id} đã được đóng, lần chạy tiếp theo được dời sang %{time}"
   text_periodictask_last_skipped: "Lần chạy lúc %{time} không tạo vấn đề: %{issue} vẫn còn mở."
   field_periodictask_run_notes: "Ghi chú"
+  label_attachments_info: "Các tệp đính kèm vào mẫu được sao chép vào mỗi vấn đề được tạo."
+  error_attachment_copy_failed: 'Không thể sao chép tệp đính kèm "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'

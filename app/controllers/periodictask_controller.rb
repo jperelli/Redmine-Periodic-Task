@@ -19,6 +19,7 @@ class PeriodictaskController < ApplicationController
   helper :issues
   helper :projects
   helper :watchers
+  helper :attachments
   helper :queries
   helper :sort
   include SortHelper
@@ -89,9 +90,13 @@ class PeriodictaskController < ApplicationController
     if blank_first_run && @periodictask.interval_number.to_i.positive?
       @periodictask.next_run_date = @periodictask.get_next_run_date(Time.current)
     end
+    find_copy_source
+    @periodictask.copy_attachments_from(@copy_from) if @copy_from && params[:copy_attachments] == '1'
+    @periodictask.save_attachments(params[:attachments])
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('create')
+      render_attachment_warning_if_needed(@periodictask)
       flash[:notice] = l(:flash_task_created)
       redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
@@ -103,7 +108,8 @@ class PeriodictaskController < ApplicationController
   # Prefills the new task form from an existing task; nothing is stored until
   # the form is submitted.
   def copy
-    @periodictask = build_periodictask.copy_from(@periodictask)
+    @copy_from = @periodictask
+    @periodictask = build_periodictask.copy_from(@copy_from)
     @issue = @periodictask.generate_issue
     render action: 'new'
   end
@@ -116,9 +122,11 @@ class PeriodictaskController < ApplicationController
   def update
     params[:periodictask][:project_id] = @project[:id]
     assign_periodictask_params
+    @periodictask.save_attachments(params[:attachments])
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('update')
+      render_attachment_warning_if_needed(@periodictask)
       flash[:notice] = l(:flash_task_saved)
       redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
     else
@@ -210,6 +218,13 @@ class PeriodictaskController < ApplicationController
 
   def project_periodictasks
     @project.periodictasks.accessible
+  end
+
+  # The task a submitted copy was prefilled from (the new form posts its id as
+  # copy_from), looked up in the URL project only. Sets @copy_from, nil when
+  # the form was not a copy.
+  def find_copy_source
+    @copy_from = project_periodictasks.find_by(id: params[:copy_from]) if params[:copy_from].present?
   end
 
   # Issue the new task is prefilled from (new?from_issue_id=). Like tasks, it

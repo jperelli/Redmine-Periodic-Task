@@ -1,4 +1,6 @@
-class Periodictask < ActiveRecord::Base
+# Redmine 6 includes acts_as_attachable into ApplicationRecord; Redmine 5
+# (Rails 6.1) has no ApplicationRecord and patches ActiveRecord::Base instead.
+class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRecord::Base)
   include Redmine::I18n
   extend Redmine::I18n
 
@@ -11,6 +13,11 @@ class Periodictask < ActiveRecord::Base
   belongs_to :last_skipped_issue, class_name: 'Issue', foreign_key: 'last_skipped_issue_id', optional: true
   has_many :periodictask_issues, dependent: :delete_all
   has_many :issues, through: :periodictask_issues
+  # Files attached to the template, copied onto every generated issue. The
+  # :periodictask permission covers viewing, adding and deleting them.
+  acts_as_attachable view_permission: :periodictask,
+                     edit_permission: :periodictask,
+                     delete_permission: :periodictask
   attribute :custom_field_values, :json
   attribute :watcher_user_ids, :json, default: []
   attribute :subtasks, :json, default: []
@@ -245,11 +252,36 @@ class Periodictask < ActiveRecord::Base
     ]
   end
 
+  # Whether +user+ may see the task (and its attachments) in its project.
+  def visible?(user = User.current)
+    project.present? && user.allowed_to?(:periodictask, project)
+  end
+
   # Takes over the schedule and issue template of another task, leaving the
   # project and author of this one untouched.
   def copy_from(source)
     self.attributes = source.attributes.except(*COPY_EXCLUDED_ATTRIBUTES)
     self
+  end
+
+  # Attaches copies of +source+'s files to this (unsaved) task; they are
+  # persisted together with it, like Redmine's issue copy does.
+  def copy_attachments_from(source)
+    self.attachments = source.attachments.map { |attachment| attachment.copy(container: self) }
+    self
+  end
+
+  # Copies the template's attachments onto the persisted +issue+ as records of
+  # its own (same author/description; the file on disk is shared and
+  # reference-counted by Redmine, as with an issue copy). Returns the error
+  # messages of the files that could not be copied; the issue itself is kept.
+  def copy_attachments_to(issue)
+    return [] unless issue.persisted?
+
+    attachments.each_with_object([]) do |attachment, errors|
+      error = copy_attachment_error(attachment, issue)
+      errors << l(:error_attachment_copy_failed, filename: attachment.filename, error: error) if error
+    end
   end
 
   # Builds the issue template from an existing issue, leaving the schedule
@@ -333,12 +365,13 @@ class Periodictask < ActiveRecord::Base
   end
 
   # Everything that needs the generated issue to be persisted first: watchers,
-  # subtasks, relations and the run history. Returns the error messages of the
-  # subtasks/relations that could not be created (the issue itself is kept).
+  # attachments, subtasks, relations and the run history. Returns the error
+  # messages of the attachments/subtasks/relations that could not be created
+  # (the issue itself is kept).
   def complete_generated_issue(issue, now = Time.current)
     fill_watchers(issue)
     record_generated_issue(issue)
-    create_subtasks(issue, now) + create_relations(issue)
+    copy_attachments_to(issue) + create_subtasks(issue, now) + create_relations(issue)
   end
 
   # Creates a child issue per subtask template under +issue+. Returns error messages.
@@ -535,6 +568,16 @@ class Periodictask < ActiveRecord::Base
       val += (interval_number * interval_steps).send(units)
     end
     val
+  end
+
+  def copy_attachment_error(attachment, issue)
+    return l(:error_attachment_not_found, name: attachment.filename) unless attachment.readable?
+
+    copy = attachment.copy(container: issue)
+    copy.errors.full_messages.join(', ') unless copy.save
+  rescue StandardError => e
+    Rails.logger.error "Periodictask ##{id}: copying attachment ##{attachment.id} failed: #{e.message}"
+    e.message
   end
 
   # Walks business days from the anchor's date and keeps the anchor's time of

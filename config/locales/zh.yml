@@ -166,4 +166,6 @@ zh:
   text_periodictask_rescheduled_after_completion: "#%{id} 已关闭，下次运行改为 %{time}"
   text_periodictask_last_skipped: "%{time} 的运行未创建问题：%{issue} 当时仍未关闭。"
   field_periodictask_run_notes: "备注"
+  label_attachments_info: "附加到模板的文件会复制到每个创建的问题。"
+  error_attachment_copy_failed: '无法复制附件「%{filename}」：%{error}'
   label_new_periodictask_from_issue: '从此问题新建周期任务'

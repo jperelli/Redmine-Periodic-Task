@@ -164,4 +164,6 @@ ja:
   text_periodictask_rescheduled_after_completion: "#%{id} が終了したため、次回実行を %{time} に再設定しました"
   text_periodictask_last_skipped: "%{time} の実行ではチケットを作成しませんでした: %{issue} がまだ開いていました。"
   field_periodictask_run_notes: "備考"
+  label_attachments_info: "テンプレートに添付されたファイルは、生成される各チケットにコピーされます。"
+  error_attachment_copy_failed: '添付ファイル「%{filename}」をコピーできませんでした: %{error}'
   label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'

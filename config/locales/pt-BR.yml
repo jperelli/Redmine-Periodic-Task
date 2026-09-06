@@ -164,4 +164,6 @@ pt-BR:
   text_periodictask_rescheduled_after_completion: "#%{id} foi fechada, próxima execução reagendada para %{time}"
   text_periodictask_last_skipped: "A execução de %{time} não criou uma tarefa: %{issue} ainda estava aberta."
   field_periodictask_run_notes: "Observações"
+  label_attachments_info: "Os arquivos anexados ao modelo são copiados para cada tarefa gerada."
+  error_attachment_copy_failed: 'Não foi possível copiar o anexo "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'
