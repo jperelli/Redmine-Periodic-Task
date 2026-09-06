@@ -101,6 +101,8 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_redirected_to '/settings/plugin/periodictask'
     follow_redirect!
     assert_select 'div.flash.notice', text: I18n.t(:notice_periodictask_checker_run, count: 1, locale: :es)
+  ensure
+    ::I18n.locale = 'en'
   end
 
   def test_non_admin_is_forbidden
