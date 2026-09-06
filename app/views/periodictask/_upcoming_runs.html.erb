@@ -2,7 +2,7 @@
 <div class="periodictask-upcoming-runs">
 <% if dates.any? %>
   <% if sentence %>
-    <div class="periodictask-schedule-rule"><%= safe_join([periodictask_schedule_sentence(task, dates.first), periodictask_end_condition_note(task)].compact, ' ') %></div>
+    <div class="periodictask-schedule-rule"><%= safe_join([periodictask_schedule_sentence(task, dates.first), periodictask_end_description(task)&.then { |text| content_tag(:span, text, class: 'periodictask-end-condition') }].compact, ' · ') %></div>
   <% end %>
   <div class="periodictask-run-chips">
     <% dates.each do |date| %><%= periodictask_run_chip(task, date) %> <% end %>
