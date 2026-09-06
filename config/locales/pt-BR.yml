@@ -146,7 +146,7 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "Se a tarefa anterior ainda estiver aberta"
+  label_if_previous_open: "Tarefa anterior aberta"
   label_if_previous_open_info: "O que uma execução faz quando a tarefa criada pela execução anterior ainda não foi fechada"
   label_if_previous_open_help: "O que cada modo significa, com exemplos"
   label_if_previous_open_create: "Criar uma nova tarefa mesmo assim"

@@ -146,7 +146,7 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "前回のチケットがまだ開いている場合"
+  label_if_previous_open: "前回チケットが未終了"
   label_if_previous_open_info: "前回の実行で作成されたチケットがまだ終了していないときの動作"
   label_if_previous_open_help: "各モードの意味と例"
   label_if_previous_open_create: "それでも新しいチケットを作成する"

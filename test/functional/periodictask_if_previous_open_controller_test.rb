@@ -22,20 +22,20 @@ class PeriodictaskIfPreviousOpenControllerTest < ActionController::TestCase
                            next_run_date: 1.week.from_now }.merge(attrs))
   end
 
-  def test_new_form_offers_every_mode_with_create_preselected_and_explained
+  def test_new_form_offers_every_mode_with_create_preselected_and_a_help_link
     get :new, params: { project_id: 'ecookbook' }
     assert_response :success
 
+    assert_select 'p.periodictask-if-previous-open label span[title=?]', I18n.t(:label_if_previous_open_info),
+                  text: I18n.t(:label_if_previous_open)
     assert_select "select#periodictask_if_previous_open[name='periodictask[if_previous_open]']" do
       Periodictask::IF_PREVIOUS_OPEN_MODES.each do |mode|
-        assert_select "option[value=#{mode}][data-info=?]", I18n.t(:"label_if_previous_open_#{mode}_info"),
-                      text: I18n.t(:"label_if_previous_open_#{mode}")
+        assert_select "option[value=#{mode}]", text: I18n.t(:"label_if_previous_open_#{mode}")
       end
       assert_select 'option[selected=selected][value=create]'
       assert_select 'option[selected=selected]', 1
     end
-    assert_select 'p.periodictask-if-previous-open em#periodictask_if_previous_open_info',
-                  text: I18n.t(:label_if_previous_open_create_info)
+    assert_select 'p.periodictask-if-previous-open em.info', 0
     assert_select 'p.periodictask-if-previous-open a.icon-help[href=?][title=?]',
                   RedminePeriodictask::IF_PREVIOUS_OPEN_DOC_URL, I18n.t(:label_if_previous_open_help)
     assert_select 'p.periodictask-credit a[href=?]', RedminePeriodictask::RECURRENCE_DOC_URL, 0
@@ -78,7 +78,6 @@ class PeriodictaskIfPreviousOpenControllerTest < ActionController::TestCase
     assert_response :success
     assert_select 'select#periodictask_if_previous_open option[selected=selected][value=skip]'
     assert_select 'select#periodictask_if_previous_open option[selected=selected]', 1
-    assert_select 'em#periodictask_if_previous_open_info', text: I18n.t(:label_if_previous_open_skip_info)
   end
 
   def test_show_displays_the_mode

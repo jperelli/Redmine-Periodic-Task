@@ -146,7 +146,7 @@ bg:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "Ако предишната задача е още отворена"
+  label_if_previous_open: "Отворена предишна задача"
   label_if_previous_open_info: "Какво прави изпълнението, когда задачата, създадена от предишното изпълнение, още не е затворена"
   label_if_previous_open_help: "Какво означават режимите, с примери"
   label_if_previous_open_create: "Все пак да се създаде нова задача"

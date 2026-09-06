@@ -151,7 +151,7 @@ uk:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "Якщо попередня задача ще відкрита"
+  label_if_previous_open: "Попередня ще відкрита"
   label_if_previous_open_info: "Що робить запуск, коли задача, створена попереднім запуском, ще не закрита"
   label_if_previous_open_help: "Що означають режими, з прикладами"
   label_if_previous_open_create: "Усе одно створити нову задачу"

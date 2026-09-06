@@ -146,7 +146,7 @@ it:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "Se la segnalazione precedente è ancora aperta"
+  label_if_previous_open: "Precedente ancora aperta"
   label_if_previous_open_info: "Cosa fa un'esecuzione quando la segnalazione creata dall'esecuzione precedente non è ancora stata chiusa"
   label_if_previous_open_help: "Cosa significano le modalità, con esempi"
   label_if_previous_open_create: "Crea comunque una nuova segnalazione"

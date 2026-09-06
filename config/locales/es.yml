@@ -146,7 +146,7 @@ es:
   label_periodictask_run_source_endpoint: 'URL de verificación'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'hasta %{time}'
-  label_if_previous_open: "Si la petición anterior sigue abierta"
+  label_if_previous_open: "Petición anterior abierta"
   label_if_previous_open_info: "Qué hace una ejecución cuando la petición creada por la ejecución anterior aún no se ha cerrado"
   label_if_previous_open_help: "Qué significa cada modo, con ejemplos"
   label_if_previous_open_create: "Crear una nueva petición de todos modos"

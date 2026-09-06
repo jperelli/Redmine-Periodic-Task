@@ -56,13 +56,9 @@ module PeriodictaskHelper
     l(:"label_if_previous_open_#{mode}_info")
   end
 
-  # Options for the if_previous_open select; each option carries its
-  # explanation in data-info so the form can show it under the select.
+  # Options for the if_previous_open select.
   def periodictask_if_previous_open_options(selected)
-    options = Periodictask::IF_PREVIOUS_OPEN_MODES.map do |mode|
-      [periodictask_if_previous_open_label(mode), mode,
-       { 'data-info' => periodictask_if_previous_open_description(mode) }]
-    end
+    options = Periodictask::IF_PREVIOUS_OPEN_MODES.map { |mode| [periodictask_if_previous_open_label(mode), mode] }
     options_for_select(options, selected)
   end
 
@@ -80,7 +76,8 @@ module PeriodictaskHelper
   end
 
   # Help icon linking to a document on GitHub, the recurrence design by default.
-  def periodictask_recurrence_help_link(title = l(:label_recurrence_help), url = RedminePeriodictask::RECURRENCE_DOC_URL)
+  def periodictask_recurrence_help_link(title = l(:label_recurrence_help),
+                                        url = RedminePeriodictask::RECURRENCE_DOC_URL)
     link_to periodictask_sprite_icon('help', title, icon_only: true), url,
             class: 'icon-only icon-help', title: title, target: '_blank', rel: 'noopener'
   end

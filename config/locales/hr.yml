@@ -151,7 +151,7 @@ hr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "Ako je prethodni zadatak još otvoren"
+  label_if_previous_open: "Prethodni zadatak otvoren"
   label_if_previous_open_info: "Što izvršavanje radi kada zadatak stvoren prethodnim izvršavanjem još nije zatvoren"
   label_if_previous_open_help: "Što znače načini, s primjerima"
   label_if_previous_open_create: "Svejedno stvori novi zadatak"

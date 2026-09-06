@@ -146,7 +146,7 @@ en:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
-  label_if_previous_open: "If the previous issue is still open"
+  label_if_previous_open: "Previous issue open"
   label_if_previous_open_info: "What a run does when the issue created by the previous run has not been closed yet"
   label_if_previous_open_help: "What the modes mean, with examples"
   label_if_previous_open_create: "Create a new issue anyway"

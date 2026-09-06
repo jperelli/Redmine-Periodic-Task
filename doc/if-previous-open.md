@@ -1,8 +1,8 @@
 # If the previous issue is still open
 
-Every periodic task has a setting called *If the previous issue is still
-open*. It decides what a due run does when the issue created by the previous
-run has not been closed yet. "Previous issue" means the newest top-level issue
+Every periodic task has a setting called *Previous issue open*. It decides
+what a due run does when the issue created by the previous run has not been
+closed yet. "Previous issue" means the newest top-level issue
 the task generated (subtasks generated with it do not count); an issue that
 was deleted from Redmine is ignored. The setting is copied with the task and
 shown on its detail page. *Run now* ignores it and always creates an issue.
