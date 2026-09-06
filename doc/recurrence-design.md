@@ -307,6 +307,10 @@ then show the end reason instead of the dates. The `preview` action builds an
 unsaved task, whose `occurrences_count` is 0; when the form edits an existing
 task it posts its `id` and the action copies the stored count (from the task
 of the URL's project only), so "After N runs" previews the runs left, not N.
+The form debounces the refresh, aborts the request still in flight when a new
+one starts and numbers each request (`preview_generation`, stored on the
+block and echoed by the action), so a slow earlier response can never
+overwrite the result of a later one.
 
 The dates returned are the occurrences of the rule; the views apply
 `adjust_to_working_day` to each of them, as the scheduler does, so the chips

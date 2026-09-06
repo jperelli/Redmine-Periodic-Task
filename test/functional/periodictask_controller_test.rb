@@ -1402,6 +1402,8 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '#periodictask_upcoming_runs a.periodictask-calendar-toggle', text: /Calendar/
     assert_select '#periodictask_upcoming_runs .periodictask-calendar table.periodictask-cal'
     assert_includes @response.body, periodictask_preview_path(project_id: 'ecookbook', format: 'js')
+    assert_includes @response.body, 'upcomingRunsRequest.abort()'
+    assert_includes @response.body, "'&preview_generation=' + upcomingRunsGeneration"
     assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
     assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
 
@@ -1588,6 +1590,24 @@ class PeriodictaskControllerTest < ActionController::TestCase
     }, xhr: true
     assert_response :success
     assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+  end
+
+  def test_preview_echoes_the_generation_so_the_form_ignores_stale_responses
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js', preview_generation: '7',
+      periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-01-05T10:00' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'var generation = 7;'
+    assert_includes @response.body, "box.data('generation') !== generation) { return; }"
+
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-01-05T10:00' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'var generation = 0;'
+    assert_includes @response.body, ".html('"
   end
 
   def test_preview_requires_the_periodictask_parameters

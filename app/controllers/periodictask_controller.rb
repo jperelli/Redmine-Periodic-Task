@@ -242,13 +242,15 @@ class PeriodictaskController < ApplicationController
   # Upcoming run dates for the recurrence currently entered in the form. The
   # task is built from the posted attributes only and never saved; when the
   # form edits an existing task (+id+), its runs made so far count towards
-  # "After N runs".
+  # "After N runs". +preview_generation+ is echoed back so the form only
+  # applies the response to its latest request.
   def preview
     @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
     assign_periodictask_params
     existing = project_periodictasks.find_by(id: params[:id]) if params[:id].present?
     @periodictask.occurrences_count = existing.occurrences_count if existing
     @upcoming_run_dates = @periodictask.upcoming_run_dates
+    @preview_generation = params[:preview_generation].to_i
   end
 
   private

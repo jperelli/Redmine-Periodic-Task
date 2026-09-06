@@ -241,15 +241,25 @@
     // Live preview of the next run dates, recomputed server-side (nothing is
     // saved) whenever an interval, recurrence or end condition field changes.
     // The id of the task being edited lets the preview count its runs so far.
+    // Only the latest request may replace the block: the previous one is
+    // aborted and each response carries the generation it was asked with,
+    // which preview.js.erb compares with the one stored on the block.
     var upcomingRunsTaskId = <%= (@periodictask.persisted? ? @periodictask.id : nil).to_json %>;
-    var upcomingRunsTimer;
+    var upcomingRunsTimer, upcomingRunsRequest, upcomingRunsGeneration = 0;
     function refreshUpcomingRuns() {
       clearTimeout(upcomingRunsTimer);
       upcomingRunsTimer = setTimeout(function() {
-        $.ajax({
+        if (upcomingRunsRequest) { upcomingRunsRequest.abort(); }
+        var box = $('#periodictask_upcoming_runs');
+        box.data('generation', ++upcomingRunsGeneration);
+        var request = $.ajax({
           url: '<%= escape_javascript(periodictask_preview_path(@project, :format => 'js')) %>',
           type: 'post',
-          data: $('#periodictask_upcoming_runs').closest('form').serialize() + (upcomingRunsTaskId ? '&id=' + upcomingRunsTaskId : '')
+          data: box.closest('form').serialize() + '&preview_generation=' + upcomingRunsGeneration + (upcomingRunsTaskId ? '&id=' + upcomingRunsTaskId : '')
+        });
+        upcomingRunsRequest = request;
+        request.always(function() {
+          if (upcomingRunsRequest === request) { upcomingRunsRequest = null; }
         });
       }, 300);
     }
