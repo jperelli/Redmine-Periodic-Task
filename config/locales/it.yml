@@ -24,6 +24,7 @@ it:
   label_set_start_date_info: 'Se selezionato, la data di inizio di ogni richiesta creata viene impostata al giorno in cui viene generata.'
   label_due_date: 'Imposta scadenza dopo'
   label_due_date_info: 'Data di scadenza di ogni richiesta creata, impostata di questo intervallo dopo la sua data di inizio.'
+  label_assigned_to_info: 'Facoltativo. Se vuoto, a ogni richiesta creata si applica l''assegnatario predefinito di Redmine: quello della categoria, altrimenti quello del progetto.'
   label_estimated_hours: Tempo stimato
   label_estimated_hours_after: Ore
   label_description: Descrizione
