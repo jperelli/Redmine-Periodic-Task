@@ -143,6 +143,17 @@
       <%= f.text_field :tag_list, :style => 'width: 99%', :autocomplete => 'off' %>
     </p>
   <% end %>
+  <% if @copy_from && @copy_from.attachments.any? %>
+    <p>
+      <label for="copy_attachments"><%= l(:label_copy_attachments) %> (<%= @copy_from.attachments.size %>)</label>
+      <%= check_box_tag 'copy_attachments', '1', params[:copy_attachments].present? || request.get? %>
+    </p>
+  <% end %>
+  <div id="periodictask_attachments" style="padding-inline-start: 180px; padding-block: 3px; min-block-size: 2em; clear: inline-start;">
+    <label><span class="field-description" title="<%= l(:label_attachments_info) %>"><%= l(:label_attachment_plural) %></span></label>
+    <%= link_to_attachments @periodictask, :thumbnails => false if @periodictask.persisted? %>
+    <%= render :partial => 'attachments/form', :locals => { :container => @periodictask } %>
+  </div>
   <%= render :partial => 'subtasks_relations', :locals => { :periodictask => @periodictask } %>
   <% if @periodictask.last_error.present? %>
     <p>
@@ -156,19 +167,6 @@
 <div id="issue_custom_fields">
   <%= render :partial => 'customfields', :locals => { :issue => @issue } %>
 </div>
-
-<fieldset class="box" id="periodictask_attachments">
-  <legend><%= l(:label_attachment_plural) %></legend>
-  <p class="periodictask-attachments-info"><%= l(:label_attachments_info) %></p>
-  <% if @copy_from && @copy_from.attachments.any? %>
-    <p>
-      <%= check_box_tag 'copy_attachments', '1', params[:copy_attachments].present? || request.get? %>
-      <label for="copy_attachments"><%= l(:label_copy_attachments) %> (<%= @copy_from.attachments.size %>)</label>
-    </p>
-  <% end %>
-  <%= link_to_attachments @periodictask, :thumbnails => false if @periodictask.persisted? %>
-  <%= render :partial => 'attachments/form', :locals => { :container => @periodictask } %>
-</fieldset>
 
 <%= javascript_tag do %>
   $(document).ready(function() {
