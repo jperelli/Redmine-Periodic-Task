@@ -150,6 +150,21 @@ zh-TW:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "結束"
+  label_end_condition_info: "可選。勾選「在日期」和/或「執行 N 次後」；先達到的條件會結束該任務。「立即執行」不計入次數。"
+  label_end_on_date: "在日期"
+  label_end_after: "執行"
+  label_end_runs: "次後"
+  label_ends_on_date: "%{date} 結束"
+  label_ended_on_date: "已於 %{date} 結束"
+  label_ended_by_date: "已結束（已到結束日期）"
+  label_ended_by_count: "已結束（已達到最大執行次數）"
+  text_ended_change_end_condition: "請修改下方的結束條件，任務才會再次執行。"
+  label_end_runs_progress: "已執行 %{count} / %{max} 次"
+  label_periodictask_journal_ended_by_date: "週期任務已結束（已到結束日期）"
+  label_periodictask_journal_ended_by_count: "週期任務已結束（已達到最大執行次數）"
+  error_end_date_before_next_run: "結束日期必須晚於下次執行日期"
+  field_max_occurrences: "最大執行次數"
   label_assignee_rotation: "被分派者輪替"
   label_assignee_rotation_info: "產生的議題會依序分派給此清單中的使用者。在專案中已無法被分派議題的使用者會被略過；若清單為空或其中無人可被分派，則使用上方的被分派者。「立即執行」也會推進輪替。"
   label_rotation_next: "下一位：%{user}"

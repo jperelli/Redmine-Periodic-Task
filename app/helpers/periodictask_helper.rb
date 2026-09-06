@@ -36,7 +36,12 @@ module PeriodictaskHelper
       task.relations.each { |row| api.relation(row.slice(*Periodictask::RELATION_KEYS)) }
     end
     api.is_active task.is_active
+    api.ended task.ended?
+    api.end_reason task.end_reason
     api.next_run_date task.next_run_date
+    api.end_date task.end_date
+    api.max_occurrences task.max_occurrences
+    api.occurrences_count task.occurrences_count
     api.last_assigned_date task.last_assigned_date
     api.last_run last_run
     api.last_error task.last_error
@@ -149,6 +154,29 @@ module PeriodictaskHelper
     end
   end
 
+  # "Ends on <date>" ("Ended on <date>" once reached) and/or "<n> of <max>
+  # runs", or nil for a task that repeats forever.
+  def periodictask_end_description(task)
+    parts = []
+    if task.end_date
+      key = task.end_reason == 'ended_by_date' ? :label_ended_on_date : :label_ends_on_date
+      parts << l(key, date: format_time(task.end_date))
+    end
+    if task.max_occurrences
+      parts << l(:label_end_runs_progress, count: task.occurrences_count.to_i, max: task.max_occurrences)
+    end
+    parts.join(', ').presence
+  end
+
+  # The end condition as a note under the schedule text in the lists and on
+  # the detail page; empty for a task that repeats forever.
+  def periodictask_end_condition_note(task)
+    text = periodictask_end_description(task)
+    return if text.nil?
+
+    content_tag(:em, text, class: 'info periodictask-end-condition')
+  end
+
   # Localized label of the task's weekend_adjustment option.
   def periodictask_weekend_adjustment_label(task)
     l(:"label_weekend_adjustment_#{task.weekend_adjustment}")
@@ -215,11 +243,32 @@ module PeriodictaskHelper
     version_options_for_select((versions + [periodictask.fixed_version]).compact.uniq, periodictask.fixed_version)
   end
 
-  # Marker shown next to a disabled task's subject in the project and admin lists.
-  def periodictask_disabled_icon(periodictask)
-    return if periodictask.is_active?
+  # "Ended (end date reached)" / "Ended (maximum number of runs reached)" /
+  # "Disabled" / "Active": what the task is doing, as a row tooltip. Ended
+  # wins over disabled: the task would not run either way, and the end
+  # condition is what has to change first.
+  def periodictask_status_label(periodictask)
+    return l(:"label_#{periodictask.end_reason}") if periodictask.ended?
 
-    periodictask_marker_icon('lock', 'icon-locked', l(:label_disabled))
+    periodictask.is_active? ? l(:field_active) : l(:label_disabled)
+  end
+
+  # Row classes for the lists: inactive rows are greyed, ended rows are greyed
+  # and struck through like closed issues (see _row_styles).
+  def periodictask_row_class(periodictask)
+    classes = ['periodictask']
+    classes << 'inactive' unless periodictask.is_active?
+    classes << 'ended' if periodictask.ended?
+    classes << cycle('odd', 'even')
+    classes.join(' ')
+  end
+
+  # Why an ended task will not run again, next to its Active flag on the
+  # detail page and in the form; nil while the task is not ended.
+  def periodictask_ended_note(periodictask)
+    return unless periodictask.ended?
+
+    content_tag(:em, periodictask_status_label(periodictask), class: 'info periodictask-ended')
   end
 
   # Marker shown next to a task's subject in the lists when its last run failed;
@@ -289,8 +338,8 @@ module PeriodictaskHelper
     zone ? time.in_time_zone(zone) : time.getlocal
   end
 
-  # Value for the next_run_date datetime-local input, in the display zone.
-  def periodictask_next_run_date_input_value(time)
+  # Value for the next_run_date / end_date datetime-local inputs, in the display zone.
+  def periodictask_time_input_value(time)
     return if time.blank?
 
     periodictask_display_time(time).strftime('%Y-%m-%dT%H:%M')

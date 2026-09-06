@@ -148,6 +148,21 @@ bg:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Приключва"
+  label_end_condition_info: "По избор. Отметнете „На дата“ и/или „След N изпълнения“; задачата приключва при достигане на първото. „Изпълни сега“ не се брои."
+  label_end_on_date: "На дата"
+  label_end_after: "След"
+  label_end_runs: "изпълнения"
+  label_ends_on_date: "Приключва на %{date}"
+  label_ended_on_date: "Приключи на %{date}"
+  label_ended_by_date: "Приключена (достигната крайна дата)"
+  label_ended_by_count: "Приключена (достигнат максимален брой изпълнения)"
+  text_ended_change_end_condition: "Променете условието за край по-долу, за да се изпълнява отново."
+  label_end_runs_progress: "%{count} от %{max} изпълнения"
+  label_periodictask_journal_ended_by_date: "Периодичната задача приключи (достигната крайна дата)"
+  label_periodictask_journal_ended_by_count: "Периодичната задача приключи (достигнат максимален брой изпълнения)"
+  error_end_date_before_next_run: "Крайната дата трябва да е след датата на следващото изпълнение"
+  field_max_occurrences: "Максимален брой изпълнения"
   label_assignee_rotation: "Ротация на изпълнителите"
   label_assignee_rotation_info: "Генерираните задачи се възлагат последователно на потребителите от този списък. Потребители, на които вече не могат да се възлагат задачи в проекта, се пропускат; ако списъкът е празен или никой от него не може да бъде възложен, се използва изпълнителят по-горе. „Изпълни сега“ също премества ротацията."
   label_rotation_next: "Следващ: %{user}"

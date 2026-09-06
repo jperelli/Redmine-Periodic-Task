@@ -153,6 +153,21 @@ ru:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Завершается"
+  label_end_condition_info: "Необязательно. Отметьте «В дату» и/или «После N запусков»; задача завершается при достижении первого из условий. «Запустить сейчас» не учитывается."
+  label_end_on_date: "В дату"
+  label_end_after: "После"
+  label_end_runs: "запусков"
+  label_ends_on_date: "Завершается %{date}"
+  label_ended_on_date: "Завершена %{date}"
+  label_ended_by_date: "Завершена (достигнута дата окончания)"
+  label_ended_by_count: "Завершена (достигнуто максимальное число запусков)"
+  text_ended_change_end_condition: "Измените условие окончания ниже, чтобы задача снова запускалась."
+  label_end_runs_progress: "%{count} из %{max} запусков"
+  label_periodictask_journal_ended_by_date: "Периодическая задача завершена (достигнута дата окончания)"
+  label_periodictask_journal_ended_by_count: "Периодическая задача завершена (достигнуто максимальное число запусков)"
+  error_end_date_before_next_run: "Дата окончания должна быть позже даты следующего запуска"
+  field_max_occurrences: "Максимальное число запусков"
   label_assignee_rotation: "Ротация исполнителей"
   label_assignee_rotation_info: "Созданные задачи назначаются поочерёдно пользователям из этого списка. Пользователи, которым больше нельзя назначать задачи в проекте, пропускаются; если список пуст или никого из него нельзя назначить, используется исполнитель выше. «Выполнить сейчас» также сдвигает ротацию."
   label_rotation_next: "Следующий: %{user}"

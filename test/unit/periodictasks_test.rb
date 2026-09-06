@@ -1480,6 +1480,8 @@ class PeriodictasksTest < ActiveSupport::TestCase
     )
 
     assert task.reload.is_active?
+    assert_not task.ended?
+    assert task.runnable?
   end
 
   def test_checker_ignores_disabled_tasks

@@ -1,0 +1,12 @@
+<% content_for :header_tags do %>
+  <style>
+    /* Inactive tasks are greyed like closed projects; ended ones are greyed and
+       struck through like closed issues. */
+    table.list tr.periodictask.inactive td:not(.buttons),
+    table.list tr.periodictask.inactive td:not(.buttons) a,
+    table.list tr.periodictask.ended td:not(.buttons),
+    table.list tr.periodictask.ended td:not(.buttons) a { color: #999; }
+    table.list tr.periodictask.ended td.id a,
+    table.list tr.periodictask.ended td.subject a { text-decoration: line-through; }
+  </style>
+<% end %>

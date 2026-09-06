@@ -148,6 +148,21 @@ tr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Bitiş"
+  label_end_condition_info: "İsteğe bağlı. \"Tarihte\" ve/veya \"N çalıştırmadan sonra\" seçeneğini işaretleyin; ilkine ulaşıldığında görev sona erer. \"Şimdi çalıştır\" sayılmaz."
+  label_end_on_date: "Tarihte"
+  label_end_after: "En fazla"
+  label_end_runs: "çalıştırma"
+  label_ends_on_date: "%{date} tarihinde biter"
+  label_ended_on_date: "%{date} tarihinde sona erdi"
+  label_ended_by_date: "Sona erdi (bitiş tarihine ulaşıldı)"
+  label_ended_by_count: "Sona erdi (en fazla çalıştırma sayısına ulaşıldı)"
+  text_ended_change_end_condition: "Yeniden çalışması için aşağıdaki bitiş koşulunu değiştirin."
+  label_end_runs_progress: "%{max} çalıştırmanın %{count} tanesi"
+  label_periodictask_journal_ended_by_date: "Periyodik görev sona erdi (bitiş tarihine ulaşıldı)"
+  label_periodictask_journal_ended_by_count: "Periyodik görev sona erdi (en fazla çalıştırma sayısına ulaşıldı)"
+  error_end_date_before_next_run: "Bitiş tarihi sonraki çalıştırma tarihinden sonra olmalıdır"
+  field_max_occurrences: "En fazla çalıştırma sayısı"
   label_assignee_rotation: "Atanan rotasyonu"
   label_assignee_rotation_info: "Oluşturulan işler bu listedeki kullanıcılara sırayla atanır. Projede artık iş atanamayan kullanıcılar atlanır; liste boşsa veya listeden kimseye atanamıyorsa yukarıdaki atanan kullanılır. Şimdi çalıştır da rotasyonu ilerletir."
   label_rotation_next: "Sıradaki: %{user}"

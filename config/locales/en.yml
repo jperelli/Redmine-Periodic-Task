@@ -148,6 +148,21 @@ en:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Ends"
+  label_end_condition_info: "Optional. Tick \"On date\" and/or \"After N runs\"; the task ends when the first of them is reached. Manual \"Run now\" does not count."
+  label_end_on_date: "On date"
+  label_end_after: "After"
+  label_end_runs: "runs"
+  label_ends_on_date: "Ends on %{date}"
+  label_ended_on_date: "Ended on %{date}"
+  label_ended_by_date: "Ended (end date reached)"
+  label_ended_by_count: "Ended (maximum number of runs reached)"
+  text_ended_change_end_condition: "Change the end condition below to let it run again."
+  label_end_runs_progress: "%{count} of %{max} runs"
+  label_periodictask_journal_ended_by_date: "Periodic task ended (end date reached)"
+  label_periodictask_journal_ended_by_count: "Periodic task ended (maximum number of runs reached)"
+  error_end_date_before_next_run: "End date must be after the next run date"
+  field_max_occurrences: "Maximum number of runs"
   label_assignee_rotation: "Assignee rotation"
   label_assignee_rotation_info: "Generated issues are assigned to the users of this list in turn. Users who can no longer be assigned issues in the project are skipped; when the list is empty or nobody in it can be assigned, the assignee above is used. Run now also moves the rotation on."
   label_rotation_next: "Next: %{user}"

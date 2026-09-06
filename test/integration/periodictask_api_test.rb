@@ -45,6 +45,8 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal 'week', t['interval_units']
     assert_equal [1, 3], t['weekdays']
     assert_equal true, t['is_active']
+    assert_equal false, t['ended']
+    assert_nil t['end_reason']
     assert_equal task.next_run_date.xmlschema(0), t['next_run_date']
     assert_equal '2026-01-05T08:00:00Z', t['last_run']
     assert_nil t['last_error']
@@ -63,6 +65,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
         assert_select 'project[id="1"][name=eCookbook]'
         assert_select 'author[id="2"]'
         assert_select 'is_active', text: 'true'
+        assert_select 'ended', text: 'false'
       end
     end
   end
@@ -111,8 +114,10 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
       watcher_user_ids: [3], rotation_ids: [3, 2], custom_field_values: { '1' => 'MySQL' },
       subtasks: [{ 'tracker_id' => '2', 'subject' => 'Sub', 'assigned_to_id' => '3', 'estimated_hours' => '2' }],
       relations: [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }],
-      last_error: 'boom', is_active: false
+      last_error: 'boom', is_active: true,
+      end_date: Time.utc(2031, 1, 1, 9), max_occurrences: 5
     )
+    task.update_columns(occurrences_count: 5)
 
     get "/projects/ecookbook/periodictask/#{task.id}.json", headers: api_headers
     assert_response :success
@@ -143,7 +148,12 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
                  t['subtasks']
     assert_equal [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }], t['relations']
     assert_equal 'boom', t['last_error']
-    assert_equal false, t['is_active']
+    assert_equal true, t['is_active']
+    assert_equal true, t['ended']
+    assert_equal 'ended_by_count', t['end_reason']
+    assert_equal '2031-01-01T09:00:00Z', t['end_date']
+    assert_equal 5, t['max_occurrences']
+    assert_equal 5, t['occurrences_count']
     assert_nil t['last_run']
     assert t.key?('created_at')
     assert t.key?('updated_at')
@@ -190,7 +200,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
         done_ratio: 10, watcher_user_ids: [3], custom_fields: [{ id: 1, value: 'PostgreSQL' }],
         subtasks: [{ subject: 'Child', tracker_id: 2 }],
         relations: [{ relation_type: 'relates', issue_id: 1 }],
-        is_active: false
+        is_active: false, end_date: '2030-12-31T09:00:00Z', max_occurrences: 12
       }
     }
     assert_difference('Periodictask.count') do
@@ -220,7 +230,11 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal '2', task.subtasks.first['tracker_id'].to_s
     assert_equal 'relates', task.relations.first['relation_type']
     assert_equal '1', task.relations.first['issue_id'].to_s
-    assert_equal false, task.is_active
+    assert_not task.is_active?
+    assert_not task.ended?
+    assert_equal Time.utc(2030, 12, 31, 9), task.end_date
+    assert_equal 12, task.max_occurrences
+    assert_equal 0, task.occurrences_count
 
     assert_equal periodictask_url(@project, task), @response.headers['Location']
     json = ActiveSupport::JSON.decode(@response.body)['periodictask']
@@ -307,7 +321,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
 
     task.reload
     assert_equal 'Renamed', task.subject
-    assert_equal false, task.is_active
+    assert_not task.is_active?
     assert_equal [1, 3], task.weekdays, 'attributes that are not sent are left unchanged'
     assert_equal 'Keep me', task.subtasks.first['subject']
   end
@@ -338,6 +352,64 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_response :unprocessable_entity
     assert_includes ActiveSupport::JSON.decode(@response.body)['errors'], 'Subject cannot be blank'
     assert_equal 'Unchanged', task.reload.subject
+  end
+
+  def test_create_rejects_a_fractional_max_occurrences_instead_of_truncating_it
+    [1.9, '1.9', 0, '0', -1, 'ten'].each do |value|
+      payload = { periodictask: { subject: "Max #{value}", tracker_id: 1, assigned_to_id: 2,
+                                  interval_number: 1, interval_units: 'month', max_occurrences: value } }
+      assert_no_difference('Periodictask.count', "#{value.inspect} should be rejected") do
+        post '/projects/ecookbook/periodictask.json', params: payload.to_json, headers: json_headers
+      end
+      assert_response :unprocessable_entity
+      errors = ActiveSupport::JSON.decode(@response.body)['errors']
+      assert(errors.any? { |e| e.start_with?(I18n.t(:field_max_occurrences)) }, "#{value.inspect}: #{errors}")
+    end
+  end
+
+  def test_create_accepts_a_blank_or_integer_max_occurrences
+    [nil, '', 3, '3'].each do |value|
+      payload = { periodictask: { subject: "Max #{value.inspect}", tracker_id: 1, assigned_to_id: 2,
+                                  interval_number: 1, interval_units: 'month', max_occurrences: value } }
+      assert_difference('Periodictask.count') do
+        post '/projects/ecookbook/periodictask.json', params: payload.to_json, headers: json_headers
+      end
+      assert_response :created
+      stored = Periodictask.order(:id).last.max_occurrences
+      if value.present?
+        assert_equal value.to_i, stored
+      else
+        assert_nil stored
+      end
+    end
+  end
+
+  def test_update_rejects_a_fractional_max_occurrences_instead_of_truncating_it
+    task = create_test_periodictask(max_occurrences: 2)
+
+    [1.9, '1.9'].each do |value|
+      put "/projects/ecookbook/periodictask/#{task.id}.json",
+          params: { periodictask: { max_occurrences: value } }.to_json, headers: json_headers
+      assert_response :unprocessable_entity
+      errors = ActiveSupport::JSON.decode(@response.body)['errors']
+      assert(errors.any? { |e| e.start_with?(I18n.t(:field_max_occurrences)) }, "#{value.inspect}: #{errors}")
+      assert_equal 2, task.reload.max_occurrences
+    end
+
+    put "/projects/ecookbook/periodictask/#{task.id}.xml",
+        params: '<periodictask><max_occurrences>1.9</max_occurrences></periodictask>', headers: xml_headers
+    assert_response :unprocessable_entity
+    assert_equal 2, task.reload.max_occurrences
+  end
+
+  def test_update_rejects_a_next_run_date_after_the_end_date
+    task = create_test_periodictask(next_run_date: Time.utc(2030, 1, 1, 9), end_date: Time.utc(2030, 6, 1, 9))
+
+    put "/projects/ecookbook/periodictask/#{task.id}.json",
+        params: { periodictask: { next_run_date: '2030-07-01T09:00:00Z' } }.to_json, headers: json_headers
+    assert_response :unprocessable_entity
+    assert_includes ActiveSupport::JSON.decode(@response.body)['errors'], I18n.t(:error_end_date_before_next_run)
+    assert_equal Time.utc(2030, 1, 1, 9), task.reload.next_run_date
   end
 
   def test_update_cannot_move_task_to_another_project

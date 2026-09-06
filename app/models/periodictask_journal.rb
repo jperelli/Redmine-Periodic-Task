@@ -1,5 +1,6 @@
-# Audit entry for a create/update/delete of a Periodictask, recorded so the
-# action shows up in Redmine's activity log (both the project Activity tab and
+# Audit entry for a create/update/delete/run of a Periodictask, or for the
+# scheduler ending it (end date or maximum number of runs reached), recorded so
+# the action shows up in Redmine's activity log (both the project Activity tab and
 # the per-user /activity page). This mirrors how Journal records issue history.
 # Redmine 6 defines ApplicationRecord; Redmine 5 (Rails 6.1) does not, so fall
 # back to ActiveRecord::Base there.
@@ -10,7 +11,7 @@ class PeriodictaskJournal < (defined?(ApplicationRecord) ? ApplicationRecord : A
   belongs_to :user
   belongs_to :periodictask, optional: true
 
-  ACTIONS = %w[create update delete run].freeze
+  ACTIONS = %w[create update delete run ended_by_date ended_by_count].freeze
   validates :action, inclusion: { in: ACTIONS }
 
   acts_as_event(

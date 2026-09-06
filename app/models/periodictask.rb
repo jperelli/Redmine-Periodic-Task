@@ -35,9 +35,9 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   RELATION_FORM_KEYS = (RELATION_KEYS + %w[target]).freeze
 
   # Identity, ownership and the outcome of past runs belong to the source task;
-  # everything else describes the template and is worth copying. A copied
-  # rotation starts over from its first user.
-  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error
+  # everything else (including the end condition) describes the template and
+  # is worth copying. A copied rotation starts over from its first user.
+  COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error occurrences_count
                                 last_skipped_issue_id last_skipped_at rotation_index].freeze
 
   # Subtask templates: array of hashes with SUBTASK_KEYS, each becoming a child
@@ -268,16 +268,24 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   validates :interval_number, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :interval_units, presence: true
   validates :done_ratio, inclusion: { in: 0..100 }, allow_nil: true
+  validates :max_occurrences, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validates :if_previous_open, inclusion: { in: ->(_task) { IF_PREVIOUS_OPEN_MODES } }
   validate :validate_subtasks_and_relations
   validate :validate_recurrence
+  validate :validate_end_condition
   before_validation :clear_irrelevant_recurrence_options
   before_validation :keep_rotation_position
   before_validation { self.if_previous_open = IF_PREVIOUS_OPEN_MODES.first if if_previous_open.blank? }
 
-  # Tasks the scheduler picks up. A disabled task keeps its schedule and can
-  # still be run by hand from the list or detail page.
+  # is_active is the user's switch; ended? is the schedule's: the end
+  # condition has been reached. The scheduler needs both (runnable); either
+  # kind of task keeps its schedule and can still be run by hand.
   scope :active, -> { where(is_active: true) }
+  scope :not_ended, lambda {
+    where('(end_date IS NULL OR next_run_date IS NULL OR next_run_date <= end_date)')
+      .where('(max_occurrences IS NULL OR occurrences_count < max_occurrences)')
+  }
+  scope :runnable, -> { active.not_ended }
 
   # Tasks whose stored occurrence may already be due at +now+ once the weekend
   # adjustment is applied: a previous-working-day move brings a run forward by
@@ -489,6 +497,15 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     copy_attachments_to(issue) + create_subtasks(issue, now) + create_relations(issue)
   end
 
+  # Persists what a scheduled run changed: schedule, occurrence count, skip,
+  # rotation position, last error. Only scheduler-owned columns move, on a
+  # task the user saved valid, so the form validations do not apply; one of
+  # them (end date after next run) is exactly what the last run before the
+  # end date makes false.
+  def save_run!
+    save!(validate: false)
+  end
+
   # Creates a child issue per subtask template under +issue+. Returns error messages.
   def create_subtasks(issue, now = Time.current)
     return [] unless issue.persisted?
@@ -631,11 +648,34 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     end
   end
 
+  # Journal action explaining why the schedule has run its course, or nil
+  # while it has not: the next run falls after end_date, or max_occurrences
+  # scheduled runs have created their issue. A run scheduled exactly at
+  # end_date still happens. Derived, not stored: the task is ended for as
+  # long as its end condition says so, whatever is_active is, and resumes
+  # once the end date is moved or the maximum raised (see not_ended).
+  def end_reason
+    if max_occurrences.present? && occurrences_count >= max_occurrences
+      'ended_by_count'
+    elsif end_date.present? && next_run_date.present? && next_run_date > end_date
+      'ended_by_date'
+    end
+  end
+
+  def ended?
+    end_reason.present?
+  end
+
+  # Whether the scheduler will pick the task up: switched on and not ended.
+  def runnable?
+    is_active? && !ended?
+  end
+
   # Records a create/update/delete in the activity log. Called from the
   # controller (not a model callback) so the scheduler's own writes to
   # next_run_date / last_error are not logged as user edits.
   def log_activity(action, user = User.current)
-    PeriodictaskJournal.create(
+    PeriodictaskJournal.create!(
       periodictask_id: id,
       project_id: project_id,
       user_id: user&.id,
@@ -819,6 +859,18 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
 
     errors.add(:base, l(:error_recurrence_month_weeks_blank)) if month_weeks.empty?
     errors.add(:base, l(:error_recurrence_weekdays_blank)) if weekdays.empty?
+  end
+
+  # An end date before the next run would never let the task run again; a
+  # next run exactly on the end date is the last one. Checked only when one
+  # of the two dates is being set: an ended task has its next run past the end
+  # date by construction (the scheduler stores it after the last run, see
+  # save_run!) and must stay editable.
+  def validate_end_condition
+    return unless (end_date_changed? || next_run_date_changed?) &&
+                  end_date.present? && next_run_date.present? && end_date < next_run_date
+
+    errors.add(:base, l(:error_end_date_before_next_run))
   end
 
   # Hidden recurrence inputs are still posted by the form; only keep the ones

@@ -9,6 +9,9 @@
   <p>
     <%= label(:periodictask, :is_active, l(:field_active)) %>
     <%= f.check_box :is_active %>
+    <% if @periodictask.ended? %>
+      <em class="info periodictask-ended"><%= periodictask_status_label(@periodictask) %> <%= l(:text_ended_change_end_condition) %></em>
+    <% end %>
   </p>
   <p>
     <%= label(:periodictask, :interval_number) do %><%= l(:label_interval) %> <span class="required">*</span><% end %>
@@ -23,9 +26,10 @@
   </p>
   <p>
     <%= label(:periodictask, :next_run_date) do %><span class="field-description" title="<%= l(:label_next_run_date_info) %>"><%= l(:label_next_run_date) %></span><% end %>
-    <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
+    <%= f.datetime_field :next_run_date, :value => periodictask_time_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
+  <%= render :partial => 'end_condition', :locals => { :f => f, :periodictask => @periodictask } %>
   <p class="periodictask-if-previous-open">
     <%= label(:periodictask, :if_previous_open) do %><span class="field-description" title="<%= l(:label_if_previous_open_info) %>"><%= l(:label_if_previous_open) %></span><% end %>
     <%= select_tag 'periodictask[if_previous_open]', periodictask_if_previous_open_options(@periodictask.if_previous_open), :id => 'periodictask_if_previous_open' %>
@@ -216,6 +220,18 @@
     }
     $('#periodictask_interval_units, input[name="periodictask[monthly_mode]"]').change(toggleRecurrenceFields);
     toggleRecurrenceFields();
+
+    // Each "Ends" box shows its input when ticked; unticking clears the value so
+    // the (still posted) blank input removes the stored end condition.
+    $('.periodictask-end-toggle').change(function() {
+      var $inputs = $('#' + $(this).data('target'));
+      $inputs.toggle(this.checked);
+      if (this.checked) {
+        $inputs.find(':input').first().focus();
+      } else {
+        $inputs.find(':input').val('');
+      }
+    });
 
     var currentUserId = '<%= User.current.id %>';
     function toggleAssignToMe() {
