@@ -53,6 +53,7 @@ vi:
   label_recurrence_on_weekdays: "vào %{weekdays}"
   label_recurrence_on_month_weekdays: "vào %{weekdays} của %{ordinals}"
   label_recurrence_on_day_of_month: "vào ngày %{day}"
+  label_recurrence_at_time: "%{schedule} lúc %{time}"
   flash_task_created: Đã tạo việc định kỳ
   flash_task_saved: Đã lưu việc định kỳ
   flash_task_run_now: 'Đã tạo vấn đề #%{id}'

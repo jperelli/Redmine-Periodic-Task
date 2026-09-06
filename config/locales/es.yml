@@ -106,6 +106,7 @@ es:
   label_recurrence_on_weekdays: "los %{weekdays}"
   label_recurrence_on_month_weekdays: "el %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "el día %{day}"
+  label_recurrence_at_time: "%{schedule} a las %{time}"
   error_recurrence_weekdays_blank: "Seleccione al menos un día de la semana"
   error_recurrence_month_weeks_blank: "Seleccione al menos una ocurrencia (1.º a 5.º)"
   label_recurrence_every_day:

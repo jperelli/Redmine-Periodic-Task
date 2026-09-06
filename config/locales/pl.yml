@@ -99,6 +99,7 @@ pl:
   label_recurrence_on_weekdays: "w %{weekdays}"
   label_recurrence_on_month_weekdays: "w %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "%{day}. dnia"
+  label_recurrence_at_time: "%{schedule} o %{time}"
   error_recurrence_weekdays_blank: "Wybierz co najmniej jeden dzień tygodnia"
   error_recurrence_month_weeks_blank: "Wybierz co najmniej jedno wystąpienie (1. do 5.)"
   label_recurrence_every_day:

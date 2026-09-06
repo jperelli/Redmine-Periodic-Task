@@ -205,10 +205,14 @@ future date, exactly like a late scheduler would. The method returns an empty
 list when the schedule cannot be walked: interval not positive, unknown unit,
 or weekday mode without ordinals or weekdays.
 
-The task page and the task form render these dates with the same helpers as
-the next run date, so they appear in the user's time zone. The form refreshes
-them through the `preview` action, which builds an unsaved task from the
-submitted attributes, in the project of the URL, and renders the list.
+The dates returned are the occurrences of the rule; the views apply
+`adjust_to_working_day` to each of them, as the scheduler does, so the chips
+and the calendar show the day the issue will really be created and mark the
+ones that were moved. The task page and the task form render everything with
+the same helpers as the next run date, so it appears in the user's time zone.
+The form refreshes the block through the `preview` action, which builds an
+unsaved task from the submitted attributes, in the project of the URL, and
+renders the sentence, the chips and the month grids.
 
 ## Previous issue still open
 

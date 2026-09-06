@@ -1,4 +1,5 @@
 <%= error_messages_for 'periodictask', 'issue' %>
+<%= render 'upcoming_runs_assets' %>
 
 <%= f.hidden_field :id %>
 <%= f.hidden_field :project_id %>
@@ -26,10 +27,10 @@
     <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
-  <p id="periodictask_upcoming_runs_field">
+  <div id="periodictask_upcoming_runs_field" style="padding-inline-start: 180px; padding-block: 3px; min-block-size: 2em; clear: inline-start;">
     <label><span class="field-description" title="<%= l(:label_next_occurrences_info) %>"><%= l(:label_next_occurrences) %></span></label>
-    <span id="periodictask_upcoming_runs"><%= render :partial => 'upcoming_runs', :locals => { :dates => @periodictask.upcoming_run_dates } %></span>
-  </p>
+    <div id="periodictask_upcoming_runs"><%= render :partial => 'upcoming_runs', :locals => { :task => @periodictask, :dates => @periodictask.upcoming_run_dates, :sentence => true } %></div>
+  </div>
   <p class="periodictask-if-previous-open">
     <%= label(:periodictask, :if_previous_open) do %><span class="field-description" title="<%= l(:label_if_previous_open_info) %>"><%= l(:label_if_previous_open) %></span><% end %>
     <%= select_tag 'periodictask[if_previous_open]', periodictask_if_previous_open_options(@periodictask.if_previous_open), :id => 'periodictask_if_previous_open' %>
@@ -233,7 +234,7 @@
         });
       }, 300);
     }
-    $('#periodictask_interval_number, #periodictask_interval_units, #periodictask_next_run_date, .periodictask-recurrence :input').on('change', refreshUpcomingRuns);
+    $('#periodictask_interval_number, #periodictask_interval_units, #periodictask_weekend_adjustment, #periodictask_next_run_date, .periodictask-recurrence :input').on('change', refreshUpcomingRuns);
     $('#periodictask_interval_number, #periodictask_next_run_date').on('input', refreshUpcomingRuns);
 
     var currentUserId = '<%= User.current.id %>';

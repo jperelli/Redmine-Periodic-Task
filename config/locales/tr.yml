@@ -99,6 +99,7 @@ tr:
   label_recurrence_on_weekdays: "%{weekdays} günleri"
   label_recurrence_on_month_weekdays: "%{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "ayın %{day}. günü"
+  label_recurrence_at_time: "%{schedule}, saat %{time}"
   error_recurrence_weekdays_blank: "En az bir gün seçin"
   error_recurrence_month_weeks_blank: "En az bir sıra seçin (1. ile 5. arası)"
   label_recurrence_every_day:

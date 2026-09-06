@@ -1,0 +1,36 @@
+/* Next occurrences: rule sentence, run chips and the collapsible month grids */
+.periodictask-schedule-rule { color: #555; font-style: italic; margin-bottom: 3px; }
+
+.periodictask-run-chips { line-height: 1.9; }
+.periodictask-run-chip {
+  display: inline-block;
+  padding: 0 6px;
+  margin-right: 3px;
+  border: 1px solid #a9c4e4;
+  border-radius: 3px;
+  background: #eef4fb;
+  color: #2a5885;
+  line-height: 1.6;
+  white-space: nowrap;
+  cursor: default;
+}
+.periodictask-run-chip-moved { border-style: dashed; }
+.periodictask-run-chip-overdue { border-color: #e6b560; background: #fdf4dc; color: #7a5a12; }
+.periodictask-calendar-toggle { white-space: nowrap; margin-left: 4px; }
+
+.periodictask-calendar { margin-top: 4px; }
+.periodictask-cal {
+  display: inline-table;
+  vertical-align: top;
+  border-collapse: separate;
+  border-spacing: 1px;
+  margin: 0 14px 6px 0;
+  font-size: 0.92em;
+}
+.periodictask-cal caption { font-weight: bold; text-align: left; padding: 0 0 2px 1px; white-space: nowrap; }
+.periodictask-cal th { font-weight: normal; color: #777; padding: 0; text-align: center; }
+.periodictask-cal td { width: 2em; text-align: center; padding: 1px 0; line-height: 1.5; border-radius: 3px; }
+.periodictask-cal td.nwday { color: #999; background: #f3f3f3; }
+.periodictask-cal td.today { box-shadow: inset 0 0 0 1px #e6b560; }
+.periodictask-cal td.periodictask-cal-run { background: #4b7fb4; color: #fff; font-weight: bold; }
+.periodictask-cal td.periodictask-cal-moved { color: #999; text-decoration: line-through; }

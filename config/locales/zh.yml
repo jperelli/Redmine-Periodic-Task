@@ -101,6 +101,7 @@ zh:
   label_recurrence_on_weekdays: "于%{weekdays}"
   label_recurrence_on_month_weekdays: "于%{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "于 %{day} 日"
+  label_recurrence_at_time: "%{schedule} %{time}"
   error_recurrence_weekdays_blank: "请至少选择一个星期"
   error_recurrence_month_weeks_blank: "请至少选择一个第几个（第 1 至第 5 个）"
   label_recurrence_every_day:

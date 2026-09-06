@@ -99,6 +99,7 @@ ru:
   label_recurrence_on_weekdays: "по %{weekdays}"
   label_recurrence_on_month_weekdays: "в %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "%{day}-го числа"
+  label_recurrence_at_time: "%{schedule} в %{time}"
   error_recurrence_weekdays_blank: "Выберите хотя бы один день недели"
   error_recurrence_month_weeks_blank: "Выберите хотя бы одно повторение (с 1-го по 5-й)"
   label_recurrence_every_day:

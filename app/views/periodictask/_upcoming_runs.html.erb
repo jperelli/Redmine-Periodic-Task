@@ -1,8 +1,16 @@
-<%# Phrasing content only: the form renders it inside a tabular <p>. %>
+<%# Rule sentence (form only), one chip per run and a chevron link revealing the month grids. %>
+<div class="periodictask-upcoming-runs">
 <% if dates.any? %>
-  <% dates.each do |date| %>
-    <span class="periodictask-upcoming-run"><%= day_name(periodictask_display_time(date).wday) %> <%= periodictask_time_with_title(date) %></span><br />
+  <% if sentence %>
+    <div class="periodictask-schedule-rule"><%= periodictask_schedule_sentence(task, dates.first) %></div>
   <% end %>
+  <div class="periodictask-run-chips">
+    <% dates.each do |date| %><%= periodictask_run_chip(task, date) %> <% end %>
+    <%= link_to periodictask_sprite_icon('angle-right', l(:label_calendar), rtl: true), '#',
+                class: 'periodictask-calendar-toggle icon icon-collapsed', 'aria-expanded' => 'false' %>
+  </div>
+  <div class="periodictask-calendar" style="display: none;"><%= periodictask_run_calendar(task, dates) %></div>
 <% else %>
   <em class="periodictask-upcoming-runs-unavailable"><%= l(:label_next_occurrences_unavailable) %></em>
 <% end %>
+</div>

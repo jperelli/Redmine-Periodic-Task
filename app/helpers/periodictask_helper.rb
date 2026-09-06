@@ -117,7 +117,10 @@ module PeriodictaskHelper
   # "each month on the 1st, 3rd Wednesday"; the single source for the list
   # and detail pages.
   def periodictask_schedule_description(task)
-    description = periodictask_recurrence_description(task)
+    periodictask_with_weekend_adjustment(periodictask_recurrence_description(task), task)
+  end
+
+  def periodictask_with_weekend_adjustment(description, task)
     return description unless task.weekend_adjusted?
 
     "#{description}, #{l(:"label_recurrence_weekend_adjustment_#{task.weekend_adjustment}")}"
@@ -143,6 +146,73 @@ module PeriodictaskHelper
     else
       interval
     end
+  end
+
+  # The schedule description plus the time of day of the runs, e.g. "each month
+  # on the 5th (or last) Friday at 09:00 AM"; the live sentence of the form.
+  def periodictask_schedule_sentence(task, first_date)
+    sentence = l(:label_recurrence_at_time, schedule: periodictask_recurrence_description(task),
+                                            time: format_time(first_date, false))
+    periodictask_with_weekend_adjustment(sentence, task)
+  end
+
+  # Chip for one upcoming occurrence: abbreviated weekday and date of the day the
+  # task will actually run, the ISO 8601 timestamp (and the occurrence it was
+  # moved from, when the working-day adjustment applied) as tooltip.
+  def periodictask_run_chip(task, date, now = Time.current)
+    effective = task.adjust_to_working_day(date)
+    classes = ['periodictask-run-chip']
+    title = periodictask_display_time(effective).iso8601
+    if effective != date
+      classes << 'periodictask-run-chip-moved'
+      title = "#{title} (#{l(:label_weekend_adjustment_moved_from, date: format_time(date))})"
+    end
+    classes << 'periodictask-run-chip-overdue' if effective <= now
+    content_tag(:span, periodictask_short_date(effective), class: classes.join(' '), title: title)
+  end
+
+  # "Fri 10/30/2026" in the user's zone and date format.
+  def periodictask_short_date(time)
+    display = periodictask_display_time(time)
+    "#{::I18n.t('date.abbr_day_names')[display.wday]} #{format_date(display)}"
+  end
+
+  # Month grids highlighting the upcoming runs: one table per month touched by
+  # the occurrences or by the working days they were moved to.
+  def periodictask_run_calendar(task, dates, today = User.current.today)
+    runs = dates.map { |d| periodictask_display_time(task.adjust_to_working_day(d)).to_date }
+    moved = dates.map { |d| periodictask_display_time(d).to_date } - runs
+    months = (runs + moved).map(&:beginning_of_month).uniq.sort
+    working_days = Periodictask.working_days
+    safe_join(months.map { |month| periodictask_month_grid(month, runs, moved, today, working_days) })
+  end
+
+  def periodictask_month_grid(month, runs, moved, today, working_days)
+    weekdays = Periodictask.ordered_weekdays
+    first = month
+    first -= 1 until first.wday == weekdays.first
+    last = month.end_of_month
+    last += 1 until last.wday == weekdays.last
+    head = content_tag(:tr, safe_join(weekdays.map { |d| content_tag(:th, day_letter(d), title: day_name(d)) }))
+    rows = (first..last).each_slice(7).map do |week|
+      cells = week.map { |day| periodictask_calendar_cell(day, month, runs, moved, today, working_days) }
+      content_tag(:tr, safe_join(cells))
+    end
+    content_tag(:table, class: 'periodictask-cal') do
+      content_tag(:caption, "#{month_name(month.month)} #{month.year}") +
+        content_tag(:thead, head) + content_tag(:tbody, safe_join(rows))
+    end
+  end
+
+  def periodictask_calendar_cell(day, month, runs, moved, today, working_days)
+    return content_tag(:td, '', class: 'periodictask-cal-other') if day.month != month.month
+
+    classes = []
+    classes << 'nwday' unless working_days.working_day?(day)
+    classes << 'today' if day == today
+    classes << 'periodictask-cal-run' if runs.include?(day)
+    classes << 'periodictask-cal-moved' if moved.include?(day)
+    content_tag(:td, day.day.to_s, class: classes.presence&.join(' '))
   end
 
   # Localized label of the task's weekend_adjustment option.

@@ -99,6 +99,7 @@ ja:
   label_recurrence_on_weekdays: "%{weekdays}"
   label_recurrence_on_month_weekdays: "%{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "%{day}日"
+  label_recurrence_at_time: "%{schedule} %{time}に"
   error_recurrence_weekdays_blank: "曜日を1つ以上選択してください"
   error_recurrence_month_weeks_blank: "第1〜第5のいずれかを1つ以上選択してください"
   label_recurrence_every_day:

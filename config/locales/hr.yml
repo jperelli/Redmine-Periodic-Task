@@ -99,6 +99,7 @@ hr:
   label_recurrence_on_weekdays: "u %{weekdays}"
   label_recurrence_on_month_weekdays: "%{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "%{day}. dana"
+  label_recurrence_at_time: "%{schedule} u %{time}"
   error_recurrence_weekdays_blank: "Odaberite barem jedan dan u tjednu"
   error_recurrence_month_weeks_blank: "Odaberite barem jedno pojavljivanje (1. do 5.)"
   label_recurrence_every_day:

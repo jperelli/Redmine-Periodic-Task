@@ -1265,12 +1265,38 @@ class PeriodictaskControllerTest < ActionController::TestCase
 
     travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
     assert_response :success
-    assert_select '.periodictask-upcoming-runs legend', text: 'Next occurrences'
-    assert_select '.periodictask-upcoming-runs .periodictask-upcoming-run', count: 5
-    assert_select '.periodictask-upcoming-runs .periodictask-upcoming-run', text: /\AWednesday /
+    assert_select 'fieldset.periodictask-upcoming-runs', count: 0
+    assert_select '.periodictask-schedule .attribute.next-occurrences' do
+      assert_select '.label', text: 'Next occurrences'
+      assert_select '.periodictask-schedule-rule', count: 0
+      assert_select '.periodictask-run-chip', count: 5
+      assert_select '.periodictask-run-chip', text: 'Wed 01/07/2026'
+      assert_select 'a.periodictask-calendar-toggle[aria-expanded=false]', text: /Calendar/
+      assert_select '.periodictask-calendar[style*="display: none"] table.periodictask-cal', count: 1
+      assert_select 'table.periodictask-cal caption', text: 'January 2026'
+      assert_select 'table.periodictask-cal td.periodictask-cal-run', count: 5
+      assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '19'
+      assert_select 'table.periodictask-cal td.nwday', text: '3'
+      assert_select 'table.periodictask-cal td.today', text: '1'
+    end
     assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0),
                   Time.utc(2026, 1, 14, 10, 0), Time.utc(2026, 1, 19, 10, 0)],
-                 rendered_upcoming_run_times('.periodictask-upcoming-runs')
+                 rendered_upcoming_run_times('.periodictask-schedule')
+    assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
+    assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
+  end
+
+  def test_show_marks_the_runs_moved_to_a_working_day
+    task = create_test_periodictask(interval_units: 'week', weekend_adjustment: 'next_working_day',
+                                    next_run_date: Time.utc(2026, 1, 3, 10, 0)) # a Saturday
+
+    travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_response :success
+    assert_select '.periodictask-run-chip.periodictask-run-chip-moved', count: 5
+    assert_select '.periodictask-run-chip-moved[title*=?]', 'moved from 01/03/2026 10:00 AM', text: 'Mon 01/05/2026'
+    assert_select 'table.periodictask-cal td.periodictask-cal-moved', text: '3'
+    assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '5'
+    assert_equal Time.utc(2026, 1, 5, 10, 0), rendered_upcoming_run_times('.periodictask-schedule').first
   end
 
   def test_show_displays_next_occurrences_in_the_user_time_zone
@@ -1279,22 +1305,31 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = create_test_periodictask(interval_units: 'day', next_run_date: Time.utc(2026, 8, 20, 1, 0))
 
     travel_to(Time.utc(2026, 8, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
-    assert_select '.periodictask-upcoming-runs .periodictask-upcoming-run',
-                  text: %r{\AWednesday .*08/19/2026 10:00 PM\z}
-    assert_equal Time.utc(2026, 8, 20, 1, 0), rendered_upcoming_run_times('.periodictask-upcoming-runs').first
+    assert_select '.periodictask-run-chip[title=?]', '2026-08-19T22:00:00-03:00', text: 'Wed 08/19/2026'
+    assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '19'
+    assert_equal Time.utc(2026, 8, 20, 1, 0), rendered_upcoming_run_times('.periodictask-schedule').first
   end
 
   def test_new_and_edit_render_the_next_occurrences_preview
     get :new, params: { project_id: 'ecookbook' }
     assert_response :success
     assert_select '#periodictask_upcoming_runs_field label', text: 'Next occurrences'
-    assert_select '#periodictask_upcoming_runs .periodictask-upcoming-run', count: 5
+    assert_select '#periodictask_upcoming_runs .periodictask-schedule-rule', count: 1
+    assert_select '#periodictask_upcoming_runs .periodictask-run-chip', count: 5
+    assert_select '#periodictask_upcoming_runs a.periodictask-calendar-toggle', text: /Calendar/
+    assert_select '#periodictask_upcoming_runs .periodictask-calendar table.periodictask-cal'
     assert_includes @response.body, periodictask_preview_path(project_id: 'ecookbook', format: 'js')
+    assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
+    assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
 
     task = create_test_periodictask(interval_units: 'month', monthly_mode: 'weekday', month_weeks: [5], weekdays: [5],
                                     next_run_date: Time.utc(2026, 1, 30, 9, 0))
     travel_to(Time.utc(2026, 1, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
     assert_response :success
+    assert_select '#periodictask_upcoming_runs .periodictask-schedule-rule',
+                  text: 'each month on the 5th (or last) Friday at 09:00 AM'
+    assert_select '#periodictask_upcoming_runs table.periodictask-cal', count: 5
+    assert_select '#periodictask_upcoming_runs table.periodictask-cal caption', text: 'May 2026'
     assert_equal [Time.utc(2026, 1, 30, 9, 0), Time.utc(2026, 2, 27, 9, 0), Time.utc(2026, 3, 27, 9, 0),
                   Time.utc(2026, 4, 24, 9, 0), Time.utc(2026, 5, 29, 9, 0)],
                  rendered_upcoming_run_times('#periodictask_upcoming_runs')
@@ -1316,12 +1351,15 @@ class PeriodictaskControllerTest < ActionController::TestCase
     end
     assert_response :success
     assert_equal 'text/javascript', @response.media_type
-    assert_match(/\A\$\('#periodictask_upcoming_runs'\)\.html\(/, @response.body)
+    assert_includes @response.body, "$('#periodictask_upcoming_runs')"
+    assert_includes @response.body, ".html('"
     assert_equal [Time.utc(2026, 1, 30, 9, 0), Time.utc(2026, 2, 27, 9, 0), Time.utc(2026, 3, 27, 9, 0),
                   Time.utc(2026, 4, 24, 9, 0), Time.utc(2026, 5, 29, 9, 0)],
                  previewed_upcoming_run_times
-    assert_equal 5, @response.body.scan('periodictask-upcoming-run\\"').size
-    assert_includes @response.body, 'Friday'
+    assert_equal 5, @response.body.scan('periodictask-run-chip\\"').size
+    assert_includes @response.body, 'each month on the 5th (or last) Friday at 09:00 AM'
+    assert_includes @response.body, 'periodictask-calendar-toggle'
+    assert_equal 5, @response.body.scan('<table class=\\"periodictask-cal\\"').size
     assert_nil Periodictask.find_by(subject: 'Not saved')
   end
 
@@ -1335,7 +1373,23 @@ class PeriodictaskControllerTest < ActionController::TestCase
     end
     assert_response :success
     assert_equal [Time.utc(2026, 8, 20, 12, 0), Time.utc(2026, 8, 21, 12, 0)], previewed_upcoming_run_times.first(2)
-    assert_includes @response.body, '08/20/2026 09:00 AM'
+    assert_includes @response.body, 'Thu 08/20/2026'
+    assert_includes @response.body, 'each day at 09:00 AM'
+  end
+
+  def test_preview_applies_the_posted_weekend_adjustment
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'week', weekend_adjustment: 'previous_working_day',
+                        next_run_date: '2026-01-03T10:00' } # a Saturday
+      }, xhr: true
+    end
+    assert_response :success
+    assert_equal 5, @response.body.scan('periodictask-run-chip periodictask-run-chip-moved').size
+    assert_includes @response.body, 'Fri 01/02/2026'
+    assert_includes @response.body, 'each week at 10:00 AM, non-working days moved to the previous working day'
+    assert_equal Time.utc(2026, 1, 2, 10, 0), previewed_upcoming_run_times.first
   end
 
   def test_preview_with_an_incomplete_recurrence_explains_instead_of_listing_dates
@@ -1424,15 +1478,15 @@ class PeriodictaskControllerTest < ActionController::TestCase
     css_select('#periodictask_weekdays_field input[type=checkbox]').map { |i| i['value'] }
   end
 
-  # Instants of the listed occurrences (from the ISO 8601 tooltip), as UTC.
+  # Instants of the run chips (from the ISO 8601 tooltip), as UTC.
   def rendered_upcoming_run_times(scope)
-    css_select("#{scope} .periodictask-upcoming-run span[title]").map { |s| Time.iso8601(s['title']).utc }
+    css_select("#{scope} .periodictask-run-chip[title]").map { |s| Time.iso8601(s['title'].split.first).utc }
   end
 
   # Same, from the JavaScript response of the preview action (HTML is escaped
   # into a JS string there, so quotes are backslash-escaped).
   def previewed_upcoming_run_times
-    @response.body.scan(/class=\\"periodictask-upcoming-run\\">[^<]*<span[^>]*title=\\"([^"\\]+)\\"/).flatten
+    @response.body.scan(/class=\\"periodictask-run-chip[^"\\]*\\" title=\\"([^" \\]+)/).flatten
              .map { |t| Time.iso8601(t).utc }
   end
 

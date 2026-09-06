@@ -99,6 +99,7 @@ de:
   label_recurrence_on_weekdays: "am %{weekdays}"
   label_recurrence_on_month_weekdays: "am %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "am %{day}. Tag"
+  label_recurrence_at_time: "%{schedule} um %{time}"
   error_recurrence_weekdays_blank: "Mindestens einen Wochentag auswählen"
   error_recurrence_month_weeks_blank: "Mindestens ein Vorkommen auswählen (1. bis 5.)"
   label_recurrence_every_day:

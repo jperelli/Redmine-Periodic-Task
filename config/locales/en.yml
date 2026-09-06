@@ -51,6 +51,7 @@ en:
   label_recurrence_on_weekdays: "on %{weekdays}"
   label_recurrence_on_month_weekdays: "on the %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "on day %{day}"
+  label_recurrence_at_time: "%{schedule} at %{time}"
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
   flash_task_run_now: 'Issue #%{id} created'
