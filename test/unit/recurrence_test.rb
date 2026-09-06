@@ -9,6 +9,7 @@ class RecurrenceTest < ActiveSupport::TestCase
 
   MON = 1
   WED = 3
+  FRI = 5
   SUN = 0
 
   def setup
@@ -308,6 +309,202 @@ class RecurrenceTest < ActiveSupport::TestCase
       assert_difference('Issue.count', 1) { ScheduledTasksChecker.checktasks! }
     end
     assert_equal Time.utc(2026, 2, 18, 10, 0, 0), task.reload.next_run_date
+  end
+
+  # ---- plain intervals ----
+
+  def test_plain_interval_run_exactly_at_the_scheduled_time_moves_to_the_next_occurrence
+    anchor = Time.utc(2026, 1, 5, 10, 0, 0)
+    task = Periodictask.new(interval_number: 1, interval_units: 'day', next_run_date: anchor)
+
+    assert_equal Time.utc(2026, 1, 6, 10, 0, 0), task.get_next_run_date(anchor)
+    assert_equal Time.utc(2026, 1, 6, 10, 0, 0), task.get_next_run_date(anchor + 1.second)
+    assert_equal anchor, task.get_next_run_date(anchor - 1.second)
+  end
+
+  # ---- upcoming_run_dates ----
+
+  def test_upcoming_run_dates_daily_starts_at_the_next_run_date
+    anchor = Time.utc(2026, 1, 5, 10, 0, 0)
+    task = Periodictask.new(interval_number: 1, interval_units: 'day', next_run_date: anchor)
+    expected = (0..4).map { |i| anchor + i.days }
+
+    assert_equal expected, task.upcoming_run_dates(5, Time.utc(2026, 1, 1))
+    assert_equal expected, task.upcoming_run_dates(5, anchor + 5.minutes), 'an overdue first run is still listed first'
+  end
+
+  def test_upcoming_run_dates_defaults_to_five_and_honours_count
+    task = Periodictask.new(interval_number: 3, interval_units: 'day', next_run_date: Time.utc(2026, 1, 5, 10, 0, 0))
+
+    assert_equal 5, task.upcoming_run_dates.size
+    assert_equal [Time.utc(2026, 1, 5, 10, 0, 0), Time.utc(2026, 1, 8, 10, 0, 0)],
+                 task.upcoming_run_dates(2, Time.utc(2026, 1, 1))
+    assert_empty task.upcoming_run_dates(0)
+  end
+
+  def test_upcoming_run_dates_business_days_skip_weekends_and_keep_the_time
+    anchor = Time.utc(2026, 1, 8, 20, 30, 0) # Thursday, outside business hours
+    task = Periodictask.new(interval_number: 1, interval_units: 'business_day', next_run_date: anchor)
+
+    assert_equal [Time.utc(2026, 1, 8, 20, 30, 0), Time.utc(2026, 1, 9, 20, 30, 0),
+                  Time.utc(2026, 1, 12, 20, 30, 0), Time.utc(2026, 1, 13, 20, 30, 0),
+                  Time.utc(2026, 1, 14, 20, 30, 0)],
+                 task.upcoming_run_dates(5, Time.utc(2026, 1, 1))
+  end
+
+  def test_upcoming_run_dates_weekly_on_selected_weekdays
+    anchor = Time.utc(2026, 1, 5, 10, 0, 0) # Monday
+    task = weekly(anchor, [MON, WED])
+
+    assert_equal [Time.utc(2026, 1, 5, 10, 0, 0), Time.utc(2026, 1, 7, 10, 0, 0),
+                  Time.utc(2026, 1, 12, 10, 0, 0), Time.utc(2026, 1, 14, 10, 0, 0),
+                  Time.utc(2026, 1, 19, 10, 0, 0)],
+                 task.upcoming_run_dates(5, Time.utc(2026, 1, 1))
+  end
+
+  def test_upcoming_run_dates_every_two_weeks_skip_the_week_in_between
+    with_settings start_of_week: '1' do
+      anchor = Time.utc(2026, 1, 7, 10, 0, 0) # Wednesday, week of Jan 5
+      task = weekly(anchor, [MON, WED], 2)
+
+      assert_equal [Time.utc(2026, 1, 7, 10, 0, 0), Time.utc(2026, 1, 19, 10, 0, 0),
+                    Time.utc(2026, 1, 21, 10, 0, 0), Time.utc(2026, 2, 2, 10, 0, 0)],
+                   task.upcoming_run_dates(4, Time.utc(2026, 1, 1))
+    end
+  end
+
+  def test_upcoming_run_dates_last_friday_of_every_month
+    fri = 5
+    anchor = Time.utc(2026, 1, 30, 9, 0, 0) # last Friday of January
+    task = monthly_weekdays(anchor, [5], [fri])
+
+    assert_equal [Time.utc(2026, 1, 30, 9, 0, 0), Time.utc(2026, 2, 27, 9, 0, 0), Time.utc(2026, 3, 27, 9, 0, 0),
+                  Time.utc(2026, 4, 24, 9, 0, 0), Time.utc(2026, 5, 29, 9, 0, 0)],
+                 task.upcoming_run_dates(5, Time.utc(2026, 1, 1))
+  end
+
+  def test_upcoming_run_dates_monthly_on_several_ordinal_weekdays
+    anchor = Time.utc(2026, 1, 5, 10, 0, 0) # first Monday
+    task = monthly_weekdays(anchor, [1, 3], [MON, WED])
+
+    assert_equal [Time.utc(2026, 1, 5, 10, 0, 0), Time.utc(2026, 1, 7, 10, 0, 0), Time.utc(2026, 1, 19, 10, 0, 0),
+                  Time.utc(2026, 1, 21, 10, 0, 0), Time.utc(2026, 2, 2, 10, 0, 0), Time.utc(2026, 2, 4, 10, 0, 0)],
+                 task.upcoming_run_dates(6, Time.utc(2026, 1, 1))
+  end
+
+  def test_upcoming_run_dates_monthly_on_day_of_month_and_yearly
+    monthly = Periodictask.new(interval_number: 1, interval_units: 'month',
+                               next_run_date: Time.utc(2026, 1, 15, 12, 0, 0))
+    assert_equal [Time.utc(2026, 1, 15, 12, 0, 0), Time.utc(2026, 2, 15, 12, 0, 0), Time.utc(2026, 3, 15, 12, 0, 0)],
+                 monthly.upcoming_run_dates(3, Time.utc(2026, 1, 1))
+
+    yearly = Periodictask.new(interval_number: 1, interval_units: 'year', next_run_date: Time.utc(2026, 1, 1, 8, 0, 0))
+    assert_equal [2026, 2027, 2028, 2029, 2030], yearly.upcoming_run_dates(5, Time.utc(2025, 12, 1)).map(&:year)
+  end
+
+  def test_upcoming_run_dates_blank_next_run_date_starts_at_the_next_matching_date
+    now = Time.utc(2026, 1, 6, 10, 0, 0) # Tuesday
+    task = weekly(nil, [MON, WED])
+
+    assert_equal [Time.utc(2026, 1, 7, 10, 0, 0), Time.utc(2026, 1, 12, 10, 0, 0), Time.utc(2026, 1, 14, 10, 0, 0)],
+                 task.upcoming_run_dates(3, now)
+    assert_nil task.next_run_date
+  end
+
+  def test_upcoming_run_dates_after_downtime_skip_to_the_next_future_occurrence
+    task = Periodictask.new(interval_number: 1, interval_units: 'day', next_run_date: Time.utc(2026, 1, 5, 10, 0, 0))
+
+    assert_equal [Time.utc(2026, 1, 5, 10, 0, 0), Time.utc(2026, 1, 9, 10, 0, 0), Time.utc(2026, 1, 10, 10, 0, 0)],
+                 task.upcoming_run_dates(3, Time.utc(2026, 1, 8, 12, 0, 0))
+  end
+
+  def test_upcoming_run_dates_are_shown_in_the_user_time_zone
+    with_time_zone('Tokyo') do
+      anchor = Time.zone.local(2026, 3, 27, 9, 0, 0) # last Friday of March, 09:00 Tokyo
+      task = monthly_weekdays(anchor, [5], [5])
+      dates = task.upcoming_run_dates(2, Time.zone.local(2026, 3, 1))
+
+      assert_equal [Time.zone.local(2026, 3, 27, 9, 0, 0), Time.zone.local(2026, 4, 24, 9, 0, 0)], dates
+      assert_equal [9, 9], dates.map(&:hour)
+    end
+  end
+
+  def test_upcoming_run_dates_do_not_persist_or_change_the_task
+    task = valid_task(interval_units: 'week', weekdays: [MON, WED], next_run_date: Time.utc(2026, 1, 5, 10, 0, 0))
+    task.save!
+
+    assert_no_difference('Issue.count') do
+      assert_equal 5, task.upcoming_run_dates.size
+    end
+    assert_not task.changed?
+    assert_equal Time.utc(2026, 1, 5, 10, 0, 0), task.next_run_date
+    assert_equal Time.utc(2026, 1, 5, 10, 0, 0), task.reload.next_run_date
+  end
+
+  def test_upcoming_run_dates_are_empty_for_an_incomplete_recurrence
+    assert_empty monthly_weekdays(Time.utc(2026, 1, 5, 10, 0, 0), [], [MON]).upcoming_run_dates
+    assert_empty monthly_weekdays(Time.utc(2026, 1, 5, 10, 0, 0), [1], []).upcoming_run_dates
+    assert_empty Periodictask.new(interval_number: 0, interval_units: 'day').upcoming_run_dates
+    assert_empty Periodictask.new(interval_number: 1, interval_units: '').upcoming_run_dates
+  end
+
+  def test_upcoming_run_dates_through_lists_every_run_up_to_the_limit
+    anchor = Time.utc(2026, 1, 5, 10, 0, 0) # Monday
+    task = weekly(anchor, [MON, WED, FRI])
+    dates = task.upcoming_run_dates_through(Time.utc(2026, 1, 31).end_of_day, Time.utc(2026, 1, 1))
+
+    assert_equal [5, 7, 9, 12, 14, 16, 19, 21, 23, 26, 28, 30], dates.map(&:day)
+    assert_equal [10], dates.map(&:hour).uniq
+    assert_equal dates.first(5), task.upcoming_run_dates(5, Time.utc(2026, 1, 1)), 'starts like the chips'
+  end
+
+  def test_upcoming_run_dates_through_always_includes_the_first_run_and_is_capped
+    first = Time.utc(2026, 1, 5, 10, 0, 0)
+    task = Periodictask.new(interval_number: 1, interval_units: 'day', next_run_date: first)
+    now = Time.utc(2026, 1, 1)
+
+    assert_equal [first], task.upcoming_run_dates_through(now, now), 'limit before the first run'
+    assert_equal 10, task.upcoming_run_dates_through(Time.utc(2030, 1, 1), now, 10).size
+    assert_empty monthly_weekdays(Time.utc(2026, 1, 5, 10, 0, 0), [], [MON]).upcoming_run_dates_through(now)
+  end
+
+  def test_upcoming_run_dates_stop_at_the_end_date
+    now = Time.utc(2026, 1, 1)
+    task = weekly(Time.utc(2026, 1, 5, 10, 0, 0), [MON, WED])
+
+    task.end_date = Time.utc(2026, 1, 14, 10, 0, 0) # a run exactly on the end date still happens
+    assert_equal [5, 7, 12, 14], task.upcoming_run_dates(5, now).map(&:day)
+    assert_equal [5, 7, 12, 14], task.upcoming_run_dates_through(Time.utc(2026, 3, 1), now).map(&:day)
+
+    task.end_date = Time.utc(2026, 1, 14, 9, 59, 0)
+    assert_equal [5, 7, 12], task.upcoming_run_dates(5, now).map(&:day)
+
+    task.end_date = Time.utc(2026, 1, 4)
+    assert_empty task.upcoming_run_dates(5, now), 'already ended by date'
+    assert_empty task.upcoming_run_dates_through(Time.utc(2026, 3, 1), now)
+
+    task.next_run_date = nil
+    assert_empty task.upcoming_run_dates(5, now), 'first computed run is past the end date'
+  end
+
+  def test_upcoming_run_dates_stop_at_the_runs_left_of_max_occurrences
+    now = Time.utc(2026, 1, 1)
+    task = weekly(Time.utc(2026, 1, 5, 10, 0, 0), [MON, WED])
+
+    task.max_occurrences = 3
+    assert_equal [5, 7, 12], task.upcoming_run_dates(5, now).map(&:day)
+    assert_equal [5, 7, 12], task.upcoming_run_dates_through(Time.utc(2026, 3, 1), now).map(&:day)
+    assert_equal [5, 7], task.upcoming_run_dates(2, now).map(&:day), 'the count still applies'
+
+    task.occurrences_count = 2
+    assert_equal [5], task.upcoming_run_dates(5, now).map(&:day), 'only the runs left'
+
+    task.occurrences_count = 3
+    assert_empty task.upcoming_run_dates(5, now), 'already ended by count'
+
+    task.max_occurrences = 10
+    task.end_date = Time.utc(2026, 1, 8)
+    assert_equal [5, 7], task.upcoming_run_dates(5, now).map(&:day), 'whichever condition comes first'
   end
 
   private

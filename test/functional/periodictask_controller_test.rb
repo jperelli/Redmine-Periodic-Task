@@ -1335,6 +1335,302 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 'Onlinestore task', other.subject
   end
 
+  def test_show_lists_the_next_occurrences
+    task = create_test_periodictask(interval_units: 'week', weekdays: [1, 3],
+                                    next_run_date: Time.utc(2026, 1, 5, 10, 0))
+
+    travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_response :success
+    assert_select 'fieldset.periodictask-upcoming-runs', count: 0
+    assert_select '.periodictask-schedule .attribute.next-occurrences' do
+      assert_select '.label', text: 'Next occurrences'
+      assert_select '.periodictask-schedule-rule', count: 0
+      assert_select '.periodictask-run-chip', count: 5
+      assert_select '.periodictask-run-chip', text: 'Wed 01/07/2026'
+      assert_select 'a.periodictask-calendar-toggle[aria-expanded=false]', text: /Calendar/
+      assert_select '.periodictask-calendar[style*="display: none"] table.periodictask-cal', count: 1
+      assert_select 'table.periodictask-cal caption', text: 'January 2026'
+      # every Monday and Wednesday of the month, not only the 5 of the chips
+      assert_select 'table.periodictask-cal td.periodictask-cal-run', count: 8
+      assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '28'
+      assert_select 'table.periodictask-cal td.nwday', text: '3'
+      assert_select 'table.periodictask-cal td.today', text: '1'
+    end
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0),
+                  Time.utc(2026, 1, 14, 10, 0), Time.utc(2026, 1, 19, 10, 0)],
+                 rendered_upcoming_run_times('.periodictask-schedule')
+    assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
+    assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
+  end
+
+  def test_show_marks_the_runs_moved_to_a_working_day
+    task = create_test_periodictask(interval_units: 'week', weekend_adjustment: 'next_working_day',
+                                    next_run_date: Time.utc(2026, 1, 3, 10, 0)) # a Saturday
+
+    travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_response :success
+    assert_select '.periodictask-run-chip.periodictask-run-chip-moved', count: 5
+    assert_select '.periodictask-run-chip-moved[title*=?]', 'moved from 01/03/2026 10:00 AM', text: 'Mon 01/05/2026'
+    assert_select 'table.periodictask-cal td.periodictask-cal-moved', text: '3'
+    assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '5'
+    # Jan 31 runs on Feb 2, so February is shown and filled; its Feb 28 run
+    # falls on Mar 2, so March is shown and filled too
+    assert_select 'table.periodictask-cal', count: 3
+    assert_select 'table.periodictask-cal caption', text: 'March 2026'
+    assert_select 'table.periodictask-cal td.periodictask-cal-run', count: 13
+    assert_select 'table.periodictask-cal td.periodictask-cal-moved', count: 13
+    assert_equal Time.utc(2026, 1, 5, 10, 0), rendered_upcoming_run_times('.periodictask-schedule').first
+  end
+
+  def test_show_displays_next_occurrences_in_the_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires') # UTC-3
+    # Aug 20 01:00 UTC is Wednesday Aug 19, 22:00 in Buenos Aires
+    task = create_test_periodictask(interval_units: 'day', next_run_date: Time.utc(2026, 8, 20, 1, 0))
+
+    travel_to(Time.utc(2026, 8, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select '.periodictask-run-chip[title=?]', '2026-08-19T22:00:00-03:00', text: 'Wed 08/19/2026'
+    assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '19'
+    assert_equal Time.utc(2026, 8, 20, 1, 0), rendered_upcoming_run_times('.periodictask-schedule').first
+  end
+
+  def test_new_and_edit_render_the_next_occurrences_preview
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select '#periodictask_upcoming_runs_field label', text: 'Next occurrences'
+    assert_select '#periodictask_upcoming_runs .periodictask-schedule-rule', count: 1
+    assert_select '#periodictask_upcoming_runs .periodictask-run-chip', count: 5
+    assert_select '#periodictask_upcoming_runs a.periodictask-calendar-toggle', text: /Calendar/
+    assert_select '#periodictask_upcoming_runs .periodictask-calendar table.periodictask-cal'
+    assert_includes @response.body, periodictask_preview_path(project_id: 'ecookbook', format: 'js')
+    assert_includes @response.body, 'upcomingRunsRequest.abort()'
+    assert_includes @response.body, "'&preview_generation=' + upcomingRunsGeneration"
+    assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
+    assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
+
+    task = create_test_periodictask(interval_units: 'month', monthly_mode: 'weekday', month_weeks: [5], weekdays: [5],
+                                    next_run_date: Time.utc(2026, 1, 30, 9, 0))
+    travel_to(Time.utc(2026, 1, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
+    assert_response :success
+    assert_select '#periodictask_upcoming_runs .periodictask-schedule-rule',
+                  text: 'each month on the 5th (or last) Friday at 09:00 AM'
+    assert_select '#periodictask_upcoming_runs table.periodictask-cal', count: 5
+    assert_select '#periodictask_upcoming_runs table.periodictask-cal caption', text: 'May 2026'
+    assert_equal [Time.utc(2026, 1, 30, 9, 0), Time.utc(2026, 2, 27, 9, 0), Time.utc(2026, 3, 27, 9, 0),
+                  Time.utc(2026, 4, 24, 9, 0), Time.utc(2026, 5, 29, 9, 0)],
+                 rendered_upcoming_run_times('#periodictask_upcoming_runs')
+  end
+
+  def test_preview_returns_the_next_occurrences_of_the_posted_recurrence_without_saving
+    assert_no_difference('Periodictask.count') do
+      travel_to(Time.utc(2026, 1, 1)) do
+        post :preview, params: {
+          project_id: 'ecookbook',
+          format: 'js',
+          periodictask: {
+            subject: 'Not saved', tracker_id: 1, assigned_to_id: 2,
+            interval_number: '1', interval_units: 'month', monthly_mode: 'weekday',
+            month_weeks: ['5'], weekdays: ['5'], next_run_date: '2026-01-30T09:00'
+          }
+        }, xhr: true
+      end
+    end
+    assert_response :success
+    assert_equal 'text/javascript', @response.media_type
+    assert_includes @response.body, "$('#periodictask_upcoming_runs')"
+    assert_includes @response.body, ".html('"
+    assert_equal [Time.utc(2026, 1, 30, 9, 0), Time.utc(2026, 2, 27, 9, 0), Time.utc(2026, 3, 27, 9, 0),
+                  Time.utc(2026, 4, 24, 9, 0), Time.utc(2026, 5, 29, 9, 0)],
+                 previewed_upcoming_run_times
+    assert_equal 5, @response.body.scan('periodictask-run-chip\\"').size
+    assert_includes @response.body, 'each month on the 5th (or last) Friday at 09:00 AM'
+    assert_includes @response.body, 'periodictask-calendar-toggle'
+    assert_equal 5, @response.body.scan('<table class=\\"periodictask-cal\\"').size
+    assert_nil Periodictask.find_by(subject: 'Not saved')
+  end
+
+  def test_preview_parses_the_next_run_date_in_the_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires') # UTC-3
+    travel_to(Time.utc(2026, 8, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-08-20T09:00' }
+      }, xhr: true
+    end
+    assert_response :success
+    assert_equal [Time.utc(2026, 8, 20, 12, 0), Time.utc(2026, 8, 21, 12, 0)], previewed_upcoming_run_times.first(2)
+    assert_includes @response.body, 'Thu 08/20/2026'
+    assert_includes @response.body, 'each day at 09:00 AM'
+  end
+
+  def test_preview_applies_the_posted_weekend_adjustment
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'week', weekend_adjustment: 'previous_working_day',
+                        next_run_date: '2026-01-03T10:00' } # a Saturday
+      }, xhr: true
+    end
+    assert_response :success
+    assert_equal 5, @response.body.scan('periodictask-run-chip periodictask-run-chip-moved').size
+    assert_includes @response.body, 'Fri 01/02/2026'
+    assert_includes @response.body, 'each week at 10:00 AM, non-working days moved to the previous working day'
+    assert_equal Time.utc(2026, 1, 2, 10, 0), previewed_upcoming_run_times.first
+  end
+
+  def test_preview_stops_at_the_posted_end_date_and_maximum_number_of_runs
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'week', weekdays: %w[1 3],
+                        next_run_date: '2026-01-05T10:00', end_date: '2026-01-14T10:00' }
+      }, xhr: true
+    end
+    assert_response :success
+    # Jan 14 10:00 is exactly the end date, so it still runs; Jan 19 does not
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0),
+                  Time.utc(2026, 1, 14, 10, 0)], previewed_upcoming_run_times
+    assert_equal 4, @response.body.scan('<td class=\\"periodictask-cal-run\\"').size
+    assert_includes @response.body, 'Ends on 01/14/2026 10:00 AM'
+
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'week', weekdays: %w[1 3],
+                        next_run_date: '2026-01-05T10:00', max_occurrences: '3' }
+      }, xhr: true
+    end
+    assert_response :success
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0)],
+                 previewed_upcoming_run_times
+    assert_equal 3, @response.body.scan('<td class=\\"periodictask-cal-run\\"').size
+    assert_includes @response.body, '0 of 3 runs'
+  end
+
+  def test_preview_counts_the_runs_already_made_when_editing_a_task
+    task = create_test_periodictask(interval_units: 'week', weekdays: [1, 3], max_occurrences: 4,
+                                    next_run_date: Time.utc(2026, 1, 5, 10, 0))
+    task.update_columns(occurrences_count: 3)
+
+    travel_to(Time.utc(2026, 1, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select '#periodictask_upcoming_runs .periodictask-run-chip', count: 1
+    assert_select '#periodictask_upcoming_runs .periodictask-end-condition', text: '3 of 4 runs'
+    assert_includes @response.body, "var upcomingRunsTaskId = #{task.id};"
+
+    get :new, params: { project_id: 'ecookbook' }
+    assert_includes @response.body, 'var upcomingRunsTaskId = null;'
+
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js', id: task.id,
+        periodictask: { interval_number: '1', interval_units: 'week', weekdays: %w[1 3],
+                        next_run_date: '2026-01-05T10:00', max_occurrences: '5' }
+      }, xhr: true
+    end
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0)], previewed_upcoming_run_times
+    assert_includes @response.body, '3 of 5 runs'
+
+    # a task of another project does not leak its count
+    other = Periodictask.create!(project_id: 2, tracker_id: 1, author_id: 2, subject: 'Other', interval_number: 1,
+                                 interval_units: 'week', next_run_date: Time.utc(2026, 1, 5, 10, 0),
+                                 occurrences_count: 3)
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js', id: other.id,
+        periodictask: { interval_number: '1', interval_units: 'week', next_run_date: '2026-01-05T10:00',
+                        max_occurrences: '5' }
+      }, xhr: true
+    end
+    assert_equal 5, previewed_upcoming_run_times.size
+  end
+
+  def test_preview_explains_an_ended_task_instead_of_listing_dates
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-01-05T10:00',
+                        end_date: '2026-01-04T10:00' }
+      }, xhr: true
+    end
+    assert_response :success
+    assert_empty previewed_upcoming_run_times
+    assert_includes @response.body, 'periodictask-upcoming-runs-ended'
+    assert_includes @response.body, 'Ended (end date reached)'
+  end
+
+  def test_show_explains_an_ended_task_instead_of_listing_dates
+    task = create_test_periodictask(interval_units: 'day', max_occurrences: 2,
+                                    next_run_date: Time.utc(2026, 1, 5, 10, 0))
+    task.update_columns(occurrences_count: 2)
+    travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select '.next-occurrences .periodictask-run-chip', count: 0
+    assert_select '.next-occurrences em.periodictask-upcoming-runs-ended',
+                  text: 'Ended (maximum number of runs reached)'
+  end
+
+  def test_preview_with_an_incomplete_recurrence_explains_instead_of_listing_dates
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'month', monthly_mode: 'weekday',
+                      next_run_date: '2026-01-30T09:00' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+    assert_empty previewed_upcoming_run_times
+
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '0', interval_units: 'day' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: 'abc', interval_units: 'fortnight', weekdays: %w[9 x] }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'Complete the recurrence to see the next occurrences.'
+  end
+
+  def test_preview_echoes_the_generation_so_the_form_ignores_stale_responses
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js', preview_generation: '7',
+      periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-01-05T10:00' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'var generation = 7;'
+    assert_includes @response.body, "box.data('generation') !== generation) { return; }"
+
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-01-05T10:00' }
+    }, xhr: true
+    assert_response :success
+    assert_includes @response.body, 'var generation = 0;'
+    assert_includes @response.body, ".html('"
+  end
+
+  def test_preview_requires_the_periodictask_parameters
+    assert_raises(ActionController::ParameterMissing) do
+      post :preview, params: { project_id: 'ecookbook', format: 'js' }, xhr: true
+    end
+  end
+
+  def test_preview_is_scoped_to_the_project_and_its_permission
+    post :preview, params: {
+      project_id: 'onlinestore', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'day' }
+    }, xhr: true
+    assert_response 403 # periodictask module not enabled on onlinestore
+
+    @request.session[:user_id] = 3 # Developer without the periodictask permission
+    post :preview, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { interval_number: '1', interval_units: 'day' }
+    }, xhr: true
+    assert_response 403
+  end
+
   def test_index_greys_inactive_tasks_and_marks_failed_ones
     create_test_periodictask(subject: 'Paused task', is_active: false)
     create_test_periodictask(subject: 'Broken task', last_error: 'Tracker cannot be blank')
@@ -1650,6 +1946,18 @@ class PeriodictaskControllerTest < ActionController::TestCase
 
   def rendered_weekday_values
     css_select('#periodictask_weekdays_field input[type=checkbox]').map { |i| i['value'] }
+  end
+
+  # Instants of the run chips (from the ISO 8601 tooltip), as UTC.
+  def rendered_upcoming_run_times(scope)
+    css_select("#{scope} .periodictask-run-chip[title]").map { |s| Time.iso8601(s['title'].split.first).utc }
+  end
+
+  # Same, from the JavaScript response of the preview action (HTML is escaped
+  # into a JS string there, so quotes are backslash-escaped).
+  def previewed_upcoming_run_times
+    @response.body.scan(/class=\\"periodictask-run-chip[^"\\]*\\" title=\\"([^" \\]+)/).flatten
+             .map { |t| Time.iso8601(t).utc }
   end
 
   def rendered_rotation_ids

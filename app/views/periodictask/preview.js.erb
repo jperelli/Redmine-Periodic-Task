@@ -1,0 +1,9 @@
+(function() {
+  var box = $('#periodictask_upcoming_runs');
+  var generation = <%= @preview_generation.to_i %>;
+  // A response to an earlier request than the block's latest one is stale.
+  if (generation && box.data('generation') && box.data('generation') !== generation) { return; }
+  var calendarShown = box.find('.periodictask-calendar').is(':visible');
+  box.html('<%= escape_javascript(render :partial => 'upcoming_runs', :locals => { :task => @periodictask, :dates => @upcoming_run_dates, :sentence => true }) %>');
+  if (calendarShown) { box.find('.periodictask-calendar-toggle').trigger('click'); }
+})();

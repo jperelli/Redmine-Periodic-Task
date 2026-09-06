@@ -37,6 +37,9 @@ vi:
   label_unit_month: tháng
   label_unit_year: năm
   label_next_run_date_info: "Lần chạy đầu tiên và cũng là mốc của lịch chạy (ngày trong tháng, giờ trong ngày). Để trống để bắt đầu từ ngày kế tiếp khớp với chu kỳ lặp."
+  label_next_occurrences: "Các lần chạy tiếp theo"
+  label_next_occurrences_info: "Các ngày chạy tiếp theo của lịch này, theo múi giờ của bạn. Các lần chạy bị bỏ lỡ sẽ được thực hiện ở lần kiểm tra kế tiếp."
+  label_next_occurrences_unavailable: "Hoàn tất chu kỳ lặp để xem các lần chạy tiếp theo."
   label_recurrence_repeat_on: Lặp vào
   label_recurrence_monthly_on: Hằng tháng vào
   label_recurrence_day_of_month: Cùng ngày trong tháng với lần chạy kế tiếp
@@ -50,6 +53,7 @@ vi:
   label_recurrence_on_weekdays: "vào %{weekdays}"
   label_recurrence_on_month_weekdays: "vào %{weekdays} của %{ordinals}"
   label_recurrence_on_day_of_month: "vào ngày %{day}"
+  label_recurrence_at_time: "%{schedule} lúc %{time}"
   flash_task_created: Đã tạo việc định kỳ
   flash_task_saved: Đã lưu việc định kỳ
   flash_task_run_now: 'Đã tạo vấn đề #%{id}'

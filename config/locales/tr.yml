@@ -83,6 +83,9 @@ tr:
   error_relation_type_invalid: "Geçersiz ilişki türü"
   error_relation_issue_invalid: "İlişkili iş bir iş numarası olmalıdır"
   label_next_run_date_info: "İlk çalıştırma ve zamanlamanın dayanağı (ayın günü, saat). Yinelemeye uyan bir sonraki tarihte başlamak için boş bırakın."
+  label_next_occurrences: "Sonraki çalıştırmalar"
+  label_next_occurrences_info: "Bu zamanlamanın sonraki çalıştırma tarihleri, sizin saat diliminizde. Kaçırılan çalıştırmalar bir sonraki kontrolde telafi edilir."
+  label_next_occurrences_unavailable: "Sonraki çalıştırmaları görmek için yinelemeyi tamamlayın."
   label_recurrence_repeat_on: "Tekrar günleri"
   label_recurrence_monthly_on: "Aylık"
   label_recurrence_day_of_month: "Sonraki çalıştırma tarihiyle aynı ayın günü"
@@ -96,6 +99,7 @@ tr:
   label_recurrence_on_weekdays: "%{weekdays} günleri"
   label_recurrence_on_month_weekdays: "%{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "ayın %{day}. günü"
+  label_recurrence_at_time: "%{schedule}, saat %{time}"
   error_recurrence_weekdays_blank: "En az bir gün seçin"
   error_recurrence_month_weeks_blank: "En az bir sıra seçin (1. ile 5. arası)"
   label_recurrence_every_day:

@@ -705,6 +705,26 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     next_occurrence(at_anchor_time(closed_at.to_date, next_run_date), closed_at.end_of_day)
   end
 
+  # The next +count+ run dates: the stored next_run_date (or, when blank, the
+  # first date matching the recurrence from +now+) followed by the occurrences
+  # the scheduler would move to after each run. Missed runs collapse into the
+  # next future one, like the scheduler does. Stops at the end condition: no
+  # date after end_date, no more than the runs left of max_occurrences.
+  # Computed on a copy of the task, nothing is persisted. Empty when the
+  # recurrence is incomplete or invalid, or the task is ended.
+  def upcoming_run_dates(count = 5, now = Time.current)
+    return [] unless count.to_i.positive?
+
+    walk_run_dates(now) { |dates, _next_date| dates.size < count }
+  end
+
+  # Same walk, but every run date up to +limit+ (the first one always), so a
+  # calendar can show all the runs of the months it displays. Capped at +max+
+  # dates to bound the work for dense schedules.
+  def upcoming_run_dates_through(limit, now = Time.current, max = 400)
+    walk_run_dates(now) { |dates, next_date| dates.size < max && next_date <= limit }
+  end
+
   # The moment the scheduler runs the stored occurrence: next_run_date itself,
   # or the nearest working day (at the same time of day) when the task moves
   # runs off non-working days. Nil when there is no next_run_date.
@@ -761,6 +781,47 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
 
       steps += 1
     end
+  end
+
+  # Run dates from the stored next_run_date (or the first occurrence from
+  # +now+) on, appending the occurrence the scheduler would move to after each
+  # run while the block accepts it and the end condition allows it. Works on
+  # a copy of the task.
+  def walk_run_dates(now)
+    return [] unless recurrence_computable? && !ended?
+
+    preview = dup
+    first = next_run_date || preview.get_next_run_date(now)
+    return [] if past_end_date?(first)
+
+    dates = [first]
+    loop do
+      break if runs_left && dates.size >= runs_left
+
+      preview.next_run_date = dates.last
+      next_date = preview.get_next_run_date([dates.last, now].max)
+      break if past_end_date?(next_date) || !yield(dates, next_date)
+
+      dates << next_date
+    end
+    dates
+  end
+
+  # Scheduled runs still to come under max_occurrences, nil when unlimited.
+  def runs_left
+    max_occurrences - occurrences_count.to_i if max_occurrences.present?
+  end
+
+  def past_end_date?(time)
+    end_date.present? && time > end_date
+  end
+
+  # A schedule can be walked when the interval is a positive number of a known
+  # unit and, in monthly weekday mode, ordinals and weekdays are selected.
+  def recurrence_computable?
+    return false unless interval_number.to_i.positive? && INTERVAL_UNITS.include?(interval_units.to_s.downcase)
+
+    !monthly_weekday_mode? || (weekdays.any? && month_weeks.any?)
   end
 
   # When the rotation list is edited, the user who was up next stays up next

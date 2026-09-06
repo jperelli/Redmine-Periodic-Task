@@ -90,6 +90,9 @@ zh-TW:
   error_relation_type_invalid: "無效的關聯類型"
   error_relation_issue_invalid: "關聯議題必須是議題編號"
   label_next_run_date_info: "首次執行時間，也是排程的基準（每月日期、時刻）。留空則從符合重複規則的下一個日期開始。"
+  label_next_occurrences: "下次執行時間"
+  label_next_occurrences_info: "此排程接下來的執行時間（以您的時區顯示）。錯過的執行會在下次檢查時補上。"
+  label_next_occurrences_unavailable: "請完成重複設定以查看下次執行時間。"
   label_recurrence_repeat_on: "重複於"
   label_recurrence_monthly_on: "每月依"
   label_recurrence_day_of_month: "與下次執行日期相同的日"
@@ -103,6 +106,7 @@ zh-TW:
   label_recurrence_on_weekdays: "於%{weekdays}"
   label_recurrence_on_month_weekdays: "於%{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "於 %{day} 日"
+  label_recurrence_at_time: "%{schedule} %{time}"
   error_recurrence_weekdays_blank: "請至少選擇一個星期"
   error_recurrence_month_weeks_blank: "請至少選擇一個第幾個（第 1 至第 5 個）"
   label_recurrence_every_day:

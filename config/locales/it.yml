@@ -83,6 +83,9 @@ it:
   error_relation_type_invalid: "Tipo di relazione non valido"
   error_relation_issue_invalid: "La segnalazione correlata deve essere un numero di segnalazione"
   label_next_run_date_info: "Prima esecuzione e riferimento della pianificazione (giorno del mese, ora). Lasciare vuoto per iniziare alla prossima data corrispondente alla ricorrenza."
+  label_next_occurrences: "Prossime esecuzioni"
+  label_next_occurrences_info: "Le prossime date di esecuzione di questa pianificazione, nel tuo fuso orario. Le esecuzioni mancate vengono recuperate al controllo successivo."
+  label_next_occurrences_unavailable: "Completa la ricorrenza per vedere le prossime esecuzioni."
   label_recurrence_repeat_on: "Ripeti il"
   label_recurrence_monthly_on: "Mensilmente il"
   label_recurrence_day_of_month: "Lo stesso giorno del mese della prossima esecuzione"
@@ -96,6 +99,7 @@ it:
   label_recurrence_on_weekdays: "il %{weekdays}"
   label_recurrence_on_month_weekdays: "il %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "il giorno %{day}"
+  label_recurrence_at_time: "%{schedule} alle %{time}"
   error_recurrence_weekdays_blank: "Selezionare almeno un giorno della settimana"
   error_recurrence_month_weeks_blank: "Selezionare almeno un'occorrenza (dal 1° al 5°)"
   label_recurrence_every_day:

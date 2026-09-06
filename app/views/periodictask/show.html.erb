@@ -24,6 +24,7 @@
 </div>
 
 <h2 class="inline-block"><%= l(:label_periodic_task) %> #<%= @periodictask.id %></h2>
+<%= render 'upcoming_runs_assets' %>
 
 <div class="issue details periodictask-schedule">
   <div class="attributes" style="margin-top: 0;">
@@ -45,6 +46,10 @@
                             title: periodictask_if_previous_open_description(@periodictask.if_previous_open)),
                 class: 'if-previous-open'
     end %>
+    <div class="attribute next-occurrences">
+      <div class="label"><span title="<%= l(:label_next_occurrences_info) %>"><%= l(:label_next_occurrences) %></span></div>
+      <div class="value"><%= render partial: 'upcoming_runs', locals: { task: @periodictask, dates: @periodictask.upcoming_run_dates, sentence: false } %></div>
+    </div>
   </div>
 </div>
 

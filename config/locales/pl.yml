@@ -83,6 +83,9 @@ pl:
   error_relation_type_invalid: "Nieprawidłowy typ powiązania"
   error_relation_issue_invalid: "Powiązane zagadnienie musi być numerem zagadnienia"
   label_next_run_date_info: "Pierwsze uruchomienie i punkt odniesienia harmonogramu (dzień miesiąca, godzina). Pozostaw puste, aby rozpocząć w najbliższym terminie pasującym do powtarzania."
+  label_next_occurrences: "Następne uruchomienia"
+  label_next_occurrences_info: "Najbliższe terminy uruchomienia tego harmonogramu w Twojej strefie czasowej. Pominięte uruchomienia są nadrabiane przy następnym sprawdzeniu."
+  label_next_occurrences_unavailable: "Uzupełnij powtarzanie, aby zobaczyć następne uruchomienia."
   label_recurrence_repeat_on: "Powtarzaj w"
   label_recurrence_monthly_on: "Co miesiąc"
   label_recurrence_day_of_month: "Ten sam dzień miesiąca co następne uruchomienie"
@@ -96,6 +99,7 @@ pl:
   label_recurrence_on_weekdays: "w %{weekdays}"
   label_recurrence_on_month_weekdays: "w %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "%{day}. dnia"
+  label_recurrence_at_time: "%{schedule} o %{time}"
   error_recurrence_weekdays_blank: "Wybierz co najmniej jeden dzień tygodnia"
   error_recurrence_month_weeks_blank: "Wybierz co najmniej jedno wystąpienie (1. do 5.)"
   label_recurrence_every_day:

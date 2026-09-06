@@ -9,9 +9,9 @@ class PeriodictaskController < ApplicationController
   before_action :authorize
   before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
   before_action :find_source_issue, only: :new
-  before_action :load_users, except: %i[destroy run_now tags], unless: :api_request?
-  before_action :load_categories, except: %i[destroy run_now tags], unless: :api_request?
-  before_action :load_versions, except: %i[destroy run_now tags], unless: :api_request?
+  before_action :load_users, except: %i[destroy run_now tags preview], unless: :api_request?
+  before_action :load_categories, except: %i[destroy run_now tags preview], unless: :api_request?
+  before_action :load_versions, except: %i[destroy run_now tags preview], unless: :api_request?
   accept_api_auth :index, :show, :create, :update, :destroy, :run_now
 
   helper :custom_fields
@@ -237,6 +237,20 @@ class PeriodictaskController < ApplicationController
                     end
     assign_periodictask_params
     @issue = @periodictask.generate_issue
+  end
+
+  # Upcoming run dates for the recurrence currently entered in the form. The
+  # task is built from the posted attributes only and never saved; when the
+  # form edits an existing task (+id+), its runs made so far count towards
+  # "After N runs". +preview_generation+ is echoed back so the form only
+  # applies the response to its latest request.
+  def preview
+    @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
+    assign_periodictask_params
+    existing = project_periodictasks.find_by(id: params[:id]) if params[:id].present?
+    @periodictask.occurrences_count = existing.occurrences_count if existing
+    @upcoming_run_dates = @periodictask.upcoming_run_dates
+    @preview_generation = params[:preview_generation].to_i
   end
 
   private

@@ -35,6 +35,9 @@ en:
   label_unit_month: month(s)
   label_unit_year: year(s)
   label_next_run_date_info: "First run and anchor of the schedule (day of month, time of day). Leave blank to start at the next date matching the recurrence."
+  label_next_occurrences: "Next occurrences"
+  label_next_occurrences_info: "The next run dates for this schedule, in your time zone. Missed runs are made up by the next check."
+  label_next_occurrences_unavailable: "Complete the recurrence to see the next occurrences."
   label_recurrence_repeat_on: Repeat on
   label_recurrence_monthly_on: Monthly on
   label_recurrence_day_of_month: The same day of the month as the next run date
@@ -48,6 +51,7 @@ en:
   label_recurrence_on_weekdays: "on %{weekdays}"
   label_recurrence_on_month_weekdays: "on the %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "on day %{day}"
+  label_recurrence_at_time: "%{schedule} at %{time}"
   flash_task_created: Periodic Task is created
   flash_task_saved: Periodic Task is saved
   flash_task_run_now: 'Issue #%{id} created'

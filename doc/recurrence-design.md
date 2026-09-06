@@ -173,7 +173,9 @@ at 10:04 does not move the task to 10:04.
 `due?` compares a candidate with now. When the task has a `next_run_date`,
 that date has already run, so the candidate must be later than now. When the
 first run date is blank, the candidate may be equal to now, so a task created
-on a matching day and time can run right away.
+on a matching day and time can run right away. The plain `every N units`
+rule follows the same convention: a task checked at exactly its scheduled
+time moves to the following occurrence.
 
 ## First run date
 
@@ -279,6 +281,45 @@ in `last_error` (written outside the rolled-back transaction) and the other
 due tasks still run. An issue that fails validation is different: it never
 existed, so the occurrence is spent (the schedule moves on, the error is
 recorded) as before.
+
+## Preview of the next occurrences
+
+`Periodictask#upcoming_run_dates(count = 5, now = Time.current)` returns the
+next `count` run dates without saving anything. It works on a `dup` of the
+task and walks the schedule the way the scheduler does: the first date is
+`next_run_date` (or, when blank, the first date matching the rule from now),
+then each date becomes the anchor for `get_next_run_date`, evaluated at the
+later of that date and now. Missed runs therefore collapse into the next
+future date, exactly like a late scheduler would. The method returns an empty
+list when the schedule cannot be walked: interval not positive, unknown unit,
+or weekday mode without ordinals or weekdays.
+
+`upcoming_run_dates_through(limit, now, max = 400)` is the same walk bounded
+by a date instead of a count: the calendar shows the months touched by the 5
+chips and highlights every run of those months, extending the months while a
+run moved to a working day spills into the next one.
+
+Both walks stop at the end condition, with the same rules as the scheduler
+(see [End condition](#end-condition)): a date after `end_date` is not listed
+(one exactly on it is), no more than `max_occurrences - occurrences_count`
+dates are listed, and an ended task (`ended?`) gives an empty list; the views
+then show the end reason instead of the dates. The `preview` action builds an
+unsaved task, whose `occurrences_count` is 0; when the form edits an existing
+task it posts its `id` and the action copies the stored count (from the task
+of the URL's project only), so "After N runs" previews the runs left, not N.
+The form debounces the refresh, aborts the request still in flight when a new
+one starts and numbers each request (`preview_generation`, stored on the
+block and echoed by the action), so a slow earlier response can never
+overwrite the result of a later one.
+
+The dates returned are the occurrences of the rule; the views apply
+`adjust_to_working_day` to each of them, as the scheduler does, so the chips
+and the calendar show the day the issue will really be created and mark the
+ones that were moved. The task page and the task form render everything with
+the same helpers as the next run date, so it appears in the user's time zone.
+The form refreshes the block through the `preview` action, which builds an
+unsaved task from the submitted attributes, in the project of the URL, and
+renders the sentence, the chips and the month grids.
 
 ## Previous issue still open
 

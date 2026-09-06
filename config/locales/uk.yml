@@ -83,6 +83,9 @@ uk:
   error_relation_type_invalid: "Недійсний тип зв'язку"
   error_relation_issue_invalid: "Пов'язана задача має бути номером задачі"
   label_next_run_date_info: "Перший запуск і опорна точка розкладу (день місяця, час). Залиште порожнім, щоб почати з наступної дати, яка відповідає повторенню."
+  label_next_occurrences: "Наступні запуски"
+  label_next_occurrences_info: "Найближчі дати запуску за цим розкладом у вашому часовому поясі. Пропущені запуски виконуються під час наступної перевірки."
+  label_next_occurrences_unavailable: "Заповніть повторення, щоб побачити наступні запуски."
   label_recurrence_repeat_on: "Повторювати по"
   label_recurrence_monthly_on: "Щомісяця"
   label_recurrence_day_of_month: "Того ж дня місяця, що й наступний запуск"
@@ -96,6 +99,7 @@ uk:
   label_recurrence_on_weekdays: "по %{weekdays}"
   label_recurrence_on_month_weekdays: "у %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "%{day}-го числа"
+  label_recurrence_at_time: "%{schedule} о %{time}"
   error_recurrence_weekdays_blank: "Виберіть хоча б один день тижня"
   error_recurrence_month_weeks_blank: "Виберіть хоча б одне повторення (з 1-го по 5-й)"
   label_recurrence_every_day:

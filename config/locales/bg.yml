@@ -83,6 +83,9 @@ bg:
   error_relation_type_invalid: "Невалиден тип връзка"
   error_relation_issue_invalid: "Свързаната задача трябва да е номер на задача"
   label_next_run_date_info: "Първо изпълнение и опорна точка на графика (ден от месеца, час). Оставете празно, за да започне на следващата дата, съответстваща на повторението."
+  label_next_occurrences: "Следващи изпълнения"
+  label_next_occurrences_info: "Следващите дати на изпълнение по този график във вашата часова зона. Пропуснатите изпълнения се наваксват при следващата проверка."
+  label_next_occurrences_unavailable: "Попълнете повторението, за да видите следващите изпълнения."
   label_recurrence_repeat_on: "Повтаряне в"
   label_recurrence_monthly_on: "Месечно на"
   label_recurrence_day_of_month: "Същия ден от месеца като следващото изпълнение"
@@ -96,6 +99,7 @@ bg:
   label_recurrence_on_weekdays: "в %{weekdays}"
   label_recurrence_on_month_weekdays: "на %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "на %{day}-о число"
+  label_recurrence_at_time: "%{schedule} в %{time}"
   error_recurrence_weekdays_blank: "Изберете поне един ден от седмицата"
   error_recurrence_month_weeks_blank: "Изберете поне една поредност (1-ви до 5-ти)"
   label_recurrence_every_day:

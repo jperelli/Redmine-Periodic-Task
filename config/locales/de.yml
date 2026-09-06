@@ -83,6 +83,9 @@ de:
   error_relation_type_invalid: "Ungültiger Beziehungstyp"
   error_relation_issue_invalid: "Zugehöriges Ticket muss eine Ticketnummer sein"
   label_next_run_date_info: "Erste Ausführung und Anker des Zeitplans (Tag im Monat, Uhrzeit). Leer lassen, um am nächsten passenden Termin der Wiederholung zu starten."
+  label_next_occurrences: "Nächste Ausführungen"
+  label_next_occurrences_info: "Die nächsten Ausführungstermine dieses Zeitplans in Ihrer Zeitzone. Verpasste Ausführungen werden bei der nächsten Prüfung nachgeholt."
+  label_next_occurrences_unavailable: "Vervollständigen Sie die Wiederholung, um die nächsten Ausführungen zu sehen."
   label_recurrence_repeat_on: "Wiederholen am"
   label_recurrence_monthly_on: "Monatlich am"
   label_recurrence_day_of_month: "Gleicher Tag im Monat wie das nächste Ausführungsdatum"
@@ -96,6 +99,7 @@ de:
   label_recurrence_on_weekdays: "am %{weekdays}"
   label_recurrence_on_month_weekdays: "am %{ordinals} %{weekdays}"
   label_recurrence_on_day_of_month: "am %{day}. Tag"
+  label_recurrence_at_time: "%{schedule} um %{time}"
   error_recurrence_weekdays_blank: "Mindestens einen Wochentag auswählen"
   error_recurrence_month_weeks_blank: "Mindestens ein Vorkommen auswählen (1. bis 5.)"
   label_recurrence_every_day:
