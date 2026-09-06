@@ -183,10 +183,6 @@ class Periodictask < ActiveRecord::Base
     joins(:project).where(Project.allowed_to_condition(user, :periodictask))
   }
 
-  def visible?(user = User.current)
-    user.allowed_to?(:periodictask, project)
-  end
-
   # Shown where the task stands for itself: issue list group headers, CSV/PDF.
   def to_s
     subject.to_s
