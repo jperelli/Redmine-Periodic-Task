@@ -597,15 +597,16 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   # next future one, like the scheduler does. Computed on a copy of the task,
   # nothing is persisted. Empty when the recurrence is incomplete or invalid.
   def upcoming_run_dates(count = 5, now = Time.current)
-    return [] unless count.to_i.positive? && recurrence_computable?
+    return [] unless count.to_i.positive?
 
-    preview = dup
-    dates = [next_run_date || preview.get_next_run_date(now)]
-    while dates.size < count
-      preview.next_run_date = dates.last
-      dates << preview.get_next_run_date([dates.last, now].max)
-    end
-    dates
+    walk_run_dates(now) { |dates, _next_date| dates.size < count }
+  end
+
+  # Same walk, but every run date up to +limit+ (the first one always), so a
+  # calendar can show all the runs of the months it displays. Capped at +max+
+  # dates to bound the work for dense schedules.
+  def upcoming_run_dates_through(limit, now = Time.current, max = 400)
+    walk_run_dates(now) { |dates, next_date| dates.size < max && next_date <= limit }
   end
 
   # The moment the scheduler runs the stored occurrence: next_run_date itself,
@@ -664,6 +665,24 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
 
       steps += 1
     end
+  end
+
+  # Run dates from the stored next_run_date (or the first occurrence from
+  # +now+) on, appending the occurrence the scheduler would move to after each
+  # run while the block accepts it. Works on a copy of the task.
+  def walk_run_dates(now)
+    return [] unless recurrence_computable?
+
+    preview = dup
+    dates = [next_run_date || preview.get_next_run_date(now)]
+    loop do
+      preview.next_run_date = dates.last
+      next_date = preview.get_next_run_date([dates.last, now].max)
+      break unless yield(dates, next_date)
+
+      dates << next_date
+    end
+    dates
   end
 
   # A schedule can be walked when the interval is a positive number of a known

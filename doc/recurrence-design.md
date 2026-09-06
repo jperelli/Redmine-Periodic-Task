@@ -205,6 +205,11 @@ future date, exactly like a late scheduler would. The method returns an empty
 list when the schedule cannot be walked: interval not positive, unknown unit,
 or weekday mode without ordinals or weekdays.
 
+`upcoming_run_dates_through(limit, now, max = 400)` is the same walk bounded
+by a date instead of a count: the calendar shows the months touched by the 5
+chips and highlights every run of those months, extending the months while a
+run moved to a working day spills into the next one.
+
 The dates returned are the occurrences of the rule; the views apply
 `adjust_to_working_day` to each of them, as the scheduler does, so the chips
 and the calendar show the day the issue will really be created and mark the

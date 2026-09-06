@@ -1274,8 +1274,9 @@ class PeriodictaskControllerTest < ActionController::TestCase
       assert_select 'a.periodictask-calendar-toggle[aria-expanded=false]', text: /Calendar/
       assert_select '.periodictask-calendar[style*="display: none"] table.periodictask-cal', count: 1
       assert_select 'table.periodictask-cal caption', text: 'January 2026'
-      assert_select 'table.periodictask-cal td.periodictask-cal-run', count: 5
-      assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '19'
+      # every Monday and Wednesday of the month, not only the 5 of the chips
+      assert_select 'table.periodictask-cal td.periodictask-cal-run', count: 8
+      assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '28'
       assert_select 'table.periodictask-cal td.nwday', text: '3'
       assert_select 'table.periodictask-cal td.today', text: '1'
     end
@@ -1296,6 +1297,12 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.periodictask-run-chip-moved[title*=?]', 'moved from 01/03/2026 10:00 AM', text: 'Mon 01/05/2026'
     assert_select 'table.periodictask-cal td.periodictask-cal-moved', text: '3'
     assert_select 'table.periodictask-cal td.periodictask-cal-run', text: '5'
+    # Jan 31 runs on Feb 2, so February is shown and filled; its Feb 28 run
+    # falls on Mar 2, so March is shown and filled too
+    assert_select 'table.periodictask-cal', count: 3
+    assert_select 'table.periodictask-cal caption', text: 'March 2026'
+    assert_select 'table.periodictask-cal td.periodictask-cal-run', count: 13
+    assert_select 'table.periodictask-cal td.periodictask-cal-moved', count: 13
     assert_equal Time.utc(2026, 1, 5, 10, 0), rendered_upcoming_run_times('.periodictask-schedule').first
   end
 

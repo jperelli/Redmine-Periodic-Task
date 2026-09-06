@@ -177,14 +177,36 @@ module PeriodictaskHelper
     "#{::I18n.t('date.abbr_day_names')[display.wday]} #{format_date(display)}"
   end
 
-  # Month grids highlighting the upcoming runs: one table per month touched by
-  # the occurrences or by the working days they were moved to.
-  def periodictask_run_calendar(task, dates, today = User.current.today)
+  # Month grids: one table per month touched by the given occurrences (or by
+  # the working days they were moved to), highlighting every run of those
+  # months, not only the given ones.
+  def periodictask_run_calendar(task, dates, today = User.current.today, now = Time.current)
+    dates = periodictask_calendar_dates(task, dates, now)
     runs = dates.map { |d| periodictask_display_time(task.adjust_to_working_day(d)).to_date }
     moved = dates.map { |d| periodictask_display_time(d).to_date } - runs
     months = (runs + moved).map(&:beginning_of_month).uniq.sort
     working_days = Periodictask.working_days
     safe_join(months.map { |month| periodictask_month_grid(month, runs, moved, today, working_days) })
+  end
+
+  # +dates+ extended with every run up to the end of the last month they
+  # touch; repeated while a run moved to a working day opens a further month.
+  def periodictask_calendar_dates(task, dates, now)
+    limit = periodictask_calendar_limit(task, dates)
+    3.times do
+      dates = task.upcoming_run_dates_through(limit, now)
+      extended = periodictask_calendar_limit(task, dates)
+      break if extended == limit
+
+      limit = extended
+    end
+    dates
+  end
+
+  # End, in the display zone, of the last month touched by the occurrences or
+  # by the working days they were moved to.
+  def periodictask_calendar_limit(task, dates)
+    periodictask_display_time(dates.flat_map { |d| [d, task.adjust_to_working_day(d)] }.max).end_of_month
   end
 
   def periodictask_month_grid(month, runs, moved, today, working_days)

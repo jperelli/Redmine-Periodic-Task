@@ -9,6 +9,7 @@ class RecurrenceTest < ActiveSupport::TestCase
 
   MON = 1
   WED = 3
+  FRI = 5
   SUN = 0
 
   def setup
@@ -445,6 +446,26 @@ class RecurrenceTest < ActiveSupport::TestCase
     assert_empty monthly_weekdays(Time.utc(2026, 1, 5, 10, 0, 0), [1], []).upcoming_run_dates
     assert_empty Periodictask.new(interval_number: 0, interval_units: 'day').upcoming_run_dates
     assert_empty Periodictask.new(interval_number: 1, interval_units: '').upcoming_run_dates
+  end
+
+  def test_upcoming_run_dates_through_lists_every_run_up_to_the_limit
+    anchor = Time.utc(2026, 1, 5, 10, 0, 0) # Monday
+    task = weekly(anchor, [MON, WED, FRI])
+    dates = task.upcoming_run_dates_through(Time.utc(2026, 1, 31).end_of_day, Time.utc(2026, 1, 1))
+
+    assert_equal [5, 7, 9, 12, 14, 16, 19, 21, 23, 26, 28, 30], dates.map(&:day)
+    assert_equal [10], dates.map(&:hour).uniq
+    assert_equal dates.first(5), task.upcoming_run_dates(5, Time.utc(2026, 1, 1)), 'starts like the chips'
+  end
+
+  def test_upcoming_run_dates_through_always_includes_the_first_run_and_is_capped
+    first = Time.utc(2026, 1, 5, 10, 0, 0)
+    task = Periodictask.new(interval_number: 1, interval_units: 'day', next_run_date: first)
+    now = Time.utc(2026, 1, 1)
+
+    assert_equal [first], task.upcoming_run_dates_through(now, now), 'limit before the first run'
+    assert_equal 10, task.upcoming_run_dates_through(Time.utc(2030, 1, 1), now, 10).size
+    assert_empty monthly_weekdays(Time.utc(2026, 1, 5, 10, 0, 0), [], [MON]).upcoming_run_dates_through(now)
   end
 
   private
