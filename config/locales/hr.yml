@@ -162,4 +162,6 @@ hr:
   label_periodictask_journal_ended_by_count: "Periodični zadatak završen (dosegnut najveći broj izvršavanja)"
   error_end_date_before_next_run: "Krajnji datum mora biti nakon datuma sljedećeg izvršavanja"
   error_max_occurrences_not_positive: "Najveći broj izvršavanja mora biti veći od 0"
+  label_attachments_info: "Datoteke priložene predlošku kopiraju se na svaki stvoreni zadatak."
+  error_attachment_copy_failed: 'Privitak "%{filename}" nije moguće kopirati: %{error}'
   label_new_periodictask_from_issue: 'Stvori periodički zadatak iz ovog zadatka'

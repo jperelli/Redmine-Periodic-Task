@@ -157,4 +157,6 @@ tr:
   label_periodictask_journal_ended_by_count: "Periyodik görev sona erdi (en fazla çalıştırma sayısına ulaşıldı)"
   error_end_date_before_next_run: "Bitiş tarihi sonraki çalıştırma tarihinden sonra olmalıdır"
   error_max_occurrences_not_positive: "En fazla çalıştırma sayısı 0'dan büyük olmalıdır"
+  label_attachments_info: "Şablona eklenen dosyalar oluşturulan her işe kopyalanır."
+  error_attachment_copy_failed: '"%{filename}" eki kopyalanamadı: %{error}'
   label_new_periodictask_from_issue: 'Bu işten periyodik iş oluştur'

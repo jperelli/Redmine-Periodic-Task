@@ -197,6 +197,12 @@ A task repeats every N days, business days, weeks, months or years. A weekly tas
 
 By default a task repeats forever. The `Ends` control of the form can stop it *on a date* and/or *after N runs*; when both are set, whichever comes first applies. Once the scheduler creates a run and the next one would fall after the end date, or the number of scheduled runs reaches N, the task is disabled (the `Active` flag is unticked, so the lock marker appears in the lists) and an entry such as *Periodic task ended (maximum number of runs reached)* is written to the project activity. The task lists and detail page show `Ends on <date>` and `<n> of <max> runs` next to the schedule. `Run now` does not count towards N. Re-tick `Active` (after moving the end date or raising N) to resume the task; the copy action keeps the end condition and starts the count at 0.
 
+### Attachments
+
+A periodic task can carry files (a checklist PDF, a form, a template spreadsheet...): the task form has Redmine's standard *Files* field, and the detail page lists the attached files with the usual download and delete links. Every issue the task generates gets its own copy of each file, with the same author and description, so deleting a file on a generated issue never touches the template (nor the copies on other issues). Copying a task offers to copy its attachments onto the new task, and deleting a task deletes its attachments. A file that cannot be copied (for example because it is missing from the file system) does not prevent the issue from being created; the failure is shown in the task's *Last error*. Viewing, adding and deleting files is governed by the *Periodic tasks* permission of the project.
+
+![Periodic task form with the Files field](doc/screenshots/attachments_form.png)
+
 ### Assignee
 
 The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.

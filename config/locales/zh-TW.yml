@@ -159,4 +159,6 @@ zh-TW:
   label_periodictask_journal_ended_by_count: "週期任務已結束（已達到最大執行次數）"
   error_end_date_before_next_run: "結束日期必須晚於下次執行日期"
   error_max_occurrences_not_positive: "最大執行次數必須大於 0"
+  label_attachments_info: "附加到範本的檔案會複製到每個建立的議題。"
+  error_attachment_copy_failed: '無法複製附件「%{filename}」：%{error}'
   label_new_periodictask_from_issue: '從此議題建立週期任務'

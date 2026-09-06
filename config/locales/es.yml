@@ -157,4 +157,6 @@ es:
   label_periodictask_journal_ended_by_count: "Tarea periódica finalizada (número máximo de ejecuciones alcanzado)"
   error_end_date_before_next_run: "La fecha de fin debe ser posterior a la fecha de próxima ejecución"
   error_max_occurrences_not_positive: "El número máximo de ejecuciones debe ser mayor que 0"
+  label_attachments_info: "Los archivos adjuntos a la plantilla se copian en cada incidencia generada."
+  error_attachment_copy_failed: 'No se pudo copiar el adjunto "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Crear tarea periódica a partir de esta petición'

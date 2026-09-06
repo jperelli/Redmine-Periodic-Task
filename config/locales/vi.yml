@@ -159,4 +159,6 @@ vi:
   label_periodictask_journal_ended_by_count: "Tác vụ định kỳ đã kết thúc (đã đạt số lần chạy tối đa)"
   error_end_date_before_next_run: "Ngày kết thúc phải sau ngày chạy tiếp theo"
   error_max_occurrences_not_positive: "Số lần chạy tối đa phải lớn hơn 0"
+  label_attachments_info: "Các tệp đính kèm vào mẫu được sao chép vào mỗi vấn đề được tạo."
+  error_attachment_copy_failed: 'Không thể sao chép tệp đính kèm "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'

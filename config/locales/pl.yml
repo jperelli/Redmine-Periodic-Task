@@ -161,4 +161,6 @@ pl:
   label_periodictask_journal_ended_by_count: "Zadanie okresowe zakończone (osiągnięto maksymalną liczbę uruchomień)"
   error_end_date_before_next_run: "Data końcowa musi być późniejsza niż data następnego uruchomienia"
   error_max_occurrences_not_positive: "Maksymalna liczba uruchomień musi być większa niż 0"
+  label_attachments_info: "Pliki załączone do szablonu są kopiowane do każdego utworzonego zagadnienia."
+  error_attachment_copy_failed: 'Nie udało się skopiować załącznika "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Utwórz zadanie cykliczne z tego zagadnienia'
