@@ -15,6 +15,24 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/   # wait for 200
 ```
 Login: admin / admin at http://localhost:3000/login (Redmine may force a password change on first login).
 
+### Schema changes in disposable local databases
+- Compose bind-mounts `.volumes/sqlite`; `docker compose down -v` does not remove that host database.
+- If a development migration is rewritten under an already-used version, inspect the actual schema before testing.
+  For a disposable fixture database only, stop compose, preserve a backup of `.volumes/sqlite/redmine.db`,
+  then move it aside and rerun provisioning/startup. Do not reset a database containing user data.
+- The database file can be container-owned; use a temporary container with the same bind mount if host
+  permissions prevent making the backup.
+
+### Scheduler and REST entry points
+- Manual checker UI: Administration > Plugins > Periodictask > Configure
+  (`/settings/plugin/periodictask`) > Run checker now, then accept the native confirmation.
+  The scheduler log reports tasks due and issues created.
+- CLI checker: `docker compose exec redmine bundle exec rake redmine:check_periodictasks RAILS_ENV=development`.
+- On Redmine versions with an Integrations tab, REST enablement is at
+  `/settings?tab=integrations` rather than an API tab.
+- The project REST collection uses the singular path `/projects/<identifier>/periodictask.json`.
+  Use REST API authentication (API key or local admin basic auth), not copied browser cookies.
+
 ## Setting up a project for periodic tasks
 1. Create a project (Projects > New project) and tick the "Periodic tasks" module (`project_module_periodictask`).
 2. Add a member (Settings > Members > New member) if you want to pick an assignee; the "Assignee" select is
