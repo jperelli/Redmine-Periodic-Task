@@ -507,6 +507,64 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select '.periodictask-relations li', text: /#{I18n.t(:label_blocks)}.*#1/m
   end
 
+  def test_relation_to_previous_issue_round_trips_through_the_form
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Chained', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'week',
+        relations: { '0' => { relation_type: 'follows', target: 'previous_issue', issue_id: '', delay: '1' },
+                     '1' => { relation_type: 'relates', target: 'issue', issue_id: '1', delay: '' } }
+      }
+    }
+    assert_response :redirect
+    task = Periodictask.find_by(subject: 'Chained')
+    assert_equal [{ 'relation_type' => 'follows', 'issue_id' => 'previous_issue', 'delay' => '1' },
+                  { 'relation_type' => 'relates', 'issue_id' => '1', 'delay' => nil }], task.relations
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select[name=?] option[selected][value=follows]', 'periodictask[relations][0][relation_type]'
+    assert_select 'select[name=?] option[selected][value=previous_issue]', 'periodictask[relations][0][target]'
+    assert_select 'input[name=?][value]', 'periodictask[relations][0][issue_id]', count: 0
+    assert_select 'select[name=?] option[selected][value=issue]', 'periodictask[relations][1][target]'
+    assert_select 'input[name=?][value="1"]', 'periodictask[relations][1][issue_id]'
+
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: {
+        relations: { '0' => { relation_type: 'follows', target: 'previous_issue', issue_id: '', delay: '1' },
+                     '1' => { relation_type: 'relates', target: 'issue', issue_id: '1', delay: '' } }
+      }
+    }
+    assert_response :redirect
+    assert_equal task.relations, task.reload.relations
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.periodictask-relations li',
+                  text: /#{I18n.t(:label_follows)}.*#{I18n.t(:label_relation_previous_issue)}/m
+  end
+
+  def test_run_now_twice_relates_the_new_issue_to_the_previous_one
+    task = create_test_periodictask(next_run_date: 1.month.from_now, subject: 'Weekly **PREVIOUS_ISSUE**',
+                                    relations: [{ 'relation_type' => 'relates', 'issue_id' => 'previous_issue' }])
+    assert_no_difference('IssueRelation.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    first = task.created_issues.first
+    assert_equal 'Weekly ', first.subject
+    assert_nil task.reload.last_error
+
+    assert_difference('IssueRelation.count', 1) do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    second = task.created_issues.where.not(id: first.id).first
+    assert_equal "Weekly ##{first.id}", second.subject
+    assert_equal [first], second.relations.map { |r| r.other_issue(second) }.to_a
+    assert_nil task.reload.last_error
+  end
+
   # ---- recurrence (issue #50) ----
 
   def test_new_renders_recurrence_controls_as_checkboxes

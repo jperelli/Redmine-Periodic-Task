@@ -277,7 +277,7 @@ class PeriodictaskController < ApplicationController
       { watcher_user_ids: [] },
       { rotation_ids: [] },
       { subtasks: Periodictask::SUBTASK_KEYS },
-      { relations: Periodictask::RELATION_KEYS }
+      { relations: Periodictask::RELATION_FORM_KEYS }
     )
   end
 end
