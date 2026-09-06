@@ -14,7 +14,7 @@
   <% if @tasks.empty? %>
     <p class="nodata"><%= l(:label_no_periodic_tasks) %></p>
   <% else %>
-  <%= render 'periodictask/state_styles' %>
+  <%= render 'periodictask/row_styles' %>
   <table class="list <%= sort_css_classes %>">
     <thead>
       <tr>
@@ -31,7 +31,7 @@
     </thead>
     <tbody>
       <% @tasks.each do |a| %>
-        <tr class="<%= periodictask_row_class(a) %>" title="<%= periodictask_state_label(a) %>">
+        <tr class="<%= periodictask_row_class(a) %>" title="<%= periodictask_status_label(a) %>">
           <td class="id"><%= link_to a.id, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %></td>
           <td class="interval"><%= periodictask_schedule_description(a) %><%= periodictask_end_condition_note(a) %></td>
           <td><%= periodictask_next_run_with_title(a) %></td>

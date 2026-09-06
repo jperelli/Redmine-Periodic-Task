@@ -1465,45 +1465,21 @@ class PeriodictasksTest < ActiveSupport::TestCase
       subject: 'Active by default', interval_number: 1, interval_units: 'month'
     )
 
-    assert task.reload.active?
-    assert_nil task.ended_at
+    assert task.reload.is_active?
+    assert_not task.ended?
+    assert task.runnable?
   end
 
-  def test_state_must_be_one_of_the_known_states
-    task = Periodictask.new(
+  def test_checker_ignores_disabled_tasks
+    Periodictask.create!(
       project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
-      subject: 'Bad state', interval_number: 1, interval_units: 'month', state: 'paused'
+      subject: 'Disabled task', interval_number: 1, interval_units: 'month',
+      next_run_date: 1.day.ago, is_active: false
     )
-
-    assert_not task.valid?
-    assert task.errors[:state].any?
-  end
-
-  def test_ended_at_follows_the_state
-    task = Periodictask.create!(
-      project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
-      subject: 'Ended', interval_number: 1, interval_units: 'month', state: 'ended'
-    )
-    assert task.ended?
-    assert task.ended_at.present?
-
-    task.update!(state: 'inactive')
-    assert_nil task.reload.ended_at
-  end
-
-  def test_checker_ignores_inactive_and_ended_tasks
-    %w[inactive ended].each do |state|
-      Periodictask.create!(
-        project: @project, tracker_id: 1, assigned_to_id: 2, author_id: 2,
-        subject: "#{state} task", interval_number: 1, interval_units: 'month',
-        next_run_date: 1.day.ago, state: state
-      )
-    end
 
     assert_no_difference('Issue.count') do
       ScheduledTasksChecker.checktasks!
     end
-    assert_equal %w[ended inactive], Periodictask.where.not(state: 'active').order(:state).pluck(:state)
   end
 
   def test_generated_issue_gets_the_target_version

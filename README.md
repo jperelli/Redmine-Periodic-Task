@@ -193,14 +193,6 @@ On an issue page, the sidebar of a project with the module enabled shows *Period
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
 
-### End condition
-
-By default a task repeats forever. The `Ends` control of the form can stop it *on a date* and/or *after N runs*; when both are set, whichever comes first applies. Once the scheduler creates a run and the next one would fall after the end date, or the number of scheduled runs reaches N, the task's state becomes *Ended* and an entry such as *Periodic task ended (maximum number of runs reached)* is written to the project activity. The task lists and detail page show `Ends on <date>` and `<n> of <max> runs` next to the schedule. `Run now` does not count towards N, nor does an occurrence skipped because the previous issue was still open (see [Previous issue open](#previous-issue-open)). Set the state back to *Active* (after moving the end date or raising N) to resume the task; the copy action keeps the end condition, starts the count at 0 and starts active.
-
-### State
-
-Each task is *Active*, *Inactive* or *Ended*. *Active* tasks are picked up by the scheduler. *Inactive* is a pause you set yourself in the form to stop a task without deleting it. *Ended* is set by the scheduler when the end condition is reached; the detail page shows *Ended on <date>*. Inactive and ended tasks are skipped by the scheduler but keep their schedule and can still be run with `Run now`. In the task lists inactive tasks are greyed out and ended tasks are greyed out and struck through, like closed issues.
-
 Business days follow Redmine's own *Administration → Settings → Issue tracking → Non-working days* setting (Saturday and Sunday by default), the same one Redmine uses for issue dates. There are no extra gems and no separate holiday calendar.
 
 The `Non-working days` option of a task decides what happens when a run falls on one of those days, for any unit:
@@ -210,6 +202,12 @@ The `Non-working days` option of a task decides what happens when a run falls on
 - `Move to the previous working day`: Saturday August 1st is run on Friday July 31st.
 
 The time of day is kept and the schedule itself is not moved: "every month on day 1" still means the 1st, so the next run after a moved August 1st is September 1st. The task list and detail page show the day the task will actually run, with the original date next to it.
+
+### Active flag and end condition
+
+The `Active` box of the form (ticked by default) is your switch: untick it to pause a task without deleting it. Inactive tasks are skipped by the scheduler but keep their schedule and can still be run with `Run now`; in the task lists they are greyed out.
+
+By default a task repeats forever. The `Ends` control of the form can stop it *on a date* and/or *after N runs*; when both are set, whichever comes first applies. A task is *ended* as soon as its next run would fall after the end date, or the number of scheduled runs has reached N. Ended is not a setting: it is computed from those two fields, independently of the `Active` box, so a task can be active and ended at the same time (it will not run either way). The scheduler writes an entry such as *Periodic task ended (maximum number of runs reached)* to the project activity when it makes the last run. The detail page and the form show *Ended (end date reached)* / *Ended (maximum number of runs reached)* next to the `Active` box, the task lists show `Ends on <date>` / `Ended on <date>` and `<n> of <max> runs` next to the schedule, and ended rows are greyed out and struck through, like closed issues. `Run now` does not count towards N, nor does an occurrence skipped because the previous issue was still open (see [Previous issue open](#previous-issue-open)). To let an ended task run again, move the end date or raise N (the `Active` box alone is not enough); lowering N below the runs already made ends the task at once. The copy action keeps the end condition and the `Active` flag and starts the count at 0.
 
 ### Previous issue open
 
@@ -299,7 +297,7 @@ Periodic tasks can be listed, created, updated, deleted and run through Redmine'
 
 `:project_id` is the project's numeric id or identifier. Replace `.json` with `.xml` for XML. Add `include=issues` to `GET` requests to list the issues each task generated (`issues: [{id, created_at}]`). A task from another project answers `404`, a missing permission `403`, validation errors `422` with `{"errors": ["Subject cannot be blank", ...]}`; the same rules that the form applies (the task is validated as the issue it would create).
 
-A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `weekend_adjustment`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `state` (`active`, `inactive` or `ended`), `ended_at`, `next_run_date`, `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
+A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `weekend_adjustment`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `is_active`, `ended` and `end_reason` (computed from the end condition: `ended_by_date`, `ended_by_count` or `null`), `next_run_date`, `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
 
 Attributes accepted on create/update, under a `periodictask` key (the same the form posts):
 
@@ -316,7 +314,7 @@ Attributes accepted on create/update, under a `periodictask` key (the same the f
 | `set_start_date` | Boolean, set the issue start date to the generation date |
 | `due_date_number`, `due_date_units` | Due date as an offset from the generation date |
 | `estimated_hours`, `done_ratio` | Number, integer 0-100 |
-| `state` | `active` or `inactive` (`ended` is set by the scheduler; sending `active` resumes an ended task) |
+| `is_active` | Boolean, default `true`; `ended` is read-only and follows the end condition |
 | `custom_fields` or `custom_field_values` | `[{"id": 1, "value": "MySQL"}]` like the core issues API, or a `{"1": "MySQL"}` hash |
 | `watcher_user_ids` | Array of user ids |
 | `subtasks` | Array of `{tracker_id, subject, assigned_to_id, estimated_hours}` |

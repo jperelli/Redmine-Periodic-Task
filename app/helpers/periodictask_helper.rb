@@ -31,8 +31,9 @@ module PeriodictaskHelper
     api.array(:relations) do
       task.relations.each { |row| api.relation(row.slice(*Periodictask::RELATION_KEYS)) }
     end
-    api.state task.state
-    api.ended_at task.ended_at
+    api.is_active task.is_active
+    api.ended task.ended?
+    api.end_reason task.end_reason
     api.next_run_date task.next_run_date
     api.end_date task.end_date
     api.max_occurrences task.max_occurrences
@@ -149,11 +150,14 @@ module PeriodictaskHelper
     end
   end
 
-  # "Ends on <date>" and/or "<n> of <max> runs", or nil for a task that
-  # repeats forever.
+  # "Ends on <date>" ("Ended on <date>" once reached) and/or "<n> of <max>
+  # runs", or nil for a task that repeats forever.
   def periodictask_end_description(task)
     parts = []
-    parts << l(:label_ends_on_date, date: format_time(task.end_date)) if task.end_date
+    if task.end_date
+      key = task.end_reason == 'ended_by_date' ? :label_ended_on_date : :label_ends_on_date
+      parts << l(key, date: format_time(task.end_date))
+    end
     if task.max_occurrences
       parts << l(:label_end_runs_progress, count: task.occurrences_count.to_i, max: task.max_occurrences)
     end
@@ -235,28 +239,32 @@ module PeriodictaskHelper
     version_options_for_select((versions + [periodictask.fixed_version]).compact.uniq, periodictask.fixed_version)
   end
 
-  def periodictask_state_label(periodictask)
-    l(:"label_periodictask_state_#{periodictask.state}")
-  end
+  # "Ended (end date reached)" / "Ended (maximum number of runs reached)" /
+  # "Disabled" / "Active": what the task is doing, as a row tooltip. Ended
+  # wins over disabled: the task would not run either way, and the end
+  # condition is what has to change first.
+  def periodictask_status_label(periodictask)
+    return l(:"label_#{periodictask.end_reason}") if periodictask.ended?
 
-  # Options for the state select. Only the scheduler ends a task, so "Ended" is
-  # offered just while the task is in that state (to leave it as is).
-  def periodictask_state_options(periodictask)
-    states = periodictask.ended? ? Periodictask::STATES : Periodictask::STATES - ['ended']
-    states.map { |state| [l(:"label_periodictask_state_#{state}"), state] }
+    periodictask.is_active? ? l(:field_active) : l(:label_disabled)
   end
 
   # Row classes for the lists: inactive rows are greyed, ended rows are greyed
-  # and struck through like closed issues (see _state_styles).
+  # and struck through like closed issues (see _row_styles).
   def periodictask_row_class(periodictask)
-    "periodictask #{periodictask.state} #{cycle('odd', 'even')}"
+    classes = ['periodictask']
+    classes << 'inactive' unless periodictask.is_active?
+    classes << 'ended' if periodictask.ended?
+    classes << cycle('odd', 'even')
+    classes.join(' ')
   end
 
-  # "Active" / "Inactive" / "Ended on <date>" for the detail page.
-  def periodictask_state_description(periodictask)
-    return periodictask_state_label(periodictask) unless periodictask.ended? && periodictask.ended_at
+  # Why an ended task will not run again, next to its Active flag on the
+  # detail page and in the form; nil while the task is not ended.
+  def periodictask_ended_note(periodictask)
+    return unless periodictask.ended?
 
-    l(:label_ended_on_date, date: format_time(periodictask.ended_at))
+    content_tag(:em, periodictask_status_label(periodictask), class: 'info periodictask-ended')
   end
 
   # Marker shown next to a task's subject in the lists when its last run failed;

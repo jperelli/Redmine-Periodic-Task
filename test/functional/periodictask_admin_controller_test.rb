@@ -31,15 +31,21 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
   end
 
   def test_index_greys_inactive_tasks_and_strikes_ended_ones
-    create_test_periodictask(Project.find(1), subject: 'Paused task', state: 'inactive')
-    create_test_periodictask(Project.find(1), subject: 'Finished task', state: 'ended')
+    create_test_periodictask(Project.find(1), subject: 'Paused task', is_active: false)
+    create_test_periodictask(Project.find(1), subject: 'Finished task', max_occurrences: 2)
+      .update_columns(occurrences_count: 2)
+    create_test_periodictask(Project.find(1), subject: 'Paused and finished', is_active: false, max_occurrences: 1)
+      .update_columns(occurrences_count: 1)
 
     log_user('admin', 'admin')
     get '/admin/periodictasks'
     assert_response :success
-    assert_select 'tr.periodictask.inactive[title=?]', 'Inactive', text: /Paused task/
-    assert_select 'tr.periodictask.ended[title=?]', 'Ended', text: /Finished task/
-    assert_select 'tr.periodictask.active[title=?]', 'Active', text: /Due task/
+    assert_select 'tr.periodictask.inactive[title=?]', I18n.t(:label_disabled), text: /Paused task/
+    assert_select 'tr.periodictask.ended[title=?]', I18n.t(:label_ended_by_count), text: /Finished task/
+    assert_select 'tr.periodictask.inactive.ended[title=?]', I18n.t(:label_ended_by_count), text: /Paused and finished/
+    assert_select 'tr.periodictask[title=?]', I18n.t(:field_active), text: /Due task/
+    assert_select 'tr.periodictask.inactive', 2
+    assert_select 'tr.periodictask.ended', 2
     assert_select 'style', text: /tr\.periodictask\.ended td\.subject a \{ text-decoration: line-through; \}/
     assert_select 'span.icon-locked', 0
   end

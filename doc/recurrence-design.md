@@ -200,37 +200,45 @@ A task repeats forever unless `end_date` and/or `max_occurrences` is set.
 The form's `Ends` control has two independent boxes, `On date` and `After N
 runs`; both may be ticked, and the first condition reached ends the task.
 
-After every scheduled run the checker increments `occurrences_count`,
-computes the next run and then checks `Periodictask#end_reason`:
+Whether a task is ended is not stored: `Periodictask#end_reason` derives it
+from the three columns, at any time:
 
 - `ended_by_count` when `occurrences_count >= max_occurrences`;
-- `ended_by_date` when the new `next_run_date` is strictly after `end_date`.
+- `ended_by_date` when `next_run_date` is strictly after `end_date`.
   A run that falls exactly on `end_date` still happens.
 
-When a reason is found the task is saved with `state = 'ended'` and
-`ended_at = now`, and a `PeriodictaskJournal` entry with that action is
-written, so the project activity shows *Periodic task ended (end date
-reached)* or *(maximum number of runs reached)*. `next_run_date` is left as
-computed, so setting the state back to `Active` (after moving the end date or
-raising the maximum) resumes the schedule at its natural next slot. Lowering
-`max_occurrences` below the runs already made ends the task on its next due
-date without creating another issue.
+`ended?` is `end_reason.present?`. The same condition is expressed in SQL by
+the `not_ended` scope, and `runnable = active.not_ended` is what the checker
+selects from: a task runs only while it is both switched on and not ended.
 
-### States
+After every scheduled run the checker increments `occurrences_count` and
+computes the next run; if the task is ended at that point it writes a
+`PeriodictaskJournal` entry with the reason, so the project activity shows
+*Periodic task ended (end date reached)* or *(maximum number of runs
+reached)* and its `created_on` is the moment the series finished.
+`next_run_date` is left as computed, so moving the end date past it or raising
+the maximum makes the task not ended again and it resumes at its natural next
+slot. Lowering `max_occurrences` below the runs already made makes the task
+ended at once, without a run or a journal entry.
 
-`Periodictask#state` is one of:
+### Active and ended
 
-| State | Set by | Scheduler | Lists |
-|---|---|---|---|
-| `active` (default) | the user | picks it up | normal row |
-| `inactive` | the user (pause without deleting) | skips it | greyed row |
-| `ended` | the checker, when the end condition is reached | skips it | greyed row, `#id` and subject struck through like a closed issue |
+The two are independent: `is_active` (default `true`) is the user's switch,
+ended is the schedule's verdict, and every combination is possible:
 
-`Run now` works in every state and never changes it. The form's `State`
-select offers `Active` and `Inactive`; `Ended` is listed only while the task
-is ended, so it can be left as is. `ended_at` is kept only while the state is
-`ended` (`sync_ended_at`). A copy of an ended task starts `active` with
-`occurrences_count = 0`; a copy of an inactive task stays inactive.
+| `is_active` | `ended?` | Scheduler | Form / detail | Lists |
+|---|---|---|---|---|
+| true | false | picks it up | `Active` ticked | normal row |
+| false | false | skips it | `Active` unticked | greyed row |
+| true | true | skips it | `Active` ticked, *Ended (reason)* next to it | greyed row, `#id` and subject struck through like a closed issue |
+| false | true | skips it | `Active` unticked, *Ended (reason)* | as above (ended wins over inactive) |
+
+The `Active` box can be toggled at any time; ended can only change through
+the end condition. `Run now` works in every combination and changes neither.
+A copy of a task keeps `is_active` and the end condition and starts with
+`occurrences_count = 0`, so a copy of a task ended by count is not ended; a
+copy of a task ended by date is, and fails validation until its end date is
+moved.
 
 Only scheduled runs count. `Run now` creates an issue and records it in the
 task history, but it does not advance the schedule and it does not increment
@@ -242,11 +250,11 @@ created nothing because the previous issue was still open (`skip`,
 `after_completion`) does not count, while the end date applies to whatever
 `next_run_date` the run leaves behind, rescheduled or not.
 
-Validation: `end_date` must not be before `next_run_date` (for active tasks;
-an inactive or ended task keeps a next run past its end date, and a next run
-exactly on the end date is the last one) and `max_occurrences` must be
-greater than 0.
-Both are cleared when their box is unticked in the form.
+Validation: `end_date` must not be before `next_run_date` (a next run exactly
+on the end date is the last one) and `max_occurrences` must be greater than
+0. The end date is only checked when it is being set or changed: a task
+ended by date has its next run past the end date by construction and must
+stay editable. Both are cleared when their box is unticked in the form.
 
 ## Previous issue still open
 
@@ -314,9 +322,8 @@ occurrence is counted from the rescheduled anchor as usual. A task without
 - The migration adds three nullable columns. No data migration is needed.
 - The end condition adds `end_date` and `max_occurrences` (nullable) and
   `occurrences_count` (default 0). Existing tasks keep repeating forever.
-  The same migration replaces the unreleased `is_active` boolean with the
-  `state` string (`active`/`inactive`/`ended`, indexed with `next_run_date`)
-  and adds `ended_at`; `is_active = false` rows become `inactive`.
+  Ended is derived from these three columns and `next_run_date`; nothing else
+  is stored.
 - `weekend_adjustment` is a string column, `NOT NULL DEFAULT 'none'`. An
   unknown value reads as `none`. Old records get the default, so nothing
   changes for them.

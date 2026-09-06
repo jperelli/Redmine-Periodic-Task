@@ -1213,93 +1213,103 @@ class PeriodictaskControllerTest < ActionController::TestCase
     end
   end
 
-  def test_create_stores_target_version_and_inactive_state
+  def test_create_stores_target_version_and_disabled_state
     post :create, params: {
       project_id: 'ecookbook',
       periodictask: {
         subject: 'Versioned task', tracker_id: 1, assigned_to_id: 2, author_id: 2,
-        interval_number: 1, interval_units: 'month', fixed_version_id: '3', state: 'inactive'
+        interval_number: 1, interval_units: 'month', fixed_version_id: '3', is_active: '0'
       }
     }
     assert_response :redirect
 
     task = Periodictask.find_by(subject: 'Versioned task')
     assert_equal 3, task.fixed_version_id
-    assert task.inactive?
+    assert_not task.is_active?
+    assert_not task.ended?
   end
 
-  def test_create_rejects_an_unknown_state
-    assert_no_difference('Periodictask.count') do
-      post :create, params: {
-        project_id: 'ecookbook',
-        periodictask: { subject: 'Bad state', tracker_id: 1, author_id: 2, interval_number: 1,
-                        interval_units: 'month', state: 'paused' }
-      }
-    end
-    assert_response :success
-    assert_select '#errorExplanation'
+  def test_new_form_has_the_active_box_ticked
+    get :new, params: { project_id: 'ecookbook' }
+    assert_select 'input[type=checkbox]#periodictask_is_active[checked=checked]'
+    assert_select 'em.periodictask-ended', 0
   end
 
-  def test_form_offers_ended_only_while_the_task_is_ended
-    active = create_test_periodictask
-    get :edit, params: { project_id: 'ecookbook', id: active.id }
-    assert_select 'select#periodictask_state' do
-      assert_select 'option[value=active][selected=selected]'
-      assert_select 'option[value=inactive]'
-      assert_select 'option[value=ended]', 0
-    end
-    assert_select 'em.periodictask-ended-at', 0
+  def test_edit_form_keeps_the_active_box_and_explains_why_an_ended_task_will_not_run
+    task = create_test_periodictask(max_occurrences: 2)
+    task.update_columns(occurrences_count: 2)
 
-    ended = create_test_periodictask(state: 'ended')
-    ended.update_columns(ended_at: Time.utc(2026, 9, 5, 12, 0))
-    get :edit, params: { project_id: 'ecookbook', id: ended.id }
-    assert_select 'select#periodictask_state' do
-      assert_select 'option[value=ended][selected=selected]'
-      assert_select 'option[value=active]'
-      assert_select 'option[value=inactive]'
-    end
-    assert_select 'em.periodictask-ended-at', text: 'Ended on 09/05/2026 12:00 PM'
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'input[type=checkbox]#periodictask_is_active[checked=checked]'
+    assert_select 'em.periodictask-ended', text: /Ended \(maximum number of runs reached\)/
+    assert_select 'em.periodictask-ended', text: /Change the end condition below to let it run again\./
+
+    task.update_columns(max_occurrences: 3)
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'em.periodictask-ended', 0
   end
 
-  def test_show_states_active_inactive_or_ended_on_date
+  def test_show_displays_the_active_flag_and_the_end_reason
     task = create_test_periodictask
     get :show, params: { project_id: 'ecookbook', id: task.id }
-    assert_select '.state .label', text: 'State:'
-    assert_select '.state .value span.periodictask-state.active', text: 'Active'
+    assert_select '.active .label', text: 'Active:'
+    assert_select '.active .value em.periodictask-ended', 0
 
-    task.update!(state: 'inactive')
+    task.update!(is_active: false)
     get :show, params: { project_id: 'ecookbook', id: task.id }
-    assert_select '.state .value span.periodictask-state.inactive', text: 'Inactive'
+    assert_select '.active .value em.periodictask-ended', 0
 
-    task.update!(state: 'ended', ended_at: Time.utc(2026, 9, 5, 12, 0))
+    task.update_columns(is_active: true, end_date: Time.utc(2026, 9, 5, 12, 0),
+                        next_run_date: Time.utc(2026, 10, 5, 12, 0))
     get :show, params: { project_id: 'ecookbook', id: task.id }
-    assert_select '.state .value span.periodictask-state.ended', text: 'Ended on 09/05/2026 12:00 PM'
+    assert_select '.active .value em.periodictask-ended', text: 'Ended (end date reached)'
+    assert_select '.interval .value em.periodictask-end-condition', text: 'Ended on 09/05/2026 12:00 PM'
   end
 
-  def test_update_reactivates_an_ended_task
-    task = create_test_periodictask(state: 'ended', max_occurrences: 2)
-    task.update_columns(occurrences_count: 2, ended_at: 1.day.ago)
+  def test_update_of_an_ended_task_does_not_trip_the_end_date_validation
+    task = create_test_periodictask(end_date: Time.utc(2026, 9, 5, 12, 0),
+                                    next_run_date: Time.utc(2026, 9, 1, 12, 0))
+    task.update_columns(next_run_date: Time.utc(2026, 10, 1, 12, 0))
 
     patch :update, params: { project_id: 'ecookbook', id: task.id,
-                             periodictask: { state: 'active', max_occurrences: 5 } }
+                             periodictask: { subject: 'Renamed', is_active: '0' } }
     assert_response :redirect
 
     task.reload
-    assert task.active?
-    assert_nil task.ended_at
+    assert_equal 'Renamed', task.subject
+    assert_not task.is_active?
+    assert task.ended?
+  end
+
+  def test_update_lets_an_ended_task_run_again_by_raising_the_maximum
+    task = create_test_periodictask(max_occurrences: 2)
+    task.update_columns(occurrences_count: 2)
+
+    patch :update, params: { project_id: 'ecookbook', id: task.id,
+                             periodictask: { max_occurrences: 5 } }
+    assert_response :redirect
+
+    task.reload
+    assert_not task.ended?
+    assert task.runnable?
     assert_equal 5, task.max_occurrences
     assert_equal 2, task.occurrences_count
   end
 
-  def test_run_now_works_on_inactive_and_ended_tasks
-    %w[inactive ended].each do |state|
-      task = create_test_periodictask(state: state)
+  def test_run_now_works_on_disabled_and_ended_tasks
+    disabled = create_test_periodictask(is_active: false)
+    ended = create_test_periodictask(max_occurrences: 1)
+    ended.update_columns(occurrences_count: 1)
+
+    [disabled, ended].each do |task|
       assert_difference('Issue.count') do
         post :run_now, params: { project_id: 'ecookbook', id: task.id }
       end
       assert_response :redirect
-      assert_equal state, task.reload.state
     end
+    assert_not disabled.reload.is_active?
+    assert ended.reload.ended?
+    assert_equal 1, ended.occurrences_count
   end
 
   def test_task_of_another_project_is_not_reachable_through_this_project
@@ -1326,12 +1336,14 @@ class PeriodictaskControllerTest < ActionController::TestCase
   end
 
   def test_index_greys_inactive_tasks_and_marks_failed_ones
-    create_test_periodictask(subject: 'Paused task', state: 'inactive')
+    create_test_periodictask(subject: 'Paused task', is_active: false)
     create_test_periodictask(subject: 'Broken task', last_error: 'Tracker cannot be blank')
     get :index, params: { project_id: 'ecookbook' }
     assert_response :success
-    assert_select 'tr.periodictask.inactive[title=?]', 'Inactive', text: /Paused task/
-    assert_select 'tr.periodictask.active[title=?]', 'Active', text: /Broken task/
+    assert_select 'tr.periodictask.inactive[title=?]', I18n.t(:label_disabled), text: /Paused task/
+    assert_select 'tr.periodictask[title=?]', 'Active', text: /Broken task/
+    assert_select 'tr.periodictask.inactive', 1
+    assert_select 'tr.periodictask.ended', 0
     assert_select 'span.icon-locked', 0
     assert_select 'style', text: /tr\.periodictask\.inactive td:not\(\.buttons\)/
     assert_select 'td', text: /Broken task/ do
@@ -1472,11 +1484,11 @@ class PeriodictaskControllerTest < ActionController::TestCase
   end
 
   def test_index_strikes_through_an_ended_task
-    task = create_test_periodictask(subject: 'Ended task', max_occurrences: 2, state: 'ended')
+    task = create_test_periodictask(subject: 'Ended task', max_occurrences: 2)
     task.update_columns(occurrences_count: 2)
 
     get :index, params: { project_id: 'ecookbook' }
-    assert_select 'tr.periodictask.ended[title=?]', 'Ended', text: /Ended task/ do
+    assert_select 'tr.periodictask.ended[title=?]', I18n.t(:label_ended_by_count), text: /Ended task/ do
       assert_select 'td.id a', text: task.id.to_s
       assert_select 'td.subject a', text: 'Ended task'
       assert_select 'td.interval em.periodictask-end-condition', text: '2 of 2 runs'
@@ -1493,7 +1505,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
 
     task.reload
     assert_equal 0, task.occurrences_count
-    assert task.active?
+    assert task.runnable?
     assert_equal 1, task.periodictask_issues.count
   end
 

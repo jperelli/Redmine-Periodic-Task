@@ -7,7 +7,7 @@ class ScheduledTasksChecker
     errors = []
     notes = []
     issues_created = 0
-    tasks = Periodictask.active.possibly_due(now).select { |task| task.due_by?(now) }
+    tasks = Periodictask.runnable.possibly_due(now).select { |task| task.due_by?(now) }
 
     # Macros render in the shell-configured locale (or Redmine's default). The
     # checker also runs inside web requests, so the caller's locale must be
@@ -15,16 +15,12 @@ class ScheduledTasksChecker
     I18n.with_locale(ENV['LOCALE'] || I18n.default_locale) do
       tasks.each do |task|
         as_user(task.author) do
-          # A task edited past its end (e.g. max_occurrences lowered below the
-          # runs already made) ends without creating another issue.
-          unless task.end_reached?
-            run = TaskRun.new(task, now)
-            run.execute
-            issues_created += 1 if run.issue_created?
-            errors.concat(run.errors)
-            notes.concat(run.notes)
-          end
-          finish(task) if task.end_reached?
+          run = TaskRun.new(task, now)
+          run.execute
+          issues_created += 1 if run.issue_created?
+          errors.concat(run.errors)
+          notes.concat(run.notes)
+          finish(task) if task.ended?
           task.save
         end
       end
@@ -37,12 +33,13 @@ class ScheduledTasksChecker
     record_run(source, now, tasks, issues_created, errors, notes)
   end
 
-  # Disables a task whose end condition is met and records why in the
-  # activity log; the schedule is left untouched so no further run is queued.
+  # Records in the activity log that the run just made was the last one. The
+  # task is ended by its own end condition from now on (Periodictask#ended?);
+  # nothing else is stored.
   def self.finish(task)
     reason = task.end_reason
     Rails.logger.info "ScheduledTasksChecker: ##{task.id} #{task.subject} #{reason.tr('_', ' ')}"
-    task.mark_ended(reason)
+    task.log_activity(reason)
   end
   private_class_method :finish
 

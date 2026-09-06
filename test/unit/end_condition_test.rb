@@ -1,8 +1,9 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # End condition of a periodic task: an optional end date and/or a maximum
-# number of scheduled runs. Whichever is reached first disables the task and
-# the reason is written to the activity log.
+# number of scheduled runs. Whichever is reached first ends the task (a
+# derived state, independent of the user's Active flag) and the reason is
+# written to the activity log.
 class EndConditionTest < ActiveSupport::TestCase
   fixtures :projects, :users, :trackers, :projects_trackers, :issue_statuses,
            :enumerations, :enabled_modules, :roles, :members, :member_roles
@@ -38,11 +39,25 @@ class EndConditionTest < ActiveSupport::TestCase
     assert build_task(next_run_date: nil, end_date: 1.year.from_now).valid?
   end
 
-  def test_inactive_and_ended_tasks_may_keep_a_next_run_past_their_end_date
+  def test_end_date_is_only_checked_when_it_is_being_changed
     anchor = Time.utc(2026, 3, 1, 10, 0, 0)
-    %w[inactive ended].each do |state|
-      assert build_task(next_run_date: anchor, end_date: anchor - 1.day, state: state).valid?, state
-    end
+    task = create_task(next_run_date: anchor, end_date: anchor + 1.day)
+    task.update_columns(next_run_date: anchor + 2.days)
+    task.reload
+
+    assert task.ended?
+    task.subject = 'Renamed'
+    assert task.valid?
+    task.is_active = false
+    assert task.valid?
+
+    task.end_date = anchor + 1.day + 1.hour
+    assert_not task.valid?
+    assert_includes task.errors.full_messages, I18n.t(:error_end_date_before_next_run)
+
+    task.end_date = anchor + 2.days
+    assert task.valid?
+    assert_not task.ended?
   end
 
   def test_max_occurrences_must_be_positive
@@ -59,12 +74,12 @@ class EndConditionTest < ActiveSupport::TestCase
 
   def test_end_reason_is_nil_without_end_condition
     assert_nil build_task(next_run_date: 1.day.ago).end_reason
-    assert_not build_task(next_run_date: 1.day.ago).end_reached?
+    assert_not build_task(next_run_date: 1.day.ago).ended?
   end
 
   def test_end_reason_by_date_only_when_next_run_is_strictly_after_end_date
     end_date = Time.utc(2026, 3, 1, 10, 0, 0)
-    task = build_task(state: 'inactive', end_date: end_date)
+    task = build_task(end_date: end_date)
 
     task.next_run_date = end_date - 1.second
     assert_nil task.end_reason
@@ -86,10 +101,47 @@ class EndConditionTest < ActiveSupport::TestCase
   end
 
   def test_end_reason_prefers_count_when_both_conditions_are_met
-    task = build_task(state: 'inactive', max_occurrences: 1, occurrences_count: 1,
+    task = build_task(max_occurrences: 1, occurrences_count: 1,
                       end_date: Time.utc(2026, 3, 1), next_run_date: Time.utc(2026, 4, 1))
 
     assert_equal 'ended_by_count', task.end_reason
+  end
+
+  def test_ended_is_independent_of_the_active_flag
+    task = build_task(max_occurrences: 1, occurrences_count: 1, is_active: false)
+
+    assert task.ended?
+    assert_not task.is_active?
+    assert_not task.runnable?
+
+    task.is_active = true
+    assert task.ended?
+    assert_not task.runnable?
+
+    task.max_occurrences = 2
+    assert_not task.ended?
+    assert task.runnable?
+  end
+
+  def test_runnable_scope_matches_the_ruby_predicates
+    anchor = Time.utc(2026, 3, 1, 10, 0, 0)
+    forever = create_task(subject: 'Forever', next_run_date: anchor)
+    paused = create_task(subject: 'Paused', next_run_date: anchor, is_active: false)
+    last_run_pending = create_task(subject: 'Last run pending', next_run_date: anchor, end_date: anchor)
+    by_date = create_task(subject: 'By date', next_run_date: anchor, end_date: anchor + 1.day)
+    by_date.update_columns(next_run_date: anchor + 2.days)
+    by_count = create_task(subject: 'By count', next_run_date: anchor, max_occurrences: 2)
+    by_count.update_columns(occurrences_count: 2)
+    one_left = create_task(subject: 'One left', next_run_date: anchor, max_occurrences: 2)
+    one_left.update_columns(occurrences_count: 1)
+
+    tasks = [forever, paused, last_run_pending, by_date, by_count, one_left].each(&:reload)
+    assert_equal [forever, last_run_pending, one_left].map(&:id).sort,
+                 Periodictask.runnable.where(id: tasks.map(&:id)).pluck(:id).sort
+    assert_equal tasks.select(&:runnable?).map(&:id).sort,
+                 Periodictask.runnable.where(id: tasks.map(&:id)).pluck(:id).sort
+    assert_equal tasks.reject(&:ended?).map(&:id).sort,
+                 Periodictask.not_ended.where(id: tasks.map(&:id)).pluck(:id).sort
   end
 
   # ---- checker ----
@@ -102,22 +154,25 @@ class EndConditionTest < ActiveSupport::TestCase
 
     task.reload
     assert task.ended?
-    assert_in_delta Time.current, task.ended_at, 60
+    assert task.is_active?
+    assert_not task.runnable?
     assert task.next_run_date > task.end_date
     assert_equal 1, task.occurrences_count
     assert_nil task.last_error
     assert_equal ['ended_by_date'], journal_actions(task)
   end
 
-  def test_ended_task_resumes_when_set_back_to_active_with_a_new_end_condition
+  def test_ended_task_resumes_once_its_end_condition_is_changed
     task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago, max_occurrences: 1)
     ScheduledTasksChecker.checktasks!
     assert task.reload.ended?
 
-    task.state = 'active'
-    assert task.valid?
-    task.update!(max_occurrences: 2, next_run_date: 1.hour.ago)
-    assert_nil task.ended_at
+    task.update!(next_run_date: 1.hour.ago)
+    assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+
+    task.update!(max_occurrences: 2)
+    assert_not task.ended?
+    assert task.runnable?
 
     assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
     task.reload
@@ -133,7 +188,7 @@ class EndConditionTest < ActiveSupport::TestCase
     ScheduledTasksChecker.checktasks!
 
     task.reload
-    assert task.active?
+    assert task.runnable?
     assert task.next_run_date > Time.current
     assert_empty journal_actions(task)
   end
@@ -146,14 +201,14 @@ class EndConditionTest < ActiveSupport::TestCase
 
     task.reload
     assert_equal task.end_date, task.next_run_date
-    assert task.active?
+    assert task.runnable?
   end
 
   def test_checker_ends_task_when_max_occurrences_reached
     task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago, max_occurrences: 2)
 
     assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
-    assert task.reload.active?
+    assert task.reload.runnable?
     assert_equal 1, task.occurrences_count
 
     task.update!(next_run_date: 1.hour.ago)
@@ -179,7 +234,7 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
-    assert task.active?
+    assert task.runnable?
     assert_equal 1, task.occurrences_count
     assert task.last_skipped_issue_id.present?
     assert_equal [], journal_actions(task)
@@ -209,15 +264,30 @@ class EndConditionTest < ActiveSupport::TestCase
     assert by_count.ended?
   end
 
-  def test_checker_ends_task_without_running_when_max_was_lowered_below_past_runs
+  def test_task_whose_max_was_lowered_below_past_runs_is_ended_at_once_and_not_run
     task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago, max_occurrences: 5)
-    task.update_columns(occurrences_count: 5, max_occurrences: 3)
+    task.update_columns(occurrences_count: 5)
+    task.reload.update!(max_occurrences: 3)
 
+    assert task.ended?
     assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+    assert_equal 5, task.reload.occurrences_count
+    assert_empty journal_actions(task)
+  end
+
+  def test_inactive_task_is_not_ended_by_an_end_date_that_passed_while_it_was_paused
+    task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 2.days.ago,
+                       end_date: 1.day.ago, is_active: false)
+
+    assert_not task.ended?
+    assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+
+    task.update!(is_active: true)
+    assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     task.reload
     assert task.ended?
-    assert_equal ['ended_by_count'], journal_actions(task)
+    assert_equal ['ended_by_date'], journal_actions(task)
   end
 
   def test_checker_counts_a_run_whose_issue_was_created_even_if_subtasks_failed
@@ -240,7 +310,7 @@ class EndConditionTest < ActiveSupport::TestCase
 
     task.reload
     assert_equal 0, task.occurrences_count
-    assert task.active?
+    assert task.runnable?
     assert task.next_run_date > Time.current
   end
 
@@ -276,15 +346,32 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_equal 0, copy.occurrences_count
   end
 
-  def test_copy_of_an_ended_task_starts_active_while_an_inactive_one_stays_inactive
-    ended = create_task(state: 'ended', max_occurrences: 1)
+  def test_copy_of_a_task_ended_by_count_is_not_ended_and_keeps_the_active_flag
+    ended = create_task(max_occurrences: 1)
     ended.update_columns(occurrences_count: 1)
-    copy = Periodictask.new(project: @project, author_id: 3).copy_from(ended)
-    assert copy.active?
-    assert_nil copy.ended_at
+    assert ended.reload.ended?
 
-    inactive = create_task(state: 'inactive')
-    assert Periodictask.new(project: @project, author_id: 3).copy_from(inactive).inactive?
+    copy = Periodictask.new(project: @project, author_id: 3).copy_from(ended)
+    assert_not copy.ended?
+    assert copy.is_active?
+    assert copy.valid?
+
+    inactive = create_task(is_active: false)
+    assert_not Periodictask.new(project: @project, author_id: 3).copy_from(inactive).is_active?
+  end
+
+  def test_copy_of_a_task_ended_by_date_needs_a_new_end_date
+    anchor = Time.utc(2026, 3, 1, 10, 0, 0)
+    ended = create_task(next_run_date: anchor, end_date: anchor)
+    ended.update_columns(next_run_date: anchor + 1.month)
+
+    copy = Periodictask.new(project: @project, author_id: 3).copy_from(ended.reload)
+    assert_not copy.valid?
+    assert_includes copy.errors.full_messages, I18n.t(:error_end_date_before_next_run)
+
+    copy.end_date = anchor + 2.months
+    assert copy.valid?
+    assert_not copy.ended?
   end
 
   private

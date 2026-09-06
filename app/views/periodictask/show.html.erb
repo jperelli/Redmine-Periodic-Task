@@ -37,9 +37,9 @@
       rows.left l(:label_weekend_adjustment),
                 periodictask_weekend_adjustment_label(@periodictask),
                 class: 'weekend-adjustment'
-      rows.right l(:label_periodictask_state),
-                 content_tag(:span, periodictask_state_description(@periodictask), class: "periodictask-state #{@periodictask.state}"),
-                 class: 'state'
+      rows.right l(:field_active),
+                 safe_join([checked_image(@periodictask.is_active?), periodictask_ended_note(@periodictask)].compact, ' '),
+                 class: 'active'
       rows.left l(:label_if_previous_open),
                 content_tag(:span, periodictask_if_previous_open_label(@periodictask.if_previous_open),
                             title: periodictask_if_previous_open_description(@periodictask.if_previous_open)),
