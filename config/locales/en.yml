@@ -25,6 +25,7 @@ en:
   label_set_start_date_info: When checked, the start date of each created issue is set to the day it is generated.
   label_due_date: 'Set due date after'
   label_due_date_info: 'Due date of each created issue, set this amount of time after its start date.'
+  label_assigned_to_info: 'Optional. When blank, Redmine''s default assignee applies to each created issue: the category''s default assignee, otherwise the project''s default assignee.'
   label_estimated_hours: Estimated time
   label_estimated_hours_after: Hours
   label_description: Description

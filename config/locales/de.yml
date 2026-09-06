@@ -24,6 +24,7 @@ de:
   label_set_start_date_info: 'Wenn aktiviert, wird das Startdatum jeder erstellten Aufgabe auf den Tag der Erstellung gesetzt.'
   label_due_date: 'Fälligkeitsdatum setzen nach'
   label_due_date_info: 'Fälligkeitsdatum jeder erstellten Aufgabe, gesetzt um diese Zeitspanne nach ihrem Startdatum.'
+  label_assigned_to_info: 'Optional. Wenn leer, gilt für jede erstellte Aufgabe die Standardzuweisung von Redmine: der Standard-Bearbeiter der Kategorie, sonst der des Projekts.'
   label_description: Beschreibung
   label_estimated_hours: Geschätzter Aufwand
   label_estimated_hours_after: Stunden

@@ -25,6 +25,7 @@
 - The checker restores the request locale after running, so the *Run checker now* flash message is shown in the admin's language instead of Redmine's default (@jperelli)
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
 - The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
+- The assignee is optional: a task can be saved without one and its issues follow Redmine's default assignee rules (category default assignee, then project default assignee), like any other unassigned issue (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 

@@ -24,6 +24,7 @@ pt-BR:
   label_set_start_date_info: 'Quando marcado, a data de início de cada tarefa criada é definida para o dia em que é gerada.'
   label_due_date: 'Definir data de vencimento após'
   label_due_date_info: 'Data de vencimento de cada tarefa criada, definida com este intervalo após a data de início.'
+  label_assigned_to_info: 'Opcional. Quando em branco, cada tarefa criada recebe o atribuído padrão do Redmine: o atribuído padrão da categoria ou, na falta dele, o do projeto.'
   label_estimated_hours: Tempo estimado
   label_estimated_hours_after: Horas
   label_description: Descrição
