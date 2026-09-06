@@ -175,7 +175,7 @@ The endpoint works regardless of the **Scheduler** setting.
 
 ### Scheduler log
 
-The plugin configuration page (*Administration → Plugins → Redmine periodictask → Configure*) shows the last 50 runs of the checker, whatever triggered them (cron/rake, web request, check URL or the *Run checker now* button): when it started, how many tasks were due, how many issues were created, how long it took and any errors. Use it to confirm that your cron/uptime monitor/CI schedule is actually firing. Consecutive runs that found nothing to do are grouped in a single row (with a run counter and the time of the last one), so the 50 rows cover days of history even with a 5-minute web-request interval.
+The plugin configuration page (*Administration → Plugins → Redmine periodictask → Configure*) shows the last 50 runs of the checker, whatever triggered them (cron/rake, web request, check URL or the *Run checker now* button): when it started, how many tasks were due, how many issues were created, how long it took, any errors, and notes about tasks that deliberately created nothing (see [Previous issue open](#previous-issue-open)). Use it to confirm that your cron/uptime monitor/CI schedule is actually firing. Consecutive runs that found nothing to do (or only skipped or waited for the same tasks) are grouped in a single row (with a run counter and the time of the last one), so the 50 rows cover days of history even with a 5-minute web-request interval.
 
 The *Run checker now* button on the same page runs the checker immediately, which is handy to test a setup without waiting for the scheduler.
 
@@ -202,6 +202,19 @@ The `Non-working days` option of a task decides what happens when a run falls on
 - `Move to the previous working day`: Saturday August 1st is run on Friday July 31st.
 
 The time of day is kept and the schedule itself is not moved: "every month on day 1" still means the 1st, so the next run after a moved August 1st is September 1st. The task list and detail page show the day the task will actually run, with the original date next to it.
+
+### Previous issue open
+
+By default a task creates a new issue on every occurrence, even when nobody closed the one from the previous occurrence, so unfinished issues pile up (a weekly report nobody writes). The *Previous issue open* setting of each task decides what a due run does when the issue it generated last time is not closed yet:
+
+| Mode | What happens while the previous issue is open | Schedule |
+|---|---|---|
+| **Create a new issue anyway** (default) | A new issue is created; the old one stays open. | Unchanged. |
+| **Skip this occurrence** | Nothing is created. The task detail page shows *The run of … did not create an issue: #123 was still open* above the generated issues, and the scheduler log records `skipped: #123 is still open` in its *Notes* column. It is not an error, so *Last error* stays empty. | The next run date moves on to the next occurrence: the skipped one is lost. |
+| **Close the previous issue** | The previous issue (and the subtasks the task generated under it) is closed with the first closed status its workflow allows the task author, with a journal note pointing at the new issue, and the new issue is created. If Redmine refuses to close it (blocked by another issue, open subtasks that the task did not create, no closed status) the new issue is still created and the failure is shown in *Last error* and in the scheduler log. | Unchanged. |
+| **Wait until it is closed** | Nothing is created and the next run date is not advanced: the task stays due. Once the issue is closed, the schedule restarts from its closing day: the next run is the first occurrence after that day at the task's usual time (closed on Monday 15:37, daily at 10:00 → Tuesday 10:00; closed on a Friday, weekly on Wednesdays → next Wednesday; every 2 weeks → two weeks after the closing day). If that is already in the past, the issue is created right away. | Anchored to the closing date instead of the fixed calendar, like Todoist's `every!`. |
+
+The setting is copied by the *Copy* action and shown on the task detail page. *Run now* ignores it and always creates an issue. "Previous issue" means the newest top-level issue the task generated (generated subtasks do not count); an issue deleted from Redmine is ignored. [doc/if-previous-open.md](doc/if-previous-open.md) (also linked from the help icon next to the setting) explains each mode with examples.
 
 ### Attachments
 

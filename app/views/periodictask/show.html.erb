@@ -40,6 +40,10 @@
       rows.right l(:field_active),
                  checked_image(@periodictask.is_active?),
                  class: 'active'
+      rows.left l(:label_if_previous_open),
+                content_tag(:span, periodictask_if_previous_open_label(@periodictask.if_previous_open),
+                            title: periodictask_if_previous_open_description(@periodictask.if_previous_open)),
+                class: 'if-previous-open'
     end %>
   </div>
 </div>
@@ -202,6 +206,10 @@
 </fieldset>
 
 <h3><%= l(:label_periodictask_history) %></h3>
+
+<% if @periodictask.last_skipped_at %>
+  <p class="periodictask-last-skipped"><%= periodictask_last_skipped_note(@periodictask) %></p>
+<% end %>
 
 <% if @issues.present? %>
   <% content_for :header_tags do %>
