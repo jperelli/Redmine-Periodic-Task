@@ -90,6 +90,8 @@ vi:
   label_periodictask_history: Vấn đề đã tạo
   label_periodictask_no_history: Việc định kỳ này chưa tạo vấn đề nào
   label_issue_created_by_periodictask: Được tạo tự động bởi việc định kỳ
+  field_periodictask: Việc định kỳ
+  label_periodictask_all_issues: Tất cả vấn đề được tạo bởi việc định kỳ này
   label_periodictask_plural: Việc định kỳ
   label_periodictask_journal_create: Đã thêm việc định kỳ
   label_periodictask_journal_update: Đã cập nhật việc định kỳ

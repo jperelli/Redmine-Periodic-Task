@@ -74,6 +74,8 @@ es:
   label_periodictask_history: Incidencias generadas
   label_periodictask_no_history: Esta tarea aún no ha generado ninguna incidencia
   label_issue_created_by_periodictask: Creada automáticamente por una tarea periódica
+  field_periodictask: Tarea periódica
+  label_periodictask_all_issues: Todas las incidencias generadas por esta tarea
   label_periodictask_plural: Tareas periódicas
   label_periodictask_journal_create: Tarea periódica añadida
   label_periodictask_journal_update: Tarea periódica actualizada
