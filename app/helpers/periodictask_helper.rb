@@ -1,4 +1,106 @@
 module PeriodictaskHelper
+  # REST API representation of a task, shared by the project list/detail and
+  # the admin list. Related records follow Redmine core's `{id, name}` shape;
+  # generated issues are only listed on request (`include=issues`).
+  def render_api_periodictask(api, task, last_run)
+    api.id task.id
+    render_api_periodictask_associations(api, task)
+    api.subject task.subject
+    api.description task.description
+    api.interval_number task.interval_number
+    api.interval_units task.interval_units
+    api.array(:weekdays) { task.weekdays.each { |d| api.weekday d } }
+    api.monthly_mode task.monthly_mode
+    api.array(:month_weeks) { task.month_weeks.each { |w| api.month_week w } }
+    api.set_start_date task.set_start_date
+    api.due_date_number task.due_date_number
+    api.due_date_units task.due_date_units
+    api.estimated_hours task.estimated_hours
+    api.done_ratio task.done_ratio
+    api.parent_id task.parent_id
+    api.checklists_template_id task.checklists_template_id
+    api.array(:tags) { task.tag_names.each { |t| api.tag t } }
+    render_api_periodictask_custom_fields(api, task)
+    api.array(:watchers) do
+      User.where(id: task.watcher_user_ids).sorted.each { |u| api.user(id: u.id, name: u.name) }
+    end
+    api.array(:subtasks) do
+      task.subtasks.each { |row| api.subtask(row.slice(*Periodictask::SUBTASK_KEYS)) }
+    end
+    api.array(:relations) do
+      task.relations.each { |row| api.relation(row.slice(*Periodictask::RELATION_KEYS)) }
+    end
+    api.is_active task.is_active
+    api.next_run_date task.next_run_date
+    api.end_date task.end_date
+    api.max_occurrences task.max_occurrences
+    api.occurrences_count task.occurrences_count
+    api.last_assigned_date task.last_assigned_date
+    api.last_run last_run
+    api.last_error task.last_error
+    api.created_at task.created_at
+    api.updated_at task.updated_at
+    render_api_periodictask_issues(api, task) if include_in_api_response?('issues')
+  end
+
+  def render_api_periodictask_associations(api, task)
+    api.project(id: task.project_id, name: task.project.name) if task.project
+    api.tracker(id: task.tracker_id, name: task.tracker.name) if task.tracker
+    api.author(id: task.author_id, name: task.author.name) if task.author
+    api.assigned_to(id: task.assigned_to_id, name: task.assigned_to.name) if task.assigned_to
+    api.category(id: task.issue_category_id, name: task.issue_category.name) if task.issue_category
+    api.fixed_version(id: task.fixed_version_id, name: task.fixed_version.name) if task.fixed_version
+    if task.priority_id && (priority = api_issue_priorities[task.priority_id])
+      api.priority(id: priority.id, name: priority.name)
+    end
+    return unless task.status_id && (status = api_issue_statuses[task.status_id])
+
+    api.status(id: status.id, name: status.name)
+  end
+
+  def render_api_periodictask_custom_fields(api, task)
+    values = task.custom_field_values.respond_to?(:to_h) ? task.custom_field_values.to_h : {}
+    api.array(:custom_fields) do
+      values.each do |id, value|
+        field = api_issue_custom_fields[id.to_i]
+        next unless field
+
+        attrs = { id: field.id, name: field.name }
+        attrs[:multiple] = true if field.multiple?
+        api.custom_field(attrs) do
+          if value.is_a?(Array)
+            api.array(:value) { value.each { |v| api.value v if v.present? } }
+          else
+            api.value value
+          end
+        end
+      end
+    end
+  end
+
+  def render_api_periodictask_issues(api, task)
+    api.array(:issues) do
+      task.periodictask_issues.joins(:issue).order(created_at: :desc).each do |link|
+        api.issue do
+          api.id link.issue_id
+          api.created_at link.created_at
+        end
+      end
+    end
+  end
+
+  def api_issue_priorities
+    @api_issue_priorities ||= IssuePriority.all.index_by(&:id)
+  end
+
+  def api_issue_statuses
+    @api_issue_statuses ||= IssueStatus.all.index_by(&:id)
+  end
+
+  def api_issue_custom_fields
+    @api_issue_custom_fields ||= IssueCustomField.all.index_by(&:id)
+  end
+
   # Renders an icon + label using Redmine 6's sprite_icon when available, and
   # falls back to the plain label on Redmine 5, where the icon is supplied by
   # the link's `icon icon-*` CSS class instead.

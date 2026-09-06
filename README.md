@@ -252,6 +252,72 @@ If you want to get localized month names, please add `LOCALE="de"` (available ar
 
 A task can create child issues under each generated issue (their subjects accept the same variables) and relations from the generated issue to other issues, with any relation type Redmine supports (`relates`, `follows`, `precedes`, `blocks`, `duplicates`, `copied_to`, ...) and a delay for `precedes`/`follows`. The target of a relation is either a fixed issue number or *Previous generated issue*: the issue the same task created on its previous run. That way each weekly report can `follow` or `relate to` the one before, so users can walk the chain from Redmine's issue page. On the first run there is no previous issue and the relation is silently skipped; a deleted previous issue is skipped in favour of the one created before it.
 
+## REST API
+
+Periodic tasks can be listed, created, updated, deleted and run through Redmine's REST API, in JSON or XML, following the same conventions as the core API (`/issues.json`, ...). Enable *Administration → Settings → API → Enable REST web service* and authenticate with an API key (`X-Redmine-API-Key` header or `key=` parameter) or HTTP basic auth. The user needs the *Periodic tasks* permission in the project and the *Periodic tasks* module must be enabled, exactly like the HTML pages.
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/projects/:project_id/periodictask.json` | List the project's tasks. Paginated with `limit` (default 25, max 100) and `offset`; the response carries `total_count`, `offset` and `limit` |
+| `GET` | `/projects/:project_id/periodictask/:id.json` | One task |
+| `POST` | `/projects/:project_id/periodictask.json` | Create a task. Answers `201 Created` with the task and a `Location` header |
+| `PUT`/`PATCH` | `/projects/:project_id/periodictask/:id.json` | Update a task. Only the attributes sent are changed. Answers `204 No Content` |
+| `DELETE` | `/projects/:project_id/periodictask/:id.json` | Delete a task. Answers `204 No Content` |
+| `POST` | `/projects/:project_id/periodictask/:id/run_now.json` | Generate an issue right away without moving the schedule. Answers `201 Created` with `{"issue": {"id": ..., "subject": ..., "errors": [...]}}` (`errors` lists non-fatal problems such as a relation that could not be created) |
+| `GET` | `/admin/periodictasks.json` | Administrators only: the tasks of every project, paginated like the project list |
+
+`:project_id` is the project's numeric id or identifier. Replace `.json` with `.xml` for XML. Add `include=issues` to `GET` requests to list the issues each task generated (`issues: [{id, created_at}]`). A task from another project answers `404`, a missing permission `403`, validation errors `422` with `{"errors": ["Subject cannot be blank", ...]}`; the same rules that the form applies (the task is validated as the issue it would create).
+
+A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `is_active`, `next_run_date`, `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
+
+Attributes accepted on create/update, under a `periodictask` key (the same the form posts):
+
+| Attribute | Value |
+|---|---|
+| `subject`, `description` | Text, `**DAY**`-style macros allowed |
+| `tracker_id`, `assigned_to_id` (user or group), `author_id`, `issue_category_id`, `fixed_version_id`, `priority_id`, `status_id`, `parent_id` | Ids of the Redmine objects; `author_id` defaults to the API user |
+| `interval_number`, `interval_units` | Integer and one of `day`, `business_day`, `week`, `month`, `year` |
+| `weekdays` | Array of weekdays, `0` = Sunday ... `6` = Saturday (Ruby's `wday`), for weekly and monthly-by-weekday tasks |
+| `monthly_mode`, `month_weeks` | `day_of_month` or `weekday`, and the array of occurrences (`1`..`5`) for the latter |
+| `next_run_date` | ISO 8601 time. Left blank on create, it is computed from the recurrence |
+| `end_date`, `max_occurrences` | End condition: ISO 8601 time and/or a positive integer; blank for none (see *End condition*) |
+| `set_start_date` | Boolean, set the issue start date to the generation date |
+| `due_date_number`, `due_date_units` | Due date as an offset from the generation date |
+| `estimated_hours`, `done_ratio`, `is_active` | Number, integer 0-100, boolean |
+| `custom_fields` or `custom_field_values` | `[{"id": 1, "value": "MySQL"}]` like the core issues API, or a `{"1": "MySQL"}` hash |
+| `watcher_user_ids` | Array of user ids |
+| `subtasks` | Array of `{tracker_id, subject, assigned_to_id, estimated_hours}` |
+| `relations` | Array of `{relation_type, issue_id, delay}`; `issue_id` is a number or `previous_issue` (the issue generated by the previous run) |
+| `tag_list` | Tags for the generated issue (string or array), with a tagging plugin |
+| `checklists_template_id` | With the checklists plugin |
+
+Sending an array attribute (`weekdays`, `subtasks`, ...) replaces the stored rows; sending `[]` clears them.
+
+Create a task that opens a "Weekly report" issue every Monday and Friday at 9:00 UTC:
+
+```sh
+curl -H "X-Redmine-API-Key: $KEY" -H "Content-Type: application/json" -X POST \
+  https://redmine.example.com/projects/myproject/periodictask.json \
+  -d '{"periodictask": {"subject": "Weekly report **WEEKISO**/**WEEKISO_YEAR**", "tracker_id": 2,
+       "assigned_to_id": 5, "interval_number": 1, "interval_units": "week", "weekdays": [1, 5],
+       "next_run_date": "2026-10-05T09:00:00Z", "due_date_number": 2, "due_date_units": "day",
+       "watcher_user_ids": [7], "custom_fields": [{"id": 3, "value": "Reporting"}]}}'
+```
+
+List the tasks of a project with the issues they generated:
+
+```sh
+curl -H "X-Redmine-API-Key: $KEY" \
+  "https://redmine.example.com/projects/myproject/periodictask.json?include=issues&limit=50"
+```
+
+Run a task immediately:
+
+```sh
+curl -H "X-Redmine-API-Key: $KEY" -X POST \
+  https://redmine.example.com/projects/myproject/periodictask/12/run_now.json
+```
+
 ## Plugins supported
 
 redmine-periodictask supports [redminecrm checklist PRO](https://www.redmineup.com/pages/plugins/checklists) to be used when creating a periodic task.
