@@ -162,7 +162,7 @@ tr:
   label_periodictask_journal_ended_by_date: "Periyodik görev sona erdi (bitiş tarihine ulaşıldı)"
   label_periodictask_journal_ended_by_count: "Periyodik görev sona erdi (en fazla çalıştırma sayısına ulaşıldı)"
   error_end_date_before_next_run: "Bitiş tarihi sonraki çalıştırma tarihinden sonra olmalıdır"
-  error_max_occurrences_not_positive: "En fazla çalıştırma sayısı 0'dan büyük olmalıdır"
+  field_max_occurrences: "En fazla çalıştırma sayısı"
   label_assignee_rotation: "Atanan rotasyonu"
   label_assignee_rotation_info: "Oluşturulan işler bu listedeki kullanıcılara sırayla atanır. Projede artık iş atanamayan kullanıcılar atlanır; liste boşsa veya listeden kimseye atanamıyorsa yukarıdaki atanan kullanılır. Şimdi çalıştır da rotasyonu ilerletir."
   label_rotation_next: "Sıradaki: %{user}"

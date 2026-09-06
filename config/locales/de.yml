@@ -162,7 +162,7 @@ de:
   label_periodictask_journal_ended_by_date: "Periodische Aufgabe beendet (Enddatum erreicht)"
   label_periodictask_journal_ended_by_count: "Periodische Aufgabe beendet (maximale Anzahl Ausführungen erreicht)"
   error_end_date_before_next_run: "Das Enddatum muss nach dem nächsten Ausführungsdatum liegen"
-  error_max_occurrences_not_positive: "Die maximale Anzahl Ausführungen muss größer als 0 sein"
+  field_max_occurrences: "Maximale Anzahl Ausführungen"
   label_assignee_rotation: "Zuweisungsrotation"
   label_assignee_rotation_info: "Erzeugte Tickets werden der Reihe nach den Benutzern dieser Liste zugewiesen. Benutzer, denen im Projekt keine Tickets mehr zugewiesen werden können, werden übersprungen; ist die Liste leer oder kann niemand daraus zugewiesen werden, wird der obige Zugewiesene verwendet. „Jetzt ausführen“ rückt die Rotation ebenfalls weiter."
   label_rotation_next: "Nächster: %{user}"

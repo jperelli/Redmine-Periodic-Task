@@ -162,7 +162,7 @@ pt-BR:
   label_periodictask_journal_ended_by_date: "Tarefa periódica encerrada (data final atingida)"
   label_periodictask_journal_ended_by_count: "Tarefa periódica encerrada (número máximo de execuções atingido)"
   error_end_date_before_next_run: "A data final deve ser posterior à data da próxima execução"
-  error_max_occurrences_not_positive: "O número máximo de execuções deve ser maior que 0"
+  field_max_occurrences: "Número máximo de execuções"
   label_assignee_rotation: "Rotação de atribuídos"
   label_assignee_rotation_info: "As tarefas geradas são atribuídas por turnos aos usuários desta lista. Usuários que não podem mais receber tarefas no projeto são ignorados; se a lista estiver vazia ou ninguém puder ser atribuído, o atribuído acima é usado. Executar agora também avança a rotação."
   label_rotation_next: "Próximo: %{user}"

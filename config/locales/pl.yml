@@ -166,7 +166,7 @@ pl:
   label_periodictask_journal_ended_by_date: "Zadanie okresowe zakończone (osiągnięto datę końcową)"
   label_periodictask_journal_ended_by_count: "Zadanie okresowe zakończone (osiągnięto maksymalną liczbę uruchomień)"
   error_end_date_before_next_run: "Data końcowa musi być późniejsza niż data następnego uruchomienia"
-  error_max_occurrences_not_positive: "Maksymalna liczba uruchomień musi być większa niż 0"
+  field_max_occurrences: "Maksymalna liczba uruchomień"
   label_assignee_rotation: "Rotacja przypisanych"
   label_assignee_rotation_info: "Wygenerowane zagadnienia są przypisywane kolejno użytkownikom z tej listy. Użytkownicy, którym nie można już przypisywać zagadnień w projekcie, są pomijani; gdy lista jest pusta lub nikomu z niej nie można przypisać, używany jest przypisany powyżej. „Uruchom teraz” również przesuwa rotację."
   label_rotation_next: "Następny: %{user}"

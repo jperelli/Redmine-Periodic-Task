@@ -162,7 +162,7 @@ it:
   label_periodictask_journal_ended_by_date: "Attività periodica terminata (data di fine raggiunta)"
   label_periodictask_journal_ended_by_count: "Attività periodica terminata (numero massimo di esecuzioni raggiunto)"
   error_end_date_before_next_run: "La data di fine deve essere successiva alla data della prossima esecuzione"
-  error_max_occurrences_not_positive: "Il numero massimo di esecuzioni deve essere maggiore di 0"
+  field_max_occurrences: "Numero massimo di esecuzioni"
   label_assignee_rotation: "Rotazione degli assegnatari"
   label_assignee_rotation_info: "Le segnalazioni generate vengono assegnate a turno agli utenti di questo elenco. Gli utenti a cui non è più possibile assegnare segnalazioni nel progetto vengono saltati; se l'elenco è vuoto o nessuno può essere assegnato, viene usato l'assegnatario qui sopra. Anche \"Esegui ora\" fa avanzare la rotazione."
   label_rotation_next: "Prossimo: %{user}"

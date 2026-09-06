@@ -39,7 +39,7 @@ class EndConditionTest < ActiveSupport::TestCase
     assert build_task(next_run_date: nil, end_date: 1.year.from_now).valid?
   end
 
-  def test_end_date_is_only_checked_when_it_is_being_changed
+  def test_end_date_is_only_checked_when_one_of_the_dates_is_being_changed
     anchor = Time.utc(2026, 3, 1, 10, 0, 0)
     task = create_task(next_run_date: anchor, end_date: anchor + 1.day)
     task.update_columns(next_run_date: anchor + 2.days)
@@ -60,14 +60,49 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_not task.ended?
   end
 
-  def test_max_occurrences_must_be_positive
-    assert build_task(max_occurrences: 1).valid?
+  def test_moving_the_next_run_past_the_end_date_is_rejected
+    anchor = Time.utc(2026, 3, 1, 10, 0, 0)
+    task = create_task(next_run_date: anchor, end_date: anchor + 1.day)
 
-    [0, -1].each do |n|
-      task = build_task(max_occurrences: n)
-      assert_not task.valid?, "#{n} should be invalid"
-      assert_includes task.errors.full_messages, I18n.t(:error_max_occurrences_not_positive)
+    task.next_run_date = anchor + 1.day
+    assert task.valid?
+
+    task.next_run_date = anchor + 1.day + 1.second
+    assert_not task.valid?
+    assert_includes task.errors.full_messages, I18n.t(:error_end_date_before_next_run)
+  end
+
+  def test_scheduler_can_store_the_next_run_past_the_end_date
+    anchor = Time.utc(2026, 3, 1, 10, 0, 0)
+    task = create_task(next_run_date: anchor, end_date: anchor + 1.day)
+
+    task.next_run_date = anchor + 2.days
+    task.save_run!
+
+    assert task.reload.ended?
+    assert_equal anchor + 2.days, task.next_run_date
+  end
+
+  def test_max_occurrences_must_be_a_positive_integer_or_blank
+    [nil, 1, '1', 10, '10'].each do |n|
+      assert build_task(max_occurrences: n).valid?, "#{n.inspect} should be valid"
     end
+    assert_nil build_task(max_occurrences: '').max_occurrences
+    assert build_task(max_occurrences: '').valid?
+
+    [0, -1, '0', '-1', 1.9, '1.9', 0.5, '0.5', 'ten'].each do |n|
+      task = build_task(max_occurrences: n)
+      assert_not task.valid?, "#{n.inspect} should be invalid"
+      assert task.errors[:max_occurrences].any?, "#{n.inspect} should fail on max_occurrences"
+    end
+  end
+
+  def test_fractional_max_occurrences_is_rejected_rather_than_truncated
+    task = create_task(max_occurrences: 2)
+
+    assert_not task.update(max_occurrences: 1.9)
+    assert_not task.update(max_occurrences: '1.9')
+    assert_equal 2, task.reload.max_occurrences
   end
 
   # ---- end_reason ----

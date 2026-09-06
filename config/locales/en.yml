@@ -162,7 +162,7 @@ en:
   label_periodictask_journal_ended_by_date: "Periodic task ended (end date reached)"
   label_periodictask_journal_ended_by_count: "Periodic task ended (maximum number of runs reached)"
   error_end_date_before_next_run: "End date must be after the next run date"
-  error_max_occurrences_not_positive: "Maximum number of runs must be greater than 0"
+  field_max_occurrences: "Maximum number of runs"
   label_assignee_rotation: "Assignee rotation"
   label_assignee_rotation_info: "Generated issues are assigned to the users of this list in turn. Users who can no longer be assigned issues in the project are skipped; when the list is empty or nobody in it can be assigned, the assignee above is used. Run now also moves the rotation on."
   label_rotation_next: "Next: %{user}"

@@ -251,10 +251,34 @@ created nothing because the previous issue was still open (`skip`,
 `next_run_date` the run leaves behind, rescheduled or not.
 
 Validation: `end_date` must not be before `next_run_date` (a next run exactly
-on the end date is the last one) and `max_occurrences` must be greater than
-0. The end date is only checked when it is being set or changed: a task
-ended by date has its next run past the end date by construction and must
-stay editable. Both are cleared when their box is unticked in the form.
+on the end date is the last one) and `max_occurrences` must be a positive
+integer (`1.9` and `"1.9"` are rejected, not truncated to 1; blank means no
+limit). The dates are only compared when one of them is being set or changed:
+a task ended by date has its next run past the end date by construction and
+must stay editable, while moving either date so that the next run falls
+after the end date is refused. Both are cleared when their box is unticked in
+the form. The scheduler stores the next run through `save_run!` (no
+validation) because after the last run before the end date it legitimately
+lies past it.
+
+### One run, one unit of work
+
+A scheduled run is committed as a whole or not at all. `checktasks!` selects
+the due tasks with `runnable.possibly_due`, then handles each one inside
+`with_lock`: a transaction holding a `SELECT ... FOR UPDATE` row lock on the
+task. `lock!` reloads the task, so the runnable/due check is repeated on the
+locked row; a task that another trigger (cron, the web scheduler, the
+endpoint, `Run now` for the rotation position) just ran or ended is skipped.
+Within the lock the run saves the issue, increments `occurrences_count`,
+completes the issue (watchers, history link, rotation, attachments, subtasks,
+relations), computes the next run, writes the end journal when the task is
+now ended and saves the task. An exception anywhere after `Issue#save!` rolls
+all of it back: no orphan issue without its count, no count without its
+issue, no end journal for a run that did not happen. The task keeps the error
+in `last_error` (written outside the rolled-back transaction) and the other
+due tasks still run. An issue that fails validation is different: it never
+existed, so the occurrence is spent (the schedule moves on, the error is
+recorded) as before.
 
 ## Previous issue still open
 

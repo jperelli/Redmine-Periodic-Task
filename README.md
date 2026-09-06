@@ -240,7 +240,7 @@ Users who can no longer be assigned issues in the project (locked, removed from 
 
 *Run now* moves the rotation on exactly like a scheduled run (the generated issue goes to the next user and the following one becomes next), while still leaving the schedule untouched.
 
-Each run (scheduled or *Run now*) holds a database row lock on the task from generating the issue until the task is saved, so triggers firing at the same time (cron, the web scheduler, the endpoint, *Run now*) cannot hand the same turn to two issues; a scheduled run re-checks that the task is still due once it holds the lock, so a task is not generated twice for one occurrence.
+Each run (scheduled or *Run now*) holds a database row lock on the task from generating the issue until the task is saved, so triggers firing at the same time (cron, the web scheduler, the endpoint, *Run now*) cannot hand the same turn to two issues; a scheduled run re-checks that the task is still due once it holds the lock, so a task is not generated twice for one occurrence. A scheduled run is also one transaction: the issue, the run count, the next run date and the *ended* activity entry are saved together or, if anything fails half-way, not at all (the failure goes to *Last error* and the scheduler log, and the other due tasks still run).
 
 ### Finding the generated issues
 

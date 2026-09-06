@@ -164,7 +164,7 @@ zh:
   label_periodictask_journal_ended_by_date: "周期任务已结束（已到结束日期）"
   label_periodictask_journal_ended_by_count: "周期任务已结束（已达到最大运行次数）"
   error_end_date_before_next_run: "结束日期必须晚于下次运行日期"
-  error_max_occurrences_not_positive: "最大运行次数必须大于 0"
+  field_max_occurrences: "最大运行次数"
   label_assignee_rotation: "指派人轮换"
   label_assignee_rotation_info: "生成的问题会依次指派给此列表中的用户。在项目中已无法被指派问题的用户会被跳过；若列表为空或其中无人可被指派，则使用上方的指派人。“立即执行”也会推进轮换。"
   label_rotation_next: "下一位：%{user}"

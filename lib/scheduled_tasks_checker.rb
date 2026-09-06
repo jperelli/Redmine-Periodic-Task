@@ -14,29 +14,24 @@ class ScheduledTasksChecker
     # restored afterwards.
     I18n.with_locale(ENV['LOCALE'] || I18n.default_locale) do
       tasks.each do |task|
-        # Cron, the web scheduler, the endpoint and Run now can fire together:
-        # the row is locked from generating the issue until the task (schedule,
-        # count, rotation position) is saved. lock! reloads the task, so
-        # everything below (still runnable and due? author?) works on the
-        # locked state.
-        task.with_lock do
-          next unless task.runnable? && task.due_by?(now)
+        run = run_task(task, now)
+        next unless run
 
-          as_user(task.author) do
-            run = TaskRun.new(task, now)
-            run.execute
-            issues_created += 1 if run.issue_created?
-            errors.concat(run.errors)
-            notes.concat(run.notes)
-            finish(task) if task.ended?
-            task.save
-          end
-        end
+        issues_created += 1 if run.issue_created?
+        errors.concat(run.errors)
+        notes.concat(run.notes)
       rescue ActiveRecord::RecordNotFound
         # Deleted since the query above; anything else missing is a real error.
         raise if Periodictask.exists?(task.id)
 
         Rails.logger.info "ScheduledTasksChecker: ##{task.id} was deleted before it could run"
+      rescue StandardError => e
+        # The transaction rolled back: no issue, no count, no schedule change.
+        # The task keeps the error and the other due tasks still run.
+        message = "##{task.id} #{task.subject}: #{e.class}: #{e.message}"
+        Rails.logger.error "ScheduledTasksChecker: #{message}"
+        errors << message
+        task.update_columns(last_error: "#{e.class}: #{e.message}")
       end
     end
     tasks.size
@@ -46,6 +41,28 @@ class ScheduledTasksChecker
   ensure
     record_run(source, now, tasks, issues_created, errors, notes)
   end
+
+  # One task's run, as a unit: cron, the web scheduler, the endpoint and Run
+  # now can fire together, so the row is locked (with_lock: transaction +
+  # SELECT FOR UPDATE) from generating the issue until the task (schedule,
+  # count, rotation position) and the end journal are saved. lock! reloads the
+  # task, so a task another trigger just ran or ended is seen as such and
+  # skipped; a failure anywhere rolls the issue back along with the count.
+  # Returns the TaskRun, or nil when the task was not run.
+  def self.run_task(task, now)
+    task.with_lock do
+      next unless task.runnable? && task.due_by?(now)
+
+      as_user(task.author) do
+        run = TaskRun.new(task, now)
+        run.execute
+        finish(task) if task.ended?
+        task.save_run!
+        run
+      end
+    end
+  end
+  private_class_method :run_task
 
   # Records in the activity log that the run just made was the last one. The
   # task is ended by its own end condition from now on (Periodictask#ended?);
@@ -112,26 +129,30 @@ class ScheduledTasksChecker
 
     private
 
+    # An issue that fails to save costs the occurrence (the schedule moves on,
+    # the error is kept on the task). Once it is saved, the occurrence is
+    # consumed: anything raised after that point is left to the caller's
+    # transaction, which takes the issue back along with the count.
     def create_issue(previous)
       issue = @task.generate_issue(@now)
-      if issue
-        begin
-          issue.save!
-          @issue_created = true
-          @task.occurrences_count += 1
-          @task.clear_skip
-          task_errors = @task.complete_generated_issue(issue, @now)
-          task_errors.concat(close_previous(previous, issue)) if previous
-          task_errors.each { |msg| Rails.logger.error "ScheduledTasksChecker: #{msg}" }
-          @errors.concat(task_errors.map { |msg| prefixed(msg) })
-          @task.last_error = task_errors.join(', ').presence
-        rescue ActiveRecord::RecordInvalid => e
-          fail_with(e.message)
-        end
-        advance_schedule
-      else
-        fail_with('Project is missing or closed')
+      return fail_with('Project is missing or closed') unless issue
+
+      begin
+        issue.save!
+      rescue ActiveRecord::RecordInvalid => e
+        fail_with(e.message)
+        return advance_schedule
       end
+
+      @issue_created = true
+      @task.occurrences_count += 1
+      @task.clear_skip
+      task_errors = @task.complete_generated_issue(issue, @now)
+      task_errors.concat(close_previous(previous, issue)) if previous
+      task_errors.each { |msg| Rails.logger.error "ScheduledTasksChecker: #{msg}" }
+      @errors.concat(task_errors.map { |msg| prefixed(msg) })
+      @task.last_error = task_errors.join(', ').presence
+      advance_schedule
     end
 
     # close_previous: the previous issue is closed once the new one exists, so

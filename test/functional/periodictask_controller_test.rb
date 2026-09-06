@@ -1438,18 +1438,20 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_nil task.reload.end_date
   end
 
-  def test_create_with_zero_max_occurrences_rerenders_form_with_error
-    assert_no_difference('Periodictask.count') do
-      post :create, params: {
-        project_id: 'ecookbook',
-        periodictask: {
-          subject: 'Zero runs', tracker_id: 1, assigned_to_id: 2, author_id: 2,
-          interval_number: 1, interval_units: 'month', max_occurrences: '0'
+  def test_create_with_a_non_positive_or_fractional_max_occurrences_rerenders_form_with_error
+    %w[0 -1 1.9 ten].each do |value|
+      assert_no_difference('Periodictask.count', "#{value} should be rejected") do
+        post :create, params: {
+          project_id: 'ecookbook',
+          periodictask: {
+            subject: 'Bad max', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+            interval_number: 1, interval_units: 'month', max_occurrences: value
+          }
         }
-      }
+      end
+      assert_response :success
+      assert_select 'div#errorExplanation li', text: /\A#{Regexp.escape(I18n.t(:field_max_occurrences))} /
     end
-    assert_response :success
-    assert_select 'div#errorExplanation', text: /#{Regexp.escape(I18n.t(:error_max_occurrences_not_positive))}/
   end
 
   def test_index_and_show_display_the_end_condition_next_to_the_schedule

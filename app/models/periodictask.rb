@@ -268,6 +268,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   validates :interval_number, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :interval_units, presence: true
   validates :done_ratio, inclusion: { in: 0..100 }, allow_nil: true
+  validates :max_occurrences, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validates :if_previous_open, inclusion: { in: ->(_task) { IF_PREVIOUS_OPEN_MODES } }
   validate :validate_subtasks_and_relations
   validate :validate_recurrence
@@ -496,6 +497,15 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     copy_attachments_to(issue) + create_subtasks(issue, now) + create_relations(issue)
   end
 
+  # Persists what a scheduled run changed: schedule, occurrence count, skip,
+  # rotation position, last error. Only scheduler-owned columns move, on a
+  # task the user saved valid, so the form validations do not apply; one of
+  # them (end date after next run) is exactly what the last run before the
+  # end date makes false.
+  def save_run!
+    save!(validate: false)
+  end
+
   # Creates a child issue per subtask template under +issue+. Returns error messages.
   def create_subtasks(issue, now = Time.current)
     return [] unless issue.persisted?
@@ -665,7 +675,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   # controller (not a model callback) so the scheduler's own writes to
   # next_run_date / last_error are not logged as user edits.
   def log_activity(action, user = User.current)
-    PeriodictaskJournal.create(
+    PeriodictaskJournal.create!(
       periodictask_id: id,
       project_id: project_id,
       user_id: user&.id,
@@ -852,13 +862,13 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   end
 
   # An end date before the next run would never let the task run again; a
-  # next run exactly on the end date is the last one. Checked only when the
-  # end date itself is being set: an ended task has its next run past the end
-  # date by construction (the scheduler stores it after the last run) and
-  # must stay editable.
+  # next run exactly on the end date is the last one. Checked only when one
+  # of the two dates is being set: an ended task has its next run past the end
+  # date by construction (the scheduler stores it after the last run, see
+  # save_run!) and must stay editable.
   def validate_end_condition
-    errors.add(:base, l(:error_max_occurrences_not_positive)) if max_occurrences.present? && max_occurrences < 1
-    return unless end_date_changed? && end_date.present? && next_run_date.present? && end_date < next_run_date
+    return unless (end_date_changed? || next_run_date_changed?) &&
+                  end_date.present? && next_run_date.present? && end_date < next_run_date
 
     errors.add(:base, l(:error_end_date_before_next_run))
   end
