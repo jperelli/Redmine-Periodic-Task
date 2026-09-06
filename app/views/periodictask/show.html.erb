@@ -30,7 +30,7 @@
   <div class="attributes" style="margin-top: 0;">
     <%= issue_fields_rows do |rows|
       rows.left l(:label_interval),
-                periodictask_schedule_description(@periodictask),
+                safe_join([periodictask_schedule_description(@periodictask), periodictask_end_condition_note(@periodictask)].compact),
                 class: 'interval'
       rows.right l(:label_next_run_date),
                  periodictask_next_run_with_title(@periodictask),
@@ -39,7 +39,7 @@
                 periodictask_weekend_adjustment_label(@periodictask),
                 class: 'weekend-adjustment'
       rows.right l(:field_active),
-                 checked_image(@periodictask.is_active?),
+                 safe_join([checked_image(@periodictask.is_active?), periodictask_ended_note(@periodictask)].compact, ' '),
                  class: 'active'
       rows.left l(:label_if_previous_open),
                 content_tag(:span, periodictask_if_previous_open_label(@periodictask.if_previous_open),

@@ -1226,14 +1226,90 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = Periodictask.find_by(subject: 'Versioned task')
     assert_equal 3, task.fixed_version_id
     assert_not task.is_active?
+    assert_not task.ended?
   end
 
-  def test_run_now_works_on_a_disabled_task
-    task = create_test_periodictask(is_active: false)
-    assert_difference('Issue.count') do
-      post :run_now, params: { project_id: 'ecookbook', id: task.id }
-    end
+  def test_new_form_has_the_active_box_ticked
+    get :new, params: { project_id: 'ecookbook' }
+    assert_select 'input[type=checkbox]#periodictask_is_active[checked=checked]'
+    assert_select 'em.periodictask-ended', 0
+  end
+
+  def test_edit_form_keeps_the_active_box_and_explains_why_an_ended_task_will_not_run
+    task = create_test_periodictask(max_occurrences: 2)
+    task.update_columns(occurrences_count: 2)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'input[type=checkbox]#periodictask_is_active[checked=checked]'
+    assert_select 'em.periodictask-ended', text: /Ended \(maximum number of runs reached\)/
+    assert_select 'em.periodictask-ended', text: /Change the end condition below to let it run again\./
+
+    task.update_columns(max_occurrences: 3)
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_select 'em.periodictask-ended', 0
+  end
+
+  def test_show_displays_the_active_flag_and_the_end_reason
+    task = create_test_periodictask
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.active .label', text: 'Active:'
+    assert_select '.active .value em.periodictask-ended', 0
+
+    task.update!(is_active: false)
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.active .value em.periodictask-ended', 0
+
+    task.update_columns(is_active: true, end_date: Time.utc(2026, 9, 5, 12, 0),
+                        next_run_date: Time.utc(2026, 10, 5, 12, 0))
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_select '.active .value em.periodictask-ended', text: 'Ended (end date reached)'
+    assert_select '.interval .value em.periodictask-end-condition', text: 'Ended on 09/05/2026 12:00 PM'
+  end
+
+  def test_update_of_an_ended_task_does_not_trip_the_end_date_validation
+    task = create_test_periodictask(end_date: Time.utc(2026, 9, 5, 12, 0),
+                                    next_run_date: Time.utc(2026, 9, 1, 12, 0))
+    task.update_columns(next_run_date: Time.utc(2026, 10, 1, 12, 0))
+
+    patch :update, params: { project_id: 'ecookbook', id: task.id,
+                             periodictask: { subject: 'Renamed', is_active: '0' } }
     assert_response :redirect
+
+    task.reload
+    assert_equal 'Renamed', task.subject
+    assert_not task.is_active?
+    assert task.ended?
+  end
+
+  def test_update_lets_an_ended_task_run_again_by_raising_the_maximum
+    task = create_test_periodictask(max_occurrences: 2)
+    task.update_columns(occurrences_count: 2)
+
+    patch :update, params: { project_id: 'ecookbook', id: task.id,
+                             periodictask: { max_occurrences: 5 } }
+    assert_response :redirect
+
+    task.reload
+    assert_not task.ended?
+    assert task.runnable?
+    assert_equal 5, task.max_occurrences
+    assert_equal 2, task.occurrences_count
+  end
+
+  def test_run_now_works_on_disabled_and_ended_tasks
+    disabled = create_test_periodictask(is_active: false)
+    ended = create_test_periodictask(max_occurrences: 1)
+    ended.update_columns(occurrences_count: 1)
+
+    [disabled, ended].each do |task|
+      assert_difference('Issue.count') do
+        post :run_now, params: { project_id: 'ecookbook', id: task.id }
+      end
+      assert_response :redirect
+    end
+    assert_not disabled.reload.is_active?
+    assert ended.reload.ended?
+    assert_equal 1, ended.occurrences_count
   end
 
   def test_task_of_another_project_is_not_reachable_through_this_project
@@ -1399,6 +1475,96 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal Time.utc(2026, 1, 2, 10, 0), previewed_upcoming_run_times.first
   end
 
+  def test_preview_stops_at_the_posted_end_date_and_maximum_number_of_runs
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'week', weekdays: %w[1 3],
+                        next_run_date: '2026-01-05T10:00', end_date: '2026-01-14T10:00' }
+      }, xhr: true
+    end
+    assert_response :success
+    # Jan 14 10:00 is exactly the end date, so it still runs; Jan 19 does not
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0),
+                  Time.utc(2026, 1, 14, 10, 0)], previewed_upcoming_run_times
+    assert_equal 4, @response.body.scan('<td class=\\"periodictask-cal-run\\"').size
+    assert_includes @response.body, 'Ends on 01/14/2026 10:00 AM'
+
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'week', weekdays: %w[1 3],
+                        next_run_date: '2026-01-05T10:00', max_occurrences: '3' }
+      }, xhr: true
+    end
+    assert_response :success
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0), Time.utc(2026, 1, 12, 10, 0)],
+                 previewed_upcoming_run_times
+    assert_equal 3, @response.body.scan('<td class=\\"periodictask-cal-run\\"').size
+    assert_includes @response.body, '0 of 3 runs'
+  end
+
+  def test_preview_counts_the_runs_already_made_when_editing_a_task
+    task = create_test_periodictask(interval_units: 'week', weekdays: [1, 3], max_occurrences: 4,
+                                    next_run_date: Time.utc(2026, 1, 5, 10, 0))
+    task.update_columns(occurrences_count: 3)
+
+    travel_to(Time.utc(2026, 1, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select '#periodictask_upcoming_runs .periodictask-run-chip', count: 1
+    assert_select '#periodictask_upcoming_runs .periodictask-end-condition', text: '3 of 4 runs'
+    assert_includes @response.body, "var upcomingRunsTaskId = #{task.id};"
+
+    get :new, params: { project_id: 'ecookbook' }
+    assert_includes @response.body, 'var upcomingRunsTaskId = null;'
+
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js', id: task.id,
+        periodictask: { interval_number: '1', interval_units: 'week', weekdays: %w[1 3],
+                        next_run_date: '2026-01-05T10:00', max_occurrences: '5' }
+      }, xhr: true
+    end
+    assert_equal [Time.utc(2026, 1, 5, 10, 0), Time.utc(2026, 1, 7, 10, 0)], previewed_upcoming_run_times
+    assert_includes @response.body, '3 of 5 runs'
+
+    # a task of another project does not leak its count
+    other = Periodictask.create!(project_id: 2, tracker_id: 1, author_id: 2, subject: 'Other', interval_number: 1,
+                                 interval_units: 'week', next_run_date: Time.utc(2026, 1, 5, 10, 0),
+                                 occurrences_count: 3)
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js', id: other.id,
+        periodictask: { interval_number: '1', interval_units: 'week', next_run_date: '2026-01-05T10:00',
+                        max_occurrences: '5' }
+      }, xhr: true
+    end
+    assert_equal 5, previewed_upcoming_run_times.size
+  end
+
+  def test_preview_explains_an_ended_task_instead_of_listing_dates
+    travel_to(Time.utc(2026, 1, 1)) do
+      post :preview, params: {
+        project_id: 'ecookbook', format: 'js',
+        periodictask: { interval_number: '1', interval_units: 'day', next_run_date: '2026-01-05T10:00',
+                        end_date: '2026-01-04T10:00' }
+      }, xhr: true
+    end
+    assert_response :success
+    assert_empty previewed_upcoming_run_times
+    assert_includes @response.body, 'periodictask-upcoming-runs-ended'
+    assert_includes @response.body, 'Ended (end date reached)'
+  end
+
+  def test_show_explains_an_ended_task_instead_of_listing_dates
+    task = create_test_periodictask(interval_units: 'day', max_occurrences: 2,
+                                    next_run_date: Time.utc(2026, 1, 5, 10, 0))
+    task.update_columns(occurrences_count: 2)
+    travel_to(Time.utc(2026, 1, 1)) { get :show, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select '.next-occurrences .periodictask-run-chip', count: 0
+    assert_select '.next-occurrences em.periodictask-upcoming-runs-ended',
+                  text: 'Ended (maximum number of runs reached)'
+  end
+
   def test_preview_with_an_incomplete_recurrence_explains_instead_of_listing_dates
     post :preview, params: {
       project_id: 'ecookbook', format: 'js',
@@ -1445,15 +1611,17 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_response 403
   end
 
-  def test_index_marks_disabled_and_failed_tasks
+  def test_index_greys_inactive_tasks_and_marks_failed_ones
     create_test_periodictask(subject: 'Paused task', is_active: false)
     create_test_periodictask(subject: 'Broken task', last_error: 'Tracker cannot be blank')
     get :index, params: { project_id: 'ecookbook' }
     assert_response :success
-    assert_select 'td', text: /Paused task/ do
-      assert_select 'span.icon-locked[title=?]', I18n.t(:label_disabled)
-      assert_select 'span.icon-locked svg' if Redmine::VERSION::MAJOR >= 6
-    end
+    assert_select 'tr.periodictask.inactive[title=?]', I18n.t(:label_disabled), text: /Paused task/
+    assert_select 'tr.periodictask[title=?]', 'Active', text: /Broken task/
+    assert_select 'tr.periodictask.inactive', 1
+    assert_select 'tr.periodictask.ended', 0
+    assert_select 'span.icon-locked', 0
+    assert_select 'style', text: /tr\.periodictask\.inactive td:not\(\.buttons\)/
     assert_select 'td', text: /Broken task/ do
       assert_select 'span.icon-error[title=?]', 'Tracker cannot be blank'
       assert_select 'span.icon-error svg' if Redmine::VERSION::MAJOR >= 6
@@ -1469,6 +1637,169 @@ class PeriodictaskControllerTest < ActionController::TestCase
     body = @response.body
     assert_operator body.index('One day'), :<, body.index('Three business days')
     assert_operator body.index('Three business days'), :<, body.index('One week')
+  end
+
+  def test_new_renders_end_condition_controls_unticked_by_default
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select '#periodictask_end_condition_field' do
+      assert_select 'input#periodictask_end_on_date[type=checkbox]:not([checked])'
+      assert_select 'input#periodictask_end_after_runs[type=checkbox]:not([checked])'
+      assert_select '#periodictask_end_date_inputs[style*="display: none"]' do
+        assert_select 'input#periodictask_end_date[type="datetime-local"]'
+      end
+      assert_select '#periodictask_max_occurrences_inputs[style*="display: none"]' do
+        assert_select 'input#periodictask_max_occurrences[type=number][min="1"]'
+      end
+    end
+  end
+
+  def test_create_stores_end_date_in_user_time_zone_and_max_occurrences
+    User.find(2).pref.update!(time_zone: 'Buenos Aires') # UTC-3, no DST
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Ending task', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'month', next_run_date: '2026-08-20T09:00',
+        end_date: '2026-12-31T09:00', max_occurrences: '4'
+      }
+    }
+    assert_response :redirect
+
+    task = Periodictask.find_by(subject: 'Ending task')
+    assert_equal Time.utc(2026, 12, 31, 12, 0), task.end_date.utc
+    assert_equal 4, task.max_occurrences
+    assert_equal 0, task.occurrences_count
+  end
+
+  def test_edit_shows_end_condition_ticked_with_values_in_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires')
+    task = create_test_periodictask(next_run_date: Time.utc(2026, 8, 20, 12, 0),
+                                    end_date: Time.utc(2026, 12, 31, 12, 0), max_occurrences: 4)
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+
+    assert_select 'input#periodictask_end_on_date[checked]'
+    assert_select '#periodictask_end_date_inputs:not([style*="display: none"])' do
+      assert_select '#periodictask_end_date[value="2026-12-31T09:00"]'
+    end
+    assert_select 'input#periodictask_end_after_runs[checked]'
+    assert_select '#periodictask_max_occurrences_inputs:not([style*="display: none"])' do
+      assert_select '#periodictask_max_occurrences[value="4"]'
+    end
+  end
+
+  def test_update_clears_end_condition_when_inputs_are_blank
+    task = create_test_periodictask(end_date: 1.year.from_now, max_occurrences: 4)
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: { end_date: '', max_occurrences: '' }
+    }
+    assert_response :redirect
+
+    task.reload
+    assert_nil task.end_date
+    assert_nil task.max_occurrences
+  end
+
+  def test_update_with_end_date_before_next_run_rerenders_form_with_error
+    task = create_test_periodictask(next_run_date: Time.utc(2026, 8, 20, 12, 0))
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: { end_date: '2026-08-01T09:00' }
+    }
+    assert_response :success
+    assert_select 'div#errorExplanation', text: /#{Regexp.escape(I18n.t(:error_end_date_before_next_run))}/
+    assert_nil task.reload.end_date
+  end
+
+  def test_create_with_a_non_positive_or_fractional_max_occurrences_rerenders_form_with_error
+    %w[0 -1 1.9 ten].each do |value|
+      assert_no_difference('Periodictask.count', "#{value} should be rejected") do
+        post :create, params: {
+          project_id: 'ecookbook',
+          periodictask: {
+            subject: 'Bad max', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+            interval_number: 1, interval_units: 'month', max_occurrences: value
+          }
+        }
+      end
+      assert_response :success
+      assert_select 'div#errorExplanation li', text: /\A#{Regexp.escape(I18n.t(:field_max_occurrences))} /
+    end
+  end
+
+  def test_index_and_show_display_the_end_condition_next_to_the_schedule
+    User.find(2).pref.update!(time_zone: 'UTC')
+    anchor = Time.utc(2026, 10, 1, 12, 0)
+    forever = create_test_periodictask(subject: 'Forever', next_run_date: anchor)
+    create_test_periodictask(subject: 'Until date', next_run_date: anchor, end_date: Time.utc(2026, 12, 31, 12, 0))
+    by_count = create_test_periodictask(subject: 'Five runs', next_run_date: anchor, max_occurrences: 5)
+    by_count.update_columns(occurrences_count: 2)
+    both = create_test_periodictask(subject: 'Both', next_run_date: anchor, end_date: Time.utc(2026, 12, 31, 12, 0),
+                                    max_occurrences: 5)
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'tr', text: /Forever/ do
+      assert_select 'td.interval em.periodictask-end-condition', 0
+    end
+    assert_select 'tr', text: /Until date/ do
+      assert_select 'td.interval em.periodictask-end-condition', text: 'Ends on 12/31/2026 12:00 PM'
+    end
+    assert_select 'tr', text: /Five runs/ do
+      assert_select 'td.interval em.periodictask-end-condition', text: '2 of 5 runs'
+    end
+    assert_select 'tr', text: /Both/ do
+      assert_select 'td.interval em.periodictask-end-condition', text: 'Ends on 12/31/2026 12:00 PM, 0 of 5 runs'
+    end
+
+    get :show, params: { project_id: 'ecookbook', id: both.id }
+    assert_select '.interval .value em.periodictask-end-condition', text: 'Ends on 12/31/2026 12:00 PM, 0 of 5 runs'
+    get :show, params: { project_id: 'ecookbook', id: forever.id }
+    assert_select '.interval .value em.periodictask-end-condition', 0
+  end
+
+  def test_index_strikes_through_an_ended_task
+    task = create_test_periodictask(subject: 'Ended task', max_occurrences: 2)
+    task.update_columns(occurrences_count: 2)
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_select 'tr.periodictask.ended[title=?]', I18n.t(:label_ended_by_count), text: /Ended task/ do
+      assert_select 'td.id a', text: task.id.to_s
+      assert_select 'td.subject a', text: 'Ended task'
+      assert_select 'td.interval em.periodictask-end-condition', text: '2 of 2 runs'
+    end
+    assert_select 'style', text: /tr\.periodictask\.ended td\.subject a \{ text-decoration: line-through; \}/
+  end
+
+  def test_run_now_does_not_count_towards_max_occurrences
+    task = create_test_periodictask(max_occurrences: 1)
+
+    assert_difference('Issue.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+
+    task.reload
+    assert_equal 0, task.occurrences_count
+    assert task.runnable?
+    assert_equal 1, task.periodictask_issues.count
+  end
+
+  def test_copy_prefills_the_end_condition
+    task = create_test_periodictask(next_run_date: Time.utc(2026, 10, 1, 12, 0),
+                                    end_date: Time.utc(2026, 12, 31, 12, 0), max_occurrences: 5)
+    task.update_columns(occurrences_count: 3)
+    User.find(2).pref.update!(time_zone: 'UTC')
+
+    get :copy, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'input#periodictask_end_on_date[checked]'
+    assert_select '#periodictask_end_date[value="2026-12-31T12:00"]'
+    assert_select 'input#periodictask_end_after_runs[checked]'
+    assert_select '#periodictask_max_occurrences[value="5"]'
+    assert_select 'input#periodictask_occurrences_count', 0
   end
 
   def test_new_offers_the_assignable_users_of_the_project_for_the_rotation

@@ -152,6 +152,21 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Termina"
+  label_end_condition_info: "Opcional. Marque \"Na data\" e/ou \"Após N execuções\"; a tarefa é encerrada ao atingir a primeira. \"Executar agora\" não conta."
+  label_end_on_date: "Na data"
+  label_end_after: "Após"
+  label_end_runs: "execuções"
+  label_ends_on_date: "Termina em %{date}"
+  label_ended_on_date: "Encerrada em %{date}"
+  label_ended_by_date: "Encerrada (data final atingida)"
+  label_ended_by_count: "Encerrada (número máximo de execuções atingido)"
+  text_ended_change_end_condition: "Altere a condição de término abaixo para que volte a ser executada."
+  label_end_runs_progress: "%{count} de %{max} execuções"
+  label_periodictask_journal_ended_by_date: "Tarefa periódica encerrada (data final atingida)"
+  label_periodictask_journal_ended_by_count: "Tarefa periódica encerrada (número máximo de execuções atingido)"
+  error_end_date_before_next_run: "A data final deve ser posterior à data da próxima execução"
+  field_max_occurrences: "Número máximo de execuções"
   label_assignee_rotation: "Rotação de atribuídos"
   label_assignee_rotation_info: "As tarefas geradas são atribuídas por turnos aos usuários desta lista. Usuários que não podem mais receber tarefas no projeto são ignorados; se a lista estiver vazia ou ninguém puder ser atribuído, o atribuído acima é usado. Executar agora também avança a rotação."
   label_rotation_next: "Próximo: %{user}"

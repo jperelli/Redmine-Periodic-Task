@@ -157,6 +157,21 @@ hr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Završava"
+  label_end_condition_info: "Neobavezno. Označite \"Na datum\" i/ili \"Nakon N izvršavanja\"; zadatak završava kada se dosegne prvo od toga. \"Pokreni sada\" se ne broji."
+  label_end_on_date: "Na datum"
+  label_end_after: "Nakon"
+  label_end_runs: "izvršavanja"
+  label_ends_on_date: "Završava %{date}"
+  label_ended_on_date: "Završio %{date}"
+  label_ended_by_date: "Završen (dosegnut krajnji datum)"
+  label_ended_by_count: "Završen (dosegnut najveći broj izvršavanja)"
+  text_ended_change_end_condition: "Promijenite uvjet završetka ispod da bi se ponovno izvršavao."
+  label_end_runs_progress: "%{count} od %{max} izvršavanja"
+  label_periodictask_journal_ended_by_date: "Periodični zadatak završen (dosegnut krajnji datum)"
+  label_periodictask_journal_ended_by_count: "Periodični zadatak završen (dosegnut najveći broj izvršavanja)"
+  error_end_date_before_next_run: "Krajnji datum mora biti nakon datuma sljedećeg izvršavanja"
+  field_max_occurrences: "Najveći broj izvršavanja"
   label_assignee_rotation: "Rotacija dodijeljenih"
   label_assignee_rotation_info: "Generirane zadaće dodjeljuju se redom korisnicima s ovog popisa. Korisnici kojima se u projektu više ne mogu dodjeljivati zadaće preskaču se; ako je popis prazan ili se nikome s njega ne može dodijeliti, koristi se gore navedeni dodijeljeni. „Pokreni sada“ također pomiče rotaciju."
   label_rotation_next: "Sljedeći: %{user}"

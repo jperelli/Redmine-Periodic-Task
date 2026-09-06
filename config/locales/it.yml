@@ -152,6 +152,21 @@ it:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Termina"
+  label_end_condition_info: "Opzionale. Spunta \"In data\" e/o \"Dopo N esecuzioni\"; l'attività termina al raggiungimento della prima. \"Esegui ora\" non conta."
+  label_end_on_date: "In data"
+  label_end_after: "Dopo"
+  label_end_runs: "esecuzioni"
+  label_ends_on_date: "Termina il %{date}"
+  label_ended_on_date: "Terminata il %{date}"
+  label_ended_by_date: "Terminata (data di fine raggiunta)"
+  label_ended_by_count: "Terminata (numero massimo di esecuzioni raggiunto)"
+  text_ended_change_end_condition: "Modifica la condizione di fine qui sotto per farla eseguire di nuovo."
+  label_end_runs_progress: "%{count} di %{max} esecuzioni"
+  label_periodictask_journal_ended_by_date: "Attività periodica terminata (data di fine raggiunta)"
+  label_periodictask_journal_ended_by_count: "Attività periodica terminata (numero massimo di esecuzioni raggiunto)"
+  error_end_date_before_next_run: "La data di fine deve essere successiva alla data della prossima esecuzione"
+  field_max_occurrences: "Numero massimo di esecuzioni"
   label_assignee_rotation: "Rotazione degli assegnatari"
   label_assignee_rotation_info: "Le segnalazioni generate vengono assegnate a turno agli utenti di questo elenco. Gli utenti a cui non è più possibile assegnare segnalazioni nel progetto vengono saltati; se l'elenco è vuoto o nessuno può essere assegnato, viene usato l'assegnatario qui sopra. Anche \"Esegui ora\" fa avanzare la rotazione."
   label_rotation_next: "Prossimo: %{user}"

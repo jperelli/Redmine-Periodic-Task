@@ -152,6 +152,21 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "終了"
+  label_end_condition_info: "任意。「日時で終了」や「N回実行後に終了」をチェックすると、先に到達した条件でタスクが終了します。「今すぐ実行」は回数に含まれません。"
+  label_end_on_date: "日時で終了"
+  label_end_after: "実行回数"
+  label_end_runs: "回で終了"
+  label_ends_on_date: "%{date} に終了"
+  label_ended_on_date: "%{date} に終了しました"
+  label_ended_by_date: "終了（終了日時に到達）"
+  label_ended_by_count: "終了（最大実行回数に到達）"
+  text_ended_change_end_condition: "再び実行するには、下の終了条件を変更してください。"
+  label_end_runs_progress: "%{max} 回中 %{count} 回実行"
+  label_periodictask_journal_ended_by_date: "定期タスクが終了しました（終了日時に到達）"
+  label_periodictask_journal_ended_by_count: "定期タスクが終了しました（最大実行回数に到達）"
+  error_end_date_before_next_run: "終了日時は次回実行日時より後にしてください"
+  field_max_occurrences: "最大実行回数"
   label_assignee_rotation: "担当者ローテーション"
   label_assignee_rotation_info: "生成されたチケットは、このリストのユーザーに順番に割り当てられます。プロジェクトで担当者になれなくなったユーザーはスキップされます。リストが空、または誰も担当者になれない場合は、上の担当者が使用されます。「今すぐ実行」でもローテーションは進みます。"
   label_rotation_next: "次: %{user}"

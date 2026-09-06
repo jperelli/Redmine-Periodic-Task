@@ -157,6 +157,21 @@ uk:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_end_condition: "Завершується"
+  label_end_condition_info: "Необов'язково. Позначте «У дату» та/або «Після N запусків»; завдання завершується, коли досягнуто першу з умов. «Запустити зараз» не враховується."
+  label_end_on_date: "У дату"
+  label_end_after: "Після"
+  label_end_runs: "запусків"
+  label_ends_on_date: "Завершується %{date}"
+  label_ended_on_date: "Завершено %{date}"
+  label_ended_by_date: "Завершене (досягнуто дату завершення)"
+  label_ended_by_count: "Завершене (досягнуто максимальну кількість запусків)"
+  text_ended_change_end_condition: "Змініть умову завершення нижче, щоб завдання знову запускалося."
+  label_end_runs_progress: "%{count} з %{max} запусків"
+  label_periodictask_journal_ended_by_date: "Періодичне завдання завершено (досягнуто дату завершення)"
+  label_periodictask_journal_ended_by_count: "Періодичне завдання завершено (досягнуто максимальну кількість запусків)"
+  error_end_date_before_next_run: "Дата завершення має бути пізнішою за дату наступного запуску"
+  field_max_occurrences: "Максимальна кількість запусків"
   label_assignee_rotation: "Ротація виконавців"
   label_assignee_rotation_info: "Створені задачі призначаються по черзі користувачам із цього списку. Користувачі, яким більше не можна призначати задачі в проєкті, пропускаються; якщо список порожній або нікого з нього не можна призначити, використовується виконавець вище. «Виконати зараз» також зсуває ротацію."
   label_rotation_next: "Наступний: %{user}"

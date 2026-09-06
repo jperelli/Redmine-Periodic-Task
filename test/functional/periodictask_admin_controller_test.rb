@@ -30,20 +30,24 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_select 'table.list td.subject a', text: 'Task on onlinestore'
   end
 
-  def test_index_marks_disabled_tasks
+  def test_index_greys_inactive_tasks_and_strikes_ended_ones
     create_test_periodictask(Project.find(1), subject: 'Paused task', is_active: false)
+    create_test_periodictask(Project.find(1), subject: 'Finished task', max_occurrences: 2)
+      .update_columns(occurrences_count: 2)
+    create_test_periodictask(Project.find(1), subject: 'Paused and finished', is_active: false, max_occurrences: 1)
+      .update_columns(occurrences_count: 1)
 
     log_user('admin', 'admin')
     get '/admin/periodictasks'
     assert_response :success
-    assert_select 'table.list td.subject', text: /Paused task/ do
-      assert_select 'span.icon-locked[title=?]', I18n.t(:label_disabled)
-      # Redmine 6+ draws icons from the SVG sprite; an empty span shows nothing.
-      assert_select 'span.icon-locked svg' if Redmine::VERSION::MAJOR >= 6
-    end
-    assert_select 'table.list td.subject', text: /Due task/ do
-      assert_select 'span.icon-locked', 0
-    end
+    assert_select 'tr.periodictask.inactive[title=?]', I18n.t(:label_disabled), text: /Paused task/
+    assert_select 'tr.periodictask.ended[title=?]', I18n.t(:label_ended_by_count), text: /Finished task/
+    assert_select 'tr.periodictask.inactive.ended[title=?]', I18n.t(:label_ended_by_count), text: /Paused and finished/
+    assert_select 'tr.periodictask[title=?]', I18n.t(:field_active), text: /Due task/
+    assert_select 'tr.periodictask.inactive', 2
+    assert_select 'tr.periodictask.ended', 2
+    assert_select 'style', text: /tr\.periodictask\.ended td\.subject a \{ text-decoration: line-through; \}/
+    assert_select 'span.icon-locked', 0
   end
 
   def test_index_marks_tasks_whose_last_run_failed

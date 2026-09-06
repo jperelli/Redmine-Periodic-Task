@@ -10,6 +10,9 @@
   <p>
     <%= label(:periodictask, :is_active, l(:field_active)) %>
     <%= f.check_box :is_active %>
+    <% if @periodictask.ended? %>
+      <em class="info periodictask-ended"><%= periodictask_status_label(@periodictask) %> <%= l(:text_ended_change_end_condition) %></em>
+    <% end %>
   </p>
   <p>
     <%= label(:periodictask, :interval_number) do %><%= l(:label_interval) %> <span class="required">*</span><% end %>
@@ -24,9 +27,10 @@
   </p>
   <p>
     <%= label(:periodictask, :next_run_date) do %><span class="field-description" title="<%= l(:label_next_run_date_info) %>"><%= l(:label_next_run_date) %></span><% end %>
-    <%= f.datetime_field :next_run_date, :value => periodictask_next_run_date_input_value(@periodictask.next_run_date) %>
+    <%= f.datetime_field :next_run_date, :value => periodictask_time_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
+  <%= render :partial => 'end_condition', :locals => { :f => f, :periodictask => @periodictask } %>
   <div id="periodictask_upcoming_runs_field" style="padding-inline-start: 180px; padding-block: 3px; min-block-size: 2em; clear: inline-start;">
     <label><span class="field-description" title="<%= l(:label_next_occurrences_info) %>"><%= l(:label_next_occurrences) %></span></label>
     <div id="periodictask_upcoming_runs"><%= render :partial => 'upcoming_runs', :locals => { :task => @periodictask, :dates => @periodictask.upcoming_run_dates, :sentence => true } %></div>
@@ -222,8 +226,22 @@
     $('#periodictask_interval_units, input[name="periodictask[monthly_mode]"]').change(toggleRecurrenceFields);
     toggleRecurrenceFields();
 
+    // Each "Ends" box shows its input when ticked; unticking clears the value so
+    // the (still posted) blank input removes the stored end condition.
+    $('.periodictask-end-toggle').change(function() {
+      var $inputs = $('#' + $(this).data('target'));
+      $inputs.toggle(this.checked);
+      if (this.checked) {
+        $inputs.find(':input').first().focus();
+      } else {
+        $inputs.find(':input').val('');
+      }
+    });
+
     // Live preview of the next run dates, recomputed server-side (nothing is
-    // saved) whenever an interval or recurrence field changes.
+    // saved) whenever an interval, recurrence or end condition field changes.
+    // The id of the task being edited lets the preview count its runs so far.
+    var upcomingRunsTaskId = <%= (@periodictask.persisted? ? @periodictask.id : nil).to_json %>;
     var upcomingRunsTimer;
     function refreshUpcomingRuns() {
       clearTimeout(upcomingRunsTimer);
@@ -231,12 +249,12 @@
         $.ajax({
           url: '<%= escape_javascript(periodictask_preview_path(@project, :format => 'js')) %>',
           type: 'post',
-          data: $('#periodictask_upcoming_runs').closest('form').serialize()
+          data: $('#periodictask_upcoming_runs').closest('form').serialize() + (upcomingRunsTaskId ? '&id=' + upcomingRunsTaskId : '')
         });
       }, 300);
     }
-    $('#periodictask_interval_number, #periodictask_interval_units, #periodictask_weekend_adjustment, #periodictask_next_run_date, .periodictask-recurrence :input').on('change', refreshUpcomingRuns);
-    $('#periodictask_interval_number, #periodictask_next_run_date').on('input', refreshUpcomingRuns);
+    $('#periodictask_interval_number, #periodictask_interval_units, #periodictask_weekend_adjustment, #periodictask_next_run_date, .periodictask-recurrence :input, #periodictask_end_condition_field :input').on('change', refreshUpcomingRuns);
+    $('#periodictask_interval_number, #periodictask_next_run_date, #periodictask_end_date, #periodictask_max_occurrences').on('input', refreshUpcomingRuns);
 
     var currentUserId = '<%= User.current.id %>';
     function toggleAssignToMe() {

@@ -240,10 +240,14 @@ class PeriodictaskController < ApplicationController
   end
 
   # Upcoming run dates for the recurrence currently entered in the form. The
-  # task is built from the posted attributes only and never saved.
+  # task is built from the posted attributes only and never saved; when the
+  # form edits an existing task (+id+), its runs made so far count towards
+  # "After N runs".
   def preview
     @periodictask = Periodictask.new(project: @project, author_id: User.current.id)
     assign_periodictask_params
+    existing = project_periodictasks.find_by(id: params[:id]) if params[:id].present?
+    @periodictask.occurrences_count = existing.occurrences_count if existing
     @upcoming_run_dates = @periodictask.upcoming_run_dates
   end
 
@@ -336,14 +340,15 @@ class PeriodictaskController < ApplicationController
     @versions = @project.shared_versions.open.to_a
   end
 
-  # The form posts next_run_date as a wall-clock time without an offset; parse
-  # it in the same zone the list/show pages use to display it (format_time).
-  # API clients may send it with an offset (ISO 8601), which is then honoured.
+  # The form posts next_run_date and end_date as wall-clock times without an
+  # offset; parse them in the same zone the list/show pages use to display
+  # them (format_time). API clients may send them with an offset (ISO 8601),
+  # which is then honoured.
   def assign_periodictask_params
     attrs = periodictask_params
     attrs[:project_id] = @project.id
-    if attrs[:next_run_date].present?
-      attrs[:next_run_date] = helpers.periodictask_parse_time(attrs[:next_run_date].to_s)
+    %i[next_run_date end_date].each do |field|
+      attrs[field] = helpers.periodictask_parse_time(attrs[field].to_s) if attrs[field].present?
     end
     # Core-style `custom_fields: [{id:, value:}]` is accepted as an alias of
     # the `custom_field_values: {id => value}` hash the form posts.
@@ -369,7 +374,7 @@ class PeriodictaskController < ApplicationController
       :interval_number, :interval_units, :next_run_date, :set_start_date,
       :due_date_number, :due_date_units, :description, :issue_category_id,
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :done_ratio, :tag_list,
-      :fixed_version_id, :is_active, :if_previous_open,
+      :fixed_version_id, :is_active, :end_date, :max_occurrences, :if_previous_open,
       :monthly_mode, :weekend_adjustment,
       { tag_list: [] },
       { weekdays: [] },

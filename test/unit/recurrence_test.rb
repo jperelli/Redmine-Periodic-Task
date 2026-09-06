@@ -468,6 +468,45 @@ class RecurrenceTest < ActiveSupport::TestCase
     assert_empty monthly_weekdays(Time.utc(2026, 1, 5, 10, 0, 0), [], [MON]).upcoming_run_dates_through(now)
   end
 
+  def test_upcoming_run_dates_stop_at_the_end_date
+    now = Time.utc(2026, 1, 1)
+    task = weekly(Time.utc(2026, 1, 5, 10, 0, 0), [MON, WED])
+
+    task.end_date = Time.utc(2026, 1, 14, 10, 0, 0) # a run exactly on the end date still happens
+    assert_equal [5, 7, 12, 14], task.upcoming_run_dates(5, now).map(&:day)
+    assert_equal [5, 7, 12, 14], task.upcoming_run_dates_through(Time.utc(2026, 3, 1), now).map(&:day)
+
+    task.end_date = Time.utc(2026, 1, 14, 9, 59, 0)
+    assert_equal [5, 7, 12], task.upcoming_run_dates(5, now).map(&:day)
+
+    task.end_date = Time.utc(2026, 1, 4)
+    assert_empty task.upcoming_run_dates(5, now), 'already ended by date'
+    assert_empty task.upcoming_run_dates_through(Time.utc(2026, 3, 1), now)
+
+    task.next_run_date = nil
+    assert_empty task.upcoming_run_dates(5, now), 'first computed run is past the end date'
+  end
+
+  def test_upcoming_run_dates_stop_at_the_runs_left_of_max_occurrences
+    now = Time.utc(2026, 1, 1)
+    task = weekly(Time.utc(2026, 1, 5, 10, 0, 0), [MON, WED])
+
+    task.max_occurrences = 3
+    assert_equal [5, 7, 12], task.upcoming_run_dates(5, now).map(&:day)
+    assert_equal [5, 7, 12], task.upcoming_run_dates_through(Time.utc(2026, 3, 1), now).map(&:day)
+    assert_equal [5, 7], task.upcoming_run_dates(2, now).map(&:day), 'the count still applies'
+
+    task.occurrences_count = 2
+    assert_equal [5], task.upcoming_run_dates(5, now).map(&:day), 'only the runs left'
+
+    task.occurrences_count = 3
+    assert_empty task.upcoming_run_dates(5, now), 'already ended by count'
+
+    task.max_occurrences = 10
+    task.end_date = Time.utc(2026, 1, 8)
+    assert_equal [5, 7], task.upcoming_run_dates(5, now).map(&:day), 'whichever condition comes first'
+  end
+
   private
 
   def weekly(anchor, weekdays, interval_number = 1)

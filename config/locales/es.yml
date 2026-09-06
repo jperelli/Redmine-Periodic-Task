@@ -152,6 +152,21 @@ es:
   label_periodictask_run_source_endpoint: 'URL de verificación'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'hasta %{time}'
+  label_end_condition: "Termina"
+  label_end_condition_info: "Opcional. Marque \"En fecha\" y/o \"Después de N ejecuciones\"; la tarea termina al alcanzar la primera. \"Ejecutar ahora\" no cuenta."
+  label_end_on_date: "En fecha"
+  label_end_after: "Después de"
+  label_end_runs: "ejecuciones"
+  label_ends_on_date: "Termina el %{date}"
+  label_ended_on_date: "Terminó el %{date}"
+  label_ended_by_date: "Terminada (fecha de fin alcanzada)"
+  label_ended_by_count: "Terminada (número máximo de ejecuciones alcanzado)"
+  text_ended_change_end_condition: "Cambie la condición de fin más abajo para que vuelva a ejecutarse."
+  label_end_runs_progress: "%{count} de %{max} ejecuciones"
+  label_periodictask_journal_ended_by_date: "Tarea periódica finalizada (fecha de fin alcanzada)"
+  label_periodictask_journal_ended_by_count: "Tarea periódica finalizada (número máximo de ejecuciones alcanzado)"
+  error_end_date_before_next_run: "La fecha de fin debe ser posterior a la fecha de próxima ejecución"
+  field_max_occurrences: "Número máximo de ejecuciones"
   label_assignee_rotation: "Rotación de asignados"
   label_assignee_rotation_info: "Las peticiones generadas se asignan por turnos a los usuarios de esta lista. Se omiten los usuarios a los que ya no se les pueden asignar peticiones en el proyecto; si la lista está vacía o nadie de ella puede ser asignado, se usa el asignado de arriba. Ejecutar ahora también avanza la rotación."
   label_rotation_next: "Siguiente: %{user}"

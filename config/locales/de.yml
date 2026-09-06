@@ -152,6 +152,21 @@ de:
   label_periodictask_run_source_endpoint: 'Prüf-URL'
   label_periodictask_run_source_manual: 'Manuell'
   label_periodictask_run_until: 'bis %{time}'
+  label_end_condition: "Endet"
+  label_end_condition_info: "Optional. \"Am Datum\" und/oder \"Nach N Ausführungen\" ankreuzen; die Aufgabe endet, sobald das erste davon erreicht ist. \"Jetzt ausführen\" zählt nicht."
+  label_end_on_date: "Am Datum"
+  label_end_after: "Nach"
+  label_end_runs: "Ausführungen"
+  label_ends_on_date: "Endet am %{date}"
+  label_ended_on_date: "Beendet am %{date}"
+  label_ended_by_date: "Beendet (Enddatum erreicht)"
+  label_ended_by_count: "Beendet (maximale Anzahl Ausführungen erreicht)"
+  text_ended_change_end_condition: "Ändern Sie die Endbedingung unten, damit sie wieder ausgeführt wird."
+  label_end_runs_progress: "%{count} von %{max} Ausführungen"
+  label_periodictask_journal_ended_by_date: "Periodische Aufgabe beendet (Enddatum erreicht)"
+  label_periodictask_journal_ended_by_count: "Periodische Aufgabe beendet (maximale Anzahl Ausführungen erreicht)"
+  error_end_date_before_next_run: "Das Enddatum muss nach dem nächsten Ausführungsdatum liegen"
+  field_max_occurrences: "Maximale Anzahl Ausführungen"
   label_assignee_rotation: "Zuweisungsrotation"
   label_assignee_rotation_info: "Erzeugte Tickets werden der Reihe nach den Benutzern dieser Liste zugewiesen. Benutzer, denen im Projekt keine Tickets mehr zugewiesen werden können, werden übersprungen; ist die Liste leer oder kann niemand daraus zugewiesen werden, wird der obige Zugewiesene verwendet. „Jetzt ausführen“ rückt die Rotation ebenfalls weiter."
   label_rotation_next: "Nächster: %{user}"
