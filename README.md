@@ -193,11 +193,15 @@ On an issue page, the sidebar of a project with the module enabled shows *Period
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can also run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is calculated, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
 
+### Assignee
+
+The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
+
 ### Assignee rotation
 
 Besides a single *Assignee* (user or group), a task can have an *Assignee rotation*: an ordered list of project members (users only, holding a role that allows assignment). Each generated issue goes to the next user in the list, wrapping around at the end — the classic first-responder, on-call or release-captain roster. The form shows the ordered list and who is next; the task detail page and the task lists show *Next: <user>*.
 
-Users who can no longer be assigned issues in the project (locked, removed from the project, role changed) are skipped and logged in the Rails log. The single *Assignee* is kept as the fallback: it is used when the rotation is empty or when none of its users can be assigned anymore. Editing the list keeps the same user up next when still listed; a copied task gets the same rotation, starting again from its first user.
+Users who can no longer be assigned issues in the project (locked, removed from the project, role changed) are skipped and logged in the Rails log. The single *Assignee* is kept as the fallback: it (or, when blank, Redmine's default assignee) is used when the rotation is empty or when none of its users can be assigned anymore. Editing the list keeps the same user up next when still listed; a copied task gets the same rotation, starting again from its first user.
 
 *Run now* moves the rotation on exactly like a scheduled run (the generated issue goes to the next user and the following one becomes next), while still leaving the schedule untouched.
 

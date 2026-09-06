@@ -27,6 +27,7 @@ vi:
   label_set_start_date_info: Khi được chọn, ngày bắt đầu của mỗi vấn đề được tạo sẽ là ngày sinh ra vấn đề đó.
   label_due_date: 'Đặt hạn chót sau'
   label_due_date_info: 'Hạn chót của mỗi vấn đề được tạo, tính bằng khoảng thời gian này kể từ ngày bắt đầu của nó.'
+  label_assigned_to_info: 'Không bắt buộc. Nếu để trống, mỗi vấn đề được tạo sẽ nhận người được giao mặc định của Redmine: người được giao mặc định của danh mục, nếu không thì của dự án.'
   label_estimated_hours: Thời gian ước lượng
   label_estimated_hours_after: Giờ
   label_description: Mô tả

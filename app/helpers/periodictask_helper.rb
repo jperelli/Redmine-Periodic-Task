@@ -88,6 +88,10 @@ module PeriodictaskHelper
     task.assigned_to ? link_to_principal(task.assigned_to) : '-'
   end
 
+  def periodictask_fallback_assignee(task)
+    task.assigned_to ? link_to_principal(task.assigned_to) : periodictask_default_assignee_label
+  end
+
   # "Next: <user>" for a task with a rotation, the whole roster as tooltip.
   # When nobody in the rotation can be assigned issues anymore, says so and
   # names the fallback assignee instead.
@@ -98,14 +102,20 @@ module PeriodictaskHelper
       content_tag(:span, l(:label_rotation_next, user: link_to_principal(user)).html_safe,
                   title: roster, class: 'periodictask-rotation-next')
     else
-      fallback = task.assigned_to ? link_to_principal(task.assigned_to) : '-'
-      content_tag(:span, l(:label_rotation_fallback, user: fallback).html_safe,
+      content_tag(:span, l(:label_rotation_fallback, user: periodictask_fallback_assignee(task)).html_safe,
                   title: roster, class: 'periodictask-rotation-fallback')
     end
   end
 
   def periodictask_default_label(value)
     ["(#{l(:label_default)})", value].compact.join(' - ')
+  end
+
+  # "(Default)" plus a help icon explaining Redmine's default assignee rules,
+  # shown when a task has no assignee configured.
+  def periodictask_default_assignee_label
+    help = periodictask_marker_icon('help', 'icon-help', l(:label_assigned_to_info))
+    safe_join([periodictask_default_label(nil), help], ' ')
   end
 
   # Parses a wall-clock datetime (no offset) in the zone Redmine's format_time
