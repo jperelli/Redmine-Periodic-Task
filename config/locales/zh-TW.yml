@@ -61,6 +61,7 @@ zh-TW:
     **PREVIOUS_MONTHNAME** (一月 - 十二月)
     **NEXT_MONTHNAME** (一月 - 十二月)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N 天)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (上一次 / 前第 N 次執行建立的議題 #編號，第一次執行時為空)
   label_variables_markdown_note: '注意：在概述中，由於 ** 是 Markdown 的粗體語法，它們在預覽中會顯示為粗體；建立議題時會替換為實際值。'
   label_last_error: 最後錯誤
   label_issue_custom_fields: 自訂欄位
@@ -83,7 +84,8 @@ zh-TW:
   label_periodictask_plugin_name: 週期任務外掛
   label_periodictask_credit_by: 作者：
   label_subtasks_info: "在每個建立的議題下建立的子議題。主旨支援與議題主旨相同的變數。"
-  label_relations_info: "從每個建立的議題到現有議題建立的關聯。"
+  label_relations_info: "從每個建立的議題到現有議題或上一次執行所建立議題的關聯。"
+  label_relation_previous_issue: "上一次建立的議題"
   error_subtask_subject_blank: "子議題主旨不能為空"
   error_relation_type_invalid: "無效的關聯類型"
   error_relation_issue_invalid: "關聯議題必須是議題編號"
@@ -148,4 +150,6 @@ zh-TW:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "附加到範本的檔案會複製到每個建立的議題。"
+  error_attachment_copy_failed: '無法複製附件「%{filename}」：%{error}'
   label_new_periodictask_from_issue: '從此議題建立週期任務'

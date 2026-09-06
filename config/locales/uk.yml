@@ -56,6 +56,7 @@ uk:
     **PREVIOUS_MONTHNAME** (Січень - Грудень)
     **NEXT_MONTHNAME** (Січень - Грудень)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N днів)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#номер задачі, створеної під час попереднього / N-го попереднього запуску, порожньо під час першого запуску)
   label_variables_markdown_note: 'Примітка: в описі вони відображаються жирним у попередньому перегляді, оскільки ** — це синтаксис жирного шрифту в Markdown; під час створення завдання вони замінюються фактичним значенням.'
   label_last_error: Остання помилка
   label_issue_custom_fields: Налаштовувані поля завдання
@@ -76,7 +77,8 @@ uk:
   label_periodictask_journal_delete: Періодичне завдання видалено
   label_periodictask_journal_run: Періодичне завдання виконано
   label_subtasks_info: "Підзадачі, що створюються під кожною створеною задачею. Теми приймають ті самі змінні, що й тема задачі."
-  label_relations_info: "Зв'язки, що створюються від кожної створеної задачі до існуючих задач."
+  label_relations_info: "Зв'язки, що створюються від кожної створеної задачі до існуючих задач або до задачі, створеної під час попереднього запуску."
+  label_relation_previous_issue: "Попередня створена задача"
   error_subtask_subject_blank: "Тема підзадачі не може бути порожньою"
   error_relation_type_invalid: "Недійсний тип зв'язку"
   error_relation_issue_invalid: "Пов'язана задача має бути номером задачі"
@@ -151,4 +153,6 @@ uk:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "Файли, прикріплені до шаблону, копіюються в кожну створену задачу."
+  error_attachment_copy_failed: 'Не вдалося скопіювати вкладення "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Створити періодичне завдання з цієї задачі'

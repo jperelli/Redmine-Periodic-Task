@@ -56,6 +56,7 @@ pt-BR:
     **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
     **NEXT_MONTHNAME** (Janeiro - Dezembro)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dias)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#id da tarefa criada na execução anterior / N execuções antes, vazio na primeira execução)
   label_variables_markdown_note: 'Observação: na descrição elas aparecem em negrito na pré-visualização porque ** é a sintaxe de negrito do Markdown; são substituídas pelo valor real quando a tarefa é criada.'
   label_last_error: Último erro
   label_issue_custom_fields: Campos personalizados
@@ -76,7 +77,8 @@ pt-BR:
   label_periodictask_journal_delete: Tarefa periódica excluída
   label_periodictask_journal_run: Tarefa periódica executada
   label_subtasks_info: "Subtarefas criadas sob cada tarefa gerada. Os títulos aceitam as mesmas variáveis que o título da tarefa."
-  label_relations_info: "Relações criadas de cada tarefa gerada para tarefas existentes."
+  label_relations_info: "Relações criadas de cada tarefa gerada para tarefas existentes ou para a tarefa gerada na execução anterior."
+  label_relation_previous_issue: "Tarefa gerada anteriormente"
   error_subtask_subject_blank: "O título da subtarefa não pode ficar em branco"
   error_relation_type_invalid: "Tipo de relação inválido"
   error_relation_issue_invalid: "A tarefa relacionada deve ser um número de tarefa"
@@ -146,4 +148,6 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "Os arquivos anexados ao modelo são copiados para cada tarefa gerada."
+  error_attachment_copy_failed: 'Não foi possível copiar o anexo "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'

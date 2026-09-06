@@ -56,6 +56,7 @@ it:
     **PREVIOUS_MONTHNAME** (Gennaio - Dicembre)
     **NEXT_MONTHNAME** (Gennaio - Dicembre)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N giorni)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#id della segnalazione creata nell'esecuzione precedente / N esecuzioni prima, vuoto alla prima esecuzione)
   label_variables_markdown_note: 'Nota: nella descrizione appaiono in grassetto nell''anteprima perché ** è la sintassi del grassetto di Markdown; vengono sostituite con il valore effettivo quando la richiesta viene creata.'
   label_last_error: Ultimo errore
   label_issue_custom_fields: Campi personalizzati
@@ -76,7 +77,8 @@ it:
   label_periodictask_journal_delete: Task periodico eliminato
   label_periodictask_journal_run: Task periodico eseguito
   label_subtasks_info: "Sotto-segnalazioni create sotto ogni segnalazione generata. Gli oggetti accettano le stesse variabili dell'oggetto della segnalazione."
-  label_relations_info: "Relazioni create da ogni segnalazione generata verso segnalazioni esistenti."
+  label_relations_info: "Relazioni create da ogni segnalazione generata verso segnalazioni esistenti o verso la segnalazione generata nell'esecuzione precedente."
+  label_relation_previous_issue: "Segnalazione generata in precedenza"
   error_subtask_subject_blank: "L'oggetto della sotto-segnalazione non può essere vuoto"
   error_relation_type_invalid: "Tipo di relazione non valido"
   error_relation_issue_invalid: "La segnalazione correlata deve essere un numero di segnalazione"
@@ -146,4 +148,6 @@ it:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "I file allegati al modello vengono copiati su ogni segnalazione generata."
+  error_attachment_copy_failed: "Impossibile copiare l'allegato \"%{filename}\": %{error}"
   label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'

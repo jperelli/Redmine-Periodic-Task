@@ -56,6 +56,7 @@ pl:
     **PREVIOUS_MONTHNAME** (Styczeń - Grudzień)
     **NEXT_MONTHNAME** (Styczeń - Grudzień)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dni)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#numer zagadnienia utworzonego w poprzednim / N-tym poprzednim uruchomieniu, puste przy pierwszym uruchomieniu)
   label_variables_markdown_note: 'Uwaga: w opisie są one wyświetlane pogrubioną czcionką w podglądzie, ponieważ ** to składnia pogrubienia w Markdown; przy tworzeniu zadania są zastępowane rzeczywistą wartością.'
   label_last_error: Ostatni błąd
   label_issue_custom_fields: Pola niestandardowe
@@ -76,7 +77,8 @@ pl:
   label_periodictask_journal_delete: Usunięto zadanie cykliczne
   label_periodictask_journal_run: Uruchomiono zadanie cykliczne
   label_subtasks_info: "Podzagadnienia tworzone pod każdym wygenerowanym zagadnieniem. Tematy akceptują te same zmienne co temat zagadnienia."
-  label_relations_info: "Powiązania tworzone od każdego wygenerowanego zagadnienia do istniejących zagadnień."
+  label_relations_info: "Powiązania tworzone od każdego wygenerowanego zagadnienia do istniejących zagadnień lub do zagadnienia wygenerowanego w poprzednim uruchomieniu."
+  label_relation_previous_issue: "Poprzednio wygenerowane zagadnienie"
   error_subtask_subject_blank: "Temat podzagadnienia nie może być pusty"
   error_relation_type_invalid: "Nieprawidłowy typ powiązania"
   error_relation_issue_invalid: "Powiązane zagadnienie musi być numerem zagadnienia"
@@ -150,4 +152,6 @@ pl:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "Pliki załączone do szablonu są kopiowane do każdego utworzonego zagadnienia."
+  error_attachment_copy_failed: 'Nie udało się skopiować załącznika "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Utwórz zadanie cykliczne z tego zagadnienia'

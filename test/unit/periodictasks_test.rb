@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class PeriodictasksTest < ActiveSupport::TestCase
   fixtures :projects, :users, :trackers, :projects_trackers, :issue_statuses,
            :enumerations, :enabled_modules, :roles, :members, :member_roles,
-           :versions, :issue_categories
+           :versions, :issue_categories, :issues, :attachments
 
   def setup
     @project = Project.find(1)
@@ -539,6 +539,87 @@ class PeriodictasksTest < ActiveSupport::TestCase
     created = Issue.where(subject: 'History test').last
     assert_includes task.created_issues, created
     assert_equal 1, task.created_issues.count
+  end
+
+  def test_checker_copies_attachments_onto_the_generated_issue
+    set_fixtures_attachments_directory
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Attachments test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+    template_attachment = Attachment.find(4).copy(container: task, description: 'Checklist')
+    template_attachment.save!
+
+    assert_difference('Attachment.count', 1) do
+      ScheduledTasksChecker.checktasks!
+    end
+
+    issue = Issue.where(subject: 'Attachments test').to_a.tap { |issues| assert_equal 1, issues.size }.first
+    copy = issue.attachments.to_a.tap { |copies| assert_equal 1, copies.size }.first
+    assert_not_equal template_attachment.id, copy.id
+    assert_equal %w[source.rb Checklist], [copy.filename, copy.description]
+    assert_equal template_attachment.author_id, copy.author_id
+    assert_equal template_attachment.disk_filename, copy.disk_filename
+    assert copy.readable?
+    assert_nil task.reload.last_error
+
+    # The copies are independent records: removing the issue's file keeps the
+    # template's, and vice versa.
+    issue.attachments.delete(copy)
+    assert Attachment.exists?(template_attachment.id)
+    assert template_attachment.reload.readable?
+  end
+
+  def test_checker_keeps_the_issue_and_records_the_error_when_an_attachment_cannot_be_copied
+    set_tmp_attachments_directory
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Missing file test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.ago
+    )
+    Attachment.find(4).copy(container: task).save! # file not present under the tmp storage path
+
+    assert_difference('Issue.count', 1) do
+      assert_no_difference('Attachment.count') do
+        ScheduledTasksChecker.checktasks!
+      end
+    end
+
+    task.reload
+    assert_equal 1, task.created_issues.count
+    assert_match(/source\.rb/, task.last_error)
+    assert_operator task.next_run_date, :>, Time.current
+  end
+
+  def test_destroy_deletes_the_attachments
+    set_fixtures_attachments_directory
+    task = Periodictask.create!(
+      project: @project,
+      tracker_id: 1,
+      author_id: 1,
+      assigned_to_id: 2,
+      subject: 'Destroy test',
+      interval_number: 1,
+      interval_units: 'month',
+      next_run_date: 1.day.from_now
+    )
+    attachment = Attachment.find(4).copy(container: task)
+    attachment.save!
+
+    assert_difference('Attachment.count', -1) { task.destroy }
+    assert_not Attachment.exists?(attachment.id)
+    assert Attachment.find(4).readable? # still referenced by issue 2, so the file stays
   end
 
   def test_record_generated_issue_is_idempotent
@@ -1196,6 +1277,126 @@ class PeriodictasksTest < ActiveSupport::TestCase
     task.reload
     assert_match(/#999999/, task.last_error)
     assert task.next_run_date > Time.current
+  end
+
+  # --- Previous generated issue ---
+
+  def test_previous_issue_macro_is_blank_on_the_first_run_and_links_later_runs
+    task = Periodictask.create!(
+      project: @project, tracker_id: 1, author_id: 1,
+      subject: 'Weekly report',
+      description: 'Previous report: **PREVIOUS_ISSUE**',
+      interval_number: 1, interval_units: 'week', next_run_date: 1.day.ago
+    )
+
+    ScheduledTasksChecker.checktasks!
+    first = task.created_issues.first
+    assert_equal 'Previous report: ', first.description
+
+    task.update!(next_run_date: 1.day.ago)
+    ScheduledTasksChecker.checktasks!
+    second = task.created_issues.first
+    assert_not_equal first.id, second.id
+    assert_equal "Previous report: ##{first.id}", second.description
+  end
+
+  def test_previous_issue_macro_offset_selects_older_runs
+    task = Periodictask.create!(
+      project: @project, tracker_id: 1, author_id: 1, subject: 'Report',
+      interval_number: 1, interval_units: 'week', next_run_date: 1.day.ago
+    )
+    issues = 3.times.map do |i|
+      issue = Issue.create!(project: @project, tracker_id: 1, author_id: 1, subject: "Run #{i}",
+                            status_id: 1, priority_id: IssuePriority.default.id)
+      task.periodictask_issues.create!(issue_id: issue.id, created_at: (3 - i).days.ago)
+      issue
+    end
+
+    assert_equal "##{issues[2].id}", task.send(:parse_macro, '**PREVIOUS_ISSUE**'.dup, Time.current)
+    assert_equal "##{issues[2].id}", task.send(:parse_macro, '**PREVIOUS_ISSUE-1**'.dup, Time.current)
+    assert_equal "##{issues[1].id}", task.send(:parse_macro, '**PREVIOUS_ISSUE-2**'.dup, Time.current)
+    assert_equal "##{issues[0].id}", task.send(:parse_macro, '**PREVIOUS_ISSUE-3**'.dup, Time.current)
+    assert_equal '', task.send(:parse_macro, '**PREVIOUS_ISSUE-4**'.dup, Time.current)
+    assert_equal '**PREVIOUS_ISSUE-0** **PREVIOUS_ISSUE+1**',
+                 task.send(:parse_macro, '**PREVIOUS_ISSUE-0** **PREVIOUS_ISSUE+1**'.dup, Time.current)
+  end
+
+  def test_previous_issue_macro_is_blank_for_an_unsaved_task
+    assert_equal 'Report ', parse_macro('Report **PREVIOUS_ISSUE**', Time.current)
+  end
+
+  # The generated issue is recorded before its subtasks are created, so the
+  # macro in a subtask subject must still resolve to the run before.
+  def test_previous_issue_macro_in_subtasks_skips_the_current_run
+    task = Periodictask.create!(
+      project: @project, tracker_id: 1, author_id: 1, subject: 'Parent',
+      subtasks: [{ 'subject' => 'Compare with **PREVIOUS_ISSUE**' }],
+      interval_number: 1, interval_units: 'week', next_run_date: 1.day.ago
+    )
+
+    ScheduledTasksChecker.checktasks!
+    first_parent = Issue.where(subject: 'Parent').last
+    assert_equal ['Compare with '], first_parent.children.map(&:subject)
+
+    task.update!(next_run_date: 1.day.ago)
+    ScheduledTasksChecker.checktasks!
+    second_parent = Issue.where(subject: 'Parent').order(:id).last
+    assert_not_equal first_parent.id, second_parent.id
+    assert_equal ["Compare with ##{first_parent.id}"], second_parent.children.map(&:subject)
+    assert_equal second_parent, task.previous_generated_issue
+  end
+
+  def test_relations_accepts_the_previous_issue_target_from_the_form
+    task = Periodictask.new(relations: { '0' => { 'relation_type' => 'follows', 'target' => 'previous_issue',
+                                                  'issue_id' => '', 'delay' => '2' },
+                                         '1' => { 'relation_type' => 'relates', 'target' => 'issue',
+                                                  'issue_id' => '7', 'delay' => '' },
+                                         '2' => { 'relation_type' => 'relates', 'target' => 'issue',
+                                                  'issue_id' => '', 'delay' => '' } })
+    assert_equal [{ 'relation_type' => 'follows', 'issue_id' => 'previous_issue', 'delay' => '2' },
+                  { 'relation_type' => 'relates', 'issue_id' => '7', 'delay' => nil }], task.relations
+  end
+
+  def test_relation_to_the_previous_issue_is_valid
+    task = Periodictask.new(project: @project, tracker_id: 1, author_id: 1, subject: 'Parent',
+                            relations: [{ 'relation_type' => 'follows', 'issue_id' => 'previous_issue' }])
+    assert task.valid?
+
+    task.relations = [{ 'relation_type' => 'follows', 'issue_id' => 'previous' }]
+    assert_not task.valid?
+    assert_includes task.errors.full_messages, I18n.t(:error_relation_issue_invalid)
+  end
+
+  def test_relation_to_the_previous_issue_links_consecutive_runs
+    task = Periodictask.create!(
+      project: @project, tracker_id: 1, author_id: 1, subject: 'Chained',
+      subtasks: [{ 'subject' => 'Child' }],
+      relations: [{ 'relation_type' => 'follows', 'issue_id' => 'previous_issue', 'delay' => '1' }],
+      interval_number: 1, interval_units: 'week', next_run_date: 1.day.ago
+    )
+
+    assert_no_difference('IssueRelation.count') do
+      ScheduledTasksChecker.checktasks!
+    end
+    first = Issue.where(subject: 'Chained').last
+    assert_nil task.reload.last_error
+
+    task.update!(next_run_date: 1.day.ago)
+    assert_difference('IssueRelation.count', 1) do
+      ScheduledTasksChecker.checktasks!
+    end
+    second = Issue.where(subject: 'Chained').order(:id).last
+    relation = second.relations.first
+    # Redmine stores a `follows` as the reverse `precedes` from the other issue.
+    assert_equal 'follows', relation.relation_type_for(second)
+    assert_equal first, relation.other_issue(second)
+    assert_equal 1, relation.delay
+    assert_nil task.reload.last_error
+
+    task.update!(next_run_date: 1.day.ago)
+    ScheduledTasksChecker.checktasks!
+    third = Issue.where(subject: 'Chained').order(:id).last
+    assert_equal [second], third.relations.map { |r| r.other_issue(third) }.to_a
   end
 
   def test_copy_from_takes_the_template_but_not_the_identity
