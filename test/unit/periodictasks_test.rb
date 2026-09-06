@@ -9,7 +9,7 @@ class PeriodictasksTest < ActiveSupport::TestCase
   # standing in for another trigger that gets to the task first.
   cattr_accessor :before_lock
   Periodictask.prepend(Module.new do
-    def lock!(*args)
+    def with_lock(*args, &)
       PeriodictasksTest.before_lock&.call(self)
       super
     end
@@ -1617,6 +1617,32 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
 
     assert_equal 0, task.reload.rotation_index
+  end
+
+  def test_checker_skips_a_task_deleted_before_the_row_lock_and_runs_the_others
+    deleted = create_rotation_task(subject: 'Deleted meanwhile', next_run_date: 2.days.ago)
+    other = create_rotation_task(subject: 'Still there', next_run_date: 1.day.ago)
+
+    while_locking(deleted) { Periodictask.where(id: deleted.id).delete_all }
+    assert_difference('Issue.count', 1) { assert_equal 2, ScheduledTasksChecker.checktasks! }
+
+    assert_equal 1, other.reload.created_issues.count
+    assert_nil PeriodictaskRun.recent.first.error_messages
+  end
+
+  def test_checker_runs_as_the_author_read_under_the_row_lock
+    task = create_rotation_task(author_id: 2, next_run_date: 1.day.ago)
+
+    seen = nil
+    Periodictask.any_instance.expects(:fill_watchers).with do |_issue|
+      seen = User.current.id
+      true
+    end
+    while_locking(task) { Periodictask.where(id: task.id).update_all(author_id: 3) }
+    ScheduledTasksChecker.checktasks!
+
+    assert_equal 3, seen
+    assert_equal 3, task.reload.created_issues.first.author_id
   end
 
   def test_checker_skips_a_rotation_user_who_got_locked_after_being_listed
