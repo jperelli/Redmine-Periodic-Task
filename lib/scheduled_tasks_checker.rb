@@ -14,15 +14,29 @@ class ScheduledTasksChecker
     # restored afterwards.
     I18n.with_locale(ENV['LOCALE'] || I18n.default_locale) do
       tasks.each do |task|
-        as_user(task.author) do
-          run = TaskRun.new(task, now)
-          run.execute
-          issues_created += 1 if run.issue_created?
-          errors.concat(run.errors)
-          notes.concat(run.notes)
-          finish(task) if task.ended?
-          task.save
+        # Cron, the web scheduler, the endpoint and Run now can fire together:
+        # the row is locked from generating the issue until the task (schedule,
+        # count, rotation position) is saved. lock! reloads the task, so
+        # everything below (still runnable and due? author?) works on the
+        # locked state.
+        task.with_lock do
+          next unless task.runnable? && task.due_by?(now)
+
+          as_user(task.author) do
+            run = TaskRun.new(task, now)
+            run.execute
+            issues_created += 1 if run.issue_created?
+            errors.concat(run.errors)
+            notes.concat(run.notes)
+            finish(task) if task.ended?
+            task.save
+          end
         end
+      rescue ActiveRecord::RecordNotFound
+        # Deleted since the query above; anything else missing is a real error.
+        raise if Periodictask.exists?(task.id)
+
+        Rails.logger.info "ScheduledTasksChecker: ##{task.id} was deleted before it could run"
       end
     end
     tasks.size

@@ -87,6 +87,7 @@
           <%= l(:no_members_in_project) %>
         <% end %>
       </p>
+      <%= render :partial => 'rotation', :locals => { :periodictask => @periodictask } %>
       <p>
         <%= label(:periodictask, :issue_category_id) do %><%= l(:field_category) %> <span class="required">*</span><% end %>
         <% if @categories.length > 0 %>

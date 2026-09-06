@@ -41,7 +41,7 @@
             <%= periodictask_error_icon(a) %>
             <%= link_to a.subject, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %>
           </td>
-          <td><%= a.assigned_to ? link_to_principal(a.assigned_to) : '-' %></td>
+          <td><%= periodictask_assignee(a) %></td>
           <td><%= periodictask_time_with_title(@last_runs[a.id]) %></td>
           <td class="buttons hide-when-print">
             <%= link_to(

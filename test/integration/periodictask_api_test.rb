@@ -111,7 +111,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
       weekend_adjustment: 'next_working_day',
       due_date_number: 3, due_date_units: 'day', estimated_hours: 1.5, done_ratio: 20,
       issue_category_id: 1, fixed_version_id: 2, priority_id: 6, status_id: 2,
-      watcher_user_ids: [3], custom_field_values: { '1' => 'MySQL' },
+      watcher_user_ids: [3], rotation_ids: [3, 2], custom_field_values: { '1' => 'MySQL' },
       subtasks: [{ 'tracker_id' => '2', 'subject' => 'Sub', 'assigned_to_id' => '3', 'estimated_hours' => '2' }],
       relations: [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }],
       last_error: 'boom', is_active: true,
@@ -141,6 +141,8 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal({ 'id' => 6, 'name' => 'High' }, t['priority'])
     assert_equal({ 'id' => 2, 'name' => 'Assigned' }, t['status'])
     assert_equal [{ 'id' => 3, 'name' => 'Dave Lopper' }], t['watchers']
+    assert_equal [{ 'id' => 3, 'name' => 'Dave Lopper' }, { 'id' => 2, 'name' => 'John Smith' }], t['rotation']
+    assert_equal({ 'id' => 3, 'name' => 'Dave Lopper' }, t['rotation_next'])
     assert_equal [{ 'id' => 1, 'name' => 'Database', 'value' => 'MySQL' }], t['custom_fields']
     assert_equal [{ 'tracker_id' => '2', 'subject' => 'Sub', 'assigned_to_id' => '3', 'estimated_hours' => 2.0 }],
                  t['subtasks']
