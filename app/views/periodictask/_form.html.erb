@@ -21,6 +21,10 @@
   </p>
   <%= render :partial => 'recurrence', :locals => { :periodictask => @periodictask } %>
   <p>
+    <%= label(:periodictask, :weekend_adjustment) do %><span class="field-description" title="<%= l(:label_weekend_adjustment_info) %>"><%= l(:label_weekend_adjustment) %></span><% end %>
+    <%= f.select :weekend_adjustment, Periodictask.weekend_adjustment_options %>
+  </p>
+  <p>
     <%= label(:periodictask, :next_run_date) do %><span class="field-description" title="<%= l(:label_next_run_date_info) %>"><%= l(:label_next_run_date) %></span><% end %>
     <%= f.datetime_field :next_run_date, :value => periodictask_time_input_value(@periodictask.next_run_date) %>
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>

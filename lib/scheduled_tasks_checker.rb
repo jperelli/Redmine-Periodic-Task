@@ -7,7 +7,7 @@ class ScheduledTasksChecker
     errors = []
     notes = []
     issues_created = 0
-    tasks = Periodictask.active.where('next_run_date <= ? ', now).to_a
+    tasks = Periodictask.active.possibly_due(now).select { |task| task.due_by?(now) }
 
     # Macros render in the shell-configured locale (or Redmine's default). The
     # checker also runs inside web requests, so the caller's locale must be
@@ -117,7 +117,7 @@ class ScheduledTasksChecker
         rescue ActiveRecord::RecordInvalid => e
           fail_with(e.message)
         end
-        @task.next_run_date = @task.get_next_run_date(@now)
+        advance_schedule
       else
         fail_with('Project is missing or closed')
       end
@@ -135,7 +135,7 @@ class ScheduledTasksChecker
     def skip(previous)
       @task.record_skip(previous, @now)
       @task.last_error = nil
-      @task.next_run_date = @task.get_next_run_date(@now) if @task.if_previous_open == 'skip'
+      advance_schedule if @task.if_previous_open == 'skip'
       note(l(:text_periodictask_skipped_open_issue, id: previous.id))
     end
 
@@ -155,6 +155,12 @@ class ScheduledTasksChecker
       @task.next_run_date = resume_at
       note(l(:text_periodictask_rescheduled_after_completion,
              id: @task.last_generated_issue.id, time: format_time(resume_at)))
+    end
+
+    # A run moved to a previous working day fires before its stored occurrence;
+    # the next one must follow that occurrence, not now.
+    def advance_schedule
+      @task.next_run_date = @task.get_next_run_date([@now, @task.next_run_date].max)
     end
 
     def fail_with(message)

@@ -26,7 +26,7 @@
           <%= link_to task.subject, periodictask_path(:project_id => task.project, :id => task.id) %>
         </td>
         <td class="interval"><%= periodictask_schedule_description(task) %><%= periodictask_end_condition_note(task) %></td>
-        <td><%= periodictask_time_with_title(task.next_run_date) %></td>
+        <td><%= periodictask_next_run_with_title(task) %></td>
         <td><%= task.assigned_to ? link_to_principal(task.assigned_to) : '-' %></td>
         <td><%= periodictask_time_with_title(@last_runs[task.id]) %></td>
         <td class="buttons hide-when-print">

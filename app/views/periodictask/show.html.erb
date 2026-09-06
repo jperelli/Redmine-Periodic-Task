@@ -32,15 +32,18 @@
                 safe_join([periodictask_schedule_description(@periodictask), periodictask_end_condition_note(@periodictask)].compact),
                 class: 'interval'
       rows.right l(:label_next_run_date),
-                 periodictask_time_with_title(@periodictask.next_run_date),
+                 periodictask_next_run_with_title(@periodictask),
                  class: 'next-run-date'
-      rows.left l(:label_periodictask_state),
-                content_tag(:span, periodictask_state_description(@periodictask), class: "periodictask-state #{@periodictask.state}"),
-                class: 'state'
-      rows.right l(:label_if_previous_open),
-                 content_tag(:span, periodictask_if_previous_open_label(@periodictask.if_previous_open),
-                             title: periodictask_if_previous_open_description(@periodictask.if_previous_open)),
-                 class: 'if-previous-open'
+      rows.left l(:label_weekend_adjustment),
+                periodictask_weekend_adjustment_label(@periodictask),
+                class: 'weekend-adjustment'
+      rows.right l(:label_periodictask_state),
+                 content_tag(:span, periodictask_state_description(@periodictask), class: "periodictask-state #{@periodictask.state}"),
+                 class: 'state'
+      rows.left l(:label_if_previous_open),
+                content_tag(:span, periodictask_if_previous_open_label(@periodictask.if_previous_open),
+                            title: periodictask_if_previous_open_description(@periodictask.if_previous_open)),
+                class: 'if-previous-open'
     end %>
   </div>
 </div>

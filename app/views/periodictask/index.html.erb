@@ -34,7 +34,7 @@
         <tr class="<%= periodictask_row_class(a) %>" title="<%= periodictask_state_label(a) %>">
           <td class="id"><%= link_to a.id, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %></td>
           <td class="interval"><%= periodictask_schedule_description(a) %><%= periodictask_end_condition_note(a) %></td>
-          <td><%= periodictask_time_with_title(a.next_run_date) %></td>
+          <td><%= periodictask_next_run_with_title(a) %></td>
           <td><%= a.tracker&.name %></td>
           <td><%= @priorities[a.priority_id]&.name %></td>
           <td class="subject">
