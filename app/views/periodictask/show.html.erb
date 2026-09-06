@@ -134,6 +134,12 @@
     <div class="wiki"><%= textilizable @periodictask, :description %></div>
   <% end %>
 
+  <% if @periodictask.attachments.any? %>
+    <hr />
+    <p><strong><%= l(:label_attachment_plural) %> (<%= @periodictask.attachments.size %>)</strong></p>
+    <%= link_to_attachments @periodictask, thumbnails: true %>
+  <% end %>
+
   <% if @periodictask.subtasks.any? %>
     <hr />
     <div class="periodictask-subtasks">

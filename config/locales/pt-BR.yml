@@ -146,4 +146,6 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "Os arquivos anexados ao modelo são copiados para cada tarefa gerada."
+  error_attachment_copy_failed: 'Não foi possível copiar o anexo "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'

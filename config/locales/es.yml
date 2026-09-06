@@ -146,4 +146,6 @@ es:
   label_periodictask_run_source_endpoint: 'URL de verificación'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'hasta %{time}'
+  label_attachments_info: "Los archivos adjuntos a la plantilla se copian en cada incidencia generada."
+  error_attachment_copy_failed: 'No se pudo copiar el adjunto "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Crear tarea periódica a partir de esta petición'
