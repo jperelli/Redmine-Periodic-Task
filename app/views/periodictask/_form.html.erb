@@ -26,6 +26,11 @@
     <label><span class="field-description" title="<%= l(:label_next_occurrences_info) %>"><%= l(:label_next_occurrences) %></span></label>
     <span id="periodictask_upcoming_runs"><%= render :partial => 'upcoming_runs', :locals => { :dates => @periodictask.upcoming_run_dates } %></span>
   </p>
+  <p class="periodictask-if-previous-open">
+    <%= label(:periodictask, :if_previous_open) do %><span class="field-description" title="<%= l(:label_if_previous_open_info) %>"><%= l(:label_if_previous_open) %></span><% end %>
+    <%= select_tag 'periodictask[if_previous_open]', periodictask_if_previous_open_options(@periodictask.if_previous_open), :id => 'periodictask_if_previous_open' %>
+    <%= periodictask_if_previous_open_help_link %>
+  </p>
   <p>
     <%= label(:periodictask, :author_id, l(:label_issue_author)) %>
     <% if @authors.length > 0 %>

@@ -149,6 +149,24 @@ it:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_if_previous_open: "Precedente ancora aperta"
+  label_if_previous_open_info: "Cosa fa un'esecuzione quando la segnalazione creata dall'esecuzione precedente non è ancora stata chiusa"
+  label_if_previous_open_help: "Cosa significano le modalità, con esempi"
+  label_if_previous_open_create: "Crea comunque una nuova segnalazione"
+  label_if_previous_open_create_info: "Predefinito: le segnalazioni si accumulano finché qualcuno non le chiude."
+  label_if_previous_open_skip: "Salta questa occorrenza"
+  label_if_previous_open_skip_info: "Non viene creata nessuna segnalazione e la pianificazione passa all'occorrenza successiva."
+  label_if_previous_open_close_previous: "Chiudi la segnalazione precedente"
+  label_if_previous_open_close_previous_info: "La segnalazione precedente viene chiusa con il primo stato chiuso del suo flusso di lavoro, poi viene creata la nuova."
+  label_if_previous_open_after_completion: "Attendi che venga chiusa"
+  label_if_previous_open_after_completion_info: "Finché è aperta non viene creato nulla; una volta chiusa, la segnalazione successiva scade un intervallo dopo la data di chiusura."
+  label_periodictask_close_previous_failed: "Impossibile chiudere la segnalazione precedente"
+  error_no_closed_status: "nessuno stato chiuso disponibile"
+  text_periodictask_closed_by_next_issue: "Chiusa dall'attività periodica: sostituita da #%{id}."
+  text_periodictask_skipped_open_issue: "saltata: #%{id} è ancora aperta"
+  text_periodictask_rescheduled_after_completion: "#%{id} è stata chiusa, prossima esecuzione ripianificata al %{time}"
+  text_periodictask_last_skipped: "L'esecuzione del %{time} non ha creato una segnalazione: %{issue} era ancora aperta."
+  field_periodictask_run_notes: "Note"
   label_attachments_info: "I file allegati al modello vengono copiati su ogni segnalazione generata."
   error_attachment_copy_failed: "Impossibile copiare l'allegato \"%{filename}\": %{error}"
   label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'

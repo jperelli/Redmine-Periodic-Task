@@ -145,9 +145,39 @@ module PeriodictaskHelper
     l(key, count: number.to_i)
   end
 
-  # Help icon linking to the recurrence design document on GitHub.
-  def periodictask_recurrence_help_link(title = l(:label_recurrence_help))
-    link_to periodictask_sprite_icon('help', title, icon_only: true), RedminePeriodictask::RECURRENCE_DOC_URL,
+  # Short name of an if_previous_open mode, e.g. "Skip this occurrence".
+  def periodictask_if_previous_open_label(mode)
+    l(:"label_if_previous_open_#{mode}")
+  end
+
+  # One-sentence explanation of an if_previous_open mode.
+  def periodictask_if_previous_open_description(mode)
+    l(:"label_if_previous_open_#{mode}_info")
+  end
+
+  # Options for the if_previous_open select.
+  def periodictask_if_previous_open_options(selected)
+    options = Periodictask::IF_PREVIOUS_OPEN_MODES.map { |mode| [periodictask_if_previous_open_label(mode), mode] }
+    options_for_select(options, selected)
+  end
+
+  # Help icon linking to the if_previous_open document on GitHub.
+  def periodictask_if_previous_open_help_link
+    periodictask_recurrence_help_link(l(:label_if_previous_open_help), RedminePeriodictask::IF_PREVIOUS_OPEN_DOC_URL)
+  end
+
+  # "The run of <time> skipped ...: #123 was still open", shown above the
+  # generated issues; the row for the run that created nothing.
+  def periodictask_last_skipped_note(task)
+    text = l(:text_periodictask_last_skipped, time: h(format_time(task.last_skipped_at)),
+                                              issue: periodictask_issue_link(task.last_skipped_issue_id))
+    safe_join([content_tag(:span, periodictask_sprite_icon('time'), class: 'icon-only icon-time'), ' ', text.html_safe])
+  end
+
+  # Help icon linking to a document on GitHub, the recurrence design by default.
+  def periodictask_recurrence_help_link(title = l(:label_recurrence_help),
+                                        url = RedminePeriodictask::RECURRENCE_DOC_URL)
+    link_to periodictask_sprite_icon('help', title, icon_only: true), url,
             class: 'icon-only icon-help', title: title, target: '_blank', rel: 'noopener'
   end
 

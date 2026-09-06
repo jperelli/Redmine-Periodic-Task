@@ -149,6 +149,24 @@ pt-BR:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_if_previous_open: "Tarefa anterior aberta"
+  label_if_previous_open_info: "O que uma execução faz quando a tarefa criada pela execução anterior ainda não foi fechada"
+  label_if_previous_open_help: "O que cada modo significa, com exemplos"
+  label_if_previous_open_create: "Criar uma nova tarefa mesmo assim"
+  label_if_previous_open_create_info: "Padrão: as tarefas se acumulam até que alguém as feche."
+  label_if_previous_open_skip: "Pular esta ocorrência"
+  label_if_previous_open_skip_info: "Nenhuma tarefa é criada e o agendamento passa para a próxima ocorrência."
+  label_if_previous_open_close_previous: "Fechar a tarefa anterior"
+  label_if_previous_open_close_previous_info: "A tarefa anterior é fechada com o primeiro status fechado do seu fluxo de trabalho e então a nova é criada."
+  label_if_previous_open_after_completion: "Aguardar até que seja fechada"
+  label_if_previous_open_after_completion_info: "Nada é criado enquanto estiver aberta; depois de fechada, a próxima tarefa vence um intervalo após a data de fechamento."
+  label_periodictask_close_previous_failed: "Não foi possível fechar a tarefa anterior"
+  error_no_closed_status: "nenhum status fechado disponível"
+  text_periodictask_closed_by_next_issue: "Fechada pela tarefa periódica: substituída por #%{id}."
+  text_periodictask_skipped_open_issue: "pulada: #%{id} ainda está aberta"
+  text_periodictask_rescheduled_after_completion: "#%{id} foi fechada, próxima execução reagendada para %{time}"
+  text_periodictask_last_skipped: "A execução de %{time} não criou uma tarefa: %{issue} ainda estava aberta."
+  field_periodictask_run_notes: "Observações"
   label_attachments_info: "Os arquivos anexados ao modelo são copiados para cada tarefa gerada."
   error_attachment_copy_failed: 'Não foi possível copiar o anexo "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'
