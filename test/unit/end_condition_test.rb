@@ -150,6 +150,23 @@ class EndConditionTest < ActiveSupport::TestCase
     assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
   end
 
+  def test_checker_does_not_count_an_occurrence_skipped_because_the_previous_issue_is_open
+    task = create_task(interval_number: 1, interval_units: 'day', next_run_date: 1.hour.ago,
+                       max_occurrences: 2, if_previous_open: 'skip')
+
+    assert_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+    assert_equal 1, task.reload.occurrences_count
+
+    task.update!(next_run_date: 1.hour.ago)
+    assert_no_difference('Issue.count') { ScheduledTasksChecker.checktasks! }
+
+    task.reload
+    assert task.is_active?
+    assert_equal 1, task.occurrences_count
+    assert task.last_skipped_issue_id.present?
+    assert_equal [], journal_actions(task)
+  end
+
   def test_checker_ends_task_with_a_single_occurrence_after_its_only_run
     task = create_task(interval_number: 1, interval_units: 'month', next_run_date: 1.hour.ago, max_occurrences: 1)
 
