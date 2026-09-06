@@ -114,10 +114,11 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
       watcher_user_ids: [3], rotation_ids: [3, 2], custom_field_values: { '1' => 'MySQL' },
       subtasks: [{ 'tracker_id' => '2', 'subject' => 'Sub', 'assigned_to_id' => '3', 'estimated_hours' => '2' }],
       relations: [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }],
-      last_error: 'boom', is_active: true,
+      last_error: 'boom', is_active: true, if_previous_open: 'skip',
       end_date: Time.utc(2031, 1, 1, 9), max_occurrences: 5
     )
-    task.update_columns(occurrences_count: 5)
+    task.update_columns(occurrences_count: 5, last_skipped_issue_id: 2,
+                        last_skipped_at: Time.utc(2030, 12, 5, 9))
 
     get "/projects/ecookbook/periodictask/#{task.id}.json", headers: api_headers
     assert_response :success
@@ -148,9 +149,13 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
                  t['subtasks']
     assert_equal [{ 'relation_type' => 'follows', 'issue_id' => '1', 'delay' => '2' }], t['relations']
     assert_equal 'boom', t['last_error']
+    assert_equal 'skip', t['if_previous_open']
+    assert_equal({ 'id' => 2 }, t['last_skipped_issue'])
+    assert_equal '2030-12-05T09:00:00Z', t['last_skipped_at']
     assert_equal true, t['is_active']
     assert_equal true, t['ended']
     assert_equal 'ended_by_count', t['end_reason']
+    assert_equal task.effective_next_run_date.xmlschema(0), t['effective_next_run_date']
     assert_equal '2031-01-01T09:00:00Z', t['end_date']
     assert_equal 5, t['max_occurrences']
     assert_equal 5, t['occurrences_count']
@@ -158,6 +163,53 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert t.key?('created_at')
     assert t.key?('updated_at')
     assert_not t.key?('issues')
+    assert_not t.key?('attachments')
+  end
+
+  def test_show_without_skip_or_adjustment
+    task = create_test_periodictask
+
+    get "/projects/ecookbook/periodictask/#{task.id}.json", headers: api_headers
+    t = ActiveSupport::JSON.decode(@response.body)['periodictask']
+    assert_equal 'create', t['if_previous_open']
+    assert_not t.key?('last_skipped_issue')
+    assert_equal t['next_run_date'], t['effective_next_run_date']
+  end
+
+  def test_show_effective_next_run_date_moved_off_a_non_working_day
+    task = create_test_periodictask(next_run_date: Time.utc(2030, 1, 5, 9), # a Saturday
+                                    weekend_adjustment: 'next_working_day')
+
+    get "/projects/ecookbook/periodictask/#{task.id}.json", headers: api_headers
+    t = ActiveSupport::JSON.decode(@response.body)['periodictask']
+    assert_equal '2030-01-05T09:00:00Z', t['next_run_date']
+    assert_equal '2030-01-07T09:00:00Z', t['effective_next_run_date']
+  end
+
+  def test_show_include_attachments
+    set_tmp_attachments_directory
+    task = create_test_periodictask
+    attachment = Attachment.create!(container: task, file: uploaded_test_file('testfile.txt', 'text/plain'),
+                                    author: User.find(2), description: 'the checklist')
+
+    get "/projects/ecookbook/periodictask/#{task.id}.json", params: { include: 'attachments' }, headers: api_headers
+    assert_response :success
+    attachments = ActiveSupport::JSON.decode(@response.body)['periodictask']['attachments']
+    assert_equal 1, attachments.size
+    assert_equal attachment.id, attachments.first['id']
+    assert_equal 'testfile.txt', attachments.first['filename']
+    assert_equal 'the checklist', attachments.first['description']
+    assert_equal "http://www.example.com/attachments/download/#{attachment.id}/testfile.txt",
+                 attachments.first['content_url']
+
+    get "/projects/ecookbook/periodictask/#{task.id}.xml?include=issues,attachments", headers: api_headers
+    assert_response :success
+    assert_select 'periodictask attachments[type=array] attachment filename', text: 'testfile.txt'
+
+    get '/projects/ecookbook/periodictask.json', params: { include: 'attachments' }, headers: api_headers
+    assert_response :success
+    listed = ActiveSupport::JSON.decode(@response.body)['periodictasks'].first['attachments']
+    assert_equal ['testfile.txt'], listed.pluck('filename')
   end
 
   def test_show_xml
@@ -240,6 +292,39 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     json = ActiveSupport::JSON.decode(@response.body)['periodictask']
     assert_equal task.id, json['id']
     assert_equal [{ 'id' => 1, 'name' => 'Database', 'value' => 'PostgreSQL' }], json['custom_fields']
+  end
+
+  def test_create_json_with_uploads
+    set_tmp_attachments_directory
+    token = json_upload('testfile.txt', json_headers)
+
+    assert_difference('Periodictask.count') do
+      post '/projects/ecookbook/periodictask.json',
+           params: { periodictask: { subject: 'With file', tracker_id: 1, interval_number: 1, interval_units: 'day',
+                                     uploads: [{ token: token, filename: 'checklist.txt', content_type: 'text/plain',
+                                                 description: 'Fill in daily' }] } }.to_json,
+           headers: json_headers
+    end
+    assert_response :created
+    task = Periodictask.order(:id).last
+    attachment = task.attachments.to_a.tap { |files| assert_equal 1, files.size }.first
+    assert_equal 'checklist.txt', attachment.filename
+    assert_equal 'Fill in daily', attachment.description
+    assert_equal 2, attachment.author_id
+  end
+
+  def test_update_json_with_uploads
+    set_tmp_attachments_directory
+    task = create_test_periodictask
+    token = json_upload('testfile.txt', json_headers)
+
+    assert_difference('task.attachments.count') do
+      put "/projects/ecookbook/periodictask/#{task.id}.json",
+          params: { periodictask: { uploads: [{ token: token, filename: 'testfile.txt' }] } }.to_json,
+          headers: json_headers
+    end
+    assert_response :no_content
+    assert_equal 'Test task', task.reload.subject
   end
 
   def test_create_with_custom_field_values_hash
@@ -628,6 +713,14 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
 
   def xml_headers(user = User.find(2))
     api_headers(user).merge('CONTENT_TYPE' => 'application/xml')
+  end
+
+  # Uploads a test file through the core API and returns its token.
+  def json_upload(filename, headers)
+    post '/uploads.json', params: File.binread(Rails.root.join('test/fixtures/files', filename)),
+                          headers: headers.merge('CONTENT_TYPE' => 'application/octet-stream')
+    assert_response :created
+    ActiveSupport::JSON.decode(@response.body)['upload']['token']
   end
 
   def create_test_periodictask(attrs = {})

@@ -1,10 +1,4 @@
 class PeriodictaskController < ApplicationController
-  unless respond_to?(:before_action)
-    class << self
-      alias before_action before_filter
-    end
-  end
-
   before_action :find_project
   before_action :authorize
   before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
@@ -65,13 +59,13 @@ class PeriodictaskController < ApplicationController
     respond_to do |format|
       format.html do
         @priorities = IssuePriority.all.index_by(&:id)
-        @last_runs = last_runs_for(@tasks)
+        @last_runs = Periodictask.last_run_dates(@tasks)
       end
       format.api do
         @offset, @limit = api_offset_and_limit
         @task_count = @tasks.count
         @tasks = @tasks.offset(@offset).limit(@limit).to_a
-        @last_runs = last_runs_for(@tasks)
+        @last_runs = Periodictask.last_run_dates(@tasks)
       end
     end
   end
@@ -101,7 +95,7 @@ class PeriodictaskController < ApplicationController
     end
     find_copy_source
     @periodictask.copy_attachments_from(@copy_from) if @copy_from && params[:copy_attachments] == '1'
-    @periodictask.save_attachments(params[:attachments])
+    @periodictask.save_attachments(attachment_params)
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('create')
@@ -140,7 +134,7 @@ class PeriodictaskController < ApplicationController
 
   def update
     assign_periodictask_params
-    @periodictask.save_attachments(params[:attachments])
+    @periodictask.save_attachments(attachment_params)
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('update')
@@ -188,15 +182,14 @@ class PeriodictaskController < ApplicationController
       @issue = @periodictask.generate_issue(now)
       if @issue.nil?
         @run_errors << l(:label_project_missing_or_closed)
-        @periodictask.update(last_error: @run_errors.join(', '))
       elsif @issue.save
         @periodictask.log_activity('run')
         @run_errors = @periodictask.complete_generated_issue(@issue, now)
-        @periodictask.update(last_error: @run_errors.join(', ').presence)
       else
         @run_errors = @issue.errors.full_messages
-        @periodictask.update(last_error: @run_errors.join(', '))
       end
+      @periodictask.last_error = @run_errors.join(', ').presence
+      @periodictask.save_run!
     end
 
     respond_to do |format|
@@ -293,8 +286,10 @@ class PeriodictaskController < ApplicationController
     Periodictask.new(project: @project, author_id: User.current.id)
   end
 
-  def last_runs_for(tasks)
-    PeriodictaskIssue.where(periodictask_id: tasks.map(&:id)).group(:periodictask_id).maximum(:created_at)
+  # The form posts attachments[]; API clients send periodictask[uploads] with
+  # tokens from POST /uploads, like the core issues API.
+  def attachment_params
+    params[:attachments] || params.dig(:periodictask, :uploads)
   end
 
   # The task's generated issues, rendered with Redmine's own issue list so
@@ -324,8 +319,7 @@ class PeriodictaskController < ApplicationController
   def load_users
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
-    # Users only: an assignee rotation is a roster of people
-    @rotation_candidates = @assignables.select { |p| p.is_a?(User) }
+    @rotation_candidates = Periodictask.rotation_candidates(@project)
 
     # Get the users in the project (as authors)
     @authors = @project.members.map(&:user)

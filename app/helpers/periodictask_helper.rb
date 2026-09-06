@@ -1,7 +1,8 @@
 module PeriodictaskHelper
   # REST API representation of a task, shared by the project list/detail and
   # the admin list. Related records follow Redmine core's `{id, name}` shape;
-  # generated issues are only listed on request (`include=issues`).
+  # generated issues and attachments are only listed on request
+  # (`include=issues,attachments`).
   def render_api_periodictask(api, task, last_run)
     api.id task.id
     render_api_periodictask_associations(api, task)
@@ -35,10 +36,16 @@ module PeriodictaskHelper
     api.array(:relations) do
       task.relations.each { |row| api.relation(row.slice(*Periodictask::RELATION_KEYS)) }
     end
+    api.if_previous_open task.if_previous_open
+    if task.last_skipped_issue_id
+      api.last_skipped_issue(id: task.last_skipped_issue_id)
+      api.last_skipped_at task.last_skipped_at
+    end
     api.is_active task.is_active
     api.ended task.ended?
     api.end_reason task.end_reason
     api.next_run_date task.next_run_date
+    api.effective_next_run_date task.effective_next_run_date
     api.end_date task.end_date
     api.max_occurrences task.max_occurrences
     api.occurrences_count task.occurrences_count
@@ -48,6 +55,9 @@ module PeriodictaskHelper
     api.created_at task.created_at
     api.updated_at task.updated_at
     render_api_periodictask_issues(api, task) if include_in_api_response?('issues')
+    return unless include_in_api_response?('attachments')
+
+    api.array(:attachments) { task.attachments.each { |attachment| render_api_attachment(attachment, api) } }
   end
 
   def render_api_periodictask_associations(api, task)
