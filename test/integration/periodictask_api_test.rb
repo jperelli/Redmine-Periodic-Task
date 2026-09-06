@@ -375,7 +375,12 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
         post '/projects/ecookbook/periodictask.json', params: payload.to_json, headers: json_headers
       end
       assert_response :created
-      assert_equal value.presence&.to_i, Periodictask.order(:id).last.max_occurrences
+      stored = Periodictask.order(:id).last.max_occurrences
+      if value.present?
+        assert_equal value.to_i, stored
+      else
+        assert_nil stored
+      end
     end
   end
 
