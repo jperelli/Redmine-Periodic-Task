@@ -146,4 +146,6 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "テンプレートに添付されたファイルは、生成される各チケットにコピーされます。"
+  error_attachment_copy_failed: '添付ファイル「%{filename}」をコピーできませんでした: %{error}'
   label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'

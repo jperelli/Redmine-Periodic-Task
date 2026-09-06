@@ -148,4 +148,6 @@ vi:
   label_periodictask_run_source_endpoint: "URL kiểm tra"
   label_periodictask_run_source_manual: "Thủ công"
   label_periodictask_run_until: "đến %{time}"
+  label_attachments_info: "Các tệp đính kèm vào mẫu được sao chép vào mỗi vấn đề được tạo."
+  error_attachment_copy_failed: 'Không thể sao chép tệp đính kèm "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'
