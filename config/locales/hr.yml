@@ -151,6 +151,24 @@ hr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_if_previous_open: "Prethodni zadatak otvoren"
+  label_if_previous_open_info: "Što izvršavanje radi kada zadatak stvoren prethodnim izvršavanjem još nije zatvoren"
+  label_if_previous_open_help: "Što znače načini, s primjerima"
+  label_if_previous_open_create: "Svejedno stvori novi zadatak"
+  label_if_previous_open_create_info: "Zadano: zadaci se gomilaju dok ih netko ne zatvori."
+  label_if_previous_open_skip: "Preskoči ovo ponavljanje"
+  label_if_previous_open_skip_info: "Zadatak se ne stvara, a raspored prelazi na sljedeće ponavljanje."
+  label_if_previous_open_close_previous: "Zatvori prethodni zadatak"
+  label_if_previous_open_close_previous_info: "Prethodni zadatak zatvara se prvim zatvorenim statusom svog tijeka rada, a zatim se stvara novi."
+  label_if_previous_open_after_completion: "Čekaj dok se ne zatvori"
+  label_if_previous_open_after_completion_info: "Dok je otvoren ništa se ne stvara; nakon zatvaranja sljedeći zadatak dospijeva jedan interval nakon datuma zatvaranja."
+  label_periodictask_close_previous_failed: "Prethodni zadatak nije bilo moguće zatvoriti"
+  error_no_closed_status: "nije dostupan nijedan zatvoreni status"
+  text_periodictask_closed_by_next_issue: "Zatvorio periodični zadatak: zamijenjen zadatkom #%{id}."
+  text_periodictask_skipped_open_issue: "preskočeno: #%{id} je još otvoren"
+  text_periodictask_rescheduled_after_completion: "#%{id} je zatvoren, sljedeće izvršavanje pomaknuto na %{time}"
+  text_periodictask_last_skipped: "Izvršavanje od %{time} nije stvorilo zadatak: %{issue} je još bio otvoren."
+  field_periodictask_run_notes: "Napomene"
   label_attachments_info: "Datoteke priložene predlošku kopiraju se na svaki stvoreni zadatak."
   error_attachment_copy_failed: 'Privitak "%{filename}" nije moguće kopirati: %{error}'
   label_new_periodictask_from_issue: 'Stvori periodički zadatak iz ovog zadatka'

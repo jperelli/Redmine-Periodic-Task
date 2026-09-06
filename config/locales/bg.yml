@@ -146,6 +146,24 @@ bg:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_if_previous_open: "Отворена предишна задача"
+  label_if_previous_open_info: "Какво прави изпълнението, когда задачата, създадена от предишното изпълнение, още не е затворена"
+  label_if_previous_open_help: "Какво означават режимите, с примери"
+  label_if_previous_open_create: "Все пак да се създаде нова задача"
+  label_if_previous_open_create_info: "По подразбиране: задачите се натрупват, докато някой не ги затвори."
+  label_if_previous_open_skip: "Пропускане на това изпълнение"
+  label_if_previous_open_skip_info: "Не се създава задача и графикът преминава към следващото изпълнение."
+  label_if_previous_open_close_previous: "Затваряне на предишната задача"
+  label_if_previous_open_close_previous_info: "Предишната задача се затваря с първия затворен статус от работния поток, след което се създава новата."
+  label_if_previous_open_after_completion: "Изчакване до затварянето ѝ"
+  label_if_previous_open_after_completion_info: "Докато е отворена, нищо не се създава; след затварянето следващата задача е дължима един интервал след датата на затваряне."
+  label_periodictask_close_previous_failed: "Предишната задача не можа да бъде затворена"
+  error_no_closed_status: "няма наличен затворен статус"
+  text_periodictask_closed_by_next_issue: "Затворена от периодичната задача: заменена от #%{id}."
+  text_periodictask_skipped_open_issue: "пропуснато: #%{id} е още отворена"
+  text_periodictask_rescheduled_after_completion: "#%{id} беше затворена, следващото изпълнение е пренасрочено за %{time}"
+  text_periodictask_last_skipped: "Изпълнението от %{time} не създаде задача: %{issue} беше още отворена."
+  field_periodictask_run_notes: "Бележки"
   label_attachments_info: "Файловете, прикачени към шаблона, се копират във всяка създадена задача."
   error_attachment_copy_failed: 'Прикаченият файл "%{filename}" не можа да бъде копиран: %{error}'
   label_new_periodictask_from_issue: 'Създай периодична задача от тази задача'

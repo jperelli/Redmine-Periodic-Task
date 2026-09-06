@@ -146,6 +146,24 @@ en:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_if_previous_open: "Previous issue open"
+  label_if_previous_open_info: "What a run does when the issue created by the previous run has not been closed yet"
+  label_if_previous_open_help: "What the modes mean, with examples"
+  label_if_previous_open_create: "Create a new issue anyway"
+  label_if_previous_open_create_info: "Default: issues pile up until someone closes them."
+  label_if_previous_open_skip: "Skip this occurrence"
+  label_if_previous_open_skip_info: "No issue is created and the schedule moves on to the next occurrence."
+  label_if_previous_open_close_previous: "Close the previous issue"
+  label_if_previous_open_close_previous_info: "The previous issue is closed with the first closed status of its workflow, then the new one is created."
+  label_if_previous_open_after_completion: "Wait until it is closed"
+  label_if_previous_open_after_completion_info: "Nothing is created while it is open; once it is closed, the next issue is due one interval after the closing date."
+  label_periodictask_close_previous_failed: "Could not close the previous issue"
+  error_no_closed_status: "no closed status available"
+  text_periodictask_closed_by_next_issue: "Closed by the periodic task: superseded by #%{id}."
+  text_periodictask_skipped_open_issue: "skipped: #%{id} is still open"
+  text_periodictask_rescheduled_after_completion: "#%{id} was closed, next run rescheduled to %{time}"
+  text_periodictask_last_skipped: "The run of %{time} did not create an issue: %{issue} was still open."
+  field_periodictask_run_notes: "Notes"
   label_attachments_info: "Files attached to the template are copied onto every generated issue."
   error_attachment_copy_failed: 'Attachment "%{filename}" could not be copied: %{error}'
   label_new_periodictask_from_issue: 'Create periodic task from this issue'
