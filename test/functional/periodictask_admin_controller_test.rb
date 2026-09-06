@@ -13,6 +13,10 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
                                      next_run_date: 1.hour.ago)
   end
 
+  def teardown
+    I18n.locale = I18n.default_locale
+  end
+
   def test_index_lists_tasks_of_every_project
     create_test_periodictask(Project.find(1), subject: 'Task on ecookbook')
     create_test_periodictask(Project.find(2), subject: 'Task on onlinestore')
