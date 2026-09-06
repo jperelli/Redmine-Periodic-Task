@@ -1471,6 +1471,118 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_operator body.index('Three business days'), :<, body.index('One week')
   end
 
+  def test_new_offers_the_assignable_users_of_the_project_for_the_rotation
+    get :new, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'select#periodictask_rotation_candidate' do
+      assert_select 'option[value=?]', '2'
+      assert_select 'option[value=?]', '3'
+      assert_select 'option[value=?]', '5', 0 # locked member
+    end
+    assert_select '#periodictask_rotation_list .periodictask-rotation-member', 0
+    assert_select 'input[name=?][value=""]', 'periodictask[rotation_ids][]'
+  end
+
+  def test_create_stores_the_rotation_in_the_posted_order
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Rotating task', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'month', rotation_ids: ['', '3', '2']
+      }
+    }
+    assert_response :redirect
+
+    task = Periodictask.find_by(subject: 'Rotating task')
+    assert_equal [3, 2], task.rotation_ids
+    assert_equal 0, task.rotation_index
+    assert_equal 2, task.assigned_to_id
+  end
+
+  def test_edit_lists_the_rotation_in_order_and_marks_who_is_next
+    task = create_test_periodictask(rotation_ids: [3, 2, 5], rotation_index: 1)
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+
+    members = css_select('#periodictask_rotation_list .periodictask-rotation-member')
+    assert_equal(%w[3 2 5], members.map { |m| m['data-user-id'] })
+    assert_equal %w[3 2 5], rendered_rotation_ids
+    assert_select '#periodictask_rotation_next[data-user-id=?]', '2', text: "Next: #{User.find(2).name}"
+    assert_select '.periodictask-rotation-member.periodictask-rotation-unassignable[data-user-id="5"]',
+                  text: /not assignable/
+    assert_select 'select#periodictask_rotation_candidate option[value=?]', '2', 0
+  end
+
+  def test_update_replaces_the_rotation_and_clears_it_when_nothing_is_posted
+    task = create_test_periodictask(rotation_ids: [3, 2])
+
+    put :update, params: { project_id: 'ecookbook', id: task.id,
+                           periodictask: { subject: 'Test task', interval_number: 1, interval_units: 'month',
+                                           rotation_ids: ['2'] } }
+    assert_equal [2], task.reload.rotation_ids
+
+    put :update, params: { project_id: 'ecookbook', id: task.id,
+                           periodictask: { subject: 'Test task', interval_number: 1, interval_units: 'month' } }
+    assert_equal [], task.reload.rotation_ids
+  end
+
+  def test_show_and_index_display_who_is_next_in_the_rotation
+    task = create_test_periodictask(rotation_ids: [3, 2], rotation_index: 1)
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.assignee-rotation .periodictask-rotation-next', text: "Next: #{User.find(2).name}"
+    assert_select '.assigned-to a', text: User.find(2).name
+    assert_select 'ol.periodictask-rotation li' do |items|
+      assert_equal 2, items.size
+      assert_select items.last, 'strong', text: /Next/
+    end
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'td .periodictask-rotation-next[title=?]', "#{User.find(3).name}, #{User.find(2).name}",
+                  text: "Next: #{User.find(2).name}"
+  end
+
+  def test_show_names_the_fallback_assignee_when_nobody_in_the_rotation_is_assignable
+    task = create_test_periodictask(rotation_ids: [5])
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.assignee-rotation .periodictask-rotation-fallback', text: /#{User.find(2).name} is used/
+  end
+
+  def test_run_now_advances_the_rotation
+    task = create_test_periodictask(rotation_ids: [3, 2])
+
+    post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    assert_equal 3, task.created_issues.first.assigned_to_id
+    assert_equal 1, task.reload.rotation_index
+
+    post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    assert_equal 2, task.created_issues.first.assigned_to_id
+    assert_equal 0, task.reload.rotation_index
+  end
+
+  def test_run_now_generates_and_saves_under_the_task_row_lock
+    task = create_test_periodictask(rotation_ids: [3, 2])
+    Periodictask.any_instance.expects(:with_lock).once.yields
+
+    assert_difference('Issue.count') { post :run_now, params: { project_id: 'ecookbook', id: task.id } }
+
+    assert_response :redirect
+    assert_equal 1, task.reload.rotation_index
+  end
+
+  def test_copy_prefills_the_rotation_and_restarts_it
+    task = create_test_periodictask(rotation_ids: [3, 2], rotation_index: 1)
+
+    get :copy, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_equal %w[3 2], rendered_rotation_ids
+    assert_select '#periodictask_rotation_next[data-user-id=""]', text: "Next: #{User.find(3).name}"
+  end
+
   def test_denies_member_without_permission
     # dlopez (user 3) is a Developer member of ecookbook but the Developer role
     # was not granted the :periodictask permission in setup.
@@ -1495,6 +1607,10 @@ class PeriodictaskControllerTest < ActionController::TestCase
   def previewed_upcoming_run_times
     @response.body.scan(/class=\\"periodictask-run-chip[^"\\]*\\" title=\\"([^" \\]+)/).flatten
              .map { |t| Time.iso8601(t).utc }
+  end
+
+  def rendered_rotation_ids
+    css_select('#periodictask_rotation_list input[name="periodictask[rotation_ids][]"]').map { |i| i['value'] }
   end
 
   def create_test_periodictask(attrs = {})

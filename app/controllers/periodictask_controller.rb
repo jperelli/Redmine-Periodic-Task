@@ -60,7 +60,7 @@ class PeriodictaskController < ApplicationController
 
     @tasks = Periodictask.where(project_id: @project[:id])
                          .left_outer_joins(:tracker, :assigned_to)
-                         .preload(:tracker, :assigned_to)
+                         .preload(:project, :tracker, :assigned_to)
                          .order(sort_clause)
     respond_to do |format|
       format.html do
@@ -179,19 +179,24 @@ class PeriodictaskController < ApplicationController
   # Generate an issue right now from the task config, without touching the
   # schedule. Handy for testing a task before its next run date arrives.
   def run_now
-    @issue = @periodictask.generate_issue(Time.current)
+    now = Time.current
     @run_errors = []
 
-    if @issue.nil?
-      @run_errors << l(:label_project_missing_or_closed)
-      @periodictask.update(last_error: @run_errors.join(', '))
-    elsif @issue.save
-      @periodictask.log_activity('run')
-      @run_errors = @periodictask.complete_generated_issue(@issue, Time.current)
-      @periodictask.update(last_error: @run_errors.join(', ').presence)
-    else
-      @run_errors = @issue.errors.full_messages
-      @periodictask.update(last_error: @run_errors.join(', '))
+    # Same row lock as the scheduler: the task (rotation position, last_error)
+    # is saved before another trigger can generate from it.
+    @periodictask.with_lock do
+      @issue = @periodictask.generate_issue(now)
+      if @issue.nil?
+        @run_errors << l(:label_project_missing_or_closed)
+        @periodictask.update(last_error: @run_errors.join(', '))
+      elsif @issue.save
+        @periodictask.log_activity('run')
+        @run_errors = @periodictask.complete_generated_issue(@issue, now)
+        @periodictask.update(last_error: @run_errors.join(', ').presence)
+      else
+        @run_errors = @issue.errors.full_messages
+        @periodictask.update(last_error: @run_errors.join(', '))
+      end
     end
 
     respond_to do |format|
@@ -313,6 +318,8 @@ class PeriodictaskController < ApplicationController
   def load_users
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
+    # Users only: an assignee rotation is a roster of people
+    @rotation_candidates = @assignables.select { |p| p.is_a?(User) }
 
     # Get the users in the project (as authors)
     @authors = @project.members.map(&:user)
@@ -351,6 +358,7 @@ class PeriodictaskController < ApplicationController
       attrs[:relations] ||= []
       attrs[:weekdays] ||= []
       attrs[:month_weeks] ||= []
+      attrs[:rotation_ids] ||= []
     end
     @periodictask.attributes = attrs
   end
@@ -369,6 +377,7 @@ class PeriodictaskController < ApplicationController
       { custom_field_values: {} },
       { custom_fields: [:id, :value, { value: [] }] },
       { watcher_user_ids: [] },
+      { rotation_ids: [] },
       { subtasks: Periodictask::SUBTASK_KEYS },
       { relations: Periodictask::RELATION_FORM_KEYS }
     )

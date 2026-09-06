@@ -152,6 +152,13 @@ tr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Atanan rotasyonu"
+  label_assignee_rotation_info: "Oluşturulan işler bu listedeki kullanıcılara sırayla atanır. Projede artık iş atanamayan kullanıcılar atlanır; liste boşsa veya listeden kimseye atanamıyorsa yukarıdaki atanan kullanılır. Şimdi çalıştır da rotasyonu ilerletir."
+  label_rotation_next: "Sıradaki: %{user}"
+  label_rotation_fallback: "Rotasyondan kimseye atanamıyor; %{user} kullanılır"
+  label_rotation_not_assignable: "atanamaz"
+  label_rotation_move_up: "Yukarı taşı"
+  label_rotation_move_down: "Aşağı taşı"
   label_weekend_adjustment: "Çalışılmayan günler"
   label_weekend_adjustment_info: "Bir çalıştırma Redmine'ın çalışılmayan günlerinden birine (Yönetim → Ayarlar → İş takibi) denk geldiğinde ne olacağı. Zamanlamanın kendisi kaymaz; ayın 1'i 1 olarak kalır."
   label_weekend_adjustment_none: "O gün çalıştır"

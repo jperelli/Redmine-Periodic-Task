@@ -156,6 +156,13 @@ pl:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Rotacja przypisanych"
+  label_assignee_rotation_info: "Wygenerowane zagadnienia są przypisywane kolejno użytkownikom z tej listy. Użytkownicy, którym nie można już przypisywać zagadnień w projekcie, są pomijani; gdy lista jest pusta lub nikomu z niej nie można przypisać, używany jest przypisany powyżej. „Uruchom teraz” również przesuwa rotację."
+  label_rotation_next: "Następny: %{user}"
+  label_rotation_fallback: "Nikomu z rotacji nie można przypisać; używany jest %{user}"
+  label_rotation_not_assignable: "nie można przypisać"
+  label_rotation_move_up: "Przenieś wyżej"
+  label_rotation_move_down: "Przenieś niżej"
   label_weekend_adjustment: "Dni wolne od pracy"
   label_weekend_adjustment_info: "Co się dzieje, gdy uruchomienie wypada w dzień wolny od pracy ustawiony w Redmine (Administracja → Ustawienia → Śledzenie zagadnień). Sam harmonogram się nie przesuwa – 1. dzień miesiąca pozostaje 1. dniem."
   label_weekend_adjustment_none: "Uruchom w tym dniu"

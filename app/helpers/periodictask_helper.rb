@@ -25,6 +25,10 @@ module PeriodictaskHelper
     api.array(:watchers) do
       User.where(id: task.watcher_user_ids).sorted.each { |u| api.user(id: u.id, name: u.name) }
     end
+    api.array(:rotation) { task.rotation_users.each { |u| api.user(id: u.id, name: u.name) } }
+    if (next_user = task.next_rotation_user)
+      api.rotation_next(id: next_user.id, name: next_user.name)
+    end
     api.array(:subtasks) do
       task.subtasks.each { |row| api.subtask(row.slice(*Periodictask::SUBTASK_KEYS)) }
     end
@@ -323,6 +327,33 @@ module PeriodictaskHelper
   # icon from the CSS class. Extra options (e.g. `size:`) go to sprite_icon.
   def periodictask_marker_icon(sprite, css_class, title, **)
     content_tag(:span, periodictask_sprite_icon(sprite, **), title: title, class: "icon-only #{css_class}")
+  end
+
+  # Assignee cell of the lists: with a rotation, who is up next; otherwise the
+  # single assignee.
+  def periodictask_assignee(task)
+    return periodictask_rotation_next(task) if task.rotation?
+
+    task.assigned_to ? link_to_principal(task.assigned_to) : '-'
+  end
+
+  def periodictask_fallback_assignee(task)
+    task.assigned_to ? link_to_principal(task.assigned_to) : periodictask_default_assignee_label
+  end
+
+  # "Next: <user>" for a task with a rotation, the whole roster as tooltip.
+  # When nobody in the rotation can be assigned issues anymore, says so and
+  # names the fallback assignee instead.
+  def periodictask_rotation_next(task)
+    roster = task.rotation_users.map(&:name).join(', ')
+    user = task.next_rotation_user
+    if user
+      content_tag(:span, l(:label_rotation_next, user: link_to_principal(user)).html_safe,
+                  title: roster, class: 'periodictask-rotation-next')
+    else
+      content_tag(:span, l(:label_rotation_fallback, user: periodictask_fallback_assignee(task)).html_safe,
+                  title: roster, class: 'periodictask-rotation-fallback')
+    end
   end
 
   def periodictask_default_label(value)

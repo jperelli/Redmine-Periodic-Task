@@ -24,6 +24,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   attribute :relations, :json, default: []
   attribute :weekdays, :json, default: []
   attribute :month_weeks, :json, default: []
+  attribute :rotation_ids, :json, default: []
 
   SUBTASK_KEYS = %w[tracker_id subject assigned_to_id estimated_hours].freeze
   RELATION_KEYS = %w[relation_type issue_id delay].freeze
@@ -34,9 +35,10 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   RELATION_FORM_KEYS = (RELATION_KEYS + %w[target]).freeze
 
   # Identity, ownership and the outcome of past runs belong to the source task;
-  # everything else describes the template and is worth copying.
+  # everything else describes the template and is worth copying. A copied
+  # rotation starts over from its first user.
   COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error
-                                last_skipped_issue_id last_skipped_at].freeze
+                                last_skipped_issue_id last_skipped_at rotation_index].freeze
 
   # Subtask templates: array of hashes with SUBTASK_KEYS, each becoming a child
   # issue of the generated issue. Accepts an array or an index-keyed hash as
@@ -143,6 +145,76 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     super(Array(value).map(&:to_i).reject(&:zero?))
   end
 
+  # Users the generated issues are assigned to in turn, in this order. Empty
+  # means every issue goes to assigned_to.
+  def rotation_ids
+    self.class.normalize_user_ids(super)
+  end
+
+  def rotation_ids=(value)
+    super(self.class.normalize_user_ids(value))
+  end
+
+  def self.normalize_user_ids(value)
+    Array(value).filter_map { |v| Integer(v.to_s, 10, exception: false) }.reject { |v| v <= 0 }.uniq
+  end
+
+  # Position in rotation_ids of the user the next issue goes to, always within
+  # the list even after members were removed from it.
+  def rotation_index
+    ids = rotation_ids
+    ids.empty? ? 0 : super.to_i % ids.size
+  end
+
+  def rotation?
+    rotation_ids.any?
+  end
+
+  # Members of the project a rotation can be made of: users (no groups) who
+  # are active and hold a role that allows assignment.
+  def rotation_candidates
+    return [] unless project
+
+    project.assignable_users.select { |p| p.is_a?(User) }
+  end
+
+  # The rotation users in list order, including the ones no longer assignable
+  # so the UI can point them out. Deleted users are dropped.
+  def rotation_users
+    ids = rotation_ids
+    users = User.where(id: ids).index_by(&:id)
+    ids.filter_map { |uid| users[uid] }
+  end
+
+  # The user the next generated issue goes to: the one at rotation_index, or
+  # the first assignable one after it. Nil when the rotation is empty or none
+  # of its users can be assigned issues in the project anymore.
+  def next_rotation_user
+    ids = rotation_ids
+    return if ids.empty?
+
+    assignable = rotation_candidates.index_by(&:id)
+    ids.rotate(rotation_index).filter_map { |uid| assignable[uid] }.first
+  end
+
+  # Moves the rotation past the user +issue+ went to, so the next run picks
+  # the following one. Rotation users passed over because they are no longer
+  # assignable are logged. Leaves the position alone when the issue went to
+  # the fallback assignee. The caller persists the task.
+  def advance_rotation(issue)
+    ids = rotation_ids
+    return if ids.empty?
+
+    position = ids.index(issue.assigned_to_id)
+    skipped = position ? ids.rotate(rotation_index).take_while { |uid| uid != issue.assigned_to_id } : ids
+    skipped.each do |uid|
+      Rails.logger.warn "Periodictask ##{id}: rotation skipped user ##{uid}, not assignable in project ##{project_id}"
+    end
+    return unless position
+
+    self.rotation_index = (position + 1) % ids.size
+  end
+
   # Tags are stored as a comma-separated string (the format the RedmineUP Tags
   # plugin itself uses for `Issue#tag_list=`). Accepts a string or an array.
   def tag_list=(value)
@@ -200,6 +272,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   validate :validate_subtasks_and_relations
   validate :validate_recurrence
   before_validation :clear_irrelevant_recurrence_options
+  before_validation :keep_rotation_position
   before_validation { self.if_previous_open = IF_PREVIOUS_OPEN_MODES.first if if_previous_open.blank? }
 
   # Tasks the scheduler picks up. A disabled task keeps its schedule and can
@@ -371,7 +444,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     issue = Issue.new(project_id: project_id,
                       tracker_id: effective_tracker.try(:id),
                       category_id: issue_category_id, parent_id: parent_id,
-                      assigned_to_id: assigned_to_id, author_id: author_id,
+                      assigned_to_id: next_rotation_user&.id || assigned_to_id, author_id: author_id,
                       subject: subj, description: desc)
     issue.fixed_version_id = fixed_version_id if fixed_version_id.present?
     issue.priority_id = priority_id if priority_id.present?
@@ -406,12 +479,13 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   end
 
   # Everything that needs the generated issue to be persisted first: watchers,
-  # attachments, subtasks, relations and the run history. Returns the error
-  # messages of the attachments/subtasks/relations that could not be created
-  # (the issue itself is kept).
+  # attachments, subtasks, relations, the run history and the rotation
+  # position. Returns the error messages of the attachments/subtasks/
+  # relations that could not be created (the issue itself is kept).
   def complete_generated_issue(issue, now = Time.current)
     fill_watchers(issue)
     record_generated_issue(issue)
+    advance_rotation(issue)
     copy_attachments_to(issue) + create_subtasks(issue, now) + create_relations(issue)
   end
 
@@ -691,6 +765,20 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     return false unless interval_number.to_i.positive? && INTERVAL_UNITS.include?(interval_units.to_s.downcase)
 
     !monthly_weekday_mode? || (weekdays.any? && month_weeks.any?)
+  end
+
+  # When the rotation list is edited, the user who was up next stays up next
+  # if still listed; otherwise the rotation starts over from the first user.
+  def keep_rotation_position
+    return if new_record? || !rotation_ids_changed? || rotation_index_changed?
+
+    previous = self.class.normalize_user_ids(rotation_ids_was)
+    unless previous.empty?
+      in_turn = previous.rotate(rotation_index_was.to_i % previous.size)
+      assignable = rotation_candidates.map(&:id)
+      next_id = in_turn.find { |uid| assignable.include?(uid) } || in_turn.first
+    end
+    self.rotation_index = rotation_ids.index(next_id) || 0
   end
 
   def copy_attachment_error(attachment, issue)
