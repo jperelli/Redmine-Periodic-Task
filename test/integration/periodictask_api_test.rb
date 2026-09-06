@@ -105,6 +105,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     task = create_test_periodictask(
       subject: 'Full task', description: 'Body', interval_number: 2, interval_units: 'month',
       monthly_mode: 'weekday', weekdays: [5], month_weeks: [1, 3], set_start_date: true,
+      weekend_adjustment: 'next_working_day',
       due_date_number: 3, due_date_units: 'day', estimated_hours: 1.5, done_ratio: 20,
       issue_category_id: 1, fixed_version_id: 2, priority_id: 6, status_id: 2,
       watcher_user_ids: [3], rotation_ids: [3, 2], custom_field_values: { '1' => 'MySQL' },
@@ -124,6 +125,7 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal 'weekday', t['monthly_mode']
     assert_equal [5], t['weekdays']
     assert_equal [1, 3], t['month_weeks']
+    assert_equal 'next_working_day', t['weekend_adjustment']
     assert_equal true, t['set_start_date']
     assert_equal 3, t['due_date_number']
     assert_equal 'day', t['due_date_units']
