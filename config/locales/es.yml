@@ -25,6 +25,7 @@ es:
   label_set_start_date_info: Cuando está marcada, la fecha de inicio de cada incidencia creada se establece en el día en que se genera.
   label_due_date: 'Establecer fecha fin después de'
   label_due_date_info: 'Fecha fin de cada incidencia creada, establecida después de este período de tiempo a partir de su fecha de inicio.'
+  label_assigned_to_info: 'Opcional. Si se deja en blanco, se aplica el asignado por defecto de Redmine a cada incidencia creada: el asignado por defecto de la categoría o, en su defecto, el del proyecto.'
   label_estimated_hours: Tiempo estimado
   label_estimated_hours_after: Horas
   label_description: Descripción

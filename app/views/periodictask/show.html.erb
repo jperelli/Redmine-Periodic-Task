@@ -91,7 +91,7 @@
                 (@periodictask.priority_id ? IssuePriority.find_by(id: @periodictask.priority_id)&.name : periodictask_default_label(IssuePriority.default&.name)),
                 class: 'priority'
       rows.left l(:field_assigned_to),
-                (@periodictask.assigned_to ? link_to_principal(@periodictask.assigned_to) : '-'),
+                (@periodictask.assigned_to ? link_to_principal(@periodictask.assigned_to) : periodictask_default_assignee_label),
                 class: 'assigned-to'
       rows.left l(:field_category),
                 (@periodictask.issue_category&.name || '-'),

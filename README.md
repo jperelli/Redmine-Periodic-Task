@@ -206,6 +206,10 @@ By default a task creates a new issue on every occurrence, even when nobody clos
 
 The setting is copied by the *Copy* action and shown on the task detail page. *Run now* ignores it and always creates an issue. "Previous issue" means the newest top-level issue the task generated (generated subtasks do not count); an issue deleted from Redmine is ignored. [doc/if-previous-open.md](doc/if-previous-open.md) (also linked from the help icon next to the setting) explains each mode with examples.
 
+### Assignee
+
+The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
+
 ### Variable interpolation
 
 You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.
