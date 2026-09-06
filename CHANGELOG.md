@@ -27,6 +27,7 @@
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
 - The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
 - `business day` intervals and due dates follow Redmine's *Non-working days* setting (`Administration` > `Settings` > `Issue tracking`) through `Redmine::Utils::DateCalculation` instead of the `business_time` gem's hard-coded Monday–Friday week; the gem dependency and the plugin `Gemfile` are gone. A due date in `business day(s)` was silently counted in calendar days (@jperelli)
+- The assignee is optional: a task can be saved without one and its issues follow Redmine's default assignee rules (category default assignee, then project default assignee), like any other unassigned issue (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 

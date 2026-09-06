@@ -26,6 +26,7 @@ zh:
   label_set_start_date_info: '勾选后，每个创建的问题的开始日期将设置为其生成当天。'
   label_due_date: '设置截止日期（之后）'
   label_due_date_info: '每个创建的问题的截止日期，设置为其开始日期之后的这段时间。'
+  label_assigned_to_info: '可选。留空时，每个创建的问题将应用 Redmine 的默认指派人：类别的默认指派人，否则为项目的默认指派人。'
   label_estimated_hours: 预期时间
   label_estimated_hours_after: 小时
   label_description: 描述
