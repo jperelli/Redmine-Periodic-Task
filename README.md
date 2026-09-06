@@ -195,6 +195,16 @@ A task repeats every N days, business days, weeks, months or years. A weekly tas
 
 To check a rule before saving it, the task form shows the next 5 occurrences under the next run date and refreshes them (in your time zone) whenever the interval, the weekdays, the ordinals or the next run date change; nothing is saved until you submit the form. The task page shows the same *Next occurrences* box for a saved task. The first date is the stored next run date, the following ones are the dates the scheduler will move to after each run, so runs missed while the scheduler was down collapse into the next future date.
 
+Business days follow Redmine's own *Administration → Settings → Issue tracking → Non-working days* setting (Saturday and Sunday by default), the same one Redmine uses for issue dates. There are no extra gems and no separate holiday calendar.
+
+The `Non-working days` option of a task decides what happens when a run falls on one of those days, for any unit:
+
+- `Run on that day` (default): the issue is created on the non-working day.
+- `Move to the next working day`: Saturday August 1st is run on Monday August 3rd.
+- `Move to the previous working day`: Saturday August 1st is run on Friday July 31st.
+
+The time of day is kept and the schedule itself is not moved: "every month on day 1" still means the 1st, so the next run after a moved August 1st is September 1st. The task list and detail page show the day the task will actually run, with the original date next to it.
+
 ### Previous issue open
 
 By default a task creates a new issue on every occurrence, even when nobody closed the one from the previous occurrence, so unfinished issues pile up (a weekly report nobody writes). The *Previous issue open* setting of each task decides what a due run does when the issue it generated last time is not closed yet:
@@ -283,7 +293,7 @@ Periodic tasks can be listed, created, updated, deleted and run through Redmine'
 
 `:project_id` is the project's numeric id or identifier. Replace `.json` with `.xml` for XML. Add `include=issues` to `GET` requests to list the issues each task generated (`issues: [{id, created_at}]`). A task from another project answers `404`, a missing permission `403`, validation errors `422` with `{"errors": ["Subject cannot be blank", ...]}`; the same rules that the form applies (the task is validated as the issue it would create).
 
-A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `is_active`, `next_run_date`, `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
+A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `weekend_adjustment`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `subtasks`, `relations`, `is_active`, `next_run_date`, `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
 
 Attributes accepted on create/update, under a `periodictask` key (the same the form posts):
 
@@ -294,6 +304,7 @@ Attributes accepted on create/update, under a `periodictask` key (the same the f
 | `interval_number`, `interval_units` | Integer and one of `day`, `business_day`, `week`, `month`, `year` |
 | `weekdays` | Array of weekdays, `0` = Sunday ... `6` = Saturday (Ruby's `wday`), for weekly and monthly-by-weekday tasks |
 | `monthly_mode`, `month_weeks` | `day_of_month` or `weekday`, and the array of occurrences (`1`..`5`) for the latter |
+| `weekend_adjustment` | `none`, `next_working_day` or `previous_working_day`: what to do when a run falls on one of Redmine's non-working days |
 | `next_run_date` | ISO 8601 time. Left blank on create, it is computed from the recurrence |
 | `set_start_date` | Boolean, set the issue start date to the generation date |
 | `due_date_number`, `due_date_units` | Due date as an offset from the generation date |

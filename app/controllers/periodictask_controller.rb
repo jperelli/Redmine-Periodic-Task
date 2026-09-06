@@ -362,7 +362,7 @@ class PeriodictaskController < ApplicationController
       :due_date_number, :due_date_units, :description, :issue_category_id,
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :done_ratio, :tag_list,
       :fixed_version_id, :is_active, :if_previous_open,
-      :monthly_mode,
+      :monthly_mode, :weekend_adjustment,
       { tag_list: [] },
       { weekdays: [] },
       { month_weeks: [] },

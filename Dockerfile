@@ -5,7 +5,6 @@ RUN mkdir -p /usr/src/redmine/sqlite
 RUN chown -R 999:999 /usr/src/redmine/sqlite
 
 RUN apt update && apt install -y gcc make
-COPY ./Gemfile /usr/src/redmine/plugins/periodictask/Gemfile
 ENV BUNDLE_WITH=development
 RUN bundle install
 
