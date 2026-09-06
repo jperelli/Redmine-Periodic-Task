@@ -27,6 +27,7 @@
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
 - A `day`, `month` or `year` task checked at exactly its scheduled time moves to the following occurrence instead of being left due, like the other units already did (@jperelli)
 - The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
+- The assignee is optional: a task can be saved without one and its issues follow Redmine's default assignee rules (category default assignee, then project default assignee), like any other unassigned issue (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 

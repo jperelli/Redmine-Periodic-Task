@@ -195,6 +195,10 @@ A task repeats every N days, business days, weeks, months or years. A weekly tas
 
 To check a rule before saving it, the task form shows the next 5 occurrences under the next run date and refreshes them (in your time zone) whenever the interval, the weekdays, the ordinals or the next run date change; nothing is saved until you submit the form. The task page shows the same *Next occurrences* box for a saved task. The first date is the stored next run date, the following ones are the dates the scheduler will move to after each run, so runs missed while the scheduler was down collapse into the next future date.
 
+### Assignee
+
+The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
+
 ### Variable interpolation
 
 You can use the following variables in the subject and description of a periodic task. They will be replaced with the corresponding value when the issue is created.
