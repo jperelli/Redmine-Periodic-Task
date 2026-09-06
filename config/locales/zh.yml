@@ -150,6 +150,13 @@ zh:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "指派人轮换"
+  label_assignee_rotation_info: "生成的问题会依次指派给此列表中的用户。在项目中已无法被指派问题的用户会被跳过；若列表为空或其中无人可被指派，则使用上方的指派人。“立即执行”也会推进轮换。"
+  label_rotation_next: "下一位：%{user}"
+  label_rotation_fallback: "轮换中无人可被指派；改用 %{user}"
+  label_rotation_not_assignable: "无法指派"
+  label_rotation_move_up: "上移"
+  label_rotation_move_down: "下移"
   label_weekend_adjustment: "非工作日"
   label_weekend_adjustment_info: "当执行日落在 Redmine 的非工作日（管理 → 设置 → 问题跟踪）时的处理方式。计划本身不会移动，每月 1 日仍是 1 日。"
   label_weekend_adjustment_none: "当天执行"

@@ -150,6 +150,13 @@ zh-TW:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "被分派者輪替"
+  label_assignee_rotation_info: "產生的議題會依序分派給此清單中的使用者。在專案中已無法被分派議題的使用者會被略過；若清單為空或其中無人可被分派，則使用上方的被分派者。「立即執行」也會推進輪替。"
+  label_rotation_next: "下一位：%{user}"
+  label_rotation_fallback: "輪替中無人可被分派；改用 %{user}"
+  label_rotation_not_assignable: "無法分派"
+  label_rotation_move_up: "上移"
+  label_rotation_move_down: "下移"
   label_weekend_adjustment: "非工作日"
   label_weekend_adjustment_info: "當執行日落在 Redmine 的非工作日（管理 → 設定 → 議題追蹤）時的處理方式。排程本身不會移動，每月 1 日仍是 1 日。"
   label_weekend_adjustment_none: "當天執行"

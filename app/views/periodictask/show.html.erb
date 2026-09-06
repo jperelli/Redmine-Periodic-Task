@@ -59,7 +59,8 @@
   <% if @periodictask.author %>
     <div class="avatar-with-child">
       <%= author_avatar(@periodictask.author, size: "50") %>
-      <%= assignee_avatar(@periodictask.assigned_to, size: "22", class: "avatar-child") if @periodictask.assigned_to %>
+      <% assignee = @periodictask.next_rotation_user || @periodictask.assigned_to %>
+      <%= assignee_avatar(assignee, size: "22", class: "avatar-child") if assignee %>
     </div>
   <% end %>
 
@@ -96,6 +97,11 @@
       rows.left l(:field_assigned_to),
                 (@periodictask.assigned_to ? link_to_principal(@periodictask.assigned_to) : periodictask_default_assignee_label),
                 class: 'assigned-to'
+      if @periodictask.rotation?
+        rows.left l(:label_assignee_rotation),
+                  periodictask_rotation_next(@periodictask),
+                  class: 'assignee-rotation'
+      end
       rows.left l(:field_category),
                 (@periodictask.issue_category&.name || '-'),
                 class: 'category'
@@ -190,6 +196,26 @@
         <% end %>
       </ul>
     </div>
+  <% end %>
+
+  <% if @periodictask.rotation? %>
+    <% rotation_users = @periodictask.rotation_users %>
+    <% next_user = @periodictask.next_rotation_user %>
+    <% candidate_ids = @periodictask.rotation_candidates.map(&:id) %>
+    <hr />
+    <p><strong><%= l(:label_assignee_rotation) %> (<%= rotation_users.size %>)</strong></p>
+    <ol class="periodictask-rotation">
+      <% rotation_users.each do |user| %>
+        <li class="user-<%= user.id %><%= ' periodictask-rotation-next' if user == next_user %>">
+          <%= avatar(user, size: "16") %><%= link_to_principal(user, class: user.class.to_s.downcase) %>
+          <% if user == next_user %>
+            <strong>&larr; <%= l(:label_next) %></strong>
+          <% elsif candidate_ids.exclude?(user.id) %>
+            <em>(<%= l(:label_rotation_not_assignable) %>)</em>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
   <% end %>
 
   <% watcher_users = User.where(id: @periodictask.watcher_user_ids).sorted.to_a %>

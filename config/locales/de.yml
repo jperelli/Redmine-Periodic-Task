@@ -148,6 +148,13 @@ de:
   label_periodictask_run_source_endpoint: 'Prüf-URL'
   label_periodictask_run_source_manual: 'Manuell'
   label_periodictask_run_until: 'bis %{time}'
+  label_assignee_rotation: "Zuweisungsrotation"
+  label_assignee_rotation_info: "Erzeugte Tickets werden der Reihe nach den Benutzern dieser Liste zugewiesen. Benutzer, denen im Projekt keine Tickets mehr zugewiesen werden können, werden übersprungen; ist die Liste leer oder kann niemand daraus zugewiesen werden, wird der obige Zugewiesene verwendet. „Jetzt ausführen“ rückt die Rotation ebenfalls weiter."
+  label_rotation_next: "Nächster: %{user}"
+  label_rotation_fallback: "Niemand aus der Rotation kann zugewiesen werden; %{user} wird verwendet"
+  label_rotation_not_assignable: "nicht zuweisbar"
+  label_rotation_move_up: "Nach oben"
+  label_rotation_move_down: "Nach unten"
   label_weekend_adjustment: "Arbeitsfreie Tage"
   label_weekend_adjustment_info: "Was passiert, wenn eine Ausführung auf einen arbeitsfreien Tag von Redmine fällt (Administration → Konfiguration → Ticket-Verfolgung). Der Zeitplan selbst verschiebt sich nicht, der 1. des Monats bleibt der 1."
   label_weekend_adjustment_none: "An diesem Tag ausführen"

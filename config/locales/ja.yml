@@ -148,6 +148,13 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "担当者ローテーション"
+  label_assignee_rotation_info: "生成されたチケットは、このリストのユーザーに順番に割り当てられます。プロジェクトで担当者になれなくなったユーザーはスキップされます。リストが空、または誰も担当者になれない場合は、上の担当者が使用されます。「今すぐ実行」でもローテーションは進みます。"
+  label_rotation_next: "次: %{user}"
+  label_rotation_fallback: "ローテーションの誰も担当者になれないため、%{user} が使用されます"
+  label_rotation_not_assignable: "割り当て不可"
+  label_rotation_move_up: "上へ"
+  label_rotation_move_down: "下へ"
   label_weekend_adjustment: "休業日"
   label_weekend_adjustment_info: "実行日が Redmine の休業日（管理 → 設定 → チケットトラッキング）に当たった場合の扱いです。スケジュール自体は移動しないため、毎月1日は1日のままです。"
   label_weekend_adjustment_none: "その日に実行する"

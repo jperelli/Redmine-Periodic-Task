@@ -153,6 +153,13 @@ hr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_assignee_rotation: "Rotacija dodijeljenih"
+  label_assignee_rotation_info: "Generirane zadaće dodjeljuju se redom korisnicima s ovog popisa. Korisnici kojima se u projektu više ne mogu dodjeljivati zadaće preskaču se; ako je popis prazan ili se nikome s njega ne može dodijeliti, koristi se gore navedeni dodijeljeni. „Pokreni sada“ također pomiče rotaciju."
+  label_rotation_next: "Sljedeći: %{user}"
+  label_rotation_fallback: "Nikome iz rotacije se ne može dodijeliti; koristi se %{user}"
+  label_rotation_not_assignable: "nije moguće dodijeliti"
+  label_rotation_move_up: "Pomakni gore"
+  label_rotation_move_down: "Pomakni dolje"
   label_weekend_adjustment: "Neradni dani"
   label_weekend_adjustment_info: "Što se događa kada izvršavanje padne na neradni dan iz Redminea (Administracija → Postavke → Praćenje zadataka). Sam raspored se ne pomiče, 1. dan mjeseca ostaje 1. dan."
   label_weekend_adjustment_none: "Izvrši tog dana"

@@ -1,0 +1,11 @@
+<span class="periodictask-rotation-member<%= ' periodictask-rotation-unassignable' unless assignable %>" data-user-id="<%= user_id %>">
+  <%= hidden_field_tag 'periodictask[rotation_ids][]', user_id, :id => nil %>
+  <span class="periodictask-rotation-name"><%= user_name %></span>
+  <% unless assignable %>
+    <span class="periodictask-rotation-unassignable-flag">(<%= l(:label_rotation_not_assignable) %>)</span>
+  <% end %>
+  <%= link_to '&uarr;'.html_safe, '#', :class => 'periodictask-rotation-up', :title => l(:label_rotation_move_up) %>
+  <%= link_to '&darr;'.html_safe, '#', :class => 'periodictask-rotation-down', :title => l(:label_rotation_move_down) %>
+  <%= link_to periodictask_sprite_icon('del', l(:button_delete), icon_only: true), '#',
+              :class => 'icon-only icon-del periodictask-rotation-remove', :title => l(:button_delete) %>
+</span>
