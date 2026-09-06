@@ -117,6 +117,70 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal @project.id, task.project_id
   end
 
+  def test_new_does_not_require_an_assignee
+    get :new, params: { project_id: 'ecookbook' }
+
+    assert_select '#periodictask_assigned_to_id:not([required])'
+    assert_select '#periodictask_assigned_to_id option[value=""]', text: "(#{I18n.t(:label_default)})"
+    assert_select 'label[for="periodictask_assigned_to_id"] span.required', count: 0
+    assert_select 'a.assign-to-me-link'
+  end
+
+  def test_create_periodictask_without_assignee
+    assert_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Unassigned periodic task',
+          tracker_id: 1,
+          assigned_to_id: '',
+          interval_number: 1,
+          interval_units: 'month',
+          next_run_date: 1.month.from_now.to_s
+        }
+      }
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+
+    task = Periodictask.order(:id).last
+    assert_equal 'Unassigned periodic task', task.subject
+    assert_nil task.assigned_to_id
+  end
+
+  def test_update_can_clear_the_assignee
+    task = create_test_periodictask
+    patch :update, params: {
+      project_id: 'ecookbook',
+      id: task.id,
+      periodictask: { assigned_to_id: '' }
+    }
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    assert_nil task.reload.assigned_to_id
+  end
+
+  def test_index_and_show_display_default_for_task_without_assignee
+    task = create_test_periodictask(subject: 'Unassigned task', assigned_to_id: nil)
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.periodictask-template .attributes .assigned-to .value', text: /\A\(#{I18n.t(:label_default)}\)/
+    assert_select '.periodictask-template .attributes .assigned-to .value span.icon-help[title=?]',
+                  I18n.t(:label_assigned_to_info)
+  end
+
+  def test_run_now_without_assignee_applies_category_default_assignee
+    category = IssueCategory.create!(project: @project, name: 'Ops', assigned_to_id: 3)
+    task = create_test_periodictask(subject: 'Unassigned run', assigned_to_id: nil, issue_category_id: category.id)
+
+    assert_difference('Issue.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    assert_equal 3, Issue.where(subject: 'Unassigned run').last.assigned_to_id
+  end
+
   def test_create_with_missing_interval_fails
     assert_no_difference('Periodictask.count') do
       post :create, params: {

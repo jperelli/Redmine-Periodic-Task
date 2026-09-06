@@ -24,6 +24,7 @@ hr:
   label_set_start_date_info: 'Kada je označeno, datum početka svakog kreiranog zadatka postavlja se na dan kada je generiran.'
   label_due_date: 'Postavi rok nakon'
   label_due_date_info: 'Rok svakog kreiranog zadatka, postavljen na ovaj vremenski razmak nakon datuma početka.'
+  label_assigned_to_info: 'Neobavezno. Ako je prazno, na svaki kreirani zadatak primjenjuje se zadani dodijeljeni iz Redminea: zadani dodijeljeni kategorije, inače onaj projekta.'
   label_estimated_hours: Procijenjeno vrijeme
   label_estimated_hours_after: sati
   label_description: Opis

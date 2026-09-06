@@ -104,6 +104,13 @@ module PeriodictaskHelper
     ["(#{l(:label_default)})", value].compact.join(' - ')
   end
 
+  # "(Default)" plus a help icon explaining Redmine's default assignee rules,
+  # shown when a task has no assignee configured.
+  def periodictask_default_assignee_label
+    help = periodictask_marker_icon('help', 'icon-help', l(:label_assigned_to_info))
+    safe_join([periodictask_default_label(nil), help], ' ')
+  end
+
   # Parses a wall-clock datetime (no offset) in the zone Redmine's format_time
   # uses for the current user: their preference when set, otherwise the
   # server's local zone.

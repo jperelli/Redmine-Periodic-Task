@@ -24,6 +24,7 @@ tr:
   label_set_start_date_info: 'İşaretlendiğinde, oluşturulan her iş kaydının başlangıç tarihi oluşturulduğu güne ayarlanır.'
   label_due_date: 'Bitiş tarihini sonra ayarla'
   label_due_date_info: 'Oluşturulan her iş kaydının bitiş tarihi; başlangıç tarihinden bu kadar sonra ayarlanır.'
+  label_assigned_to_info: 'İsteğe bağlı. Boş bırakılırsa, oluşturulan her iş kaydına Redmine''in varsayılan atananı uygulanır: kategorinin varsayılan atananı, yoksa projenin.'
   label_estimated_hours: Kalan zaman
   label_estimated_hours_after: Saat
   label_description: Açıklama
