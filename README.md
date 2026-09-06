@@ -195,6 +195,12 @@ A task repeats every N days, business days, weeks, months or years. A weekly tas
 
 To check a rule before saving it, the task form shows the next 5 occurrences under the next run date and refreshes them (in your time zone) whenever the interval, the weekdays, the ordinals or the next run date change; nothing is saved until you submit the form. The task page shows the same *Next occurrences* box for a saved task. The first date is the stored next run date, the following ones are the dates the scheduler will move to after each run, so runs missed while the scheduler was down collapse into the next future date.
 
+### Attachments
+
+A periodic task can carry files (a checklist PDF, a form, a template spreadsheet...): the task form has Redmine's standard *Files* field, and the detail page lists the attached files with the usual download and delete links. Every issue the task generates gets its own copy of each file, with the same author and description, so deleting a file on a generated issue never touches the template (nor the copies on other issues). Copying a task offers to copy its attachments onto the new task, and deleting a task deletes its attachments. A file that cannot be copied (for example because it is missing from the file system) does not prevent the issue from being created; the failure is shown in the task's *Last error*. Viewing, adding and deleting files is governed by the *Periodic tasks* permission of the project.
+
+![Periodic task form with the Files field](doc/screenshots/attachments_form.png)
+
 ### Assignee
 
 The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
@@ -223,6 +229,7 @@ You can use the following variables in the subject and description of a periodic
 | `**NEXT_WEEKISO_YEAR**` | ISO 8601 week-based year of `**NEXT_WEEKISO**` |
 | `**PREVIOUS_MONTH_YEAR**` | Four-digit year of `**PREVIOUS_MONTH**` |
 | `**NEXT_MONTH_YEAR**` | Four-digit year of `**NEXT_MONTH**` |
+| `**PREVIOUS_ISSUE**` | `#<id>` of the issue created by the previous run of the same task (e.g. `#1234`), empty on the first run |
 
 Each shifted macro has its own year companion, and `**WEEKISO**` has a week-based one, because the year of the
 shifted instant is not always the year of the run: pairing `**PREVIOUS_MONTH**` with `**YEAR**` yields `12/2026`
@@ -233,9 +240,15 @@ calendar year around New Year (2025-12-29 is already ISO week 01 of 2026).
 
 The offset shifts the whole date, so combining the variables keeps them consistent across month and year boundaries — on 2027-01-01, `**DAY-1**/**MONTH-1**/**YEAR-1**` renders `31/12/2026`.
 
+`**PREVIOUS_ISSUE**` is not a date: it renders the number of the issue the same task created on its previous run, so `Weekly report (previous: **PREVIOUS_ISSUE**)` gives Redmine's usual `#1234` link back to last week's report, and `Previous report: ` with nothing after it on the first run. `**PREVIOUS_ISSUE-N**` goes back N runs (`**PREVIOUS_ISSUE-2**` is the one before the previous). Issues that have been deleted are skipped; subtasks created by the task are not counted.
+
 If you want to get localized month names, please add `LOCALE="de"` (available are `bg`, `de`, `en`, `es`, `hr`, `it`, `ja`, `pl`, `pt-BR`, `ru`, `tr`, `uk`, `vi`, `zh`, `zh-TW`) to the cronjob like this
 
     0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production LOCALE="de"
+
+### Subtasks and relations
+
+A task can create child issues under each generated issue (their subjects accept the same variables) and relations from the generated issue to other issues, with any relation type Redmine supports (`relates`, `follows`, `precedes`, `blocks`, `duplicates`, `copied_to`, ...) and a delay for `precedes`/`follows`. The target of a relation is either a fixed issue number or *Previous generated issue*: the issue the same task created on its previous run. That way each weekly report can `follow` or `relate to` the one before, so users can walk the chain from Redmine's issue page. On the first run there is no previous issue and the relation is silently skipped; a deleted previous issue is skipped in favour of the one created before it.
 
 ## Plugins supported
 

@@ -56,6 +56,7 @@ tr:
     **PREVIOUS_MONTHNAME** (Ocak - Aralık)
     **NEXT_MONTHNAME** (Ocak - Aralık)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N gün)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (önceki / N önceki çalıştırmada oluşturulan işin #numarası, ilk çalıştırmada boş)
   label_variables_markdown_note: 'Not: açıklamada önizlemede kalın görünürler çünkü ** Markdown''ın kalın yazı söz dizimidir; iş kaydı oluşturulduğunda gerçek değerleriyle değiştirilirler.'
   label_last_error: Son hata
   label_issue_custom_fields: Özel alanlar
@@ -74,7 +75,8 @@ tr:
   label_periodictask_journal_delete: Periyodik iş silindi
   label_periodictask_journal_run: Periyodik iş çalıştırıldı
   label_subtasks_info: "Oluşturulan her işin altında oluşturulan alt işler. Konular, iş konusuyla aynı değişkenleri kabul eder."
-  label_relations_info: "Oluşturulan her işten mevcut işlere oluşturulan ilişkiler."
+  label_relations_info: "Oluşturulan her işten mevcut işlere veya önceki çalıştırmada oluşturulan işe oluşturulan ilişkiler."
+  label_relation_previous_issue: "Önceki oluşturulan iş"
   error_subtask_subject_blank: "Alt iş konusu boş olamaz"
   error_relation_type_invalid: "Geçersiz ilişki türü"
   error_relation_issue_invalid: "İlişkili iş bir iş numarası olmalıdır"
@@ -147,4 +149,6 @@ tr:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "Şablona eklenen dosyalar oluşturulan her işe kopyalanır."
+  error_attachment_copy_failed: '"%{filename}" eki kopyalanamadı: %{error}'
   label_new_periodictask_from_issue: 'Bu işten periyodik iş oluştur'

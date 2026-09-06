@@ -56,6 +56,7 @@ ja:
     **PREVIOUS_MONTHNAME** (January - December)
     **NEXT_MONTHNAME** (January - December)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N 日)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (前回 / N回前の実行で作成されたチケットの#番号、初回実行時は空)
   label_variables_markdown_note: '注: 説明欄では ** が Markdown の太字記法であるため、プレビューでは太字で表示されますが、チケット作成時に実際の値に置き換えられます。'
   label_last_error: 最後のエラー
   label_issue_custom_fields: カスタムフィールド
@@ -74,7 +75,8 @@ ja:
   label_periodictask_journal_delete: 定期タスクを削除しました
   label_periodictask_journal_run: 定期タスクを実行しました
   label_subtasks_info: "生成される各チケットの下に作成される子チケット。題名にはチケットの題名と同じ変数を使用できます。"
-  label_relations_info: "生成される各チケットから既存のチケットへ作成される関連。"
+  label_relations_info: "生成される各チケットから既存のチケット、または前回の実行で生成されたチケットへ作成される関連。"
+  label_relation_previous_issue: "前回生成されたチケット"
   error_subtask_subject_blank: "子チケットの題名を入力してください"
   error_relation_type_invalid: "関連の種類が無効です"
   error_relation_issue_invalid: "関連するチケットはチケット番号である必要があります"
@@ -147,4 +149,6 @@ ja:
   label_periodictask_run_source_endpoint: 'Check URL'
   label_periodictask_run_source_manual: 'Manual'
   label_periodictask_run_until: 'until %{time}'
+  label_attachments_info: "テンプレートに添付されたファイルは、生成される各チケットにコピーされます。"
+  error_attachment_copy_failed: '添付ファイル「%{filename}」をコピーできませんでした: %{error}'
   label_new_periodictask_from_issue: 'このチケットから繰り返しチケットを作成'
