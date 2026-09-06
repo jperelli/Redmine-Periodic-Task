@@ -94,9 +94,9 @@
       </p>
       <%= render :partial => 'rotation', :locals => { :periodictask => @periodictask } %>
       <p>
-        <%= label(:periodictask, :issue_category_id) do %><%= l(:field_category) %> <span class="required">*</span><% end %>
+        <%= label(:periodictask, :issue_category_id) do %><%= l(:field_category) %><% end %>
         <% if @categories.length > 0 %>
-          <%= f.select :issue_category_id, @categories.pluck(:name, :id), :include_blank => true, :required => true %>
+          <%= f.select :issue_category_id, @categories.pluck(:name, :id), :include_blank => true %>
         <% else %>
           <%= l(:no_categories_in_project) %>
         <% end %>

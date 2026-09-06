@@ -327,6 +327,12 @@ class PeriodictaskIfPreviousOpenTest < ActiveSupport::TestCase
     assert_equal closed_at + 3.days, task.next_run_date_after_completion(closed_at)
   end
 
+  def test_next_run_after_completion_without_a_schedule_anchor_counts_business_days
+    task = after_completion_task(next_run_date: nil, interval_units: 'business_day')
+    closed_at = Time.zone.parse('2026-09-11 16:00') # Friday
+    assert_equal Time.zone.parse('2026-09-14 16:00'), task.next_run_date_after_completion(closed_at)
+  end
+
   def test_next_run_after_completion_uses_the_closing_day_in_the_schedule_time_zone
     task = after_completion_task(next_run_date: Time.zone.parse('2026-09-01 10:00 UTC'))
     late_utc = Time.new(2026, 9, 7, 20, 30, 0, '-05:00') # 2026-09-08 01:30 UTC

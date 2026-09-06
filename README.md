@@ -230,9 +230,9 @@ A periodic task can carry files (a checklist PDF, a form, a template spreadsheet
 
 ![Periodic task form with the Files field](doc/screenshots/attachments_form.png)
 
-### Assignee
+### Assignee and category
 
-The assignee of a task is optional. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
+The category of a task is optional, like on any issue. The assignee of a task is optional too. When it is left blank, each generated issue follows Redmine's own default assignee rules: the default assignee of the issue category if it has one, otherwise the project's default assignee, otherwise the issue stays unassigned.
 
 ### Assignee rotation
 
@@ -279,7 +279,7 @@ shifted instant is not always the year of the run: pairing `**PREVIOUS_MONTH**` 
 when it runs in January 2026, and an ISO week number belongs to the ISO week-based year, which differs from the
 calendar year around New Year (2025-12-29 is already ISO week 01 of 2026).
 
-`**DAY**`, `**WEEK**`, `**WEEKISO**`, `**MONTH**`, `**MONTHNAME**`, `**QUARTER**` and `**YEAR**` also accept a day offset, written as `+N` or `-N` before the closing `**` (N up to 9999): `**DAY-1**` is the day of the month of the day before the issue is created, `**MONTHNAME+10**` the month name ten days later. The shifted macros above take no offset.
+`**DAY**`, `**WEEK**`, `**WEEKISO**`, `**WEEKISO_YEAR**`, `**MONTH**`, `**MONTHNAME**`, `**QUARTER**` and `**YEAR**` also accept a day offset, written as `+N` or `-N` before the closing `**` (N up to 9999): `**DAY-1**` is the day of the month of the day before the issue is created, `**MONTHNAME+10**` the month name ten days later. The shifted macros above take no offset.
 
 The offset shifts the whole date, so combining the variables keeps them consistent across month and year boundaries — on 2027-01-01, `**DAY-1**/**MONTH-1**/**YEAR-1**` renders `31/12/2026`.
 
@@ -307,9 +307,9 @@ Periodic tasks can be listed, created, updated, deleted and run through Redmine'
 | `POST` | `/projects/:project_id/periodictask/:id/run_now.json` | Generate an issue right away without moving the schedule. Answers `201 Created` with `{"issue": {"id": ..., "subject": ..., "errors": [...]}}` (`errors` lists non-fatal problems such as a relation that could not be created) |
 | `GET` | `/admin/periodictasks.json` | Administrators only: the tasks of every project, paginated like the project list |
 
-`:project_id` is the project's numeric id or identifier. Replace `.json` with `.xml` for XML. Add `include=issues` to `GET` requests to list the issues each task generated (`issues: [{id, created_at}]`). A task from another project answers `404`, a missing permission `403`, validation errors `422` with `{"errors": ["Subject cannot be blank", ...]}`; the same rules that the form applies (the task is validated as the issue it would create).
+`:project_id` is the project's numeric id or identifier. Replace `.json` with `.xml` for XML. Add `include=issues` to `GET` requests to list the issues each task generated (`issues: [{id, created_at}]`) and `include=attachments` for the task's files (`attachments: [{id, filename, filesize, content_type, description, content_url, author, created_on}]`, like the issues API); both can be combined (`include=issues,attachments`). A task from another project answers `404`, a missing permission `403`, validation errors `422` with `{"errors": ["Subject cannot be blank", ...]}`; the same rules that the form applies (the task is validated as the issue it would create).
 
-A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `weekend_adjustment`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `rotation` (`[{id, name}]`, in turn order) and `rotation_next` (`{id, name}` of the user the next issue goes to, omitted when there is no rotation or nobody in it can be assigned), `subtasks`, `relations`, `is_active`, `ended` and `end_reason` (computed from the end condition: `ended_by_date`, `ended_by_count` or `null`), `next_run_date`, `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
+A task is rendered with every stored field: `id`, `project`, `tracker`, `author`, `assigned_to`, `category`, `fixed_version`, `priority` and `status` as `{id, name}` pairs (omitted when not set), `subject`, `description`, `interval_number`, `interval_units`, `weekdays`, `monthly_mode`, `month_weeks`, `weekend_adjustment`, `set_start_date`, `due_date_number`, `due_date_units`, `estimated_hours`, `done_ratio`, `parent_id`, `checklists_template_id`, `tags`, `custom_fields` (`[{id, name, value}]`), `watchers` (`[{id, name}]`), `rotation` (`[{id, name}]`, in turn order) and `rotation_next` (`{id, name}` of the user the next issue goes to, omitted when there is no rotation or nobody in it can be assigned), `subtasks`, `relations`, `if_previous_open` (`create`, `skip`, `close_previous` or `after_completion`), `last_skipped_issue` (`{id}`) and `last_skipped_at` (only while the last run did not create an issue because that one was still open), `is_active`, `ended` and `end_reason` (computed from the end condition: `ended_by_date`, `ended_by_count` or `null`), `next_run_date`, `effective_next_run_date` (the moment the scheduler will actually run it: the same as `next_run_date` unless *Non-working days* moves it), `end_date`, `max_occurrences`, `occurrences_count` (scheduled runs made so far), `last_assigned_date`, `last_run` (when the last issue was generated), `last_error`, `created_at` and `updated_at`. Times are ISO 8601 in UTC.
 
 Attributes accepted on create/update, under a `periodictask` key (the same the form posts):
 
@@ -321,6 +321,7 @@ Attributes accepted on create/update, under a `periodictask` key (the same the f
 | `weekdays` | Array of weekdays, `0` = Sunday ... `6` = Saturday (Ruby's `wday`), for weekly and monthly-by-weekday tasks |
 | `monthly_mode`, `month_weeks` | `day_of_month` or `weekday`, and the array of occurrences (`1`..`5`) for the latter |
 | `weekend_adjustment` | `none`, `next_working_day` or `previous_working_day`: what to do when a run falls on one of Redmine's non-working days |
+| `if_previous_open` | `create`, `skip`, `close_previous` or `after_completion`: what a due run does when the previous generated issue is still open (see *Previous issue open*) |
 | `next_run_date` | ISO 8601 time. Left blank on create, it is computed from the recurrence |
 | `end_date`, `max_occurrences` | End condition: ISO 8601 time and/or a positive integer; blank for none (see *End condition*) |
 | `set_start_date` | Boolean, set the issue start date to the generation date |
@@ -334,6 +335,7 @@ Attributes accepted on create/update, under a `periodictask` key (the same the f
 | `relations` | Array of `{relation_type, issue_id, delay}`; `issue_id` is a number or `previous_issue` (the issue generated by the previous run) |
 | `tag_list` | Tags for the generated issue (string or array), with a tagging plugin |
 | `checklists_template_id` | With the checklists plugin |
+| `uploads` | Files to attach to the task, `[{token, filename, content_type, description}]` with tokens from `POST /uploads.json`, exactly like the core issues API; they are added to the files the task already has |
 
 Sending an array attribute (`weekdays`, `subtasks`, ...) replaces the stored rows; sending `[]` clears them.
 

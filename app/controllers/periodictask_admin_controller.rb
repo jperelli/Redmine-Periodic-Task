@@ -8,6 +8,7 @@ class PeriodictaskAdminController < ApplicationController
   accept_api_auth :index
 
   helper :periodictask
+  helper :attachments
   helper :sort
   include SortHelper
 
@@ -25,12 +26,12 @@ class PeriodictaskAdminController < ApplicationController
                          .preload(:project, :tracker, :assigned_to)
                          .order(sort_clause)
     respond_to do |format|
-      format.html { @last_runs = last_runs_for(@tasks) }
+      format.html { @last_runs = Periodictask.last_run_dates(@tasks) }
       format.api do
         @offset, @limit = api_offset_and_limit
         @task_count = @tasks.count
         @tasks = @tasks.offset(@offset).limit(@limit).to_a
-        @last_runs = last_runs_for(@tasks)
+        @last_runs = Periodictask.last_run_dates(@tasks)
       end
     end
   end
@@ -41,11 +42,5 @@ class PeriodictaskAdminController < ApplicationController
     count = ScheduledTasksChecker.checktasks!(source: 'manual')
     flash[:notice] = l(:notice_periodictask_checker_run, count: count)
     redirect_to plugin_settings_path('periodictask')
-  end
-
-  private
-
-  def last_runs_for(tasks)
-    PeriodictaskIssue.where(periodictask_id: tasks.map(&:id)).group(:periodictask_id).maximum(:created_at)
   end
 end

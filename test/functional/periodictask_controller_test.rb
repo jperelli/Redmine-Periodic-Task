@@ -126,6 +126,33 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select 'a.assign-to-me-link'
   end
 
+  def test_new_does_not_require_a_category
+    get :new, params: { project_id: 'ecookbook' }
+
+    assert_select '#periodictask_issue_category_id:not([required])'
+    assert_select '#periodictask_issue_category_id option[value=""]'
+    assert_select 'label[for="periodictask_issue_category_id"] span.required', count: 0
+  end
+
+  def test_create_periodictask_without_category
+    assert_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Uncategorized periodic task',
+          tracker_id: 1,
+          assigned_to_id: 2,
+          issue_category_id: '',
+          interval_number: 1,
+          interval_units: 'month',
+          next_run_date: 1.month.from_now.to_s
+        }
+      }
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    assert_nil Periodictask.order(:id).last.issue_category_id
+  end
+
   def test_create_periodictask_without_assignee
     assert_difference('Periodictask.count') do
       post :create, params: {

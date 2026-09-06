@@ -135,7 +135,7 @@ class ScheduledTasksChecker
     # transaction, which takes the issue back along with the count.
     def create_issue(previous)
       issue = @task.generate_issue(@now)
-      return fail_with('Project is missing or closed') unless issue
+      return fail_with(l(:label_project_missing_or_closed)) unless issue
 
       begin
         issue.save!
