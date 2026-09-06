@@ -69,6 +69,8 @@ zh:
   label_periodictask_history: 已生成的问题
   label_periodictask_no_history: 此任务尚未生成任何问题
   label_issue_created_by_periodictask: 由周期任务自动创建
+  field_periodictask: 周期任务
+  label_periodictask_all_issues: 此任务生成的所有问题
   label_periodic_task: 周期任务
   label_periodictask_template: 模板
   label_periodictask_plural: 周期任务

@@ -204,9 +204,9 @@ module PeriodictaskHelper
 
   # Icon-only marker with a tooltip. Redmine 6+ needs the SVG sprite inside the
   # span (an empty `icon-*` span renders nothing since 7.0); Redmine 5 draws the
-  # icon from the CSS class.
-  def periodictask_marker_icon(sprite, css_class, title)
-    content_tag(:span, periodictask_sprite_icon(sprite), title: title, class: "icon-only #{css_class}")
+  # icon from the CSS class. Extra options (e.g. `size:`) go to sprite_icon.
+  def periodictask_marker_icon(sprite, css_class, title, **)
+    content_tag(:span, periodictask_sprite_icon(sprite, **), title: title, class: "icon-only #{css_class}")
   end
 
   def periodictask_default_label(value)

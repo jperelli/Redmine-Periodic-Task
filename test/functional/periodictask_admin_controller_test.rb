@@ -13,8 +13,10 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
                                      next_run_date: 1.hour.ago)
   end
 
-  def teardown
-    I18n.locale = I18n.default_locale
+  # Requests made as a user with a language leave that locale set on the process.
+  teardown do
+    I18n.locale = :en
+    User.current = nil
   end
 
   def test_index_lists_tasks_of_every_project

@@ -67,6 +67,8 @@ de:
   label_periodictask_history: Erzeugte Tickets
   label_periodictask_no_history: Von dieser Aufgabe wurden noch keine Tickets erzeugt
   label_issue_created_by_periodictask: Automatisch erstellt durch periodische Aufgabe
+  field_periodictask: Periodische Aufgabe
+  label_periodictask_all_issues: Alle von dieser Aufgabe erzeugten Tickets
   label_periodic_task: Periodische Aufgabe
   label_periodictask_template: Vorlage
   label_periodictask_plural: Wiederholende Aufgaben
