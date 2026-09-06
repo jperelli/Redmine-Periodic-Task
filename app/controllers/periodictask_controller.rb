@@ -9,9 +9,10 @@ class PeriodictaskController < ApplicationController
   before_action :authorize
   before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
   before_action :find_source_issue, only: :new
-  before_action :load_users, except: %i[destroy run_now tags]
-  before_action :load_categories, except: %i[destroy run_now tags]
-  before_action :load_versions, except: %i[destroy run_now tags]
+  before_action :load_users, except: %i[destroy run_now tags], unless: :api_request?
+  before_action :load_categories, except: %i[destroy run_now tags], unless: :api_request?
+  before_action :load_versions, except: %i[destroy run_now tags], unless: :api_request?
+  accept_api_auth :index, :show, :create, :update, :destroy, :run_now
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -61,9 +62,18 @@ class PeriodictaskController < ApplicationController
                          .left_outer_joins(:tracker, :assigned_to)
                          .preload(:tracker, :assigned_to)
                          .order(sort_clause)
-    @priorities = IssuePriority.all.index_by(&:id)
-    @last_runs = PeriodictaskIssue.where(periodictask_id: @tasks.map(&:id))
-                                  .group(:periodictask_id).maximum(:created_at)
+    respond_to do |format|
+      format.html do
+        @priorities = IssuePriority.all.index_by(&:id)
+        @last_runs = last_runs_for(@tasks)
+      end
+      format.api do
+        @offset, @limit = api_offset_and_limit
+        @task_count = @tasks.count
+        @tasks = @tasks.offset(@offset).limit(@limit).to_a
+        @last_runs = last_runs_for(@tasks)
+      end
+    end
   end
 
   # With from_issue_id, the template is prefilled from that issue and the
@@ -82,7 +92,6 @@ class PeriodictaskController < ApplicationController
 
   def create
     @periodictask = build_periodictask
-    params[:periodictask][:project_id] = @project[:id]
     assign_periodictask_params
     # A blank first run means "the next time the schedule matches", which
     # depends on the recurrence options assigned just above.
@@ -96,12 +105,22 @@ class PeriodictaskController < ApplicationController
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('create')
-      render_attachment_warning_if_needed(@periodictask)
-      flash[:notice] = l(:flash_task_created)
-      redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+      respond_to do |format|
+        format.html do
+          render_attachment_warning_if_needed(@periodictask)
+          flash[:notice] = l(:flash_task_created)
+          redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+        end
+        format.api { render action: 'show', status: :created, location: periodictask_url(@project, @periodictask) }
+      end
     else
-      @periodictask.next_run_date = nil if blank_first_run
-      render action: 'new'
+      respond_to do |format|
+        format.html do
+          @periodictask.next_run_date = nil if blank_first_run
+          render action: 'new'
+        end
+        format.api { render_periodictask_validation_errors }
+      end
     end
   end
 
@@ -120,65 +139,78 @@ class PeriodictaskController < ApplicationController
   end
 
   def update
-    params[:periodictask][:project_id] = @project[:id]
     assign_periodictask_params
     @periodictask.save_attachments(params[:attachments])
     @issue = @periodictask.generate_issue
     if @issue.valid? && @periodictask.save
       @periodictask.log_activity('update')
-      render_attachment_warning_if_needed(@periodictask)
-      flash[:notice] = l(:flash_task_saved)
-      redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+      respond_to do |format|
+        format.html do
+          render_attachment_warning_if_needed(@periodictask)
+          flash[:notice] = l(:flash_task_saved)
+          redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+        end
+        format.api { render_api_ok }
+      end
     else
-      render action: 'edit'
+      respond_to do |format|
+        format.html { render action: 'edit' }
+        format.api { render_periodictask_validation_errors }
+      end
     end
   end
 
   def show
-    issue_ids = @periodictask.issues.pluck(:id)
-    return if issue_ids.empty?
-
-    # Render the generated issues with Redmine's own issue list, so columns,
-    # sorting and styling match the project's regular issue view.
-    @query = IssueQuery.new(name: '_', project: @project)
-    @query.filters = {} # drop the default "open status only" filter so closed issues show too
-    @query.add_filter('issue_id', '=', [issue_ids.join(',')])
-    @query.sort_criteria = params[:sort] if params[:sort].present?
-
-    @issue_count = @query.issue_count
-    @issue_pages = Paginator.new @issue_count, per_page_option, params['page']
-    @issues = @query.issues(offset: @issue_pages.offset, limit: @issue_pages.per_page)
+    respond_to do |format|
+      format.html { load_generated_issues }
+      format.api { @last_run = @periodictask.periodictask_issues.maximum(:created_at) }
+    end
   end
 
   def destroy
     @periodictask.destroy
     @periodictask.log_activity('delete')
-    redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+    respond_to do |format|
+      format.html { redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id] }
+      format.api { render_api_ok }
+    end
   end
 
   # Generate an issue right now from the task config, without touching the
   # schedule. Handy for testing a task before its next run date arrives.
   def run_now
-    issue = @periodictask.generate_issue(Time.current)
+    @issue = @periodictask.generate_issue(Time.current)
+    @run_errors = []
 
-    if issue.nil?
-      @periodictask.update(last_error: l(:label_project_missing_or_closed))
-      flash[:error] = l(:flash_task_run_failed, error: l(:label_project_missing_or_closed))
-    elsif issue.save
+    if @issue.nil?
+      @run_errors << l(:label_project_missing_or_closed)
+      @periodictask.update(last_error: @run_errors.join(', '))
+    elsif @issue.save
       @periodictask.log_activity('run')
-      errors = @periodictask.complete_generated_issue(issue, Time.current)
-      @periodictask.update(last_error: errors.join(', ').presence)
-      flash[:notice] = l(:flash_task_run_now, id: issue.id)
-      flash[:error] = l(:flash_task_run_failed, error: errors.join(', ')) if errors.any?
+      @run_errors = @periodictask.complete_generated_issue(@issue, Time.current)
+      @periodictask.update(last_error: @run_errors.join(', ').presence)
     else
-      error = issue.errors.full_messages.join(', ')
-      @periodictask.update(last_error: error)
-      flash[:error] = l(:flash_task_run_failed, error: error)
+      @run_errors = @issue.errors.full_messages
+      @periodictask.update(last_error: @run_errors.join(', '))
     end
 
-    # Return to wherever the action was triggered (the task detail page shows the
-    # new issue in its history), falling back to the list.
-    redirect_back fallback_location: { controller: 'periodictask', action: 'index', project_id: params[:project_id] }
+    respond_to do |format|
+      format.html do
+        flash[:notice] = l(:flash_task_run_now, id: @issue.id) if @issue&.persisted?
+        flash[:error] = l(:flash_task_run_failed, error: @run_errors.join(', ')) if @run_errors.any?
+        # Return to wherever the action was triggered (the task detail page shows the
+        # new issue in its history), falling back to the list.
+        redirect_back fallback_location: { controller: 'periodictask', action: 'index',
+                                           project_id: params[:project_id] }
+      end
+      format.api do
+        if @issue&.persisted?
+          render action: 'run_now', status: :created, location: issue_url(@issue)
+        else
+          render_api_errors(@run_errors)
+        end
+      end
+    end
   end
 
   # Autocomplete source for the tags field: names of tags already used on
@@ -206,6 +238,8 @@ class PeriodictaskController < ApplicationController
 
   def find_project
     @project = Project.find(params[:project_id])
+  rescue ActiveRecord::RecordNotFound
+    render_404
   end
 
   # Tasks are always addressed through their own project, so a task id from
@@ -240,6 +274,34 @@ class PeriodictaskController < ApplicationController
     Periodictask.new(project: @project, author_id: User.current.id)
   end
 
+  def last_runs_for(tasks)
+    PeriodictaskIssue.where(periodictask_id: tasks.map(&:id)).group(:periodictask_id).maximum(:created_at)
+  end
+
+  # The task's generated issues, rendered with Redmine's own issue list so
+  # columns, sorting and styling match the project's regular issue view.
+  def load_generated_issues
+    issue_ids = @periodictask.issues.pluck(:id)
+    return if issue_ids.empty?
+
+    @query = IssueQuery.new(name: '_', project: @project)
+    @query.filters = {} # drop the default "open status only" filter so closed issues show too
+    @query.add_filter('issue_id', '=', [issue_ids.join(',')])
+    @query.sort_criteria = params[:sort] if params[:sort].present?
+
+    @issue_count = @query.issue_count
+    @issue_pages = Paginator.new @issue_count, per_page_option, params['page']
+    @issues = @query.issues(offset: @issue_pages.offset, limit: @issue_pages.per_page)
+  end
+
+  # The template is validated as the issue it would generate (subject, tracker,
+  # required custom fields...) and as a schedule, so both sets of errors are
+  # reported. The issue is validated first, so the task may not have been.
+  def render_periodictask_validation_errors
+    @periodictask.validate if @periodictask.errors.empty?
+    render_validation_errors([@issue, @periodictask])
+  end
+
   def load_users
     # Get the assignable users and groups in the project
     @assignables = @project.assignable_users
@@ -261,17 +323,27 @@ class PeriodictaskController < ApplicationController
 
   # The form posts next_run_date as a wall-clock time without an offset; parse
   # it in the same zone the list/show pages use to display it (format_time).
+  # API clients may send it with an offset (ISO 8601), which is then honoured.
   def assign_periodictask_params
     attrs = periodictask_params
+    attrs[:project_id] = @project.id
     if attrs[:next_run_date].present?
       attrs[:next_run_date] = helpers.periodictask_parse_time(attrs[:next_run_date].to_s)
     end
-    # Rows are only posted when present, so a form with all rows removed
-    # must still clear the stored ones.
-    attrs[:subtasks] ||= []
-    attrs[:relations] ||= []
-    attrs[:weekdays] ||= []
-    attrs[:month_weeks] ||= []
+    # Core-style `custom_fields: [{id:, value:}]` is accepted as an alias of
+    # the `custom_field_values: {id => value}` hash the form posts.
+    if (fields = attrs.delete(:custom_fields))
+      attrs[:custom_field_values] = fields.to_h { |f| [f[:id].to_s, f[:value]] }
+    end
+    unless api_request?
+      # Rows are only posted when present, so a form with all rows removed
+      # must still clear the stored ones. API updates are partial instead: an
+      # attribute that is not sent keeps its value.
+      attrs[:subtasks] ||= []
+      attrs[:relations] ||= []
+      attrs[:weekdays] ||= []
+      attrs[:month_weeks] ||= []
+    end
     @periodictask.attributes = attrs
   end
 
@@ -283,9 +355,11 @@ class PeriodictaskController < ApplicationController
       :estimated_hours, :checklists_template_id, :parent_id, :priority_id, :status_id, :done_ratio, :tag_list,
       :fixed_version_id, :is_active,
       :monthly_mode, :weekend_adjustment,
+      { tag_list: [] },
       { weekdays: [] },
       { month_weeks: [] },
       { custom_field_values: {} },
+      { custom_fields: [:id, :value, { value: [] }] },
       { watcher_user_ids: [] },
       { subtasks: Periodictask::SUBTASK_KEYS },
       { relations: Periodictask::RELATION_FORM_KEYS }
