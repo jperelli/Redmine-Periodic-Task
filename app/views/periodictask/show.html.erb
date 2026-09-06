@@ -202,6 +202,14 @@
   </div>
 </fieldset>
 
+<div class="contextual">
+  <%= link_to(
+    periodictask_sprite_icon('list', l(:label_periodictask_all_issues)),
+    project_issues_path(@project, set_filter: 1, status_id: '*', periodictask: @periodictask.id),
+    class: 'icon icon-list periodictask-all-issues'
+  ) %>
+</div>
+
 <h3><%= l(:label_periodictask_history) %></h3>
 
 <% if @periodictask.last_skipped_at %>
