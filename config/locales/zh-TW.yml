@@ -147,6 +147,7 @@ zh-TW:
   label_periodictask_run_until: 'until %{time}'
   label_if_previous_open: "若上一個議題仍未關閉"
   label_if_previous_open_info: "當上一次執行建立的議題尚未關閉時，本次執行的行為"
+  label_if_previous_open_help: "各模式的含義與範例"
   label_if_previous_open_create: "仍然建立新議題"
   label_if_previous_open_create_info: "預設：議題會持續累積，直到有人關閉。"
   label_if_previous_open_skip: "略過本次"

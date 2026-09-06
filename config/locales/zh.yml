@@ -147,6 +147,7 @@ zh:
   label_periodictask_run_until: 'until %{time}'
   label_if_previous_open: "若上一个问题仍未关闭"
   label_if_previous_open_info: "当上一次运行创建的问题尚未关闭时，本次运行的行为"
+  label_if_previous_open_help: "各模式的含义与示例"
   label_if_previous_open_create: "仍然创建新问题"
   label_if_previous_open_create_info: "默认：问题会不断累积，直到有人关闭。"
   label_if_previous_open_skip: "跳过本次"

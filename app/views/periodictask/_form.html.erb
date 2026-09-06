@@ -22,14 +22,10 @@
     <span class="periodictask-time-zone"><%= link_to periodictask_time_zone_label, my_account_path, :title => l(:label_my_account), :target => '_blank', :rel => 'noopener' %></span>
   </p>
   <p class="periodictask-if-previous-open">
-    <label><span class="field-description" title="<%= l(:label_if_previous_open_info) %>"><%= l(:label_if_previous_open) %></span></label>
-    <% Periodictask::IF_PREVIOUS_OPEN_MODES.each do |mode| %>
-      <label class="block">
-        <%= radio_button 'periodictask', 'if_previous_open', mode %>
-        <%= periodictask_if_previous_open_label(mode) %>
-        <em class="info" style="display: inline;"><%= periodictask_if_previous_open_description(mode) %></em>
-      </label>
-    <% end %>
+    <%= label(:periodictask, :if_previous_open) do %><span class="field-description" title="<%= l(:label_if_previous_open_info) %>"><%= l(:label_if_previous_open) %></span><% end %>
+    <%= select_tag 'periodictask[if_previous_open]', periodictask_if_previous_open_options(@periodictask.if_previous_open), :id => 'periodictask_if_previous_open' %>
+    <%= periodictask_if_previous_open_help_link %>
+    <em class="info" id="periodictask_if_previous_open_info"><%= periodictask_if_previous_open_description(@periodictask.if_previous_open) %></em>
   </p>
   <p>
     <%= label(:periodictask, :author_id, l(:label_issue_author)) %>
@@ -188,6 +184,10 @@
       });
     });
     updateDefaultStatusLabel();
+
+    $('#periodictask_if_previous_open').change(function() {
+      $('#periodictask_if_previous_open_info').text($(this).find('option:selected').data('info'));
+    });
 
     // Show only the recurrence options that apply to the selected unit
     // (weekdays for weeks; monthly mode, and its occurrences/weekdays, for months).

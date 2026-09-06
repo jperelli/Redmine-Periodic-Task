@@ -56,6 +56,21 @@ module PeriodictaskHelper
     l(:"label_if_previous_open_#{mode}_info")
   end
 
+  # Options for the if_previous_open select; each option carries its
+  # explanation in data-info so the form can show it under the select.
+  def periodictask_if_previous_open_options(selected)
+    options = Periodictask::IF_PREVIOUS_OPEN_MODES.map do |mode|
+      [periodictask_if_previous_open_label(mode), mode,
+       { 'data-info' => periodictask_if_previous_open_description(mode) }]
+    end
+    options_for_select(options, selected)
+  end
+
+  # Help icon linking to the if_previous_open document on GitHub.
+  def periodictask_if_previous_open_help_link
+    periodictask_recurrence_help_link(l(:label_if_previous_open_help), RedminePeriodictask::IF_PREVIOUS_OPEN_DOC_URL)
+  end
+
   # "The run of <time> skipped ...: #123 was still open", shown above the
   # generated issues; the row for the run that created nothing.
   def periodictask_last_skipped_note(task)
@@ -64,9 +79,9 @@ module PeriodictaskHelper
     safe_join([content_tag(:span, periodictask_sprite_icon('time'), class: 'icon-only icon-time'), ' ', text.html_safe])
   end
 
-  # Help icon linking to the recurrence design document on GitHub.
-  def periodictask_recurrence_help_link(title = l(:label_recurrence_help))
-    link_to periodictask_sprite_icon('help', title, icon_only: true), RedminePeriodictask::RECURRENCE_DOC_URL,
+  # Help icon linking to a document on GitHub, the recurrence design by default.
+  def periodictask_recurrence_help_link(title = l(:label_recurrence_help), url = RedminePeriodictask::RECURRENCE_DOC_URL)
+    link_to periodictask_sprite_icon('help', title, icon_only: true), url,
             class: 'icon-only icon-help', title: title, target: '_blank', rel: 'noopener'
   end
 

@@ -145,6 +145,7 @@ it:
   label_periodictask_run_until: 'until %{time}'
   label_if_previous_open: "Se la segnalazione precedente è ancora aperta"
   label_if_previous_open_info: "Cosa fa un'esecuzione quando la segnalazione creata dall'esecuzione precedente non è ancora stata chiusa"
+  label_if_previous_open_help: "Cosa significano le modalità, con esempi"
   label_if_previous_open_create: "Crea comunque una nuova segnalazione"
   label_if_previous_open_create_info: "Predefinito: le segnalazioni si accumulano finché qualcuno non le chiude."
   label_if_previous_open_skip: "Salta questa occorrenza"

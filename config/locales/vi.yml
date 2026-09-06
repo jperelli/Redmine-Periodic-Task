@@ -147,6 +147,7 @@ vi:
   label_periodictask_run_until: "đến %{time}"
   label_if_previous_open: "Nếu vấn đề trước vẫn còn mở"
   label_if_previous_open_info: "Lần chạy sẽ làm gì khi vấn đề do lần chạy trước tạo ra vẫn chưa được đóng"
+  label_if_previous_open_help: "Ý nghĩa của các chế độ, kèm ví dụ"
   label_if_previous_open_create: "Vẫn tạo vấn đề mới"
   label_if_previous_open_create_info: "Mặc định: các vấn đề chồng lên nhau cho đến khi có người đóng chúng."
   label_if_previous_open_skip: "Bỏ qua lần này"

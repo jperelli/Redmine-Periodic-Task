@@ -150,6 +150,7 @@ ru:
   label_periodictask_run_until: 'until %{time}'
   label_if_previous_open: "Если предыдущая задача ещё открыта"
   label_if_previous_open_info: "Что делает запуск, когда задача, созданная предыдущим запуском, ещё не закрыта"
+  label_if_previous_open_help: "Что означают режимы, с примерами"
   label_if_previous_open_create: "Всё равно создать новую задачу"
   label_if_previous_open_create_info: "По умолчанию: задачи накапливаются, пока кто-нибудь их не закроет."
   label_if_previous_open_skip: "Пропустить этот запуск"

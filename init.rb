@@ -10,6 +10,8 @@ module RedminePeriodictask
   # Explains how next run dates are calculated; linked from the form and the
   # last-error display.
   RECURRENCE_DOC_URL = 'https://github.com/jperelli/Redmine-Periodic-Task/blob/main/doc/recurrence-design.md'.freeze
+  # Explains the if_previous_open modes; linked from the form.
+  IF_PREVIOUS_OPEN_DOC_URL = 'https://github.com/jperelli/Redmine-Periodic-Task/blob/main/doc/if-previous-open.md'.freeze
 end
 
 # Redmine already runs init.rb inside a to_prepare callback, so patches are

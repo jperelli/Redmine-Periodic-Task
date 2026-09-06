@@ -145,6 +145,7 @@ es:
   label_periodictask_run_until: 'hasta %{time}'
   label_if_previous_open: "Si la petición anterior sigue abierta"
   label_if_previous_open_info: "Qué hace una ejecución cuando la petición creada por la ejecución anterior aún no se ha cerrado"
+  label_if_previous_open_help: "Qué significa cada modo, con ejemplos"
   label_if_previous_open_create: "Crear una nueva petición de todos modos"
   label_if_previous_open_create_info: "Por defecto: las peticiones se acumulan hasta que alguien las cierra."
   label_if_previous_open_skip: "Omitir esta ocurrencia"

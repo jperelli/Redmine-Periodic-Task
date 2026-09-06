@@ -149,6 +149,7 @@ pl:
   label_periodictask_run_until: 'until %{time}'
   label_if_previous_open: "Jeśli poprzednie zagadnienie jest nadal otwarte"
   label_if_previous_open_info: "Co robi uruchomienie, gdy zagadnienie utworzone przez poprzednie uruchomienie nie zostało jeszcze zamknięte"
+  label_if_previous_open_help: "Co oznaczają tryby, z przykładami"
   label_if_previous_open_create: "Mimo to utwórz nowe zagadnienie"
   label_if_previous_open_create_info: "Domyślnie: zagadnienia gromadzą się, dopóki ktoś ich nie zamknie."
   label_if_previous_open_skip: "Pomiń to wystąpienie"

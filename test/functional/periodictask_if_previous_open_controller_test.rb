@@ -26,13 +26,19 @@ class PeriodictaskIfPreviousOpenControllerTest < ActionController::TestCase
     get :new, params: { project_id: 'ecookbook' }
     assert_response :success
 
-    Periodictask::IF_PREVIOUS_OPEN_MODES.each do |mode|
-      assert_select "input[type=radio][name='periodictask[if_previous_open]'][value=#{mode}]", 1
-      info = I18n.t(:"label_if_previous_open_#{mode}_info")
-      assert_select 'p.periodictask-if-previous-open label.block', text: /#{Regexp.escape(info)}/
+    assert_select "select#periodictask_if_previous_open[name='periodictask[if_previous_open]']" do
+      Periodictask::IF_PREVIOUS_OPEN_MODES.each do |mode|
+        assert_select "option[value=#{mode}][data-info=?]", I18n.t(:"label_if_previous_open_#{mode}_info"),
+                      text: I18n.t(:"label_if_previous_open_#{mode}")
+      end
+      assert_select 'option[selected=selected][value=create]'
+      assert_select 'option[selected=selected]', 1
     end
-    assert_select 'input#periodictask_if_previous_open_create[checked=checked]'
-    assert_select 'input#periodictask_if_previous_open_skip[checked=checked]', 0
+    assert_select 'p.periodictask-if-previous-open em#periodictask_if_previous_open_info',
+                  text: I18n.t(:label_if_previous_open_create_info)
+    assert_select 'p.periodictask-if-previous-open a.icon-help[href=?][title=?]',
+                  RedminePeriodictask::IF_PREVIOUS_OPEN_DOC_URL, I18n.t(:label_if_previous_open_help)
+    assert_select 'p.periodictask-credit a[href=?]', RedminePeriodictask::RECURRENCE_DOC_URL, 0
   end
 
   def test_create_persists_the_selected_mode
@@ -70,8 +76,9 @@ class PeriodictaskIfPreviousOpenControllerTest < ActionController::TestCase
     task = create_task(if_previous_open: 'skip')
     get :edit, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
-    assert_select 'input#periodictask_if_previous_open_skip[checked=checked]'
-    assert_select 'input#periodictask_if_previous_open_create[checked=checked]', 0
+    assert_select 'select#periodictask_if_previous_open option[selected=selected][value=skip]'
+    assert_select 'select#periodictask_if_previous_open option[selected=selected]', 1
+    assert_select 'em#periodictask_if_previous_open_info', text: I18n.t(:label_if_previous_open_skip_info)
   end
 
   def test_show_displays_the_mode
@@ -117,7 +124,7 @@ class PeriodictaskIfPreviousOpenControllerTest < ActionController::TestCase
     task = create_task(if_previous_open: 'close_previous')
     get :copy, params: { project_id: 'ecookbook', id: task.id }
     assert_response :success
-    assert_select 'input#periodictask_if_previous_open_close_previous[checked=checked]'
-    assert_select 'input#periodictask_if_previous_open_create[checked=checked]', 0
+    assert_select 'select#periodictask_if_previous_open option[selected=selected][value=close_previous]'
+    assert_select 'select#periodictask_if_previous_open option[selected=selected]', 1
   end
 end

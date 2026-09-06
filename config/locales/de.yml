@@ -145,6 +145,7 @@ de:
   label_periodictask_run_until: 'bis %{time}'
   label_if_previous_open: "Wenn das vorige Ticket noch offen ist"
   label_if_previous_open_info: "Was ein Lauf tut, wenn das vom vorigen Lauf erstellte Ticket noch nicht geschlossen wurde"
+  label_if_previous_open_help: "Was die Modi bedeuten, mit Beispielen"
   label_if_previous_open_create: "Trotzdem ein neues Ticket erstellen"
   label_if_previous_open_create_info: "Standard: Tickets sammeln sich an, bis jemand sie schließt."
   label_if_previous_open_skip: "Diesen Termin überspringen"
