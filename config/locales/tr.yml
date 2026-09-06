@@ -24,6 +24,7 @@ tr:
   label_set_start_date_info: 'İşaretlendiğinde, oluşturulan her iş kaydının başlangıç tarihi oluşturulduğu güne ayarlanır.'
   label_due_date: 'Bitiş tarihini sonra ayarla'
   label_due_date_info: 'Oluşturulan her iş kaydının bitiş tarihi; başlangıç tarihinden bu kadar sonra ayarlanır.'
+  label_assigned_to_info: 'İsteğe bağlı. Boş bırakılırsa, oluşturulan her iş kaydına Redmine''in varsayılan atananı uygulanır: kategorinin varsayılan atananı, yoksa projenin.'
   label_estimated_hours: Kalan zaman
   label_estimated_hours_after: Saat
   label_description: Açıklama
@@ -55,6 +56,7 @@ tr:
     **PREVIOUS_MONTHNAME** (Ocak - Aralık)
     **NEXT_MONTHNAME** (Ocak - Aralık)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N gün)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (önceki / N önceki çalıştırmada oluşturulan işin #numarası, ilk çalıştırmada boş)
   label_variables_markdown_note: 'Not: açıklamada önizlemede kalın görünürler çünkü ** Markdown''ın kalın yazı söz dizimidir; iş kaydı oluşturulduğunda gerçek değerleriyle değiştirilirler.'
   label_last_error: Son hata
   label_issue_custom_fields: Özel alanlar
@@ -73,7 +75,8 @@ tr:
   label_periodictask_journal_delete: Periyodik iş silindi
   label_periodictask_journal_run: Periyodik iş çalıştırıldı
   label_subtasks_info: "Oluşturulan her işin altında oluşturulan alt işler. Konular, iş konusuyla aynı değişkenleri kabul eder."
-  label_relations_info: "Oluşturulan her işten mevcut işlere oluşturulan ilişkiler."
+  label_relations_info: "Oluşturulan her işten mevcut işlere veya önceki çalıştırmada oluşturulan işe oluşturulan ilişkiler."
+  label_relation_previous_issue: "Önceki oluşturulan iş"
   error_subtask_subject_blank: "Alt iş konusu boş olamaz"
   error_relation_type_invalid: "Geçersiz ilişki türü"
   error_relation_issue_invalid: "İlişkili iş bir iş numarası olmalıdır"

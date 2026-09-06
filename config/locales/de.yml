@@ -24,6 +24,7 @@ de:
   label_set_start_date_info: 'Wenn aktiviert, wird das Startdatum jeder erstellten Aufgabe auf den Tag der Erstellung gesetzt.'
   label_due_date: 'Fälligkeitsdatum setzen nach'
   label_due_date_info: 'Fälligkeitsdatum jeder erstellten Aufgabe, gesetzt um diese Zeitspanne nach ihrem Startdatum.'
+  label_assigned_to_info: 'Optional. Wenn leer, gilt für jede erstellte Aufgabe die Standardzuweisung von Redmine: der Standard-Bearbeiter der Kategorie, sonst der des Projekts.'
   label_description: Beschreibung
   label_estimated_hours: Geschätzter Aufwand
   label_estimated_hours_after: Stunden
@@ -55,6 +56,7 @@ de:
     **PREVIOUS_MONTHNAME** (Januar - Dezember)
     **NEXT_MONTHNAME** (Januar - Dezember)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N Tage)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#Nummer des vom vorherigen / N-t-letzten Lauf erstellten Tickets, leer beim ersten Lauf)
   label_variables_markdown_note: 'Hinweis: In der Beschreibung erscheinen diese in der Vorschau fett, da ** die Fett-Syntax von Markdown ist; sie werden beim Erstellen der Aufgabe durch den tatsächlichen Wert ersetzt.'
   label_last_error: Letzter Fehler
   label_issue_custom_fields: Benutzerdefinierte Felder
@@ -73,7 +75,8 @@ de:
   label_periodictask_journal_delete: Periodische Aufgabe gelöscht
   label_periodictask_journal_run: Periodische Aufgabe ausgeführt
   label_subtasks_info: "Untertickets, die unter jedem erstellten Ticket angelegt werden. Die Themen akzeptieren dieselben Variablen wie das Ticket-Thema."
-  label_relations_info: "Beziehungen, die von jedem erstellten Ticket zu bestehenden Tickets angelegt werden."
+  label_relations_info: "Beziehungen, die von jedem erstellten Ticket zu bestehenden Tickets oder zum im vorherigen Lauf erstellten Ticket angelegt werden."
+  label_relation_previous_issue: "Zuvor erstelltes Ticket"
   error_subtask_subject_blank: "Das Thema des Untertickets darf nicht leer sein"
   error_relation_type_invalid: "Ungültiger Beziehungstyp"
   error_relation_issue_invalid: "Zugehöriges Ticket muss eine Ticketnummer sein"

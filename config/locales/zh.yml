@@ -26,6 +26,7 @@ zh:
   label_set_start_date_info: '勾选后，每个创建的问题的开始日期将设置为其生成当天。'
   label_due_date: '设置截止日期（之后）'
   label_due_date_info: '每个创建的问题的截止日期，设置为其开始日期之后的这段时间。'
+  label_assigned_to_info: '可选。留空时，每个创建的问题将应用 Redmine 的默认指派人：类别的默认指派人，否则为项目的默认指派人。'
   label_estimated_hours: 预期时间
   label_estimated_hours_after: 小时
   label_description: 描述
@@ -57,6 +58,7 @@ zh:
     **PREVIOUS_MONTHNAME** (一月 - 十二月)
     **NEXT_MONTHNAME** (一月 - 十二月)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N 天)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (上一次 / 前第 N 次运行创建的问题 #编号，首次运行时为空)
   label_variables_markdown_note: '注意：在描述中，由于 ** 是 Markdown 的加粗语法，它们在预览中显示为加粗；创建问题时会替换为实际值。'
   label_last_error: 最后错误
   label_issue_custom_fields: 自定义字段
@@ -75,7 +77,8 @@ zh:
   label_periodictask_journal_delete: 已删除周期任务
   label_periodictask_journal_run: 已运行周期任务
   label_subtasks_info: "在每个创建的问题下创建的子问题。主题支持与问题主题相同的变量。"
-  label_relations_info: "从每个创建的问题到现有问题建立的关联。"
+  label_relations_info: "从每个创建的问题到现有问题或上一次运行所创建问题建立的关联。"
+  label_relation_previous_issue: "上一次创建的问题"
   error_subtask_subject_blank: "子问题主题不能为空"
   error_relation_type_invalid: "无效的关联类型"
   error_relation_issue_invalid: "关联问题必须是问题编号"

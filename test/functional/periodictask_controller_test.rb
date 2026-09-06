@@ -117,6 +117,70 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal @project.id, task.project_id
   end
 
+  def test_new_does_not_require_an_assignee
+    get :new, params: { project_id: 'ecookbook' }
+
+    assert_select '#periodictask_assigned_to_id:not([required])'
+    assert_select '#periodictask_assigned_to_id option[value=""]', text: "(#{I18n.t(:label_default)})"
+    assert_select 'label[for="periodictask_assigned_to_id"] span.required', count: 0
+    assert_select 'a.assign-to-me-link'
+  end
+
+  def test_create_periodictask_without_assignee
+    assert_difference('Periodictask.count') do
+      post :create, params: {
+        project_id: 'ecookbook',
+        periodictask: {
+          subject: 'Unassigned periodic task',
+          tracker_id: 1,
+          assigned_to_id: '',
+          interval_number: 1,
+          interval_units: 'month',
+          next_run_date: 1.month.from_now.to_s
+        }
+      }
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+
+    task = Periodictask.order(:id).last
+    assert_equal 'Unassigned periodic task', task.subject
+    assert_nil task.assigned_to_id
+  end
+
+  def test_update_can_clear_the_assignee
+    task = create_test_periodictask
+    patch :update, params: {
+      project_id: 'ecookbook',
+      id: task.id,
+      periodictask: { assigned_to_id: '' }
+    }
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    assert_nil task.reload.assigned_to_id
+  end
+
+  def test_index_and_show_display_default_for_task_without_assignee
+    task = create_test_periodictask(subject: 'Unassigned task', assigned_to_id: nil)
+
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.periodictask-template .attributes .assigned-to .value', text: /\A\(#{I18n.t(:label_default)}\)/
+    assert_select '.periodictask-template .attributes .assigned-to .value span.icon-help[title=?]',
+                  I18n.t(:label_assigned_to_info)
+  end
+
+  def test_run_now_without_assignee_applies_category_default_assignee
+    category = IssueCategory.create!(project: @project, name: 'Ops', assigned_to_id: 3)
+    task = create_test_periodictask(subject: 'Unassigned run', assigned_to_id: nil, issue_category_id: category.id)
+
+    assert_difference('Issue.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    assert_equal 3, Issue.where(subject: 'Unassigned run').last.assigned_to_id
+  end
+
   def test_create_with_missing_interval_fails
     assert_no_difference('Periodictask.count') do
       post :create, params: {
@@ -441,6 +505,64 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_response :success
     assert_select '.periodictask-subtasks td', text: 'Child'
     assert_select '.periodictask-relations li', text: /#{I18n.t(:label_blocks)}.*#1/m
+  end
+
+  def test_relation_to_previous_issue_round_trips_through_the_form
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: {
+        subject: 'Chained', tracker_id: 1, assigned_to_id: 2, author_id: 2,
+        interval_number: 1, interval_units: 'week',
+        relations: { '0' => { relation_type: 'follows', target: 'previous_issue', issue_id: '', delay: '1' },
+                     '1' => { relation_type: 'relates', target: 'issue', issue_id: '1', delay: '' } }
+      }
+    }
+    assert_response :redirect
+    task = Periodictask.find_by(subject: 'Chained')
+    assert_equal [{ 'relation_type' => 'follows', 'issue_id' => 'previous_issue', 'delay' => '1' },
+                  { 'relation_type' => 'relates', 'issue_id' => '1', 'delay' => nil }], task.relations
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select[name=?] option[selected][value=follows]', 'periodictask[relations][0][relation_type]'
+    assert_select 'select[name=?] option[selected][value=previous_issue]', 'periodictask[relations][0][target]'
+    assert_select 'input[name=?][value]', 'periodictask[relations][0][issue_id]', count: 0
+    assert_select 'select[name=?] option[selected][value=issue]', 'periodictask[relations][1][target]'
+    assert_select 'input[name=?][value="1"]', 'periodictask[relations][1][issue_id]'
+
+    patch :update, params: {
+      project_id: 'ecookbook', id: task.id,
+      periodictask: {
+        relations: { '0' => { relation_type: 'follows', target: 'previous_issue', issue_id: '', delay: '1' },
+                     '1' => { relation_type: 'relates', target: 'issue', issue_id: '1', delay: '' } }
+      }
+    }
+    assert_response :redirect
+    assert_equal task.relations, task.reload.relations
+
+    get :show, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select '.periodictask-relations li',
+                  text: /#{I18n.t(:label_follows)}.*#{I18n.t(:label_relation_previous_issue)}/m
+  end
+
+  def test_run_now_twice_relates_the_new_issue_to_the_previous_one
+    task = create_test_periodictask(next_run_date: 1.month.from_now, subject: 'Weekly **PREVIOUS_ISSUE**',
+                                    relations: [{ 'relation_type' => 'relates', 'issue_id' => 'previous_issue' }])
+    assert_no_difference('IssueRelation.count') do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    first = task.created_issues.first
+    assert_equal 'Weekly ', first.subject
+    assert_nil task.reload.last_error
+
+    assert_difference('IssueRelation.count', 1) do
+      post :run_now, params: { project_id: 'ecookbook', id: task.id }
+    end
+    second = task.created_issues.where.not(id: first.id).first
+    assert_equal "Weekly ##{first.id}", second.subject
+    assert_equal [first], second.relations.map { |r| r.other_issue(second) }.to_a
+    assert_nil task.reload.last_error
   end
 
   # ---- recurrence (issue #50) ----

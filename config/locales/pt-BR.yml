@@ -24,6 +24,7 @@ pt-BR:
   label_set_start_date_info: 'Quando marcado, a data de início de cada tarefa criada é definida para o dia em que é gerada.'
   label_due_date: 'Definir data de vencimento após'
   label_due_date_info: 'Data de vencimento de cada tarefa criada, definida com este intervalo após a data de início.'
+  label_assigned_to_info: 'Opcional. Quando em branco, cada tarefa criada recebe o atribuído padrão do Redmine: o atribuído padrão da categoria ou, na falta dele, o do projeto.'
   label_estimated_hours: Tempo estimado
   label_estimated_hours_after: Horas
   label_description: Descrição
@@ -55,6 +56,7 @@ pt-BR:
     **PREVIOUS_MONTHNAME** (Janeiro - Dezembro)
     **NEXT_MONTHNAME** (Janeiro - Dezembro)
     **DAY±N**, **WEEK±N**, **WEEKISO±N**, **MONTH±N**, **MONTHNAME±N**, **QUARTER±N**, **YEAR±N** (±N dias)
+    **PREVIOUS_ISSUE**, **PREVIOUS_ISSUE-N** (#id da tarefa criada na execução anterior / N execuções antes, vazio na primeira execução)
   label_variables_markdown_note: 'Observação: na descrição elas aparecem em negrito na pré-visualização porque ** é a sintaxe de negrito do Markdown; são substituídas pelo valor real quando a tarefa é criada.'
   label_last_error: Último erro
   label_issue_custom_fields: Campos personalizados
@@ -73,7 +75,8 @@ pt-BR:
   label_periodictask_journal_delete: Tarefa periódica excluída
   label_periodictask_journal_run: Tarefa periódica executada
   label_subtasks_info: "Subtarefas criadas sob cada tarefa gerada. Os títulos aceitam as mesmas variáveis que o título da tarefa."
-  label_relations_info: "Relações criadas de cada tarefa gerada para tarefas existentes."
+  label_relations_info: "Relações criadas de cada tarefa gerada para tarefas existentes ou para a tarefa gerada na execução anterior."
+  label_relation_previous_issue: "Tarefa gerada anteriormente"
   error_subtask_subject_blank: "O título da subtarefa não pode ficar em branco"
   error_relation_type_invalid: "Tipo de relação inválido"
   error_relation_issue_invalid: "A tarefa relacionada deve ser um número de tarefa"

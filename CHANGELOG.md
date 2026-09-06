@@ -14,6 +14,7 @@
 - Add an `Active` flag to disable a task without deleting it: disabled tasks are skipped by the scheduler but can still be run with `Run now` **requires migration**, inspired by [@Luckyvb](https://github.com/Luckyvb)'s and [@rkteam](https://github.com/rkteam)'s forks (@jperelli)
 - Add a configurable `Target version` for the generated issues **requires migration** (@jperelli)
 - Add a day offset to the date variables: `**DAY-1**`, `**MONTHNAME+10**`, etc. shift the whole date, so `**DAY-1**/**MONTH-1**/**YEAR-1**` renders yesterday even across month and year boundaries, inspired by the `**N_DAY_AGO**`/`**N_DAY_SINCE**` variables in [@ash-r1](https://github.com/ash-r1)'s fork (@jperelli)
+- Link each generated issue to the previous occurrence: the `**PREVIOUS_ISSUE**` variable renders `#<id>` of the issue the task created on its previous run (`**PREVIOUS_ISSUE-2**` the one before, empty on the first run), and a relation target *Previous generated issue* creates a relation of any type (`relates`, `follows`, `precedes`...) from each new issue to the previous one, skipped on the first run (@jperelli)
 - Add a `Create periodic task from this issue` link to the issue sidebar that opens the new task form prefilled from the issue (template fields, custom fields, watchers, tags and checklist template; first run preset to a future due date) (@jperelli)
 - REST API (JSON and XML) for periodic tasks, following Redmine's core API conventions: list (paginated, `include=issues`), show, create, update, delete and `run_now` under `/projects/:project_id/periodictask`, plus the admin cross-project list at `/admin/periodictasks.json`; same permission, module and project checks as the pages, API key authentication, `422` validation errors (@jperelli)
 
@@ -26,6 +27,7 @@
 - The checker restores the request locale after running, so the *Run checker now* flash message is shown in the admin's language instead of Redmine's default (@jperelli)
 - Show the disabled marker in the `Administration` > `Periodic Tasks` list like in the project list, and sort `business day` intervals by duration in the project list (@jperelli)
 - The disabled and last-error markers in the task lists were invisible on Redmine 6+/7 (empty legacy icon spans render nothing with SVG icons); they now use the sprite icons (@jperelli)
+- The assignee is optional: a task can be saved without one and its issues follow Redmine's default assignee rules (category default assignee, then project default assignee), like any other unassigned issue (@jperelli)
 
 ## v7.0.0 - 2026-09-03
 
