@@ -18,17 +18,25 @@ After you installed the plugin you can add it as a module to a project that alre
 
 ## Screenshots
 
-List of scheduled tasks for a project, showing interval, next run date and last run:
+List of scheduled tasks for a project, showing the recurrence rule as a sentence, next run date, assignee (or who is next in the rotation) and last run:
 
 ![Periodic task list view](doc/screenshots/list_view.png)
 
-Creating or editing a periodic task - it mirrors Redmine's own issue form (tracker, priority, watchers, custom fields, ...):
+Creating or editing a periodic task: the recurrence rule on top, then a template that mirrors Redmine's own issue form (tracker, priority, assignee rotation, category, target version, dates, watchers, subtasks, related issues, custom fields, ...):
 
 ![Create / edit a periodic task](doc/screenshots/create_update.png)
 
-Task detail page with the history of issues generated from it:
+The *Next occurrences* preview under the rule: the next run dates as chips and a calendar of the coming months with every run day highlighted, refreshed as you change the rule:
+
+![Next occurrences chips and calendar in the task form](doc/screenshots/next_occurrences.png)
+
+Task detail page with the schedule header, the template and the history of issues generated from it:
 
 ![Periodic task detail](doc/screenshots/detail.png)
+
+Plugin settings page: scheduler mode (cron, automatic on web requests or an external check URL) and the scheduler log:
+
+![Scheduler settings and log](doc/screenshots/scheduler_settings.png)
 
 ## How it compares
 
@@ -198,7 +206,7 @@ The *Run checker now* button on the same page runs the checker immediately, whic
 
 *Administration → Periodic Tasks* lists the tasks of every project in one table (inactive and ended tasks are greyed out, tasks whose last run failed are marked), with links to each task's detail and edit pages.
 
-![Scheduler log on the plugin settings page, with a highlighted failed run](doc/screenshots/scheduler_log.png)
+![Scheduler settings page with the scheduler log, with a highlighted failed run](doc/screenshots/scheduler_settings.png)
 
 ### Creating a periodic task from an existing issue
 
