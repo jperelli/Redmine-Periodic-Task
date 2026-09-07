@@ -31,7 +31,8 @@ end
 Redmine::Plugin.register :periodictask do
   name 'Redmine Periodictask plugin'
   author 'Julian Perelli'
-  description 'Recurring issues: creates issues from per-project templates on a schedule (daily, business days, weekly, monthly, yearly)'
+  description 'Recurring issues: creates issues from per-project templates on a schedule ' \
+              '(daily, business days, weekly, monthly, yearly)'
   version '7.1.0'
   url 'https://github.com/jperelli/Redmine-Periodic-Task/'
   author_url 'https://jperelli.com.ar/'
