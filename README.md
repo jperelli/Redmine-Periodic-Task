@@ -1,10 +1,18 @@
 <p align="center"><img src="doc/logo.png" alt="Redmine Periodic Task logo" width="160"></p>
 
-# Redmine periodictask [![Test](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml/badge.svg)](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml)
+# Redmine periodictask [![Test](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml/badge.svg)](https://github.com/jperelli/Redmine-Periodic-Task/actions/workflows/test.yml) [![Redmine plugins directory](https://img.shields.io/badge/redmine.org-plugin-b63d3d)](https://www.redmine.org/plugins/redmine_periodic_task) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-In some projects there are tasks that need to be assigned on a schedule. Such as check the ssl registration once per year or run security checks every 3 months
+**Recurring issues for Redmine.** Some work repeats on a schedule: renew the SSL certificate once a year, run the security checks every 3 months, write the weekly report every Monday, rotate the on-call duty. Redmine has no built-in recurring or repeating issues; this plugin adds them. You define a *periodic task* (an issue template plus a recurrence rule) and the plugin creates the issue for you when it is due.
 
-> Read more about the plugin, how it works internally and its history in [this blog post](https://jperelli.com.ar/project/2026/06/29/redmine-periodic-task/).
+- Recurrence every N days, business days, weeks (on chosen weekdays), months (day of month or *3rd Wednesday*) or years, with an optional end date or maximum number of runs
+- Generated issues get everything a hand-made issue has: tracker, status, priority, assignee or **assignee rotation**, category, version, custom fields, watchers, attachments, **subtasks** and **relations** to other issues
+- Date variables in subject and description (`Weekly report **WEEKISO**/**YEAR**`)
+- Choose what happens when the previous issue is still open: create anyway, skip, close it or wait
+- Works with cron, **without cron** (checked on web requests) or from any external scheduler through a check URL
+- Full **REST API**, issue list filter and column for generated issues, activity entries, scheduler log
+- Supports Redmine 5.x to 7.0 (5.1 to 7.0 tested in CI), translated into 15 languages, MIT licensed
+
+> Read more about the plugin, how it works internally and its history in [this blog post](https://jperelli.com.ar/project/2026/06/29/redmine-periodic-task/). It is also listed in the [Redmine plugins directory](https://www.redmine.org/plugins/redmine_periodic_task), where you can rate it.
 
 After you installed the plugin you can add it as a module to a project that already exists or activate it as default module for new projects. On each project it will add a new tab named "Periodic Task" - just go there to add your tasks.
 
@@ -21,6 +29,15 @@ Creating or editing a periodic task - it mirrors Redmine's own issue form (track
 Task detail page with the history of issues generated from it:
 
 ![Periodic task detail](doc/screenshots/detail.png)
+
+## How it compares
+
+There are two ways to get recurring issues in Redmine:
+
+- **Template based** (this plugin): the recurrence lives in a *periodic task*, a template stored per project. Issues are generated from it; none of them is "the" recurring issue, so there is nothing to keep open or to re-copy, and the template can be changed without touching past issues. The task page shows the history of generated issues, and a filter on the issue list finds them.
+- **Issue based** ([issue_recurring](https://github.com/cryptogopher/issue_recurring) and similar plugins): the recurrence is attached to an existing issue, which is copied or reopened on each occurrence.
+
+Pick this plugin if you think of the work as "a checklist that comes back" rather than "an issue that never closes", if you want subtasks, relations, an assignee rotation or a REST API around it, if you cannot set up cron on your Redmine host, or if you run a recent Redmine (5.1 to 7.0 are tested in CI on every change).
 
 ## Redmine version support
 
