@@ -29,6 +29,6 @@ class CheckPeriodictasksRakeTest < ActiveSupport::TestCase
     end
     assert_match(/periodictask plugin is not loaded/, err)
     assert_match(Regexp.escape(Redmine::PluginLoader.directory.to_s), err)
-    assert_match(%r{Redmine-Periodic-Task#installation}, err)
+    assert_match(/Redmine-Periodic-Task#installation/, err)
   end
 end
