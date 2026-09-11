@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.1.1 - 2026-09-11
+
+### Fixes
+
+- `rake redmine:check_periodictasks` explains what to do instead of failing with `uninitialized constant ScheduledTasksChecker` when the plugin sits in `plugins/` but Redmine loads plugins from another directory (Debian packages: `/var/lib/redmine/<instance>/plugins`); README section on Debian installs ([#179](https://github.com/jperelli/Redmine-Periodic-Task/issues/179)) (@jperelli)
+
 ## v7.1.0 - 2026-09-06
 
 ### Features

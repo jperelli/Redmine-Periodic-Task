@@ -118,6 +118,17 @@ Run these from your Redmine root. The paths below assume `/opt/redmine`, adjust 
 
 Then restart Redmine so it loads the plugin (see [Restarting Redmine](#restarting-redmine)).
 
+### Debian / Ubuntu `redmine` package
+
+The Debian `redmine` 6.x package (Redmine root `/usr/share/redmine`) loads plugins from `/var/lib/redmine/<instance>/plugins/` (the instance is `default` unless you set `REDMINE_INSTANCE`), **not** from `/usr/share/redmine/plugins/`. A plugin cloned into `/usr/share/redmine/plugins/` does not show up under *Administration → Plugins*, and its rake task fails with `uninitialized constant ScheduledTasksChecker`, because Redmine still picks up the rake tasks from there. Install into the instance directory instead:
+
+    cd /usr/share/redmine
+    git clone https://github.com/jperelli/Redmine-Periodic-Task.git /var/lib/redmine/default/plugins/periodictask
+    bundle install
+    bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
+
+Or keep the clone in `/usr/share/redmine/plugins/periodictask` and symlink it: `ln -s /usr/share/redmine/plugins/periodictask /var/lib/redmine/default/plugins/periodictask`. Then restart Redmine. See `/usr/share/doc/redmine/README.Debian` for the details of the Debian layout.
+
 ## Upgrade
 
     cd /opt/redmine/plugins/periodictask
