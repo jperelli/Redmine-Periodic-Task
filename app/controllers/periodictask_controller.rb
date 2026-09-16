@@ -311,12 +311,14 @@ class PeriodictaskController < ApplicationController
   end
 
   # The task's generated issues, rendered with Redmine's own issue list so
-  # columns, sorting and styling match the project's regular issue view.
+  # columns, sorting and styling match the project's regular issue view. Once
+  # the task has been moved, the issues of its former projects are listed too
+  # (global query, hence with the project column).
   def load_generated_issues
     issue_ids = @periodictask.issues.pluck(:id)
     return if issue_ids.empty?
 
-    @query = IssueQuery.new(name: '_', project: @project)
+    @query = IssueQuery.new(name: '_', project: (@project unless @periodictask.issues_in_other_projects?))
     @query.filters = {} # drop the default "open status only" filter so closed issues show too
     @query.add_filter('issue_id', '=', [issue_ids.join(',')])
     @query.sort_criteria = params[:sort] if params[:sort].present?
@@ -354,7 +356,7 @@ class PeriodictaskController < ApplicationController
   # which is then honoured.
   def assign_periodictask_params
     attrs = periodictask_params
-    move_to(attrs.delete(:project_id))
+    project_id = attrs.delete(:project_id)
     %i[next_run_date end_date].each do |field|
       attrs[field] = helpers.periodictask_parse_time(attrs[field].to_s) if attrs[field].present?
     end
@@ -374,6 +376,8 @@ class PeriodictaskController < ApplicationController
       attrs[:rotation_ids] ||= []
     end
     @periodictask.attributes = attrs
+    # After the other attributes, so the move adapts the posted values too.
+    move_to(project_id)
   end
 
   # A new task belongs to the URL project. An existing one may be moved to

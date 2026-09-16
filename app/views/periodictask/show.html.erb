@@ -239,7 +239,11 @@
 <div class="contextual">
   <%= link_to(
     periodictask_sprite_icon('list', l(:label_periodictask_all_issues)),
-    project_issues_path(@project, set_filter: 1, status_id: '*', periodictask: @periodictask.id),
+    if @periodictask.issues_in_other_projects?
+      issues_path(set_filter: 1, status_id: '*', periodictask: @periodictask.id)
+    else
+      project_issues_path(@project, set_filter: 1, status_id: '*', periodictask: @periodictask.id)
+    end,
     class: 'icon icon-list periodictask-all-issues'
   ) %>
 </div>

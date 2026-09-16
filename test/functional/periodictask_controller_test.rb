@@ -229,6 +229,29 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_equal 2, PeriodictaskJournal.where(periodictask_id: task.id, action: 'update').last.project_id
   end
 
+  def test_update_adapts_the_values_posted_by_the_form_to_the_new_project
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask(assigned_to_id: 3, issue_category_id: 1, fixed_version_id: 3, parent_id: 1,
+                                    watcher_user_ids: [2, 3])
+    with_settings cross_project_subtasks: '' do
+      # The form posts every field, with the values of the former project
+      patch :update, params: {
+        project_id: 'ecookbook', id: task.id,
+        periodictask: { project_id: '2', tracker_id: '1', assigned_to_id: '3', issue_category_id: '1',
+                        fixed_version_id: '3', parent_id: '1', watcher_user_ids: %w[2 3] }
+      }
+    end
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'onlinestore'
+
+    task.reload
+    assert_equal 2, task.project_id
+    assert_equal 4, task.issue_category_id
+    assert_nil task.assigned_to_id
+    assert_nil task.fixed_version_id
+    assert_nil task.parent_id
+    assert_equal [2], task.watcher_user_ids, 'dlopper cannot watch issues of onlinestore'
+  end
+
   def test_update_leaves_the_generated_issues_where_they_are
     enable_periodictask_on_onlinestore
     task = create_test_periodictask
@@ -237,6 +260,19 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'onlinestore'
     assert_equal 1, Issue.find(1).project_id
     assert_equal [1], task.reload.issues.pluck(:id)
+  end
+
+  def test_show_lists_the_issues_generated_before_the_move_too
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask
+    PeriodictaskIssue.create!(periodictask: task, issue: Issue.find(1))
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { project_id: '2' } }
+
+    get :show, params: { project_id: 'onlinestore', id: task.id }
+    assert_response :success
+    assert_select 'tr#issue-1 td.project', text: 'eCookbook'
+    assert_select 'a.periodictask-all-issues[href=?]',
+                  "/issues?periodictask=#{task.id}&set_filter=1&status_id=%2A"
   end
 
   def test_a_moved_task_is_reached_through_its_new_project_only
@@ -290,6 +326,21 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_not_include 'Dave Lopper', @response.body
     assert_equal 1, task.reload.project_id, 'nothing is saved'
     assert_equal 'Test task', task.subject
+  end
+
+  def test_update_form_adapts_the_posted_values_to_the_chosen_project
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask
+    post :update_form, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { id: task.id, project_id: '2', issue_category_id: '1', fixed_version_id: '3', assigned_to_id: '3' }
+    }, xhr: true
+    assert_response :success
+    form = rerendered_form
+    assert_equal ['4'], form.css('#periodictask_issue_category_id option[selected]').map { |o| o['value'] },
+                 'the category of the same name in onlinestore is selected'
+    assert_empty form.css('#periodictask_fixed_version_id option[selected]'), 'version 3 is not shared with onlinestore'
+    assert_empty form.css('#periodictask_assigned_to_id option[selected]'), 'dlopper is not a member of onlinestore'
   end
 
   def test_update_form_keeps_the_task_where_it_is_when_the_project_is_not_changed
@@ -2146,5 +2197,12 @@ class PeriodictaskControllerTest < ActionController::TestCase
   def enable_periodictask_on_onlinestore
     EnabledModule.create!(project: Project.find(2), name: 'periodictask')
     Role.find(2).add_permission!(:periodictask)
+  end
+
+  # The form fields an update_form response puts in place, as a document.
+  def rerendered_form
+    html = @response.body[/\.html\('(.*)'\);\s*\z/m, 1]
+    unescaped = html.gsub(/\\(.)/) { Regexp.last_match(1) == 'n' ? "\n" : Regexp.last_match(1) }
+    Nokogiri::HTML::DocumentFragment.parse(unescaped)
   end
 end

@@ -410,12 +410,18 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     Project.allowed_to(user, :periodictask).or(Project.where(id: project_id)).sorted
   end
 
+  # Whether issues generated before a move live outside the task's project.
+  def issues_in_other_projects?
+    issues.where.not(project_id: project_id).exists?
+  end
+
   # Moving the template to another project keeps what still applies there and
   # drops the rest, like Issue#project= does: the tracker falls back to the
   # project's first, the category to the one with the same name; an assignee,
   # rotation user or subtask assignee who cannot be assigned issues there, a
-  # version not shared with it, a parent issue the cross-project subtasks
-  # setting forbids and a checklist template of another project are cleared.
+  # version not shared with it, a watcher who may not watch issues there, a
+  # parent issue the cross-project subtasks setting forbids and a checklist
+  # template of another project are cleared.
   # The issues generated so far stay where they were created.
   def project=(new_project)
     project_was = project
@@ -896,6 +902,7 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
       row['assigned_to_id'] = nil unless assignable_ids.include?(row['assigned_to_id'].to_i)
     end
     self.fixed_version = nil if fixed_version && !project.shared_versions.include?(fixed_version)
+    self.watcher_user_ids = watcher_user_ids & project.principals.assignable_watchers.map(&:id)
     self.parent_id = nil if parent_id.present? && !valid_parent_project?
     return unless checklists_template_id && self.class.checklists_plugin_installed?
 

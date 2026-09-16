@@ -4,7 +4,7 @@
 
 ### Features
 
-- Move a task to another project from its edit form (`Project` select, also `project_id` on `PUT /projects/:project_id/periodictask/:id.json`): the form reloads with the target project's trackers, members, categories, versions and custom fields, and the template values that do not exist there are dropped like Redmine does for an issue changing project; the generated issues stay where they are. Only projects where the user has the permission are accepted (`403` otherwise) ([#182](https://github.com/jperelli/Redmine-Periodic-Task/issues/182)) (@jperelli)
+- Move a task to another project from its edit form (`Project` select, also `project_id` on `PUT /projects/:project_id/periodictask/:id.json`): the form reloads with the target project's trackers, members, categories, versions and custom fields, and the template values that do not exist there are dropped like Redmine does for an issue changing project; the generated issues stay where they are and the task page keeps listing them across projects. Only projects where the user has the permission are accepted (`403` otherwise) ([#182](https://github.com/jperelli/Redmine-Periodic-Task/issues/182)) (@jperelli)
 
 ## v7.1.1 - 2026-09-11
 
