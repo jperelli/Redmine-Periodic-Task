@@ -2,7 +2,7 @@
 <tr class="periodictask-subtask-row">
   <td class="tracker">
     <%= select_tag "#{name}[tracker_id]",
-                   options_for_select(@project.trackers.map { |t| [t.name, t.id] }, row['tracker_id'].presence&.to_i),
+                   options_for_select(@periodictask.project.trackers.map { |t| [t.name, t.id] }, row['tracker_id'].presence&.to_i),
                    :include_blank => periodictask_default_label(nil),
                    :style => 'width: auto' %>
   </td>

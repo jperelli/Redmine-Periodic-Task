@@ -1696,6 +1696,98 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_equal 0, copy.reload.rotation_index
   end
 
+  # --- moving a task to another project --------------------------------------
+
+  def test_allowed_target_projects_are_the_active_ones_with_the_module_and_the_permission_plus_its_own
+    Role.find(1).add_permission!(:periodictask) # jsmith: Manager on ecookbook and private-child
+    EnabledModule.create!(project: Project.find(2), name: 'periodictask') # jsmith is a Developer there
+    EnabledModule.create!(project: Project.find(5), name: 'periodictask')
+    task = create_rotation_task
+
+    assert_equal [1, 5], task.allowed_target_projects(User.find(2)).map(&:id).sort
+
+    Role.find(2).add_permission!(:periodictask)
+    assert_equal [1, 2, 5], task.allowed_target_projects(User.find(2)).map(&:id).sort
+
+    Project.find(5).update_column(:status, Project::STATUS_CLOSED)
+    assert_equal [1, 2], task.allowed_target_projects(User.find(2)).map(&:id).sort
+
+    task.update_column(:project_id, 5)
+    assert_equal [1, 2, 5], task.reload.allowed_target_projects(User.find(2)).map(&:id).sort,
+                 'the task\'s own project is always offered'
+  end
+
+  def test_changing_the_project_keeps_the_template_values_the_new_project_has
+    task = create_rotation_task(tracker_id: 1, assigned_to_id: 2, issue_category_id: 1, fixed_version_id: 7,
+                                rotation_ids: [2, 3],
+                                subtasks: [{ 'subject' => 'Child', 'tracker_id' => '2', 'assigned_to_id' => '2' }])
+
+    # jsmith (2) is a member of onlinestore; trackers 1 and 2, a "Printing"
+    # category and the system-shared version 7 exist there
+    task.project = Project.find(2)
+
+    assert_equal 2, task.project_id
+    assert_equal 1, task.tracker_id
+    assert_equal 2, task.assigned_to_id
+    assert_equal 4, task.issue_category_id, 'the category of the same name in the new project'
+    assert_equal 7, task.fixed_version_id
+    assert_equal [2], task.rotation_ids, 'dlopper is not a member of onlinestore'
+    assert_equal [{ 'tracker_id' => '2', 'subject' => 'Child', 'assigned_to_id' => '2' }], task.subtasks
+    assert task.save
+  end
+
+  def test_changing_the_project_drops_the_template_values_the_new_project_does_not_have
+    parent = Issue.find(1) # on ecookbook
+    task = create_rotation_task(tracker_id: 2, assigned_to_id: 3, issue_category_id: 2, fixed_version_id: 3,
+                                parent_id: parent.id, rotation_ids: [3],
+                                subtasks: [{ 'subject' => 'Child', 'tracker_id' => '2', 'assigned_to_id' => '3' }])
+
+    with_settings cross_project_subtasks: '' do
+      task.project = Project.find(6) # only tracker 1, no categories, version 3 is not shared with it, no members
+    end
+
+    assert_equal 6, task.project_id
+    assert_equal 1, task.tracker_id, 'the first tracker of the new project'
+    assert_nil task.assigned_to_id
+    assert_nil task.issue_category_id
+    assert_nil task.fixed_version_id
+    assert_nil task.parent_id
+    assert_equal [], task.rotation_ids
+    assert_equal [{ 'tracker_id' => nil, 'subject' => 'Child', 'assigned_to_id' => nil }], task.subtasks
+    assert task.save
+    assert_equal 6, task.generate_issue.project_id
+  end
+
+  def test_changing_the_project_keeps_a_parent_issue_the_cross_project_subtasks_setting_allows
+    task = create_rotation_task(parent_id: 1) # issue 1 is on ecookbook
+
+    with_settings cross_project_subtasks: 'tree' do
+      task.project = Project.find(3) # subproject of ecookbook
+    end
+    assert_equal 1, task.parent_id
+
+    with_settings cross_project_subtasks: '' do
+      task.project = Project.find(2)
+    end
+    assert_nil task.parent_id
+  end
+
+  def test_project_id_assignment_adapts_the_template_too
+    task = create_rotation_task(assigned_to_id: 3)
+    task.project_id = 2
+    assert_equal 2, task.project_id
+    assert_nil task.assigned_to_id
+  end
+
+  def test_setting_the_same_project_changes_nothing
+    task = create_rotation_task(assigned_to_id: 3, issue_category_id: 2, fixed_version_id: 3)
+    task.project = @project
+    task.project_id = 1
+    assert_equal 3, task.assigned_to_id
+    assert_equal 2, task.issue_category_id
+    assert_equal 3, task.fixed_version_id
+  end
+
   private
 
   def create_rotation_task(attrs = {})

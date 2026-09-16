@@ -439,6 +439,37 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_equal 'Unchanged', task.reload.subject
   end
 
+  def test_update_json_moves_the_task_to_another_project
+    Role.find(2).add_permission!(:periodictask) # jsmith is a Developer on onlinestore
+    task = create_test_periodictask(assigned_to_id: 3, issue_category_id: 1)
+
+    put "/projects/ecookbook/periodictask/#{task.id}.json",
+        params: { periodictask: { project_id: 2 } }.to_json, headers: json_headers
+    assert_response :no_content
+
+    task.reload
+    assert_equal 2, task.project_id
+    assert_equal 4, task.issue_category_id, 'the category of the same name in onlinestore'
+    assert_nil task.assigned_to_id, 'dlopper is not a member of onlinestore'
+
+    get "/projects/ecookbook/periodictask/#{task.id}.json", headers: api_headers
+    assert_response :not_found
+    get "/projects/onlinestore/periodictask/#{task.id}.json", headers: api_headers
+    assert_response :success
+    assert_equal({ 'id' => 2, 'name' => 'OnlineStore' },
+                 ActiveSupport::JSON.decode(@response.body)['periodictask']['project'])
+  end
+
+  def test_update_json_refuses_a_project_where_the_user_may_not_manage_tasks
+    task = create_test_periodictask(subject: 'Unchanged')
+
+    put "/projects/ecookbook/periodictask/#{task.id}.json",
+        params: { periodictask: { project_id: 2, subject: 'Moved' } }.to_json, headers: json_headers
+    assert_response :forbidden
+    assert_equal 1, task.reload.project_id
+    assert_equal 'Unchanged', task.subject
+  end
+
   def test_create_rejects_a_fractional_max_occurrences_instead_of_truncating_it
     [1.9, '1.9', 0, '0', -1, 'ten'].each do |value|
       payload = { periodictask: { subject: "Max #{value}", tracker_id: 1, assigned_to_id: 2,
@@ -495,14 +526,6 @@ class PeriodictaskApiTest < Redmine::ApiTest::Base
     assert_response :unprocessable_entity
     assert_includes ActiveSupport::JSON.decode(@response.body)['errors'], I18n.t(:error_end_date_before_next_run)
     assert_equal Time.utc(2030, 1, 1, 9), task.reload.next_run_date
-  end
-
-  def test_update_cannot_move_task_to_another_project
-    task = create_test_periodictask
-    put "/projects/ecookbook/periodictask/#{task.id}.json",
-        params: { periodictask: { project_id: @other_project.id } }.to_json, headers: json_headers
-    assert_response :no_content
-    assert_equal @project.id, task.reload.project_id
   end
 
   # --- destroy -------------------------------------------------------------

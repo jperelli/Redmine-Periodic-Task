@@ -11,6 +11,8 @@ Rails.application.routes.draw do
                                                              as: 'periodictask_customfields', via: %i[post patch]
   match    'projects/:project_id/periodictask/preview',      to: 'periodictask#preview',
                                                              as: 'periodictask_preview', via: %i[post patch]
+  match    'projects/:project_id/periodictask/update_form',  to: 'periodictask#update_form',
+                                                             as: 'periodictask_update_form', via: %i[post patch]
   get      'projects/:project_id/periodictask/tags',       to: 'periodictask#tags',   as: 'periodictask_tags'
   get      'projects/:project_id/periodictask/new',        to: 'periodictask#new',    as: 'new_periodictask'
   get      'projects/:project_id/periodictask(.:format)',  to: 'periodictask#index',  as: 'periodictasks'

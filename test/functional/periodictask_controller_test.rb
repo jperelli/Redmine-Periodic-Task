@@ -185,6 +185,143 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_nil task.reload.assigned_to_id
   end
 
+  # --- moving a task to another project --------------------------------------
+
+  def test_edit_shows_the_project_as_text_when_there_is_nowhere_to_move_the_task
+    task = create_test_periodictask
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select#periodictask_project_id', 0
+    assert_select 'input[type=hidden][name=?][value=?]', 'periodictask[project_id]', '1'
+  end
+
+  def test_edit_offers_the_projects_the_user_may_manage_tasks_in
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :success
+    assert_select 'select#periodictask_project_id' do
+      assert_select 'option[value="1"][selected]', text: 'eCookbook'
+      assert_select 'option[value="2"]', text: 'OnlineStore'
+      assert_select 'option', 2
+    end
+    assert_select 'input[type=hidden][name=?]', 'periodictask[project_id]', 0
+  end
+
+  def test_update_moves_the_task_to_another_project
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask(assigned_to_id: 3, issue_category_id: 1, fixed_version_id: 3)
+    patch :update, params: {
+      project_id: 'ecookbook',
+      id: task.id,
+      periodictask: { project_id: '2', subject: 'Moved' }
+    }
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'onlinestore'
+
+    task.reload
+    assert_equal 2, task.project_id
+    assert_equal 'Moved', task.subject
+    assert_equal 1, task.tracker_id, 'a tracker the new project has is kept'
+    assert_equal 4, task.issue_category_id, 'the category is replaced by the one of the same name'
+    assert_nil task.assigned_to_id, 'dlopper is not a member of onlinestore'
+    assert_nil task.fixed_version_id, 'the version is not shared with onlinestore'
+    assert_equal 2, task.generate_issue.project_id
+    assert_equal 2, PeriodictaskJournal.where(periodictask_id: task.id, action: 'update').last.project_id
+  end
+
+  def test_update_leaves_the_generated_issues_where_they_are
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask
+    PeriodictaskIssue.create!(periodictask: task, issue: Issue.find(1))
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { project_id: '2' } }
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'onlinestore'
+    assert_equal 1, Issue.find(1).project_id
+    assert_equal [1], task.reload.issues.pluck(:id)
+  end
+
+  def test_a_moved_task_is_reached_through_its_new_project_only
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { project_id: '2' } }
+
+    get :edit, params: { project_id: 'ecookbook', id: task.id }
+    assert_response :not_found
+    get :edit, params: { project_id: 'onlinestore', id: task.id }
+    assert_response :success
+  end
+
+  def test_update_refuses_a_project_where_the_user_may_not_manage_tasks
+    EnabledModule.create!(project: Project.find(2), name: 'periodictask') # jsmith is a Developer there, no permission
+    task = create_test_periodictask
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { project_id: '2', subject: 'Moved' } }
+    assert_response :forbidden
+    assert_equal 1, task.reload.project_id
+    assert_equal 'Test task', task.subject
+  end
+
+  def test_update_refuses_a_project_without_the_module
+    Role.find(2).add_permission!(:periodictask)
+    task = create_test_periodictask
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { project_id: '2' } }
+    assert_response :forbidden
+    assert_equal 1, task.reload.project_id
+  end
+
+  def test_update_refuses_an_unknown_project
+    task = create_test_periodictask
+    patch :update, params: { project_id: 'ecookbook', id: task.id, periodictask: { project_id: '999999' } }
+    assert_response :forbidden
+    assert_equal 1, task.reload.project_id
+  end
+
+  def test_update_form_renders_the_form_for_the_chosen_project
+    enable_periodictask_on_onlinestore
+    task = create_test_periodictask(assigned_to_id: 3, issue_category_id: 1)
+    post :update_form, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { id: task.id, project_id: '2', subject: 'Typed but not saved' }
+    }, xhr: true
+    assert_response :success
+    assert_include '#periodictask_form_fields', @response.body
+    assert_include 'Typed but not saved', @response.body
+    assert_include 'Stock management', @response.body, 'the categories are those of onlinestore'
+    assert_not_include 'Recipes', @response.body
+    assert_include 'User Misc', @response.body, 'the assignees are the members of onlinestore'
+    assert_not_include 'Dave Lopper', @response.body
+    assert_equal 1, task.reload.project_id, 'nothing is saved'
+    assert_equal 'Test task', task.subject
+  end
+
+  def test_update_form_keeps_the_task_where_it_is_when_the_project_is_not_changed
+    task = create_test_periodictask
+    post :update_form, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { id: task.id, project_id: '1' }
+    }, xhr: true
+    assert_response :success
+    assert_include 'Recipes', @response.body
+  end
+
+  def test_update_form_refuses_a_project_where_the_user_may_not_manage_tasks
+    task = create_test_periodictask
+    post :update_form, params: {
+      project_id: 'ecookbook', format: 'js',
+      periodictask: { id: task.id, project_id: '2' }
+    }, xhr: true
+    assert_response :forbidden
+  end
+
+  def test_create_ignores_a_posted_project_and_uses_the_url_project
+    enable_periodictask_on_onlinestore
+    post :create, params: {
+      project_id: 'ecookbook',
+      periodictask: { project_id: '2', subject: 'Created here', tracker_id: 1,
+                      interval_number: 1, interval_units: 'month' }
+    }
+    assert_redirected_to controller: 'periodictask', action: 'index', project_id: 'ecookbook'
+    assert_equal 1, Periodictask.find_by(subject: 'Created here').project_id
+  end
+
   def test_index_and_show_display_default_for_task_without_assignee
     task = create_test_periodictask(subject: 'Unassigned task', assigned_to_id: nil)
 
@@ -2002,5 +2139,12 @@ class PeriodictaskControllerTest < ActionController::TestCase
       interval_units: 'month',
       next_run_date: 1.month.from_now
     }.merge(attrs))
+  end
+
+  # onlinestore, where jsmith is a Developer: module on and permission granted
+  # to that role, so the task may be moved there.
+  def enable_periodictask_on_onlinestore
+    EnabledModule.create!(project: Project.find(2), name: 'periodictask')
+    Role.find(2).add_permission!(:periodictask)
   end
 end

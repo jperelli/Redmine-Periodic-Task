@@ -404,6 +404,29 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     project.present? && user.allowed_to?(:periodictask, project)
   end
 
+  # Projects the task may be moved to: the active ones where +user+ has the
+  # permission (and the module enabled), plus the one it is in.
+  def allowed_target_projects(user = User.current)
+    Project.allowed_to(user, :periodictask).or(Project.where(id: project_id)).sorted
+  end
+
+  # Moving the template to another project keeps what still applies there and
+  # drops the rest, like Issue#project= does: the tracker falls back to the
+  # project's first, the category to the one with the same name; an assignee,
+  # rotation user or subtask assignee who cannot be assigned issues there, a
+  # version not shared with it, a parent issue the cross-project subtasks
+  # setting forbids and a checklist template of another project are cleared.
+  # The issues generated so far stay where they were created.
+  def project=(new_project)
+    project_was = project
+    super
+    adapt_template_to_project if project_was && new_project && project_was != new_project
+  end
+
+  def project_id=(value)
+    self.project = value.present? ? Project.find_by(id: value) : nil
+  end
+
   # Takes over the schedule and issue template of another task, leaving the
   # project and author of this one untouched.
   def copy_from(source)
@@ -859,6 +882,32 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
       next_id = in_turn.find { |uid| assignable.include?(uid) } || in_turn.first
     end
     self.rotation_index = rotation_ids.index(next_id) || 0
+  end
+
+  def adapt_template_to_project
+    tracker_ids = project.trackers.map(&:id)
+    self.tracker = project.trackers.first if tracker && !tracker_ids.include?(tracker_id)
+    self.issue_category = project.issue_categories.find_by(name: issue_category.name) if issue_category
+    assignable_ids = project.assignable_users.map(&:id)
+    self.assigned_to = nil if assigned_to && !assignable_ids.include?(assigned_to_id)
+    self.rotation_ids = rotation_ids & rotation_candidates.map(&:id)
+    self.subtasks = subtasks.each do |row|
+      row['tracker_id'] = nil unless tracker_ids.include?(row['tracker_id'].to_i)
+      row['assigned_to_id'] = nil unless assignable_ids.include?(row['assigned_to_id'].to_i)
+    end
+    self.fixed_version = nil if fixed_version && !project.shared_versions.include?(fixed_version)
+    self.parent_id = nil if parent_id.present? && !valid_parent_project?
+    return unless checklists_template_id && self.class.checklists_plugin_installed?
+
+    templates = ChecklistTemplate.in_project_and_global(project)
+    self.checklists_template_id = nil unless templates.exists?(id: checklists_template_id)
+  end
+
+  # Whether the configured parent issue may get children in the task's project
+  # (Redmine's "Allow cross-project subtasks" setting).
+  def valid_parent_project?
+    parent = Issue.find_by(id: parent_id)
+    parent.nil? || Issue.new(project: project).valid_parent_project?(parent)
   end
 
   def copy_attachment_error(attachment, issue)

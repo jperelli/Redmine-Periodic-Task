@@ -3,9 +3,7 @@ class PeriodictaskController < ApplicationController
   before_action :authorize
   before_action :find_periodictask, only: %i[show edit update copy destroy run_now]
   before_action :find_source_issue, only: :new
-  before_action :load_users, except: %i[destroy run_now tags preview], unless: :api_request?
-  before_action :load_categories, except: %i[destroy run_now tags preview], unless: :api_request?
-  before_action :load_versions, except: %i[destroy run_now tags preview], unless: :api_request?
+  before_action :load_form_collections, only: %i[new copy edit], unless: :api_request?
   accept_api_auth :index, :show, :create, :update, :destroy, :run_now
 
   helper :custom_fields
@@ -111,6 +109,7 @@ class PeriodictaskController < ApplicationController
       respond_to do |format|
         format.html do
           @periodictask.next_run_date = nil if blank_first_run
+          load_form_collections
           render action: 'new'
         end
         format.api { render_periodictask_validation_errors }
@@ -142,13 +141,16 @@ class PeriodictaskController < ApplicationController
         format.html do
           render_attachment_warning_if_needed(@periodictask)
           flash[:notice] = l(:flash_task_saved)
-          redirect_to controller: 'periodictask', action: 'index', project_id: params[:project_id]
+          redirect_to controller: 'periodictask', action: 'index', project_id: @periodictask.project.identifier
         end
         format.api { render_api_ok }
       end
     else
       respond_to do |format|
-        format.html { render action: 'edit' }
+        format.html do
+          load_form_collections
+          render action: 'edit'
+        end
         format.api { render_periodictask_validation_errors }
       end
     end
@@ -223,13 +225,19 @@ class PeriodictaskController < ApplicationController
   end
 
   def customfields
-    @periodictask = if params[:periodictask][:id].present?
-                      project_periodictasks.find(params[:periodictask][:id])
-                    else
-                      build_periodictask
-                    end
+    @periodictask = find_or_build_form_periodictask
     assign_periodictask_params
     @issue = @periodictask.generate_issue
+  end
+
+  # Re-renders the edit form for the project chosen in it (nothing is saved),
+  # so its members, categories, versions, trackers and custom fields are the
+  # ones of that project and the values that do not apply there are dropped.
+  def update_form
+    @periodictask = find_or_build_form_periodictask
+    assign_periodictask_params
+    @issue = @periodictask.generate_issue
+    load_form_collections
   end
 
   # Upcoming run dates for the recurrence currently entered in the form. The
@@ -286,6 +294,16 @@ class PeriodictaskController < ApplicationController
     Periodictask.new(project: @project, author_id: User.current.id)
   end
 
+  # The task a form posts back (customfields, update_form): the one being
+  # edited, or a new one for the new/copy form.
+  def find_or_build_form_periodictask
+    if params[:periodictask][:id].present?
+      project_periodictasks.find(params[:periodictask][:id])
+    else
+      build_periodictask
+    end
+  end
+
   # The form posts attachments[]; API clients send periodictask[uploads] with
   # tokens from POST /uploads, like the core issues API.
   def attachment_params
@@ -316,24 +334,18 @@ class PeriodictaskController < ApplicationController
     render_validation_errors([@issue, @periodictask])
   end
 
-  def load_users
-    # Get the assignable users and groups in the project
-    @assignables = @project.assignable_users
-    @rotation_candidates = Periodictask.rotation_candidates(@project)
-
-    # Get the users in the project (as authors)
-    @authors = @project.members.map(&:user)
-  end
-
-  def load_categories
-    # Get the issue categories
-    @categories = @project.issue_categories
-  end
-
-  # Versions that can be set on a new issue: the project's own and the ones
-  # shared with it, closed ones excluded like Redmine's issue form.
-  def load_versions
-    @versions = @project.shared_versions.open.to_a
+  # What the form offers, taken from the project the task belongs to (the one
+  # it is being moved to, once another is chosen): the assignable users and
+  # groups, the members as authors, the categories, and the versions that can
+  # be set on a new issue (the project's own and the ones shared with it,
+  # closed ones excluded like Redmine's issue form).
+  def load_form_collections
+    project = @periodictask&.project || @project
+    @assignables = project.assignable_users
+    @rotation_candidates = Periodictask.rotation_candidates(project)
+    @authors = project.members.map(&:user)
+    @categories = project.issue_categories
+    @versions = project.shared_versions.open.to_a
   end
 
   # The form posts next_run_date and end_date as wall-clock times without an
@@ -342,7 +354,7 @@ class PeriodictaskController < ApplicationController
   # which is then honoured.
   def assign_periodictask_params
     attrs = periodictask_params
-    attrs[:project_id] = @project.id
+    move_to(attrs.delete(:project_id))
     %i[next_run_date end_date].each do |field|
       attrs[field] = helpers.periodictask_parse_time(attrs[field].to_s) if attrs[field].present?
     end
@@ -362,6 +374,19 @@ class PeriodictaskController < ApplicationController
       attrs[:rotation_ids] ||= []
     end
     @periodictask.attributes = attrs
+  end
+
+  # A new task belongs to the URL project. An existing one may be moved to
+  # another project the user may manage periodic tasks in; any other target
+  # is refused with a 403.
+  def move_to(project_id)
+    return @periodictask.project = @project if @periodictask.new_record?
+    return if project_id.blank? || project_id.to_s == @periodictask.project_id.to_s
+
+    target = @periodictask.allowed_target_projects.find_by(id: project_id)
+    raise ::Unauthorized unless target
+
+    @periodictask.project = target
   end
 
   def periodictask_params

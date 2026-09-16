@@ -1,0 +1,1 @@
+$('#periodictask_form_fields').html('<%= escape_javascript(fields_for(:periodictask, @periodictask) { |f| render :partial => 'form', :locals => { :f => f } }) %>');

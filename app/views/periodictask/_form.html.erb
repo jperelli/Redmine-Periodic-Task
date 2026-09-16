@@ -1,8 +1,10 @@
 <%= error_messages_for 'periodictask', 'issue' %>
 <%= render 'upcoming_runs_assets' %>
 
+<% project = @periodictask.project %>
+<% target_projects = @periodictask.persisted? ? @periodictask.allowed_target_projects.to_a : [] %>
 <%= f.hidden_field :id %>
-<%= f.hidden_field :project_id %>
+<%= f.hidden_field :project_id if target_projects.size <= 1 %>
 <%= hidden_field_tag 'copy_from', @copy_from.id if @copy_from %>
 
 <fieldset class="box tabular">
@@ -53,12 +55,18 @@
 <fieldset class="box tabular">
   <legend><%= l(:label_periodictask_template) %></legend>
   <p>
-    <label><%= l(:field_project) %></label>
-    <%= @project %>
+    <% if target_projects.size > 1 %>
+      <%= label(:periodictask, :project_id) do %><span class="field-description" title="<%= l(:label_project_move_info) %>"><%= l(:field_project) %></span><% end %>
+      <%= f.select :project_id, project_tree_options_for_select(target_projects, :selected => project), {},
+                   :onchange => "$.ajax({ url: '#{escape_javascript(periodictask_update_form_path(@project, :format => 'js'))}', type: 'post', data: $(this).closest('form').serialize() });" %>
+    <% else %>
+      <label><%= l(:field_project) %></label>
+      <%= project %>
+    <% end %>
   </p>
   <p>
     <%= label(:periodictask, :tracker_id, l(:label_tracker)) %>
-    <%= f.select :tracker_id, options_for_select(@project.trackers.map { |tracker| [tracker.name, tracker.id, { 'data-default-status-label' => periodictask_default_label(tracker.default_status&.name), 'data-done-ratio-enabled' => tracker.core_fields.include?('done_ratio') }] }, @periodictask.tracker_id) %>
+    <%= f.select :tracker_id, options_for_select(project.trackers.map { |tracker| [tracker.name, tracker.id, { 'data-default-status-label' => periodictask_default_label(tracker.default_status&.name), 'data-done-ratio-enabled' => tracker.core_fields.include?('done_ratio') }] }, @periodictask.tracker_id) %>
   </p>
   <p>
     <%= label(:periodictask, :subject) do %><span class="field-description" title="<%= l(:subject_variables) %>"><%= l(:label_subject) %></span> <span class="required">*</span><% end %>
@@ -111,7 +119,7 @@
       <p>
         <%= label(:periodictask, :parent_id, l(:field_parent_issue)) %><%= f.text_field :parent_id, :size => 10 %>
       </p>
-      <%= javascript_tag "observeAutocompleteField('periodictask_parent_id', '#{escape_javascript(auto_complete_issues_path(:project_id => @project, :scope => Setting.cross_project_subtasks, :status => 'o'))}')" %>
+      <%= javascript_tag "observeAutocompleteField('periodictask_parent_id', '#{escape_javascript(auto_complete_issues_path(:project_id => project, :scope => Setting.cross_project_subtasks, :status => 'o'))}')" %>
       <p>
         <%= label(:periodictask, :set_start_date) do %><span class="field-description" title="<%= l(:label_set_start_date_info) %>"><%= l(:label_set_start_date) %></span><% end %>
         <%= f.check_box :set_start_date %>
@@ -140,10 +148,10 @@
     <span id="watchers_inputs">
       <%= watchers_checkboxes(@periodictask, users_for_new_periodictask_watchers(@periodictask)) %>
     </span>
-    <% if User.current.allowed_to?(:add_issue_watchers, @project) %>
+    <% if User.current.allowed_to?(:add_issue_watchers, project) %>
       <span class="search_for_watchers">
         <%= link_to periodictask_sprite_icon('add', l(:label_search_for_watchers), size: 12),
-                    { :controller => 'watchers', :action => 'new', :project_id => @project },
+                    { :controller => 'watchers', :action => 'new', :project_id => project },
                     :class => 'icon icon-add-bullet',
                     :remote => true, :method => 'get' %>
       </span>
@@ -153,7 +161,7 @@
   <% if checklist_plugin_installed? %>
     <p>
       <%= label(:periodictask, :checklists_template_id, l(:label_checklist_template)) %>
-      <%= select :periodictask, :checklists_template_id, template_options_for_select(@project, f.object.checklists_template_id) %>
+      <%= select :periodictask, :checklists_template_id, template_options_for_select(project, f.object.checklists_template_id) %>
     </p>
   <% end %>
   <% if Periodictask.tags_plugin_installed? %>

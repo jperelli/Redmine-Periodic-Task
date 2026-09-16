@@ -25,6 +25,7 @@ it:
   label_due_date: 'Imposta scadenza dopo'
   label_due_date_info: 'Data di scadenza di ogni richiesta creata, impostata di questo intervallo dopo la sua data di inizio.'
   label_assigned_to_info: 'Facoltativo. Se vuoto, a ogni richiesta creata si applica l''assegnatario predefinito di Redmine: quello della categoria, altrimenti quello del progetto.'
+  label_project_move_info: 'Dove vengono create le prossime richieste. Scegliendo un altro progetto si perdono i valori del modello che lì non esistono (tracker, categoria, assegnatario, versione, richiesta padre...); le richieste già generate restano nel loro progetto.'
   label_estimated_hours: Tempo stimato
   label_estimated_hours_after: Ore
   label_description: Descrizione

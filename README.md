@@ -223,6 +223,10 @@ On an issue page, users with the *Periodic tasks* permission see *Periodic Tasks
 
 ![Create periodic task from this issue link in the issue sidebar](doc/screenshots/new_from_issue_link.png)
 
+### Moving a task to another project
+
+The *Project* field of the edit form is a select when you have the *Periodic tasks* permission in more than one project (module enabled, project active). Pick another project and the form reloads for it: its trackers, members, categories, versions and custom fields. Template values that do not exist there are dropped, like Redmine does when an issue changes project: the tracker falls back to the project's first, the category to the one with the same name, the assignee, rotation users and subtask assignees who cannot be assigned issues there, a version not shared with the project, a parent issue the *Allow cross-project subtasks* setting forbids and a checklist template of another project are cleared. Nothing is saved until you submit. From then on the task lives in the new project (its URL changes accordingly) and the next issues are created there. The issues already generated stay where they are; the task page still lists them. Handy to import recurring items (an iCalendar `RRULE` for instance) into a triage project first and dispatch them afterwards.
+
 ### Recurrence
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is computed, what happens with time zones and missing weekdays, and what happens after the scheduler was down.
@@ -353,6 +357,7 @@ Attributes accepted on create/update, under a `periodictask` key (the same the f
 | Attribute | Value |
 |---|---|
 | `subject`, `description` | Text, `**DAY**`-style variables allowed |
+| `project_id` (update only) | Id of the project to move the task to, one where the API user has the *Periodic tasks* permission; `403` otherwise. Template values that do not exist there are dropped (see *Moving a task to another project*). Ignored on create: the task is created in the URL project |
 | `tracker_id`, `assigned_to_id` (user or group), `author_id`, `issue_category_id`, `fixed_version_id`, `priority_id`, `status_id`, `parent_id` | Ids of the Redmine objects; `author_id` defaults to the API user |
 | `interval_number`, `interval_units` | Integer and one of `day`, `business_day`, `week`, `month`, `year` |
 | `weekdays` | Array of weekdays, `0` = Sunday ... `6` = Saturday (Ruby's `wday`), for weekly and monthly-by-weekday tasks |

@@ -28,6 +28,7 @@ vi:
   label_due_date: 'Đặt hạn chót sau'
   label_due_date_info: 'Hạn chót của mỗi vấn đề được tạo, tính bằng khoảng thời gian này kể từ ngày bắt đầu của nó.'
   label_assigned_to_info: 'Không bắt buộc. Nếu để trống, mỗi vấn đề được tạo sẽ nhận người được giao mặc định của Redmine: người được giao mặc định của danh mục, nếu không thì của dự án.'
+  label_project_move_info: 'Nơi các vấn đề tiếp theo được tạo. Khi chọn dự án khác, các giá trị mẫu không tồn tại ở đó (kiểu vấn đề, danh mục, người được giao, phiên bản, vấn đề cha...) sẽ bị bỏ; các vấn đề đã tạo vẫn ở lại dự án của chúng.'
   label_estimated_hours: Thời gian ước lượng
   label_estimated_hours_after: Giờ
   label_description: Mô tả

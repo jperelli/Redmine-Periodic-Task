@@ -26,6 +26,7 @@ en:
   label_due_date: 'Set due date after'
   label_due_date_info: 'Due date of each created issue, set this amount of time after its start date.'
   label_assigned_to_info: 'Optional. When blank, Redmine''s default assignee applies to each created issue: the category''s default assignee, otherwise the project''s default assignee.'
+  label_project_move_info: 'Where the next issues are created. Choosing another project drops the template values that do not exist there (tracker, category, assignee, version, parent issue...); the issues already generated stay in their project.'
   label_estimated_hours: Estimated time
   label_estimated_hours_after: Hours
   label_description: Description

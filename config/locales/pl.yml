@@ -25,6 +25,7 @@ pl:
   label_due_date: 'Ustaw termin po'
   label_due_date_info: 'Termin każdego utworzonego zadania, ustawiony o ten okres po jego dacie rozpoczęcia.'
   label_assigned_to_info: 'Opcjonalne. Gdy puste, do każdego utworzonego zadania stosuje się domyślnego przypisanego z Redmine: domyślnego przypisanego kategorii, a w przeciwnym razie projektu.'
+  label_project_move_info: 'Gdzie tworzone są kolejne zadania. Wybór innego projektu usuwa wartości szablonu, które tam nie istnieją (typ, kategoria, przypisany, wersja, zadanie nadrzędne...); już utworzone zadania pozostają w swoim projekcie.'
   label_estimated_hours: Szacowany czas
   label_estimated_hours_after: godzin
   label_description: Opis

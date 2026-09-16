@@ -25,6 +25,7 @@ de:
   label_due_date: 'Fälligkeitsdatum setzen nach'
   label_due_date_info: 'Fälligkeitsdatum jeder erstellten Aufgabe, gesetzt um diese Zeitspanne nach ihrem Startdatum.'
   label_assigned_to_info: 'Optional. Wenn leer, gilt für jede erstellte Aufgabe die Standardzuweisung von Redmine: der Standard-Bearbeiter der Kategorie, sonst der des Projekts.'
+  label_project_move_info: 'Wo die nächsten Aufgaben erstellt werden. Wird ein anderes Projekt gewählt, entfallen die Vorlagenwerte, die es dort nicht gibt (Tracker, Kategorie, Bearbeiter, Version, übergeordnete Aufgabe...); die bereits erstellten Aufgaben bleiben in ihrem Projekt.'
   label_description: Beschreibung
   label_estimated_hours: Geschätzter Aufwand
   label_estimated_hours_after: Stunden

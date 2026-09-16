@@ -26,6 +26,7 @@ es:
   label_due_date: 'Establecer fecha fin después de'
   label_due_date_info: 'Fecha fin de cada incidencia creada, establecida después de este período de tiempo a partir de su fecha de inicio.'
   label_assigned_to_info: 'Opcional. Si se deja en blanco, se aplica el asignado por defecto de Redmine a cada incidencia creada: el asignado por defecto de la categoría o, en su defecto, el del proyecto.'
+  label_project_move_info: 'Dónde se crean las próximas incidencias. Al elegir otro proyecto se descartan los valores de la plantilla que no existen allí (tipo, categoría, asignado, versión, incidencia padre...); las incidencias ya generadas permanecen en su proyecto.'
   label_estimated_hours: Tiempo estimado
   label_estimated_hours_after: Horas
   label_description: Descripción

@@ -12,7 +12,7 @@
                    :style => 'width: auto', :class => 'periodictask-relation-target' %>
     <%= text_field_tag "#{name}[issue_id]", (previous_issue ? nil : row['issue_id']), :size => 10, :class => 'periodictask-relation-issue',
                        :style => ('display: none;' if previous_issue),
-                       :data => { :autocomplete => auto_complete_issues_path(:project_id => @project, :scope => (Setting.cross_project_issue_relations? ? 'all' : nil)) } %>
+                       :data => { :autocomplete => auto_complete_issues_path(:project_id => @periodictask.project, :scope => (Setting.cross_project_issue_relations? ? 'all' : nil)) } %>
   </td>
   <td class="delay">
     <span class="periodictask-relation-delay">
