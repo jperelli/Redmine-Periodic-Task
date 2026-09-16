@@ -1,1 +1,4 @@
+// The files field is kept as is: the files being uploaded are not posted.
+var attachments = $('#periodictask_attachments').detach();
 $('#periodictask_form_fields').html('<%= escape_javascript(fields_for(:periodictask, @periodictask) { |f| render :partial => 'form', :locals => { :f => f } }) %>');
+$('#periodictask_attachments').replaceWith(attachments);

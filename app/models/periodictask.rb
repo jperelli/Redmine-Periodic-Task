@@ -910,11 +910,11 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     self.checklists_template_id = nil unless templates.exists?(id: checklists_template_id)
   end
 
-  # Whether the configured parent issue may get children in the task's project
-  # (Redmine's "Allow cross-project subtasks" setting).
+  # Whether the configured parent issue exists and may get children in the
+  # task's project (Redmine's "Allow cross-project subtasks" setting).
   def valid_parent_project?
     parent = Issue.find_by(id: parent_id)
-    parent.nil? || Issue.new(project: project).valid_parent_project?(parent)
+    parent.present? && Issue.new(project: project).valid_parent_project?(parent)
   end
 
   def copy_attachment_error(attachment, issue)

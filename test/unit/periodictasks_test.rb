@@ -1772,6 +1772,16 @@ class PeriodictasksTest < ActiveSupport::TestCase
     assert_nil task.parent_id
   end
 
+  def test_changing_the_project_drops_a_parent_issue_that_no_longer_exists
+    task = create_rotation_task(parent_id: 1)
+    Issue.find(1).destroy
+
+    with_settings cross_project_subtasks: 'system' do
+      task.project = Project.find(2)
+    end
+    assert_nil task.parent_id
+  end
+
   def test_project_id_assignment_adapts_the_template_too
     task = create_rotation_task(assigned_to_id: 3)
     task.project_id = 2

@@ -57,8 +57,7 @@
   <p>
     <% if target_projects.size > 1 %>
       <%= label(:periodictask, :project_id) do %><span class="field-description" title="<%= l(:label_project_move_info) %>"><%= l(:field_project) %></span><% end %>
-      <%= f.select :project_id, project_tree_options_for_select(target_projects, :selected => project), {},
-                   :onchange => "$.ajax({ url: '#{escape_javascript(periodictask_update_form_path(@project, :format => 'js'))}', type: 'post', data: $(this).closest('form').serialize() });" %>
+      <%= f.select :project_id, project_tree_options_for_select(target_projects, :selected => project) %>
     <% else %>
       <label><%= l(:field_project) %></label>
       <%= project %>
@@ -308,10 +307,25 @@
       });
     }
 
-    // Redmine's watcher picker (modal + append.js) emits inputs named
-    // 'issue[watcher_user_ids][]'; rename them so they post into this form.
-    $('#watchers_inputs').closest('form').on('submit', function() {
-      $(this).find('input[name="issue[watcher_user_ids][]"]').attr('name', 'periodictask[watcher_user_ids][]');
+    // Redmine's watcher picker (checkboxes, modal + append.js) emits inputs
+    // named 'issue[watcher_user_ids][]'; rename them so they post into this form.
+    function adoptWatcherInputs(form) {
+      form.find('input[name="issue[watcher_user_ids][]"]').attr('name', 'periodictask[watcher_user_ids][]');
+    }
+    $('#watchers_inputs').closest('form').on('submit', function() { adoptWatcherInputs($(this)); });
+
+    // Another project: the form is rebuilt for it (nothing is saved). Only the
+    // last choice may rebuild it, so the request still running is dropped.
+    var updateFormRequest;
+    $('#periodictask_project_id').change(function() {
+      var form = $(this).closest('form');
+      adoptWatcherInputs(form);
+      if (updateFormRequest) { updateFormRequest.abort(); }
+      updateFormRequest = $.ajax({
+        url: '<%= escape_javascript(periodictask_update_form_path(@project, :format => 'js')) %>',
+        type: 'post',
+        data: form.serialize()
+      });
     });
 
     <% if User.current.pref.warn_on_leaving_unsaved == '1' %>

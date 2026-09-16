@@ -206,6 +206,8 @@ class PeriodictaskControllerTest < ActionController::TestCase
       assert_select 'option', 2
     end
     assert_select 'input[type=hidden][name=?]', 'periodictask[project_id]', 0
+    assert_include "url: '/projects/ecookbook/periodictask/update_form.js'", @response.body,
+                   'the form is rebuilt for the chosen project'
   end
 
   def test_update_moves_the_task_to_another_project
@@ -2201,7 +2203,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
 
   # The form fields an update_form response puts in place, as a document.
   def rerendered_form
-    html = @response.body[/\.html\('(.*)'\);\s*\z/m, 1]
+    html = @response.body[/#periodictask_form_fields'\)\.html\('(.*?)'\);$/m, 1]
     unescaped = html.gsub(/\\(.)/) { Regexp.last_match(1) == 'n' ? "\n" : Regexp.last_match(1) }
     Nokogiri::HTML::DocumentFragment.parse(unescaped)
   end
