@@ -34,3 +34,11 @@
 .periodictask-cal td.today { box-shadow: inset 0 0 0 1px #e6b560; }
 .periodictask-cal td.periodictask-cal-run { background: #4b7fb4; color: #fff; font-weight: bold; }
 .periodictask-cal td.periodictask-cal-moved { color: #999; text-decoration: line-through; }
+
+/* Calendar import: the triage table of staged items */
+.periodictask-import-upload fieldset.box p.info { margin: 4px 0 0; }
+.periodictask-import-toolbar { margin: 6px 0; }
+table.list.periodictask-imports td.subject { max-width: 24em; }
+table.list.periodictask-imports td.periodictask-import-warnings { color: #7a5a12; font-size: 0.92em; }
+table.list.periodictask-imports tr.periodictask-import-failed td.subject { border-left: 3px solid #d9534f; }
+table.list.periodictask-imports div.periodictask-import-error { margin: 4px 0 0; padding: 4px 6px; }

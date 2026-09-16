@@ -40,6 +40,11 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
   COPY_EXCLUDED_ATTRIBUTES = %w[id project_id author_id created_at updated_at last_error occurrences_count
                                 last_skipped_issue_id last_skipped_at rotation_index].freeze
 
+  # The schedule a calendar recurrence rule maps onto: what an imported item
+  # carries besides its subject and description (see PeriodictaskImport).
+  IMPORT_ATTRIBUTES = %w[interval_number interval_units weekdays month_weeks monthly_mode
+                         next_run_date end_date max_occurrences].freeze
+
   # Subtask templates: array of hashes with SUBTASK_KEYS, each becoming a child
   # issue of the generated issue. Accepts an array or an index-keyed hash as
   # posted by the form; blank rows are dropped.

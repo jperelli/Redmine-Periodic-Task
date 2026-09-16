@@ -223,6 +223,16 @@ On an issue page, users with the *Periodic tasks* permission see *Periodic Tasks
 
 ![Create periodic task from this issue link in the issue sidebar](doc/screenshots/new_from_issue_link.png)
 
+### Importing from a calendar (iCalendar / CalDAV)
+
+*Administration → Periodic Tasks → Import from calendar* turns the repeating to-dos and events of an `.ics` file (exported from a calendar application or a CalDAV server such as Nextcloud, Radicale or Baïkal) into periodic tasks, without external scripts.
+
+1. Upload the file. Every `VTODO` / `VEVENT` with an `RRULE` is staged in a table; one-off items are skipped (they are plain issues, not periodic tasks), and an item whose `UID` is already staged is not added twice, so you can upload the same export again after fixing a few entries.
+2. Pick the project of each row. The rows are independent, so tasks that belong to different projects can come from one file. The select at the top fills the empty rows in one go.
+3. Click *Create periodic tasks*. Each row with a project becomes a periodic task in it (subject, description, recurrence and first run from the calendar, the project's first tracker) and leaves the table. Rows without a project stay, so a colleague can finish the triage later. A row that could not be created (for example the project has no tracker) also stays, with the reason.
+
+The recurrence is mapped to the plugin's rules: `FREQ=DAILY|WEEKLY|MONTHLY|YEARLY` with `INTERVAL`, `BYDAY` for weekly tasks and for the *nth weekday of the month* monthly tasks (`BYDAY=2TU`, `BYDAY=TU;BYSETPOS=-1`), `BYMONTHDAY` (the first run is moved to that day), `UNTIL` and `COUNT` as the end condition, and `DTSTART` / `DUE` as the first run, in the item's `TZID` or in your time zone for floating times. Rules repeating more often than daily and rules that already ended are skipped. Parts of a rule that have no equivalent (several `BYMONTHDAY` values, `BYMONTH`, `EXDATE`, ...) are listed in the *Not carried over* column so you can adjust the task after it is created. Staged items are stored in the database (`periodictask_imports` table, **requires migration**) and are only visible to administrators.
+
 ### Recurrence
 
 A task repeats every N days, business days, weeks, months or years. A weekly task can run on several weekdays. A monthly task can run on a day of the month, or on the 1st to 5th (or last) occurrence of one or more weekdays, for example the 3rd Wednesday of every month. [doc/recurrence-design.md](doc/recurrence-design.md) explains how the next run date is computed, what happens with time zones and missing weekdays, and what happens after the scheduler was down.

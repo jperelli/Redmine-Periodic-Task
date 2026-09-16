@@ -463,6 +463,18 @@ module PeriodictaskHelper
     content_tag(:span, format_time(time), title: time.iso8601)
   end
 
+  # What the calendar recurrence rule of a staged import expresses that the
+  # periodic task cannot, one line per warning; "-" when it maps fully.
+  def periodictask_import_warnings(import)
+    warnings = import.warnings.to_a
+    return '-' if warnings.empty?
+
+    lines = warnings.map do |warning|
+      l(:"warning_periodictask_import_#{warning['key']}", part: warning['part'])
+    end
+    safe_join(lines, tag.br)
+  end
+
   # Link to the parent issue, falling back to a plain "#id" when the issue is
   # missing or not visible, and "-" when no parent is set.
   def periodictask_parent_link(task)
