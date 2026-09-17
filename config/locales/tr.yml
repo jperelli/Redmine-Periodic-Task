@@ -238,3 +238,7 @@ tr:
   warning_periodictask_import_timezone_unknown: "Bilinmeyen saat dilimi %{part}; saatler sizin saat diliminizde okundu."
   warning_periodictask_import_count_from_import: "%{part}: çalıştırmalar takvimdeki ilk oluşumdan değil, içe aktarmadan itibaren sayılır."
   warning_periodictask_import_monthday_moved: "%{part}: ilk çalıştırma ayın o gününe taşındı."
+  label_periodictask_bulk_actions: "İşlemler"
+  label_periodictask_export_ics: "ics olarak dışa aktar"
+  text_periodictask_export_hint: "İşaretli görevleri iCalendar (.ics) dosyası olarak indir, her görev için bir yinelenen görev."
+  error_periodictask_export_no_selection: "Dışa aktarmak için en az bir görev işaretleyin."

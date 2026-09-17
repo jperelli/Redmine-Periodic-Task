@@ -240,3 +240,7 @@ vi:
   warning_periodictask_import_timezone_unknown: "Múi giờ không xác định %{part}; giờ được đọc theo múi giờ của bạn."
   warning_periodictask_import_count_from_import: "%{part}: số lần chạy tính từ khi nhập, không tính từ lần đầu trong lịch."
   warning_periodictask_import_monthday_moved: "%{part}: lần chạy đầu chuyển sang ngày đó trong tháng."
+  label_periodictask_bulk_actions: "Thao tác"
+  label_periodictask_export_ics: "Xuất ra ics"
+  text_periodictask_export_hint: "Tải các tác vụ đã chọn dưới dạng tệp iCalendar (.ics), mỗi tác vụ là một việc cần làm lặp lại."
+  error_periodictask_export_no_selection: "Chọn ít nhất một tác vụ để xuất."

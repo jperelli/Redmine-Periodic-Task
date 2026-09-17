@@ -238,3 +238,7 @@ it:
   warning_periodictask_import_timezone_unknown: "Fuso orario sconosciuto %{part}; gli orari sono stati letti nel tuo fuso orario."
   warning_periodictask_import_count_from_import: "%{part}: le esecuzioni sono contate dall'importazione, non dalla prima occorrenza del calendario."
   warning_periodictask_import_monthday_moved: "%{part}: prima esecuzione spostata a quel giorno del mese."
+  label_periodictask_bulk_actions: "Azioni"
+  label_periodictask_export_ics: "Esporta in ics"
+  text_periodictask_export_hint: "Scarica le attività selezionate come file iCalendar (.ics), un'attività ricorrente per ciascuna."
+  error_periodictask_export_no_selection: "Seleziona almeno un'attività da esportare."

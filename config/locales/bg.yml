@@ -238,3 +238,7 @@ bg:
   warning_periodictask_import_timezone_unknown: "Неизвестна часова зона %{part}; времената са прочетени във вашата часова зона."
   warning_periodictask_import_count_from_import: "%{part}: изпълненията се броят от импортирането, а не от първото събитие в календара."
   warning_periodictask_import_monthday_moved: "%{part}: първото изпълнение е преместено на този ден от месеца."
+  label_periodictask_bulk_actions: "Действия"
+  label_periodictask_export_ics: "Експорт в ics"
+  text_periodictask_export_hint: "Изтеглете отметнатите задачи като iCalendar (.ics) файл, по една повтаряща се задача за всяка."
+  error_periodictask_export_no_selection: "Отметнете поне една задача за експорт."

@@ -243,3 +243,7 @@ hr:
   warning_periodictask_import_timezone_unknown: "Nepoznata vremenska zona %{part}; vremena su pročitana u vašoj vremenskoj zoni."
   warning_periodictask_import_count_from_import: "%{part}: izvršavanja se broje od uvoza, a ne od prvog događaja u kalendaru."
   warning_periodictask_import_monthday_moved: "%{part}: prvo izvršavanje pomaknuto na taj dan mjeseca."
+  label_periodictask_bulk_actions: "Radnje"
+  label_periodictask_export_ics: "Izvoz u ics"
+  text_periodictask_export_hint: "Preuzmite označene zadatke kao iCalendar (.ics) datoteku, jedan ponavljajući zadatak po stavci."
+  error_periodictask_export_no_selection: "Označite barem jedan zadatak za izvoz."

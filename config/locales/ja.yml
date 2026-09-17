@@ -238,3 +238,7 @@ ja:
   warning_periodictask_import_timezone_unknown: "不明なタイムゾーン %{part}: 時刻はあなたのタイムゾーンで読み込みました。"
   warning_periodictask_import_count_from_import: "%{part}: 実行回数は取り込み時点から数えます (カレンダーの初回からではありません)。"
   warning_periodictask_import_monthday_moved: "%{part}: 初回実行をその日に移動しました。"
+  label_periodictask_bulk_actions: "操作"
+  label_periodictask_export_ics: "ics にエクスポート"
+  text_periodictask_export_hint: "チェックしたタスクを iCalendar (.ics) ファイルとしてダウンロードします（タスクごとに繰り返し ToDo を 1 件）。"
+  error_periodictask_export_no_selection: "エクスポートするタスクを 1 件以上チェックしてください。"

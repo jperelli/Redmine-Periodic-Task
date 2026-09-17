@@ -129,6 +129,54 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_equal 0, PeriodictaskRun.count
   end
 
+  def test_index_has_row_checkboxes_and_the_bulk_actions_menu
+    other = create_test_periodictask(Project.find(2), subject: 'Task on onlinestore')
+
+    log_user('admin', 'admin')
+    get '/admin/periodictasks'
+    assert_response :success
+    assert_select 'form#periodictask-list-form[action=?]', '/admin/periodictasks/export' do
+      assert_select 'th.checkbox input.periodictask-toggle-selection[type=checkbox]', 1
+      assert_select 'td.checkbox input[type=checkbox][name="ids[]"]', 2
+      assert_select 'td.checkbox input[value=?]', other.id.to_s
+    end
+    assert_select '.periodictask-bulk-menu[data-form="periodictask-list-form"]' do
+      assert_select '.drdn-trigger', text: /Actions/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/admin/periodictasks/export', text: /Export to ics/
+    end
+  end
+
+  def test_export_writes_the_checked_tasks_of_any_project_as_ics
+    other = create_test_periodictask(Project.find(2), subject: 'Task on onlinestore', interval_units: 'week',
+                                                      weekdays: [1])
+    create_test_periodictask(Project.find(1), subject: 'Not checked')
+
+    log_user('admin', 'admin')
+    post '/admin/periodictasks/export', params: { ids: [@due_task.id, other.id, 999_999] }
+    assert_response :success
+    assert_match %r{\Atext/calendar}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-all\.ics"/, @response.headers['Content-Disposition'])
+    assert_includes @response.body, 'SUMMARY:Due task'
+    assert_includes @response.body, 'SUMMARY:Task on onlinestore'
+    assert_match(/RRULE:FREQ=WEEKLY;BYDAY=MO;WKST=[A-Z]{2}/, @response.body)
+    assert_not_includes @response.body, 'Not checked'
+    assert_equal 2, @response.body.scan('BEGIN:VTODO').size
+  end
+
+  def test_export_without_a_checked_row_goes_back_to_the_list
+    log_user('admin', 'admin')
+    post '/admin/periodictasks/export'
+    assert_redirected_to '/admin/periodictasks'
+    follow_redirect!
+    assert_select 'div.flash.error', text: I18n.t(:error_periodictask_export_no_selection)
+  end
+
+  def test_export_requires_admin
+    log_user('jsmith', 'jsmith')
+    post '/admin/periodictasks/export', params: { ids: [@due_task.id] }
+    assert_response :forbidden
+  end
+
   private
 
   def create_test_periodictask(project, attrs = {})

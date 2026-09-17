@@ -1,0 +1,13 @@
+<%# Bulk actions on the checked rows of the list form +form+: a drop-down
+    whose entries submit that form to their own URL. Disabled until a row is
+    checked. %>
+<%= render 'periodictask/upcoming_runs_assets' %>
+<div class="drdn periodictask-bulk-menu" data-form="<%= form %>">
+  <span class="drdn-trigger icon icon-checked"><%= periodictask_sprite_icon('checked', l(:label_periodictask_bulk_actions)) %> &#9662;</span>
+  <div class="drdn-content">
+    <div class="drdn-items">
+      <%= link_to periodictask_sprite_icon('download', l(:label_periodictask_export_ics)), export_path,
+                  class: 'periodictask-bulk-action icon icon-download disabled', title: l(:text_periodictask_export_hint) %>
+    </div>
+  </div>
+</div>

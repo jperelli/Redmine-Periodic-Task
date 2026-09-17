@@ -242,3 +242,7 @@ pl:
   warning_periodictask_import_timezone_unknown: "Nieznana strefa czasowa %{part}; czasy odczytano w Twojej strefie czasowej."
   warning_periodictask_import_count_from_import: "%{part}: wykonania liczone są od importu, a nie od pierwszego wystąpienia w kalendarzu."
   warning_periodictask_import_monthday_moved: "%{part}: pierwsze wykonanie przeniesiono na ten dzień miesiąca."
+  label_periodictask_bulk_actions: "Akcje"
+  label_periodictask_export_ics: "Eksportuj do ics"
+  text_periodictask_export_hint: "Pobierz zaznaczone zadania jako plik iCalendar (.ics), jedno powtarzające się zadanie na wpis."
+  error_periodictask_export_no_selection: "Zaznacz co najmniej jedno zadanie do eksportu."

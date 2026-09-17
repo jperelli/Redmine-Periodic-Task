@@ -243,3 +243,7 @@ ru:
   warning_periodictask_import_timezone_unknown: "Неизвестный часовой пояс %{part}; время прочитано в вашем часовом поясе."
   warning_periodictask_import_count_from_import: "%{part}: запуски считаются с момента импорта, а не с первого события в календаре."
   warning_periodictask_import_monthday_moved: "%{part}: первый запуск перенесён на этот день месяца."
+  label_periodictask_bulk_actions: "Действия"
+  label_periodictask_export_ics: "Экспорт в ics"
+  text_periodictask_export_hint: "Скачать отмеченные задачи как файл iCalendar (.ics), по одной повторяющейся задаче на каждую."
+  error_periodictask_export_no_selection: "Отметьте хотя бы одну задачу для экспорта."

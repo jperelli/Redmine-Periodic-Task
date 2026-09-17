@@ -7,6 +7,7 @@
 - Import tasks from ics: upload a calendar file in *Administration → Periodic Tasks*, pick a project per row and create the periodic tasks **requires migration** ([#182](https://github.com/jperelli/Redmine-Periodic-Task/issues/182)) (@jperelli)
 - Import tasks from JSCalendar (RFC 8984): the *Import* menu of the import page offers one entry per format, `.ics` or `.json` (@jperelli)
 - Import tasks from a crontab: third entry of the *Import* menu, one task per `m h dom mon dow command` line (@jperelli)
+- Export tasks to ics: checkboxes on the rows of the task lists (project tab and *Administration → Periodic Tasks*) and an *Actions → Export to ics* menu that downloads the checked tasks as an iCalendar file, one recurring to-do per task (@jperelli)
 
 ## v7.1.1 - 2026-09-11
 

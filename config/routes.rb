@@ -13,6 +13,7 @@ Rails.application.routes.draw do
                                                              as: 'periodictask_preview', via: %i[post patch]
   get      'projects/:project_id/periodictask/tags',       to: 'periodictask#tags',   as: 'periodictask_tags'
   get      'projects/:project_id/periodictask/new',        to: 'periodictask#new',    as: 'new_periodictask'
+  post     'projects/:project_id/periodictask/export',     to: 'periodictask#export', as: 'export_periodictasks'
   get      'projects/:project_id/periodictask(.:format)',  to: 'periodictask#index',  as: 'periodictasks'
   post     'projects/:project_id/periodictask(.:format)',  to: 'periodictask#create'
   get      'projects/:project_id/periodictask/:id/edit',   to: 'periodictask#edit',   as: 'edit_periodictask'
@@ -34,6 +35,7 @@ end
 Rails.application.routes.draw do
   get  'admin/periodictasks(.:format)',  to: 'periodictask_admin#index',       as: 'admin_periodictasks'
   post 'admin/periodictask/run_checker', to: 'periodictask_admin#run_checker', as: 'periodictask_run_checker'
+  post 'admin/periodictasks/export',     to: 'periodictask_admin#export',      as: 'export_admin_periodictasks'
 
   # Import of recurring calendar items (iCalendar) as periodic tasks: upload,
   # triage table, create the rows with a project, discard a row.

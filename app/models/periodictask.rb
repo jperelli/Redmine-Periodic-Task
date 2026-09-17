@@ -694,6 +694,11 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
     end_reason.present?
   end
 
+  # Scheduled runs still to come under max_occurrences, nil when unlimited.
+  def runs_left
+    max_occurrences - occurrences_count.to_i if max_occurrences.present?
+  end
+
   # Whether the scheduler will pick the task up: switched on and not ended.
   def runnable?
     is_active? && !ended?
@@ -833,11 +838,6 @@ class Periodictask < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRe
       dates << next_date
     end
     dates
-  end
-
-  # Scheduled runs still to come under max_occurrences, nil when unlimited.
-  def runs_left
-    max_occurrences - occurrences_count.to_i if max_occurrences.present?
   end
 
   def past_end_date?(time)

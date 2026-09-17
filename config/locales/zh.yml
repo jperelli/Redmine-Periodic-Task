@@ -240,3 +240,7 @@ zh:
   warning_periodictask_import_timezone_unknown: "未知时区 %{part}；时间按您的时区读取。"
   warning_periodictask_import_count_from_import: "%{part}：运行次数从导入时开始计算，而不是从日历的首次发生计算。"
   warning_periodictask_import_monthday_moved: "%{part}：首次运行移至该月的该日。"
+  label_periodictask_bulk_actions: "操作"
+  label_periodictask_export_ics: "导出为 ics"
+  text_periodictask_export_hint: "将勾选的任务下载为 iCalendar (.ics) 文件，每个任务一个重复待办事项。"
+  error_periodictask_export_no_selection: "请至少勾选一个要导出的任务。"

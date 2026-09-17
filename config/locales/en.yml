@@ -238,3 +238,7 @@ en:
   warning_periodictask_import_timezone_unknown: "Unknown time zone %{part}; times read in your time zone."
   warning_periodictask_import_count_from_import: "%{part}: runs are counted from the import, not from the calendar's first occurrence."
   warning_periodictask_import_monthday_moved: "%{part}: first run moved to that day of the month."
+  label_periodictask_bulk_actions: "Actions"
+  label_periodictask_export_ics: "Export to ics"
+  text_periodictask_export_hint: "Download the checked tasks as an iCalendar (.ics) file, one recurring to-do per task."
+  error_periodictask_export_no_selection: "Check at least one task to export."
