@@ -333,6 +333,17 @@ class PeriodictaskControllerTest < ActionController::TestCase
                   text: '(GMT-03:00) Buenos Aires'
   end
 
+  def test_edit_zone_label_shows_the_dst_offset_in_force
+    User.find(2).pref.update!(time_zone: 'Bern')
+    task = create_test_periodictask
+
+    travel_to(Time.utc(2026, 8, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select 'span.periodictask-time-zone a', text: '(GMT+02:00 CEST) Bern'
+
+    travel_to(Time.utc(2026, 1, 1)) { get :edit, params: { project_id: 'ecookbook', id: task.id } }
+    assert_select 'span.periodictask-time-zone a', text: '(GMT+01:00 CET) Bern'
+  end
+
   def test_next_run_date_round_trips_in_server_zone_without_user_time_zone
     User.find(2).pref.update!(time_zone: '')
     task = create_test_periodictask

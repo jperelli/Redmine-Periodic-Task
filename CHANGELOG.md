@@ -11,6 +11,10 @@
 - Export tasks to JSCalendar (RFC 8984): *Actions → Export to jscal* downloads the checked tasks as a JSON `Group` of `Task` objects with recurrence rules (@jperelli)
 - Export tasks to a crontab: *Actions → Export to crontab* downloads the checked tasks as `m h dom mon dow  subject` lines, the description as comments above each job; what cron cannot express is noted in a comment (@jperelli)
 
+### Fixes
+
+- The time zone label next to *Next run date* shows the offset in force today, DST included, e.g. `(GMT+02:00 CEST) Bern` instead of the standard-time `(GMT+01:00) Bern` while the value was already read as +02:00 ([#185](https://github.com/jperelli/Redmine-Periodic-Task/issues/185)) (@jperelli)
+
 ## v7.1.1 - 2026-09-11
 
 ### Fixes
