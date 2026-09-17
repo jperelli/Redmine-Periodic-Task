@@ -244,5 +244,7 @@ pl:
   warning_periodictask_import_monthday_moved: "%{part}: pierwsze wykonanie przeniesiono na ten dzień miesiąca."
   label_periodictask_bulk_actions: "Akcje"
   label_periodictask_export_ics: "Eksportuj do ics"
-  text_periodictask_export_hint: "Pobierz zaznaczone zadania jako plik iCalendar (.ics), jedno powtarzające się zadanie na wpis."
+  label_periodictask_export_jscal: "Eksportuj do jscal"
+  label_periodictask_export_cron: "Eksportuj do crontab"
+  text_periodictask_export_hint: "Pobierz zaznaczone zadania jako plik w tym formacie; strona importu odczyta go ponownie."
   error_periodictask_export_no_selection: "Zaznacz co najmniej jedno zadanie do eksportu."

@@ -240,5 +240,7 @@ tr:
   warning_periodictask_import_monthday_moved: "%{part}: ilk çalıştırma ayın o gününe taşındı."
   label_periodictask_bulk_actions: "İşlemler"
   label_periodictask_export_ics: "ics olarak dışa aktar"
-  text_periodictask_export_hint: "İşaretli görevleri iCalendar (.ics) dosyası olarak indir, her görev için bir yinelenen görev."
+  label_periodictask_export_jscal: "jscal olarak dışa aktar"
+  label_periodictask_export_cron: "crontab olarak dışa aktar"
+  text_periodictask_export_hint: "İşaretli görevleri bu biçimde dosya olarak indir; içe aktarma sayfası geri okur."
   error_periodictask_export_no_selection: "Dışa aktarmak için en az bir görev işaretleyin."

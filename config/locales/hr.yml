@@ -245,5 +245,7 @@ hr:
   warning_periodictask_import_monthday_moved: "%{part}: prvo izvršavanje pomaknuto na taj dan mjeseca."
   label_periodictask_bulk_actions: "Radnje"
   label_periodictask_export_ics: "Izvoz u ics"
-  text_periodictask_export_hint: "Preuzmite označene zadatke kao iCalendar (.ics) datoteku, jedan ponavljajući zadatak po stavci."
+  label_periodictask_export_jscal: "Izvezi u jscal"
+  label_periodictask_export_cron: "Izvezi u crontab"
+  text_periodictask_export_hint: "Preuzmi označene zadatke kao datoteku u ovom formatu; stranica za uvoz je ponovno čita."
   error_periodictask_export_no_selection: "Označite barem jedan zadatak za izvoz."

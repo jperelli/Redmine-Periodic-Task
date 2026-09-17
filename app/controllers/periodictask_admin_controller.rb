@@ -6,7 +6,7 @@ class PeriodictaskAdminController < ApplicationController
 
   before_action :require_admin
   accept_api_auth :index
-  include RedminePeriodictask::IcalExportAction
+  include RedminePeriodictask::ExportAction
 
   helper :periodictask
   helper :attachments
@@ -39,7 +39,7 @@ class PeriodictaskAdminController < ApplicationController
 
   # The selected tasks (ids[]) of any project as an iCalendar file.
   def export
-    send_ical(Periodictask.joins(:project), 'all', admin_periodictasks_path)
+    send_export(Periodictask.joins(:project), 'all', admin_periodictasks_path)
   end
 
   # Runs the checker without waiting for cron or calling the endpoint, to

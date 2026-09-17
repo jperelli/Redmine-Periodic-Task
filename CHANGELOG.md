@@ -8,6 +8,8 @@
 - Import tasks from JSCalendar (RFC 8984): the *Import* menu of the import page offers one entry per format, `.ics` or `.json` (@jperelli)
 - Import tasks from a crontab: third entry of the *Import* menu, one task per `m h dom mon dow command` line (@jperelli)
 - Export tasks to ics: checkboxes on the rows of the task lists (project tab and *Administration → Periodic Tasks*) and an *Actions → Export to ics* menu that downloads the checked tasks as an iCalendar file, one recurring to-do per task (@jperelli)
+- Export tasks to JSCalendar (RFC 8984): *Actions → Export to jscal* downloads the checked tasks as a JSON `Group` of `Task` objects with recurrence rules (@jperelli)
+- Export tasks to a crontab: *Actions → Export to crontab* downloads the checked tasks as `m h dom mon dow  subject` lines, the description as comments above each job; what cron cannot express is noted in a comment (@jperelli)
 
 ## v7.1.1 - 2026-09-11
 

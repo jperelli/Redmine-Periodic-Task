@@ -7,7 +7,7 @@ class PeriodictaskController < ApplicationController
   before_action :load_categories, except: %i[destroy run_now tags preview export], unless: :api_request?
   before_action :load_versions, except: %i[destroy run_now tags preview export], unless: :api_request?
   accept_api_auth :index, :show, :create, :update, :destroy, :run_now
-  include RedminePeriodictask::IcalExportAction
+  include RedminePeriodictask::ExportAction
 
   helper :custom_fields
   include CustomFieldsHelper
@@ -73,8 +73,8 @@ class PeriodictaskController < ApplicationController
 
   # The selected tasks of the project (ids[]) as an iCalendar file.
   def export
-    send_ical(Periodictask.where(project_id: @project.id), @project.identifier,
-              periodictasks_path(project_id: @project))
+    send_export(Periodictask.where(project_id: @project.id), @project.identifier,
+                periodictasks_path(project_id: @project))
   end
 
   # With from_issue_id, the template is prefilled from that issue and the

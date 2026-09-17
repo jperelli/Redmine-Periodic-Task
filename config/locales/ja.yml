@@ -240,5 +240,7 @@ ja:
   warning_periodictask_import_monthday_moved: "%{part}: 初回実行をその日に移動しました。"
   label_periodictask_bulk_actions: "操作"
   label_periodictask_export_ics: "ics にエクスポート"
-  text_periodictask_export_hint: "チェックしたタスクを iCalendar (.ics) ファイルとしてダウンロードします（タスクごとに繰り返し ToDo を 1 件）。"
+  label_periodictask_export_jscal: "jscal にエクスポート"
+  label_periodictask_export_cron: "crontab にエクスポート"
+  text_periodictask_export_hint: "チェックしたタスクをこの形式のファイルとしてダウンロードします。インポートページで読み戻せます。"
   error_periodictask_export_no_selection: "エクスポートするタスクを 1 件以上チェックしてください。"

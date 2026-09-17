@@ -242,5 +242,7 @@ zh-TW:
   warning_periodictask_import_monthday_moved: "%{part}：首次執行移至該月的該日。"
   label_periodictask_bulk_actions: "操作"
   label_periodictask_export_ics: "匯出為 ics"
-  text_periodictask_export_hint: "將勾選的任務下載為 iCalendar (.ics) 檔案，每個任務一個重複待辦事項。"
+  label_periodictask_export_jscal: "匯出為 jscal"
+  label_periodictask_export_cron: "匯出為 crontab"
+  text_periodictask_export_hint: "將勾選的任務下載為此格式的檔案；匯入頁面可再讀回。"
   error_periodictask_export_no_selection: "請至少勾選一個要匯出的任務。"

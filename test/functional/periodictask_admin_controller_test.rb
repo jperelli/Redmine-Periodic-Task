@@ -142,7 +142,12 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     end
     assert_select '.periodictask-bulk-menu[data-form="periodictask-list-form"]' do
       assert_select '.drdn-trigger', text: /Actions/
-      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/admin/periodictasks/export', text: /Export to ics/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/admin/periodictasks/export?export=ics',
+                    text: /Export to ics/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/admin/periodictasks/export?export=jscal',
+                    text: /Export to jscal/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/admin/periodictasks/export?export=cron',
+                    text: /Export to crontab/
     end
   end
 
@@ -161,6 +166,28 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_match(/RRULE:FREQ=WEEKLY;BYDAY=MO;WKST=[A-Z]{2}/, @response.body)
     assert_not_includes @response.body, 'Not checked'
     assert_equal 2, @response.body.scan('BEGIN:VTODO').size
+  end
+
+  def test_export_as_jscal_and_crontab_across_projects
+    other = create_test_periodictask(Project.find(2), subject: 'Task on onlinestore', interval_units: 'day',
+                                                      next_run_date: Time.utc(2027, 3, 1, 9))
+    create_test_periodictask(Project.find(1), subject: 'Not checked')
+
+    log_user('admin', 'admin')
+    post '/admin/periodictasks/export', params: { export: 'jscal', ids: [@due_task.id, other.id] }
+    assert_response :success
+    assert_match %r{\Aapplication/jscalendar\+json}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-all\.json"/, @response.headers['Content-Disposition'])
+    entries = JSON.parse(@response.body)['entries']
+    assert_equal ['Due task', 'Task on onlinestore'], (entries.map { |entry| entry['title'] })
+    assert_includes entries.last['links']['redmine']['href'], "/projects/onlinestore/periodictask/#{other.id}"
+
+    post '/admin/periodictasks/export', params: { export: 'cron', ids: [@due_task.id, other.id] }
+    assert_response :success
+    assert_match %r{\Atext/plain}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-all\.txt"/, @response.headers['Content-Disposition'])
+    assert_includes @response.body.split("\n"), '0 9 * * *  Task on onlinestore'
+    assert_not_includes @response.body, 'Not checked'
   end
 
   def test_export_without_a_checked_row_goes_back_to_the_list

@@ -994,8 +994,12 @@ class PeriodictaskControllerTest < ActionController::TestCase
     end
     assert_select '.periodictask-bulk-menu[data-form="periodictask-list-form"]' do
       assert_select '.drdn-trigger', text: /Actions/
-      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/projects/ecookbook/periodictask/export',
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/projects/ecookbook/periodictask/export?export=ics',
                     text: /Export to ics/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]',
+                    '/projects/ecookbook/periodictask/export?export=jscal', text: /Export to jscal/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]',
+                    '/projects/ecookbook/periodictask/export?export=cron', text: /Export to crontab/
     end
     assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
     assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
@@ -1019,6 +1023,34 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_not_includes @response.body, 'Not checked'
     assert_not_includes @response.body, 'Other project', 'tasks of other projects are not exported from here'
     assert_equal 1, @response.body.scan('BEGIN:VTODO').size
+  end
+
+  def test_export_as_jscal_and_crontab
+    checked = create_test_periodictask(subject: 'Checked task', description: 'Details here', interval_units: 'week',
+                                       weekdays: [1, 5], next_run_date: Time.utc(2027, 3, 1, 9))
+    create_test_periodictask(subject: 'Not checked')
+
+    post :export, params: { project_id: 'ecookbook', export: 'jscal', ids: [checked.id] }
+    assert_response :success
+    assert_match %r{\Aapplication/jscalendar\+json}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-ecookbook\.json"/, @response.headers['Content-Disposition'])
+    entries = JSON.parse(@response.body)['entries']
+    assert_equal ['Checked task'], (entries.map { |entry| entry['title'] })
+    assert_equal 'weekly', entries.first['recurrenceRules'].first['frequency']
+
+    post :export, params: { project_id: 'ecookbook', export: 'cron', ids: [checked.id] }
+    assert_response :success
+    assert_match %r{\Atext/plain}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-ecookbook\.txt"/, @response.headers['Content-Disposition'])
+    assert_includes @response.body.split("\n"), '# Details here'
+    assert_includes @response.body.split("\n"), '0 9 * * 1,5  Checked task'
+    assert_not_includes @response.body, 'Not checked'
+  end
+
+  def test_export_in_an_unknown_format_is_not_found
+    task = create_test_periodictask
+    post :export, params: { project_id: 'ecookbook', export: 'pdf', ids: [task.id] }
+    assert_response :not_found
   end
 
   def test_export_uses_the_user_time_zone

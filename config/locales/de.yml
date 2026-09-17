@@ -240,5 +240,7 @@ de:
   warning_periodictask_import_monthday_moved: "%{part}: erster Durchlauf auf diesen Tag des Monats verschoben."
   label_periodictask_bulk_actions: "Aktionen"
   label_periodictask_export_ics: "Als ics exportieren"
-  text_periodictask_export_hint: "Die markierten Aufgaben als iCalendar-Datei (.ics) herunterladen, eine wiederkehrende Aufgabe pro Eintrag."
+  label_periodictask_export_jscal: "Als jscal exportieren"
+  label_periodictask_export_cron: "Als crontab exportieren"
+  text_periodictask_export_hint: "Die markierten Aufgaben als Datei in diesem Format herunterladen; die Importseite liest sie wieder ein."
   error_periodictask_export_no_selection: "Markieren Sie mindestens eine Aufgabe zum Exportieren."

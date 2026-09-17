@@ -240,5 +240,7 @@ it:
   warning_periodictask_import_monthday_moved: "%{part}: prima esecuzione spostata a quel giorno del mese."
   label_periodictask_bulk_actions: "Azioni"
   label_periodictask_export_ics: "Esporta in ics"
-  text_periodictask_export_hint: "Scarica le attività selezionate come file iCalendar (.ics), un'attività ricorrente per ciascuna."
+  label_periodictask_export_jscal: "Esporta in jscal"
+  label_periodictask_export_cron: "Esporta in crontab"
+  text_periodictask_export_hint: "Scarica le attività selezionate come file in questo formato; la pagina di importazione lo rilegge."
   error_periodictask_export_no_selection: "Seleziona almeno un'attività da esportare."

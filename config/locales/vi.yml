@@ -242,5 +242,7 @@ vi:
   warning_periodictask_import_monthday_moved: "%{part}: lần chạy đầu chuyển sang ngày đó trong tháng."
   label_periodictask_bulk_actions: "Thao tác"
   label_periodictask_export_ics: "Xuất ra ics"
-  text_periodictask_export_hint: "Tải các tác vụ đã chọn dưới dạng tệp iCalendar (.ics), mỗi tác vụ là một việc cần làm lặp lại."
+  label_periodictask_export_jscal: "Xuất ra jscal"
+  label_periodictask_export_cron: "Xuất ra crontab"
+  text_periodictask_export_hint: "Tải các tác vụ đã chọn dưới dạng tệp ở định dạng này; trang nhập đọc lại được."
   error_periodictask_export_no_selection: "Chọn ít nhất một tác vụ để xuất."

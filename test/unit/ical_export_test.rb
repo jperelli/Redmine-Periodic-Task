@@ -54,6 +54,16 @@ class IcalExportTest < ActiveSupport::TestCase
     assert_includes lines, 'DTSTART;TZID=America/Argentina/Buenos_Aires:20260302T220000'
   end
 
+  def test_format_registry_and_filenames
+    exporters = RedminePeriodictask::CalendarExport.exporters
+    assert_equal %w[ics jscal cron], (exporters.map { |exporter| exporter::FORMAT })
+    assert_equal RedminePeriodictask::IcalExport, RedminePeriodictask::CalendarExport.for_format('ics')
+    assert_nil RedminePeriodictask::CalendarExport.for_format('pdf')
+    assert_equal 'periodictasks-ecookbook.ics', RedminePeriodictask::IcalExport.filename('ecookbook')
+    assert_equal 'periodictasks-all.json', RedminePeriodictask::JscalExport.filename('all')
+    assert_equal 'periodictasks-all.txt', RedminePeriodictask::CronExport.filename('all')
+  end
+
   def test_rrule_per_schedule
     assert_equal 'FREQ=DAILY', rrule(interval_units: 'day')
     assert_equal 'FREQ=DAILY;INTERVAL=3', rrule(interval_units: 'day', interval_number: 3)
