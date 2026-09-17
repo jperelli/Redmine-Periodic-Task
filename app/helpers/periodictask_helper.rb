@@ -447,12 +447,14 @@ module PeriodictaskHelper
     periodictask_display_time(time).strftime('%Y-%m-%dT%H:%M')
   end
 
-  # Zone name and UTC offset shown next to the next_run_date input.
+  # Zone name and its UTC offset as of now (DST included) shown next to the
+  # next_run_date input, e.g. "(GMT+02:00 CEST) Bern". The abbreviation is
+  # omitted when tzinfo only has a numeric one ("-03").
   def periodictask_time_zone_label
-    return User.current.time_zone.to_s if User.current.time_zone
-
-    now = Time.now
-    "(GMT#{now.formatted_offset}) #{now.zone}"
+    zone = User.current.time_zone
+    now = zone ? zone.now : Time.now
+    abbreviation = now.zone unless now.zone.to_s.match?(/\A[+-]/)
+    "(GMT#{[now.formatted_offset, abbreviation].compact.join(' ')}) #{zone&.name}".strip
   end
 
   # Formatted time for display, with the full ISO 8601 timestamp (including the

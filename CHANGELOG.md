@@ -8,6 +8,10 @@
 - Import tasks from JSCalendar (RFC 8984): the *Import* menu of the import page offers one entry per format, `.ics` or `.json` (@jperelli)
 - Import tasks from a crontab: third entry of the *Import* menu, one task per `m h dom mon dow command` line (@jperelli)
 
+### Fixes
+
+- The time zone label next to *Next run date* shows the offset in force today, DST included, e.g. `(GMT+02:00 CEST) Bern` instead of the standard-time `(GMT+01:00) Bern` while the value was already read as +02:00 ([#185](https://github.com/jperelli/Redmine-Periodic-Task/issues/185)) (@jperelli)
+
 ## v7.1.1 - 2026-09-11
 
 ### Fixes
