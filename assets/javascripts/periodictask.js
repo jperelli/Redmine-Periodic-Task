@@ -36,6 +36,8 @@ $(document).on('click', '.periodictask-import-format', function(event) {
   form.find('input.periodictask-import-file').each(function() {
     $(this).prop('disabled', $(this).data('source') !== source).val('');
   });
+  form.find('.periodictask-import-chosen').text('');
+  form.find('input[type=submit]').prop('disabled', true);
   $(this).closest('.drdn').removeClass('expanded');
   form.find('#periodictask-import-file-' + source)[0].click();
 });
