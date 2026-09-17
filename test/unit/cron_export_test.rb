@@ -34,7 +34,10 @@ class CronExportTest < ActiveSupport::TestCase
 
   def test_schedule_per_interval
     assert_equal '0 9 * * *', schedule(interval_units: 'day')
-    assert_equal '0 9 * * 1-5', schedule(interval_units: 'business_day')
+    assert_equal '0 9 * * 1,2,3,4,5', schedule(interval_units: 'business_day')
+    with_settings non_working_week_days: %w[5 6 7] do
+      assert_equal '0 9 * * 1,2,3,4', schedule(interval_units: 'business_day')
+    end
     assert_equal '0 9 * * 1,3', schedule(interval_units: 'week', weekdays: [1, 3])
     assert_equal '0 9 * * 3', schedule(interval_units: 'week', weekdays: []), 'the weekday of the next run'
     assert_equal '0 9 1 * *', schedule(interval_units: 'month')
@@ -61,7 +64,7 @@ class CronExportTest < ActiveSupport::TestCase
 
     assert_includes lines, '# Not carried over: interval=2, end_date=2026-12-31'
     assert_includes lines, '# Not carried over: monthly_mode=weekday, max_occurrences=7'
-    assert_equal 1, lines.count('# Not carried over: end_date=2026-12-31'), 'the end date wins over the count'
+    assert_includes lines, '# Not carried over: end_date=2026-12-31, max_occurrences=10'
   end
 
   def test_inactive_task_is_a_commented_out_job_and_a_task_without_next_run_starts_now
@@ -70,6 +73,14 @@ class CronExportTest < ActiveSupport::TestCase
 
     lines = export([paused]).split("\n")
     assert_includes lines, '# 0 12 1 * *  Paused'
+  end
+
+  def test_ended_task_is_a_commented_out_job
+    done = task(subject: 'Done', max_occurrences: 3, occurrences_count: 3)
+
+    lines = export([done]).split("\n")
+    assert_includes lines, '# Not carried over: max_occurrences=0'
+    assert_includes lines, '# 0 9 1 * *  Done'
   end
 
   def test_exported_tasks_read_back_as_the_same_schedule

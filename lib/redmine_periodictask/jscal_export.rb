@@ -7,9 +7,9 @@ module RedminePeriodictask
   # ...). See CalendarExport.
   #
   # start and until are LocalDateTime values in the entry's timeZone; the
-  # end condition becomes until or, without an end date, count with the
-  # runs left. Tags become keywords, an inactive task has progress
-  # "cancelled".
+  # end condition becomes until or count with the runs left, whichever
+  # stops the task first. Tags become keywords, an inactive task has
+  # progress "cancelled", an ended one "completed" and no recurrenceRules.
   class JscalExport < CalendarExport
     FORMAT = 'jscal'.freeze
     EXTENSION = 'json'.freeze
@@ -17,6 +17,7 @@ module RedminePeriodictask
     PRODID = IcalExport::PRODID
     FREQUENCIES = { 'day' => 'daily', 'business_day' => 'daily', 'week' => 'weekly', 'month' => 'monthly',
                     'year' => 'yearly' }.freeze
+    PROGRESS = { needs_action: 'needs-action', cancelled: 'cancelled', completed: 'completed' }.freeze
 
     def write
       group = { '@type' => 'Group', 'uid' => "periodictasks-#{@now.to_i}@#{host}", 'prodId' => PRODID,
@@ -32,11 +33,9 @@ module RedminePeriodictask
       days = by_day(task)
       rule['byDay'] = days if days
       rule['firstDayOfWeek'] = day_code(Periodictask.first_weekday) if task.interval_units == 'week' && days
-      if task.end_date
-        rule['until'] = local(task.end_date.in_time_zone(@zone))
-      elsif task.runs_left
-        rule['count'] = task.runs_left
-      end
+      kind, limit = end_condition(task)
+      rule['until'] = local(limit.in_time_zone(@zone)) if kind == :until
+      rule['count'] = limit if kind == :count
       rule
     end
 
@@ -47,9 +46,9 @@ module RedminePeriodictask
       entry['description'] = task.description if task.description.present?
       entry['start'] = local(start(task))
       entry['timeZone'] = @zone.tzinfo.name
-      entry['recurrenceRules'] = [recurrence_rule(task)]
+      entry['recurrenceRules'] = [recurrence_rule(task)] if recurring?(task)
       entry['keywords'] = task.tag_names.to_h { |tag| [tag, true] } if task.tag_names.any?
-      entry['progress'] = task.is_active? ? 'needs-action' : 'cancelled'
+      entry['progress'] = PROGRESS.fetch(status(task))
       entry['links'] = { 'redmine' => { '@type' => 'Link', 'href' => url(task), 'rel' => 'alternate' } }
       entry
     end
@@ -58,7 +57,7 @@ module RedminePeriodictask
     # monthly weekday mode as NDay objects with nthOfPeriod.
     def by_day(task)
       case task.interval_units
-      when 'business_day' then WORKDAYS.map { |wday| nday(wday) }
+      when 'business_day' then workdays.map { |wday| nday(wday) }
       when 'week' then task.weekdays.map { |wday| nday(wday) }.presence
       when 'month'
         return unless task.monthly_weekday_mode?

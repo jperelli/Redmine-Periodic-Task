@@ -9,9 +9,11 @@ module RedminePeriodictask
   # Times are written in +zone+ (the user's), so the weekday and the day of
   # the month are the ones the user sees; a task without a next run starts
   # now.
+  #
+  # A task that has ended (all its runs done, or its next run past the end
+  # date) is written without a recurrence, as a completed item.
   class CalendarExport
     WEEKDAYS = %w[SU MO TU WE TH FR SA].freeze
-    WORKDAYS = [1, 2, 3, 4, 5].freeze
 
     # The formats that can be exported, in menu order.
     def self.exporters
@@ -45,6 +47,42 @@ module RedminePeriodictask
 
     def start(task)
       (task.next_run_date || @now).in_time_zone(@zone)
+    end
+
+    def recurring?(task)
+      !task.ended?
+    end
+
+    # :needs_action, :cancelled (switched off) or :completed (ended).
+    def status(task)
+      if !task.is_active?
+        :cancelled
+      elsif task.ended?
+        :completed
+      else
+        :needs_action
+      end
+    end
+
+    # The end condition the format gets, [:until, end_date] or
+    # [:count, runs_left]; nil when the task is unlimited. A rule takes one
+    # of the two, so with both set it is the one that stops the task first:
+    # the runs left, unless the end date cuts them short.
+    def end_condition(task)
+      runs = task.runs_left
+      date = task.end_date
+      return [:count, runs] if runs && (date.nil? || task.upcoming_run_dates_through(date, @now, runs).size >= runs)
+
+      [:until, date] if date
+    end
+
+    # The wdays of the working week, per Redmine's non-working days setting.
+    def workdays
+      @workdays ||= begin
+        working_days = Periodictask.working_days
+        sunday = @now.to_date - @now.to_date.wday
+        (0..6).select { |wday| working_days.working_day?(sunday + wday) }
+      end
     end
 
     def uid(task)

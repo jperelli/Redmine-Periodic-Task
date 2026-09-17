@@ -89,9 +89,32 @@ class IcalExportTest < ActiveSupport::TestCase
   def test_end_conditions
     assert_equal 'FREQ=DAILY;UNTIL=20261231T230000Z', rrule(interval_units: 'day', end_date: Time.utc(2026, 12, 31, 23))
     assert_equal 'FREQ=DAILY;COUNT=7', rrule(interval_units: 'day', max_occurrences: 10, occurrences_count: 3)
-    assert_equal 'FREQ=DAILY;UNTIL=20261231T230000Z',
-                 rrule(interval_units: 'day', end_date: Time.utc(2026, 12, 31, 23), max_occurrences: 10),
-                 'UNTIL and COUNT cannot both be given; the date wins'
+  end
+
+  def test_with_both_end_conditions_the_one_that_stops_the_task_first_is_written
+    end_date = Time.utc(2026, 4, 10, 23) # the daily task starts April 1st: 10 runs fit
+    assert_equal 'FREQ=DAILY;COUNT=7',
+                 rrule(interval_units: 'day', end_date: end_date, max_occurrences: 10, occurrences_count: 3)
+    assert_equal 'FREQ=DAILY;COUNT=10', rrule(interval_units: 'day', end_date: end_date, max_occurrences: 10)
+    assert_equal 'FREQ=DAILY;UNTIL=20260410T230000Z',
+                 rrule(interval_units: 'day', end_date: end_date, max_occurrences: 11)
+  end
+
+  def test_ended_task_is_a_completed_todo_without_rrule
+    done = task(subject: 'Done', max_occurrences: 3, occurrences_count: 3)
+    over = task(subject: 'Over', end_date: Time.utc(2026, 4, 30))
+    over.update_columns(end_date: Time.utc(2026, 3, 31)) # as the scheduler leaves it after the last run
+
+    lines = export([done, over]).split("\r\n")
+    assert_equal 2, lines.count('STATUS:COMPLETED')
+    assert_empty lines.grep(/\ARRULE:/)
+    assert_includes lines, 'DTSTART:20260401T090000Z'
+  end
+
+  def test_business_days_follow_the_non_working_days_setting
+    with_settings non_working_week_days: %w[5 6 7] do
+      assert_equal 'FREQ=DAILY;BYDAY=MO,TU,WE,TH', rrule(interval_units: 'business_day')
+    end
   end
 
   def test_inactive_task_is_a_cancelled_todo_and_a_task_without_next_run_starts_now
@@ -152,6 +175,6 @@ class IcalExportTest < ActiveSupport::TestCase
   end
 
   def rrule(attrs)
-    RedminePeriodictask::IcalExport.new([], zone: nil).rrule(task(attrs))
+    RedminePeriodictask::IcalExport.new([], zone: nil, now: NOW).rrule(task(attrs))
   end
 end

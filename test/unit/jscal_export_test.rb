@@ -76,8 +76,18 @@ class JscalExportTest < ActiveSupport::TestCase
     assert_equal({ 'frequency' => 'yearly' }, rule(interval_units: 'year'))
     assert_equal({ 'frequency' => 'daily', 'count' => 7 },
                  rule(interval_units: 'day', max_occurrences: 10, occurrences_count: 3))
-    assert_equal({ 'frequency' => 'daily', 'until' => '2026-12-31T23:00:00' },
-                 rule(interval_units: 'day', end_date: Time.utc(2026, 12, 31, 23), max_occurrences: 10))
+    assert_equal({ 'frequency' => 'daily', 'count' => 10 },
+                 rule(interval_units: 'day', end_date: Time.utc(2026, 12, 31, 23), max_occurrences: 10),
+                 'ten daily runs from April end long before December')
+    assert_equal({ 'frequency' => 'daily', 'until' => '2026-04-05T23:00:00' },
+                 rule(interval_units: 'day', end_date: Time.utc(2026, 4, 5, 23), max_occurrences: 10))
+  end
+
+  def test_business_days_follow_the_non_working_days_setting
+    with_settings non_working_week_days: %w[6 7 1] do
+      days = %w[tu we th fr].map { |day| { '@type' => 'NDay', 'day' => day } }
+      assert_equal({ 'frequency' => 'daily', 'byDay' => days }, rule(interval_units: 'business_day'))
+    end
   end
 
   def test_inactive_task_is_cancelled_and_a_task_without_next_run_starts_now
@@ -87,6 +97,15 @@ class JscalExportTest < ActiveSupport::TestCase
     entry = JSON.parse(export([paused]))['entries'].first
     assert_equal 'cancelled', entry['progress']
     assert_equal '2026-03-01T12:00:00', entry['start']
+  end
+
+  def test_ended_task_is_completed_without_recurrence_rules
+    done = task(max_occurrences: 3, occurrences_count: 3)
+
+    entry = JSON.parse(export([done]))['entries'].first
+    assert_equal 'completed', entry['progress']
+    assert_nil entry['recurrenceRules']
+    assert_equal '2026-04-01T09:00:00', entry['start']
   end
 
   def test_exported_tasks_read_back_as_the_same_schedule
@@ -134,6 +153,6 @@ class JscalExportTest < ActiveSupport::TestCase
   end
 
   def rule(attrs)
-    RedminePeriodictask::JscalExport.new([], zone: nil).recurrence_rule(task(attrs)).except('@type')
+    RedminePeriodictask::JscalExport.new([], zone: nil, now: NOW).recurrence_rule(task(attrs)).except('@type')
   end
 end

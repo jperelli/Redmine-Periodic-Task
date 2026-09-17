@@ -3,9 +3,10 @@ module RedminePeriodictask
   # RRULE, so calendar applications and CalDAV servers show the tasks as
   # recurring to-dos. See CalendarExport.
   #
-  # DTSTART is the next run (TZID form); the end condition becomes UNTIL or,
-  # without an end date, COUNT with the runs left. Tags become CATEGORIES,
-  # an inactive task is a CANCELLED to-do.
+  # DTSTART is the next run (TZID form); the end condition becomes UNTIL or
+  # COUNT with the runs left, whichever stops the task first. Tags become
+  # CATEGORIES, an inactive task is a CANCELLED to-do, an ended one a
+  # COMPLETED to-do without RRULE.
   class IcalExport < CalendarExport
     FORMAT = 'ics'.freeze
     EXTENSION = 'ics'.freeze
@@ -15,6 +16,7 @@ module RedminePeriodictask
     LINE_OCTETS = 75
     FREQUENCIES = { 'day' => 'DAILY', 'business_day' => 'DAILY', 'week' => 'WEEKLY', 'month' => 'MONTHLY',
                     'year' => 'YEARLY' }.freeze
+    STATUSES = { needs_action: 'NEEDS-ACTION', cancelled: 'CANCELLED', completed: 'COMPLETED' }.freeze
 
     def write
       lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', "PRODID:#{PRODID}", 'CALSCALE:GREGORIAN']
@@ -29,22 +31,21 @@ module RedminePeriodictask
       parts['INTERVAL'] = task.interval_number if task.interval_number > 1
       parts['BYDAY'] = byday(task)
       parts['WKST'] = WEEKDAYS[Periodictask.first_weekday] if task.interval_units == 'week' && task.weekdays.any?
-      if task.end_date
-        parts['UNTIL'] = utc(task.end_date)
-      elsif task.runs_left
-        parts['COUNT'] = task.runs_left
-      end
+      kind, limit = end_condition(task)
+      parts['UNTIL'] = utc(limit) if kind == :until
+      parts['COUNT'] = limit if kind == :count
       parts.compact.map { |name, value| "#{name}=#{value}" }.join(';')
     end
 
     private
 
     def todo(task)
-      lines = ['BEGIN:VTODO', "UID:#{uid(task)}", "DTSTAMP:#{utc(@now)}", "DTSTART#{local(start(task))}",
-               "RRULE:#{rrule(task)}", "SUMMARY:#{escape(task.subject)}"]
+      lines = ['BEGIN:VTODO', "UID:#{uid(task)}", "DTSTAMP:#{utc(@now)}", "DTSTART#{local(start(task))}"]
+      lines << "RRULE:#{rrule(task)}" if recurring?(task)
+      lines << "SUMMARY:#{escape(task.subject)}"
       lines << "DESCRIPTION:#{escape(task.description)}" if task.description.present?
       lines << "CATEGORIES:#{task.tag_names.map { |tag| escape(tag) }.join(',')}" if task.tag_names.any?
-      lines << "STATUS:#{task.is_active? ? 'NEEDS-ACTION' : 'CANCELLED'}"
+      lines << "STATUS:#{STATUSES.fetch(status(task))}"
       lines << "URL:#{url(task)}"
       lines << 'END:VTODO'
     end
@@ -53,7 +54,7 @@ module RedminePeriodictask
     # monthly weekday mode as ordinal weekdays ("1MO,3MO").
     def byday(task)
       case task.interval_units
-      when 'business_day' then WORKDAYS.map { |wday| WEEKDAYS[wday] }.join(',')
+      when 'business_day' then workdays.map { |wday| WEEKDAYS[wday] }.join(',')
       when 'week' then task.weekdays.map { |wday| WEEKDAYS[wday] }.join(',').presence
       when 'month'
         return unless task.monthly_weekday_mode?
