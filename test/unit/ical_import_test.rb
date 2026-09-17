@@ -160,8 +160,13 @@ class IcalImportTest < ActiveSupport::TestCase
     assert_nil item.attributes['next_run_date']
   end
 
-  def test_garbage_input_yields_nothing
-    result = parse("not a calendar\nat all")
+  def test_garbage_input_is_not_a_calendar
+    assert_raises(RedminePeriodictask::CalendarImport::InvalidFile) { parse("not a calendar\nat all") }
+    assert_raises(RedminePeriodictask::CalendarImport::InvalidFile) { parse('{"@type": "Task"}') }
+  end
+
+  def test_a_calendar_without_recurring_items_yields_nothing
+    result = parse("BEGIN:VCALENDAR\nEND:VCALENDAR\n")
 
     assert_empty result.items
     assert_equal 0, result.not_recurring

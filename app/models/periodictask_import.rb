@@ -5,7 +5,7 @@
 class PeriodictaskImport < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRecord::Base)
   include Redmine::I18n
 
-  SOURCES = %w[ical].freeze
+  SOURCES = [RedminePeriodictask::IcalImport::SOURCE, RedminePeriodictask::JscalImport::SOURCE].freeze
 
   belongs_to :project, optional: true
   belongs_to :user, optional: true
@@ -31,10 +31,11 @@ class PeriodictaskImport < (defined?(ApplicationRecord) ? ApplicationRecord : Ac
   end
 
   # Stages the items parsed from a file. An item whose UID is already staged
-  # is not added again, so re-uploading the same calendar is harmless.
-  # Returns the number of rows added.
+  # (from any file, in any format: a calendar exported twice as .ics and as
+  # JSCalendar keeps its UIDs) is not added again, so re-uploading the same
+  # calendar is harmless. Returns the number of rows added.
   def self.stage(items, source:, user:)
-    staged_uids = where(source: source).where.not(uid: nil).pluck(:uid).to_set
+    staged_uids = where.not(uid: nil).pluck(:uid).to_set
     items.count do |item|
       next false if item.uid.present? && staged_uids.include?(item.uid)
 

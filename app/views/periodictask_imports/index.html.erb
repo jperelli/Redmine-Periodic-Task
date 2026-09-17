@@ -9,8 +9,24 @@
 <%= form_tag(periodictask_imports_path, multipart: true, class: 'periodictask-import-upload') do %>
   <fieldset class="box">
     <legend><%= l(:label_periodictask_import_upload) %></legend>
-    <%= file_field_tag :file, accept: '.ics,text/calendar', required: true %>
-    <%= submit_tag l(:button_periodictask_import_upload), name: nil %>
+    <div class="drdn periodictask-import-menu">
+      <span class="drdn-trigger icon icon-import"><%= periodictask_sprite_icon('import', l(:label_periodictask_import)) %> &#9662;</span>
+      <div class="drdn-content">
+        <div class="drdn-items">
+          <% RedminePeriodictask::CalendarImport.importers.each do |importer| %>
+            <%= link_to l(:"label_periodictask_import_format_#{importer::SOURCE}"), '#',
+                        data: { source: importer::SOURCE }, class: 'periodictask-import-format' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <% RedminePeriodictask::CalendarImport.importers.each do |importer| %>
+      <%= file_field_tag :file, accept: importer::ACCEPT, disabled: true, id: "periodictask-import-file-#{importer::SOURCE}",
+                         data: { source: importer::SOURCE }, class: 'periodictask-import-file' %>
+    <% end %>
+    <%= hidden_field_tag :source, '', id: 'periodictask-import-source' %>
+    <span class="periodictask-import-chosen"></span>
+    <%= submit_tag l(:button_periodictask_import_upload), name: nil, disabled: true %>
     <p class="info"><%= l(:text_periodictask_import_upload_hint) %></p>
   </fieldset>
 <% end %>

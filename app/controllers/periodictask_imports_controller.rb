@@ -1,8 +1,9 @@
-# Import of recurring items from an iCalendar file (VTODO / VEVENT with an
-# RRULE) as periodic tasks. Items are staged on upload and listed in a
-# triage table where an administrator picks the project of each; "create"
-# turns the rows with a project into periodic tasks and leaves the others
-# staged for later. Administrators only: staged rows span projects.
+# Import of recurring items from a calendar file (iCalendar or JSCalendar,
+# see RedminePeriodictask::CalendarImport) as periodic tasks. Items are
+# staged on upload and listed in a triage table where an administrator
+# picks the project of each; "create" turns the rows with a project into
+# periodic tasks and leaves the others staged for later. Administrators
+# only: staged rows span projects.
 class PeriodictaskImportsController < ApplicationController
   layout 'admin'
   self.main_menu = false
@@ -20,8 +21,14 @@ class PeriodictaskImportsController < ApplicationController
     @projects = PeriodictaskImport.target_projects.to_a
   end
 
-  # Parses the uploaded file and stages its recurring items.
+  # Parses the uploaded file as the format chosen in the import menu
+  # (params[:source]) and stages its recurring items.
   def create
+    importer = RedminePeriodictask::CalendarImport.for_source(params[:source])
+    unless importer
+      flash[:error] = l(:error_periodictask_import_no_format)
+      return redirect_to periodictask_imports_path
+    end
     file = params[:file]
     unless file.respond_to?(:read)
       flash[:error] = l(:error_periodictask_import_no_file)
@@ -33,9 +40,13 @@ class PeriodictaskImportsController < ApplicationController
     end
 
     text = file.read.to_s.force_encoding('UTF-8').scrub
-    result = RedminePeriodictask::IcalImport.parse(text, zone: User.current.time_zone)
-    staged = PeriodictaskImport.stage(result.items, source: 'ical', user: User.current)
+    result = importer.parse(text, zone: User.current.time_zone)
+    staged = PeriodictaskImport.stage(result.items, source: importer::SOURCE, user: User.current)
     flash[:notice] = upload_notice(result, staged)
+    redirect_to periodictask_imports_path
+  rescue RedminePeriodictask::CalendarImport::InvalidFile
+    flash[:error] = l(:error_periodictask_import_invalid_file,
+                      format_name: l(:"label_periodictask_import_format_#{importer::SOURCE}"))
     redirect_to periodictask_imports_path
   end
 
