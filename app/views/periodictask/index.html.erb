@@ -16,7 +16,7 @@
   <% else %>
   <%= render 'periodictask/row_styles' %>
   <%= render 'periodictask/bulk_actions', form: 'periodictask-list-form', export_path: export_periodictasks_path(:project_id => @project) %>
-  <%= form_tag(export_periodictasks_path(:project_id => @project), :id => 'periodictask-list-form', :class => 'periodictask-list-form') do %>
+  <%= form_tag(export_periodictasks_path(:project_id => @project), :id => 'periodictask-list-form', :class => 'periodictask-list-form multiple-submit') do %>
   <table class="list <%= sort_css_classes %>">
     <thead>
       <tr>

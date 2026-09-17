@@ -135,7 +135,7 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     log_user('admin', 'admin')
     get '/admin/periodictasks'
     assert_response :success
-    assert_select 'form#periodictask-list-form[action=?]', '/admin/periodictasks/export' do
+    assert_select 'form#periodictask-list-form.multiple-submit[action=?]', '/admin/periodictasks/export' do
       assert_select 'th.checkbox input.periodictask-toggle-selection[type=checkbox]', 1
       assert_select 'td.checkbox input[type=checkbox][name="ids[]"]', 2
       assert_select 'td.checkbox input[value=?]', other.id.to_s

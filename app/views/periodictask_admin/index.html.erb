@@ -9,7 +9,7 @@
 <% else %>
 <%= render 'periodictask/row_styles' %>
 <%= render 'periodictask/bulk_actions', form: 'periodictask-list-form', export_path: export_admin_periodictasks_path %>
-<%= form_tag(export_admin_periodictasks_path, :id => 'periodictask-list-form', :class => 'periodictask-list-form') do %>
+<%= form_tag(export_admin_periodictasks_path, :id => 'periodictask-list-form', :class => 'periodictask-list-form multiple-submit') do %>
 <table class="list <%= sort_css_classes %>">
   <thead>
     <tr>

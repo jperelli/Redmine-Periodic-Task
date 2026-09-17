@@ -988,7 +988,7 @@ class PeriodictaskControllerTest < ActionController::TestCase
     task = create_test_periodictask
     get :index, params: { project_id: 'ecookbook' }
     assert_response :success
-    assert_select 'form#periodictask-list-form[action=?]', '/projects/ecookbook/periodictask/export' do
+    assert_select 'form#periodictask-list-form.multiple-submit[action=?]', '/projects/ecookbook/periodictask/export' do
       assert_select 'th.checkbox input.periodictask-toggle-selection[type=checkbox]', 1
       assert_select 'td.checkbox input[type=checkbox][name="ids[]"][value=?]', task.id.to_s
     end
