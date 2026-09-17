@@ -47,7 +47,18 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
     log_user('admin', 'admin')
     get '/admin/periodictask_imports'
     assert_response :success
-    assert_select 'form.periodictask-import-upload input[type=file][name=file]'
+    assert_select 'form.periodictask-import-upload' do
+      assert_select '.drdn-trigger', text: /Import/
+      assert_select 'a.periodictask-import-format[data-source=ical]', text: 'iCalendar (.ics)'
+      assert_select 'a.periodictask-import-format[data-source=jscal]', text: 'JSCalendar (.json)'
+      assert_select 'a.periodictask-import-format[data-source=cron]', text: 'Crontab (.txt)'
+      assert_select 'input[type=file][name=file][data-source=ical][accept=?][disabled]', '.ics,text/calendar'
+      assert_select 'input[type=file][name=file][data-source=jscal][disabled]'
+      assert_select 'input[type=file][name=file][data-source=cron][accept=?][disabled]',
+                    '.cron,.crontab,.txt,text/plain'
+      assert_select 'input[type=hidden][name=source]'
+      assert_select 'input[type=submit][disabled]'
+    end
     assert_select 'p.nodata'
     assert_select 'form#periodictask-import-form', 0
   end
@@ -60,7 +71,7 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
 
   def test_upload_stages_recurring_items_and_lists_them
     log_user('admin', 'admin')
-    post '/admin/periodictask_imports', params: { file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
     assert_redirected_to '/admin/periodictask_imports'
 
     assert_equal %w[todo-weekly todo-monthly], PeriodictaskImport.sorted.pluck(:uid)
@@ -90,8 +101,8 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
 
   def test_upload_does_not_stage_the_same_uid_twice
     log_user('admin', 'admin')
-    post '/admin/periodictask_imports', params: { file: calendar_file }
-    post '/admin/periodictask_imports', params: { file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
     follow_redirect!
 
     assert_equal 2, PeriodictaskImport.count
@@ -100,11 +111,88 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
 
   def test_upload_without_a_file_is_an_error
     log_user('admin', 'admin')
-    post '/admin/periodictask_imports'
+    post '/admin/periodictask_imports', params: { source: 'ical' }
     assert_redirected_to '/admin/periodictask_imports'
     follow_redirect!
     assert_select 'div.flash.error', text: I18n.t(:error_periodictask_import_no_file)
     assert_equal 0, PeriodictaskImport.count
+  end
+
+  def test_upload_without_a_format_is_an_error
+    log_user('admin', 'admin')
+    post '/admin/periodictask_imports', params: { file: calendar_file }
+    follow_redirect!
+    assert_select 'div.flash.error', text: I18n.t(:error_periodictask_import_no_format)
+    assert_equal 0, PeriodictaskImport.count
+  end
+
+  def test_upload_of_a_jscalendar_file_stages_its_items
+    log_user('admin', 'admin')
+    post '/admin/periodictask_imports', params: { source: 'jscal', file: jscalendar_file }
+    assert_redirected_to '/admin/periodictask_imports'
+
+    assert_equal %w[jscal-weekly], PeriodictaskImport.pluck(:uid)
+    weekly = PeriodictaskImport.first
+    assert_equal 'jscal', weekly.source
+    assert_equal 'Weekly backup check (JSCalendar)', weekly.subject
+    assert_equal 'week', weekly.task_attributes['interval_units']
+    assert_equal [1], weekly.task_attributes['weekdays']
+
+    follow_redirect!
+    assert_select 'div.flash.notice', text: /1 recurring item\(s\) staged.*1 item\(s\) without recurrence rule skipped/
+    assert_select 'table.periodictask-imports td.interval', text: /each week on Monday/
+  end
+
+  def test_upload_in_the_wrong_format_is_an_error
+    log_user('admin', 'admin')
+    post '/admin/periodictask_imports', params: { source: 'jscal', file: calendar_file }
+    follow_redirect!
+    assert_select 'div.flash.error',
+                  text: I18n.t(:error_periodictask_import_invalid_file, format_name: 'JSCalendar (.json)')
+
+    post '/admin/periodictask_imports', params: { source: 'ical', file: jscalendar_file }
+    follow_redirect!
+    assert_select 'div.flash.error',
+                  text: I18n.t(:error_periodictask_import_invalid_file, format_name: 'iCalendar (.ics)')
+
+    post '/admin/periodictask_imports', params: { source: 'cron', file: calendar_file }
+    follow_redirect!
+    assert_select 'div.flash.error',
+                  text: I18n.t(:error_periodictask_import_invalid_file, format_name: 'Crontab (.txt)')
+    assert_equal 0, PeriodictaskImport.count
+  end
+
+  def test_upload_of_a_crontab_stages_its_jobs
+    log_user('admin', 'admin')
+    post '/admin/periodictask_imports', params: { source: 'cron', file: crontab_file }
+    assert_redirected_to '/admin/periodictask_imports'
+
+    assert_equal ['/usr/local/bin/backup --full'], PeriodictaskImport.pluck(:subject)
+    job = PeriodictaskImport.first
+    assert_equal 'cron', job.source
+    assert_match(/\Acron:\h{40}\z/, job.uid)
+    assert_equal 'Full backup', job.description
+    assert_equal 'week', job.task_attributes['interval_units']
+    assert_equal [1, 4], job.task_attributes['weekdays']
+
+    follow_redirect!
+    assert_select 'div.flash.notice', text: /1 recurring item\(s\) staged.*1 item\(s\) without recurrence rule skipped/
+    assert_select 'div.flash.notice', text: %r{more often than daily skipped: /usr/local/bin/poll}
+    assert_select 'table.periodictask-imports td.interval[title=?]', '0 3 * * 1,4'
+
+    post '/admin/periodictask_imports', params: { source: 'cron', file: crontab_file }
+    assert_equal 1, PeriodictaskImport.count
+  end
+
+  def test_the_same_uid_is_not_staged_twice_across_formats
+    log_user('admin', 'admin')
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'jscal', file: jscalendar_file('uid' => 'todo-weekly') }
+    follow_redirect!
+
+    assert_equal %w[todo-weekly todo-monthly], PeriodictaskImport.sorted.pluck(:uid)
+    assert_equal %w[ical], PeriodictaskImport.distinct.pluck(:source)
+    assert_select 'div.flash.notice', text: /0 recurring item\(s\) staged. 1 already staged and skipped/
   end
 
   def test_create_imports_the_rows_with_a_project_and_keeps_the_others
@@ -197,7 +285,7 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
     User.find_by_login('admin').update!(language: 'es')
 
     log_user('admin', 'admin')
-    post '/admin/periodictask_imports', params: { file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
     follow_redirect!
     expected = I18n.t(:notice_periodictask_import_staged, count: 2, locale: :es)
     assert_select 'div.flash.notice', text: /#{Regexp.escape(expected)}/
@@ -209,7 +297,7 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
     log_user('jsmith', 'jsmith')
     get '/admin/periodictask_imports'
     assert_response :forbidden
-    post '/admin/periodictask_imports', params: { file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
     assert_response :forbidden
     post '/admin/periodictask_imports/import', params: { project_ids: { weekly.id.to_s => '1' } }
     assert_response :forbidden
@@ -222,7 +310,7 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
   def test_anonymous_is_redirected_to_login
     get '/admin/periodictask_imports'
     assert_response :redirect
-    post '/admin/periodictask_imports', params: { file: calendar_file }
+    post '/admin/periodictask_imports', params: { source: 'ical', file: calendar_file }
     assert_response :redirect
     assert_equal 0, PeriodictaskImport.count
   end
@@ -231,6 +319,28 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
 
   def calendar_file
     Rack::Test::UploadedFile.new(StringIO.new(CALENDAR), 'text/calendar', original_filename: 'tasks.ics')
+  end
+
+  def crontab_file
+    crontab = <<~CRON
+      MAILTO=root
+      # Full backup
+      0 3 * * 1,4 /usr/local/bin/backup --full
+      */5 * * * * /usr/local/bin/poll
+      @reboot /usr/local/bin/warm-cache
+    CRON
+    Rack::Test::UploadedFile.new(StringIO.new(crontab), 'text/plain', original_filename: 'crontab.txt')
+  end
+
+  def jscalendar_file(overrides = {})
+    weekly = { '@type' => 'Task', 'uid' => 'jscal-weekly', 'title' => 'Weekly backup check (JSCalendar)',
+               'start' => '2026-03-02T09:00:00', 'timeZone' => 'Etc/UTC',
+               'recurrenceRules' => [{ '@type' => 'RecurrenceRule', 'frequency' => 'weekly',
+                                       'byDay' => [{ '@type' => 'NDay', 'day' => 'mo' }] }] }.merge(overrides)
+    once = { '@type' => 'Task', 'uid' => 'jscal-once', 'title' => 'Not recurring' }
+    group = { '@type' => 'Group', 'uid' => 'jscal-group', 'entries' => [weekly, once] }
+    Rack::Test::UploadedFile.new(StringIO.new(JSON.generate(group)), 'application/json',
+                                 original_filename: 'tasks.json')
   end
 
   def stage_calendar
