@@ -208,10 +208,11 @@ pl:
   error_attachment_copy_failed: 'Nie udało się skopiować załącznika "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Utwórz zadanie cykliczne z tego zagadnienia'
   label_periodictask_import: "Importuj"
-  text_periodictask_import_description: "Importuj powtarzające się zadania i wydarzenia kalendarza jako zadania okresowe. Otwórz menu Importuj, wybierz format (iCalendar .ics, jaki eksportują kalendarze i serwery CalDAV, lub JSCalendar JSON) oraz plik: jego powtarzające się elementy czekają poniżej. Wybierz projekt dla każdego i utwórz zadania okresowe; pozostałe zostają tutaj, aż ktoś wybierze dla nich projekt."
+  text_periodictask_import_description: "Importuj powtarzające się zadania i wydarzenia kalendarza lub zadania z crontab jako zadania okresowe. Otwórz menu Importuj, wybierz format (iCalendar .ics, jaki eksportują kalendarze i serwery CalDAV, JSCalendar JSON lub plik tekstowy crontab) oraz plik: jego powtarzające się elementy czekają poniżej. Wybierz projekt dla każdego i utwórz zadania okresowe; pozostałe zostają tutaj, aż ktoś wybierze dla nich projekt."
   label_periodictask_import_upload: "Wyślij plik"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Odczytywane są tylko elementy z regułą powtarzania; elementy jednorazowe to zwykłe zagadnienia i są pomijane. Elementy już oczekujące (ten sam UID) nie są dodawane ponownie."
   button_periodictask_import_upload: "Prześlij"
   label_periodictask_import_staged: "Elementy oczekujące na projekt"

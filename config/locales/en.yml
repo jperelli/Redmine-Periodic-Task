@@ -204,10 +204,11 @@ en:
   error_attachment_copy_failed: 'Attachment "%{filename}" could not be copied: %{error}'
   label_new_periodictask_from_issue: 'Create periodic task from this issue'
   label_periodictask_import: "Import"
-  text_periodictask_import_description: "Import the repeating to-dos and events of a calendar as periodic tasks. Open the Import menu, pick the format (iCalendar .ics as exported by calendars and CalDAV servers, or JSCalendar JSON) and the file: its repeating items are staged below. Choose the project of each one and create the periodic tasks; the rest stay here until someone picks a project for them."
+  text_periodictask_import_description: "Import the repeating to-dos and events of a calendar, or the jobs of a crontab, as periodic tasks. Open the Import menu, pick the format (iCalendar .ics as exported by calendars and CalDAV servers, JSCalendar JSON, or a crontab text file) and the file: its repeating items are staged below. Choose the project of each one and create the periodic tasks; the rest stay here until someone picks a project for them."
   label_periodictask_import_upload: "Upload a file"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Only items with a recurrence rule are read; one-off items are plain issues and are skipped. Items already staged (same UID) are not added twice."
   button_periodictask_import_upload: "Upload"
   label_periodictask_import_staged: "Items waiting for a project"

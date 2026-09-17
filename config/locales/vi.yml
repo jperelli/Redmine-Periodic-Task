@@ -206,10 +206,11 @@ vi:
   error_attachment_copy_failed: 'Không thể sao chép tệp đính kèm "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Tạo việc định kỳ từ vấn đề này'
   label_periodictask_import: "Nhập"
-  text_periodictask_import_description: "Nhập các công việc và sự kiện lặp lại của một lịch thành tác vụ định kỳ. Mở menu Nhập, chọn định dạng (iCalendar .ics như lịch và máy chủ CalDAV xuất ra, hoặc JSCalendar JSON) và tệp: các mục lặp lại sẽ chờ bên dưới. Chọn dự án cho từng mục và tạo tác vụ định kỳ; các mục còn lại ở đây cho đến khi ai đó chọn dự án cho chúng."
+  text_periodictask_import_description: "Nhập các công việc và sự kiện lặp lại của một lịch, hoặc các job của một crontab, thành tác vụ định kỳ. Mở menu Nhập, chọn định dạng (iCalendar .ics như lịch và máy chủ CalDAV xuất ra, JSCalendar JSON hoặc tệp văn bản crontab) và tệp: các mục lặp lại sẽ chờ bên dưới. Chọn dự án cho từng mục và tạo tác vụ định kỳ; các mục còn lại ở đây cho đến khi ai đó chọn dự án cho chúng."
   label_periodictask_import_upload: "Tải lên tệp"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Chỉ đọc các mục có quy tắc lặp lại; các mục một lần là vấn đề thông thường và bị bỏ qua. Các mục đã chờ (cùng UID) không được thêm hai lần."
   button_periodictask_import_upload: "Tải lên"
   label_periodictask_import_staged: "Mục đang chờ dự án"

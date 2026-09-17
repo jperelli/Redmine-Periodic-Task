@@ -51,8 +51,11 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
       assert_select '.drdn-trigger', text: /Import/
       assert_select 'a.periodictask-import-format[data-source=ical]', text: 'iCalendar (.ics)'
       assert_select 'a.periodictask-import-format[data-source=jscal]', text: 'JSCalendar (.json)'
+      assert_select 'a.periodictask-import-format[data-source=cron]', text: 'Crontab (.txt)'
       assert_select 'input[type=file][name=file][data-source=ical][accept=?][disabled]', '.ics,text/calendar'
       assert_select 'input[type=file][name=file][data-source=jscal][disabled]'
+      assert_select 'input[type=file][name=file][data-source=cron][accept=?][disabled]',
+                    '.cron,.crontab,.txt,text/plain'
       assert_select 'input[type=hidden][name=source]'
       assert_select 'input[type=submit][disabled]'
     end
@@ -151,7 +154,34 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
     follow_redirect!
     assert_select 'div.flash.error',
                   text: I18n.t(:error_periodictask_import_invalid_file, format_name: 'iCalendar (.ics)')
+
+    post '/admin/periodictask_imports', params: { source: 'cron', file: calendar_file }
+    follow_redirect!
+    assert_select 'div.flash.error',
+                  text: I18n.t(:error_periodictask_import_invalid_file, format_name: 'Crontab (.txt)')
     assert_equal 0, PeriodictaskImport.count
+  end
+
+  def test_upload_of_a_crontab_stages_its_jobs
+    log_user('admin', 'admin')
+    post '/admin/periodictask_imports', params: { source: 'cron', file: crontab_file }
+    assert_redirected_to '/admin/periodictask_imports'
+
+    assert_equal ['/usr/local/bin/backup --full'], PeriodictaskImport.pluck(:subject)
+    job = PeriodictaskImport.first
+    assert_equal 'cron', job.source
+    assert_match(/\Acron:\h{40}\z/, job.uid)
+    assert_equal 'Full backup', job.description
+    assert_equal 'week', job.task_attributes['interval_units']
+    assert_equal [1, 4], job.task_attributes['weekdays']
+
+    follow_redirect!
+    assert_select 'div.flash.notice', text: /1 recurring item\(s\) staged.*1 item\(s\) without recurrence rule skipped/
+    assert_select 'div.flash.notice', text: %r{more often than daily skipped: /usr/local/bin/poll}
+    assert_select 'table.periodictask-imports td.interval[title=?]', '0 3 * * 1,4'
+
+    post '/admin/periodictask_imports', params: { source: 'cron', file: crontab_file }
+    assert_equal 1, PeriodictaskImport.count
   end
 
   def test_the_same_uid_is_not_staged_twice_across_formats
@@ -289,6 +319,17 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
 
   def calendar_file
     Rack::Test::UploadedFile.new(StringIO.new(CALENDAR), 'text/calendar', original_filename: 'tasks.ics')
+  end
+
+  def crontab_file
+    crontab = <<~CRON
+      MAILTO=root
+      # Full backup
+      0 3 * * 1,4 /usr/local/bin/backup --full
+      */5 * * * * /usr/local/bin/poll
+      @reboot /usr/local/bin/warm-cache
+    CRON
+    Rack::Test::UploadedFile.new(StringIO.new(crontab), 'text/plain', original_filename: 'crontab.txt')
   end
 
   def jscalendar_file(overrides = {})

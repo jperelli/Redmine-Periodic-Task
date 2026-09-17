@@ -1,15 +1,15 @@
 module RedminePeriodictask
-  # Reads the recurring items of a calendar file into the subject,
+  # Reads the recurring items of a calendar (or crontab) file into the subject,
   # description and schedule of a periodic task. Each format is read by a
   # subclass, named by its SOURCE and listed in .importers: iCalendar
-  # (IcalImport, RFC 5545) and JSCalendar (JscalImport, RFC 8984). Items
-  # without a recurrence rule are not the plugin's business (they are plain
-  # issues) and are only counted.
+  # (IcalImport, RFC 5545), JSCalendar (JscalImport, RFC 8984) and crontab
+  # (CronImport). Items without a recurrence rule are not the plugin's
+  # business (they are plain issues) and are only counted.
   #
-  # Both formats express recurrence with the same vocabulary (RFC 5545
-  # RRULE parts: FREQ, INTERVAL, BYDAY, UNTIL, ...), so subclasses turn a
-  # rule into a parts hash and the mapping onto what a periodic task can
-  # express lives here: FREQ/INTERVAL to the interval, BYDAY to the weekdays
+  # Recurrence is described in the vocabulary of RFC 5545 (RRULE parts:
+  # FREQ, INTERVAL, BYDAY, UNTIL, ...): subclasses turn a rule into a parts
+  # hash and the mapping onto what a periodic task can express lives here:
+  # FREQ/INTERVAL to the interval, BYDAY to the weekdays
   # of a weekly task or the ordinal weekdays of a monthly one, COUNT/UNTIL
   # to the end condition, the item's start (or due date) to the first run.
   # Parts with no counterpart are reported as warnings on the item rather
@@ -29,7 +29,7 @@ module RedminePeriodictask
     # The formats that can be imported, in menu order. Each has a SOURCE
     # (stored with the staged rows) and an ACCEPT (for the file picker).
     def self.importers
-      [IcalImport, JscalImport]
+      [IcalImport, JscalImport, CronImport]
     end
 
     def self.for_source(source)

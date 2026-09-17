@@ -204,10 +204,11 @@ it:
   error_attachment_copy_failed: "Impossibile copiare l'allegato \"%{filename}\": %{error}"
   label_new_periodictask_from_issue: 'Crea attività periodica da questa segnalazione'
   label_periodictask_import: "Importa"
-  text_periodictask_import_description: "Importa le attività e gli eventi ricorrenti di un calendario come attività periodiche. Apri il menu Importa, scegli il formato (iCalendar .ics, quello esportato da calendari e server CalDAV, oppure JSCalendar JSON) e il file: gli elementi ricorrenti restano in attesa qui sotto. Scegli il progetto di ciascuno e crea le attività periodiche; gli altri restano qui finché qualcuno non sceglie un progetto."
+  text_periodictask_import_description: "Importa le attività e gli eventi ricorrenti di un calendario, o i job di un crontab, come attività periodiche. Apri il menu Importa, scegli il formato (iCalendar .ics, quello esportato da calendari e server CalDAV, JSCalendar JSON oppure un file di testo crontab) e il file: gli elementi ricorrenti restano in attesa qui sotto. Scegli il progetto di ciascuno e crea le attività periodiche; gli altri restano qui finché qualcuno non sceglie un progetto."
   label_periodictask_import_upload: "Carica un file"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Vengono letti solo gli elementi con una regola di ricorrenza; gli elementi singoli sono normali segnalazioni e vengono ignorati. Gli elementi già in attesa (stesso UID) non vengono aggiunti due volte."
   button_periodictask_import_upload: "Carica"
   label_periodictask_import_staged: "Elementi in attesa di un progetto"

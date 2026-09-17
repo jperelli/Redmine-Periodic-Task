@@ -204,10 +204,11 @@ de:
   error_attachment_copy_failed: 'Der Anhang "%{filename}" konnte nicht kopiert werden: %{error}'
   label_new_periodictask_from_issue: 'Wiederholende Aufgabe aus diesem Ticket erstellen'
   label_periodictask_import: "Importieren"
-  text_periodictask_import_description: "Importieren Sie die wiederkehrenden Aufgaben und Termine eines Kalenders als wiederholende Aufgaben. Öffnen Sie das Menü Importieren, wählen Sie das Format (iCalendar .ics, wie Kalender und CalDAV-Server es exportieren, oder JSCalendar JSON) und die Datei: die wiederkehrenden Einträge werden unten bereitgestellt. Wählen Sie für jeden Eintrag das Projekt und erstellen Sie die wiederholenden Aufgaben; die übrigen bleiben hier, bis jemand ein Projekt für sie wählt."
+  text_periodictask_import_description: "Importieren Sie die wiederkehrenden Aufgaben und Termine eines Kalenders oder die Jobs einer Crontab als wiederholende Aufgaben. Öffnen Sie das Menü Importieren, wählen Sie das Format (iCalendar .ics, wie Kalender und CalDAV-Server es exportieren, JSCalendar JSON oder eine Crontab-Textdatei) und die Datei: die wiederkehrenden Einträge werden unten bereitgestellt. Wählen Sie für jeden Eintrag das Projekt und erstellen Sie die wiederholenden Aufgaben; die übrigen bleiben hier, bis jemand ein Projekt für sie wählt."
   label_periodictask_import_upload: "Datei hochladen"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Nur Einträge mit einer Wiederholungsregel werden gelesen; einmalige Einträge sind gewöhnliche Tickets und werden übersprungen. Bereits bereitgestellte Einträge (gleiche UID) werden nicht doppelt hinzugefügt."
   button_periodictask_import_upload: "Hochladen"
   label_periodictask_import_staged: "Einträge, die auf ein Projekt warten"

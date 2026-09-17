@@ -206,10 +206,11 @@ zh-TW:
   error_attachment_copy_failed: '無法複製附件「%{filename}」：%{error}'
   label_new_periodictask_from_issue: '從此議題建立週期任務'
   label_periodictask_import: "匯入"
-  text_periodictask_import_description: "將行事曆中重複的待辦與事件匯入為週期性任務。開啟「匯入」選單，選擇格式（行事曆與 CalDAV 伺服器匯出的 iCalendar .ics，或 JSCalendar JSON）與檔案：其重複項目會在下方等待。為每一項選擇專案並建立週期性任務；其餘項目會留在此處，直到有人為其選擇專案。"
+  text_periodictask_import_description: "將行事曆中重複的待辦與事件，或 crontab 的工作，匯入為週期性任務。開啟「匯入」選單，選擇格式（行事曆與 CalDAV 伺服器匯出的 iCalendar .ics，JSCalendar JSON，或 crontab 文字檔）與檔案：其重複項目會在下方等待。為每一項選擇專案並建立週期性任務；其餘項目會留在此處，直到有人為其選擇專案。"
   label_periodictask_import_upload: "上傳檔案"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "只會讀取含重複規則的項目；一次性項目是一般議題，會被略過。已在等待中的項目（相同 UID）不會重複加入。"
   button_periodictask_import_upload: "上傳"
   label_periodictask_import_staged: "等待選擇專案的項目"

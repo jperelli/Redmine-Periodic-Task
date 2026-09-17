@@ -204,10 +204,11 @@ tr:
   error_attachment_copy_failed: '"%{filename}" eki kopyalanamadı: %{error}'
   label_new_periodictask_from_issue: 'Bu işten periyodik iş oluştur'
   label_periodictask_import: "İçe aktar"
-  text_periodictask_import_description: "Bir takvimin yinelenen görev ve etkinliklerini periyodik görev olarak içe aktarın. İçe aktar menüsünü açın, biçimi (takvimlerin ve CalDAV sunucularının dışa aktardığı iCalendar .ics veya JSCalendar JSON) ve dosyayı seçin: yinelenen öğeler aşağıda bekler. Her birinin projesini seçip periyodik görevleri oluşturun; kalanlar biri proje seçene kadar burada kalır."
+  text_periodictask_import_description: "Bir takvimin yinelenen görev ve etkinliklerini veya bir crontab'ın işlerini periyodik görev olarak içe aktarın. İçe aktar menüsünü açın, biçimi (takvimlerin ve CalDAV sunucularının dışa aktardığı iCalendar .ics JSCalendar JSON veya bir crontab metin dosyası) ve dosyayı seçin: yinelenen öğeler aşağıda bekler. Her birinin projesini seçip periyodik görevleri oluşturun; kalanlar biri proje seçene kadar burada kalır."
   label_periodictask_import_upload: "Dosya yükle"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Yalnızca yineleme kuralı olan öğeler okunur; tek seferlik öğeler sıradan iş kayıtlarıdır ve atlanır. Zaten bekleyen öğeler (aynı UID) iki kez eklenmez."
   button_periodictask_import_upload: "Yükle"
   label_periodictask_import_staged: "Proje bekleyen öğeler"

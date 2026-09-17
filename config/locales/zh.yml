@@ -206,10 +206,11 @@ zh:
   error_attachment_copy_failed: '无法复制附件「%{filename}」：%{error}'
   label_new_periodictask_from_issue: '从此问题新建周期任务'
   label_periodictask_import: "导入"
-  text_periodictask_import_description: "将日历中重复的待办和事件导入为周期任务。打开“导入”菜单，选择格式（日历和 CalDAV 服务器导出的 iCalendar .ics，或 JSCalendar JSON）和文件：其重复项目会在下方等待。为每一项选择项目并创建周期任务；其余项目留在此处，直到有人为其选择项目。"
+  text_periodictask_import_description: "将日历中重复的待办和事件，或 crontab 的作业，导入为周期任务。打开“导入”菜单，选择格式（日历和 CalDAV 服务器导出的 iCalendar .ics，JSCalendar JSON，或 crontab 文本文件）和文件：其重复项目会在下方等待。为每一项选择项目并创建周期任务；其余项目留在此处，直到有人为其选择项目。"
   label_periodictask_import_upload: "上传文件"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "只读取含重复规则的项目；一次性项目是普通问题，会被跳过。已在等待中的项目（相同 UID）不会重复添加。"
   button_periodictask_import_upload: "上传"
   label_periodictask_import_staged: "等待选择项目的条目"

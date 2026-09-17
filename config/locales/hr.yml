@@ -209,10 +209,11 @@ hr:
   error_attachment_copy_failed: 'Privitak "%{filename}" nije moguće kopirati: %{error}'
   label_new_periodictask_from_issue: 'Stvori periodički zadatak iz ovog zadatka'
   label_periodictask_import: "Uvoz"
-  text_periodictask_import_description: "Uvezite ponavljajuće zadatke i događaje kalendara kao periodične zadatke. Otvorite izbornik Uvoz, odaberite format (iCalendar .ics, kakav izvoze kalendari i CalDAV poslužitelji, ili JSCalendar JSON) i datoteku: njezini ponavljajući elementi čekaju dolje. Odaberite projekt za svaki i stvorite periodične zadatke; ostali ostaju ovdje dok im netko ne odabere projekt."
+  text_periodictask_import_description: "Uvezite ponavljajuće zadatke i događaje kalendara, ili poslove crontaba, kao periodične zadatke. Otvorite izbornik Uvoz, odaberite format (iCalendar .ics, kakav izvoze kalendari i CalDAV poslužitelji, JSCalendar JSON ili tekstualnu datoteku crontab) i datoteku: njezini ponavljajući elementi čekaju dolje. Odaberite projekt za svaki i stvorite periodične zadatke; ostali ostaju ovdje dok im netko ne odabere projekt."
   label_periodictask_import_upload: "Prijenos datoteke"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Čitaju se samo elementi s pravilom ponavljanja; jednokratni elementi su obični zadaci i preskaču se. Elementi koji već čekaju (isti UID) ne dodaju se dvaput."
   button_periodictask_import_upload: "Prenesi"
   label_periodictask_import_staged: "Stavke koje čekaju projekt"

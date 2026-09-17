@@ -209,10 +209,11 @@ ru:
   error_attachment_copy_failed: 'Не удалось скопировать вложение "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Создать периодическую задачу из этой задачи'
   label_periodictask_import: "Импорт"
-  text_periodictask_import_description: "Импортируйте повторяющиеся задачи и события календаря как периодические задачи. Откройте меню Импорт, выберите формат (iCalendar .ics, который экспортируют календари и CalDAV-серверы, или JSCalendar JSON) и файл: его повторяющиеся элементы появятся ниже в ожидании. Выберите проект для каждого и создайте периодические задачи; остальные останутся здесь, пока кто-нибудь не выберет для них проект."
+  text_periodictask_import_description: "Импортируйте повторяющиеся задачи и события календаря или задания crontab как периодические задачи. Откройте меню Импорт, выберите формат (iCalendar .ics, который экспортируют календари и CalDAV-серверы, JSCalendar JSON или текстовый файл crontab) и файл: его повторяющиеся элементы появятся ниже в ожидании. Выберите проект для каждого и создайте периодические задачи; остальные останутся здесь, пока кто-нибудь не выберет для них проект."
   label_periodictask_import_upload: "Загрузить файл"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Читаются только элементы с правилом повторения; разовые элементы — обычные задачи и пропускаются. Уже ожидающие элементы (тот же UID) не добавляются повторно."
   button_periodictask_import_upload: "Загрузить"
   label_periodictask_import_staged: "Элементы, ожидающие проекта"

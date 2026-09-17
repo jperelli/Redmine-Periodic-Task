@@ -204,10 +204,11 @@ pt-BR:
   error_attachment_copy_failed: 'Não foi possível copiar o anexo "%{filename}": %{error}'
   label_new_periodictask_from_issue: 'Criar tarefa periódica a partir desta tarefa'
   label_periodictask_import: "Importar"
-  text_periodictask_import_description: "Importe as tarefas e eventos recorrentes de um calendário como tarefas periódicas. Abra o menu Importar, escolha o formato (iCalendar .ics, o que calendários e servidores CalDAV exportam, ou JSCalendar JSON) e o arquivo: seus itens recorrentes ficam em espera abaixo. Escolha o projeto de cada um e crie as tarefas periódicas; o restante fica aqui até que alguém escolha um projeto."
+  text_periodictask_import_description: "Importe as tarefas e eventos recorrentes de um calendário, ou os jobs de um crontab, como tarefas periódicas. Abra o menu Importar, escolha o formato (iCalendar .ics, o que calendários e servidores CalDAV exportam, JSCalendar JSON ou um arquivo de texto crontab) e o arquivo: seus itens recorrentes ficam em espera abaixo. Escolha o projeto de cada um e crie as tarefas periódicas; o restante fica aqui até que alguém escolha um projeto."
   label_periodictask_import_upload: "Enviar um arquivo"
   label_periodictask_import_format_ical: "iCalendar (.ics)"
   label_periodictask_import_format_jscal: "JSCalendar (.json)"
+  label_periodictask_import_format_cron: "Crontab (.txt)"
   text_periodictask_import_upload_hint: "Só são lidos os itens com regra de recorrência; itens únicos são tarefas comuns e são ignorados. Itens já em espera (mesmo UID) não são adicionados duas vezes."
   button_periodictask_import_upload: "Enviar"
   label_periodictask_import_staged: "Itens aguardando um projeto"

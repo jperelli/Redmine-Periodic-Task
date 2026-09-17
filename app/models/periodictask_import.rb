@@ -5,7 +5,7 @@
 class PeriodictaskImport < (defined?(ApplicationRecord) ? ApplicationRecord : ActiveRecord::Base)
   include Redmine::I18n
 
-  SOURCES = [RedminePeriodictask::IcalImport::SOURCE, RedminePeriodictask::JscalImport::SOURCE].freeze
+  SOURCES = RedminePeriodictask::CalendarImport.importers.map { |importer| importer::SOURCE }.freeze
 
   belongs_to :project, optional: true
   belongs_to :user, optional: true
