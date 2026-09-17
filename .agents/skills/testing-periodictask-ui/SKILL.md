@@ -15,6 +15,21 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/   # wait for 200
 ```
 Login: admin / admin at http://localhost:3000/login (Redmine may force a password change on first login).
 
+### Docker Hub pull limits
+- If Docker Hub responds with 429, pull the exact Dockerfile `FROM` image via
+  `mirror.gcr.io/library/<image>:<tag>` and tag it back to `<image>:<tag>` before building.
+- Provisioning also uses `nouchka/sqlite3:latest`; it can be pulled from
+  `mirror.gcr.io/nouchka/sqlite3:latest` and tagged back when available.
+
+### Timezone UI checks
+- My account's Time zone dropdown includes a GMT prefix; native select type-ahead
+  should use the full option label (for example `(GMT+01:00) Bern`), not just `Bern`.
+- The account dropdown uses standard/base offsets, while the plugin form label uses
+  today's DST-aware offset. Do not confuse those two labels.
+- Persisted next-run tooltips may render UTC (`Z`) even when the visible list time
+  is localized. Compare the actual instants (11:00 CEST equals 09:00Z), not just
+  the ISO string's suffix.
+
 ### Schema changes in disposable local databases
 - Compose bind-mounts `.volumes/sqlite`; `docker compose down -v` does not remove that host database.
 - If a development migration is rewritten under an already-used version, inspect the actual schema before testing.
