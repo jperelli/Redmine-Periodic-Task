@@ -34,4 +34,11 @@ end
 Rails.application.routes.draw do
   get  'admin/periodictasks(.:format)',  to: 'periodictask_admin#index',       as: 'admin_periodictasks'
   post 'admin/periodictask/run_checker', to: 'periodictask_admin#run_checker', as: 'periodictask_run_checker'
+
+  # Import of recurring calendar items (iCalendar) as periodic tasks: upload,
+  # triage table, create the rows with a project, discard a row.
+  get    'admin/periodictask_imports',        to: 'periodictask_imports#index', as: 'periodictask_imports'
+  post   'admin/periodictask_imports',        to: 'periodictask_imports#create'
+  post   'admin/periodictask_imports/import', to: 'periodictask_imports#import', as: 'import_periodictask_imports'
+  delete 'admin/periodictask_imports/:id',    to: 'periodictask_imports#destroy', as: 'periodictask_import'
 end

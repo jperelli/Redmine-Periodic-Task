@@ -1,0 +1,82 @@
+<%= render 'periodictask/upcoming_runs_assets' %>
+<div class="contextual">
+  <%= link_to periodictask_sprite_icon('time', l(:label_periodic_tasks)), admin_periodictasks_path, class: 'icon icon-time' %>
+</div>
+
+<h2><%= l(:label_periodictask_import) %></h2>
+<p><%= l(:text_periodictask_import_description) %></p>
+
+<%= form_tag(periodictask_imports_path, multipart: true, class: 'periodictask-import-upload') do %>
+  <fieldset class="box">
+    <legend><%= l(:label_periodictask_import_upload) %></legend>
+    <%= file_field_tag :file, accept: '.ics,text/calendar', required: true %>
+    <%= submit_tag l(:button_periodictask_import_upload), name: nil %>
+    <p class="info"><%= l(:text_periodictask_import_upload_hint) %></p>
+  </fieldset>
+<% end %>
+
+<h3><%= l(:label_periodictask_import_staged) %></h3>
+<% if @imports.empty? %>
+  <p class="nodata"><%= l(:label_periodictask_import_none) %></p>
+<% else %>
+  <%= form_tag(import_periodictask_imports_path, id: 'periodictask-import-form') do %>
+    <div class="periodictask-import-toolbar">
+      <label for="periodictask-import-fill">
+        <%= l(:label_periodictask_import_fill_project) %>
+        <%= select_tag 'periodictask-import-fill', project_tree_options_for_select(@projects),
+                       include_blank: l(:label_none), id: 'periodictask-import-fill', name: nil,
+                       class: 'periodictask-import-fill' %>
+      </label>
+    </div>
+    <table class="list periodictask-imports">
+      <thead>
+        <tr>
+          <th><%= l(:label_subject) %></th>
+          <th><%= l(:label_interval) %></th>
+          <th><%= l(:label_next_run_date) %></th>
+          <th><%= l(:label_periodictask_import_warnings) %></th>
+          <th><%= l(:field_project) %></th>
+          <th class="buttons hide-when-print"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @imports.each do |import| %>
+          <% task = import.build_periodictask %>
+          <tr class="periodictask-import <%= 'periodictask-import-failed' if import.last_error.present? %>" id="periodictask-import-<%= import.id %>">
+            <td class="subject">
+              <span title="<%= import.description %>"><%= import.subject %></span>
+              <% if import.last_error.present? %>
+                <div class="flash error periodictask-import-error"><%= import.last_error %></div>
+              <% end %>
+            </td>
+            <td class="interval" title="<%= import.rule %>">
+              <%= periodictask_schedule_description(task) %><%= periodictask_end_condition_note(task) %>
+            </td>
+            <td><%= periodictask_time_with_title(task.next_run_date) %></td>
+            <td class="periodictask-import-warnings"><%= periodictask_import_warnings(import) %></td>
+            <td class="project">
+              <%= select_tag "project_ids[#{import.id}]",
+                             project_tree_options_for_select(@projects, selected: import.project),
+                             include_blank: l(:label_none), class: 'periodictask-import-project',
+                             title: l(:label_periodictask_import_choose_project) %>
+            </td>
+            <td class="buttons hide-when-print">
+              <%= link_to(
+                periodictask_sprite_icon('del', l(:label_periodictask_import_discard), icon_only: true),
+                periodictask_import_path(import),
+                method: :delete, data: { confirm: l(:text_are_you_sure) },
+                class: 'icon-only icon-del', title: l(:label_periodictask_import_discard)
+              ) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <p>
+      <%= submit_tag l(:button_periodictask_import_create), name: nil %>
+      <span class="info"><%= l(:text_periodictask_import_create_hint) %></span>
+    </p>
+  <% end %>
+<% end %>
+
+<%= render 'periodictask/credit' %>

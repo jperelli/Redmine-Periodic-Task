@@ -13,3 +13,14 @@ $(document).on('click', '.periodictask-calendar-toggle', function(event) {
     link.find('svg').toggleClass('icon-rtl', !expanded);
   }
 });
+
+/* Calendar import: the toolbar select fills the project of every staged row
+   that has none yet. */
+$(document).on('change', '.periodictask-import-fill', function() {
+  var projectId = $(this).val();
+  if (projectId === '') { return; }
+  $('#periodictask-import-form select.periodictask-import-project').each(function() {
+    if ($(this).val() === '') { $(this).val(projectId); }
+  });
+  $(this).val('');
+});
