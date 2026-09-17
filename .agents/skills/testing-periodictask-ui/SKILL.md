@@ -79,6 +79,37 @@ Login: admin / admin at http://localhost:3000/login (Redmine may force a passwor
 ## Devin Secrets Needed
 None (local docker, default admin/admin).
 
+## Calendar bulk-export UI checks
+- Refresh plugin assets after branch changes; if restarting alone serves stale JS,
+  run `docker compose exec redmine bundle exec rake assets:precompile RAILS_ENV=development`,
+  restart Redmine, and hard-reload Chrome before recording.
+- Test both `/projects/<identifier>/periodictask` and `/admin/periodictasks`.
+  Verify header/row checkbox synchronization and disabled zero-selection actions.
+- Export twice from the same loaded page, changing checked rows between downloads.
+  Redmine's POST double-submit guard can silently block repeat download forms;
+  verify a new actual download rather than just an enabled menu item.
+- Inspect files from Chrome's download directory, including suffixed filenames.
+  Check selected UIDs, VTODO count, CRLF, text escaping, folding, recurrence and status.
+- Use future-dated daily COUNT, weekly UNTIL, monthly ordinal-weekday, inactive,
+  tagged and long-description fixtures, plus one unchecked control task.
+- Re-import the downloaded file via the iCalendar menu. Remaining COUNT is relative
+  to the exported next-run DTSTART; a count-from-import warning can be expected.
+- For permission-negative POST checks use an independent session with its own login
+  and CSRF token, never copied browser cookies. Python's urllib and http.cookiejar
+  suffice if requests is unavailable. Assert HTTP403 and no attachment header.
+- Empty-selection backend checks require native form submission because the
+  normal menu intentionally blocks submitting zero checked rows.
+- For multi-format exports, download JSON then crontab from the same loaded form.
+  JSON uses a Group of Task entries; check weekly byDay, monthly nthOfPeriod,
+  timeZone, until/count, keywords, cancelled progress and links.redmine.href.
+- Crontab is intentionally lossy: interval/count/end-date/ordinal-monthly details
+  are comments, inactive jobs are commented out, and imports use the next matching
+  fire time rather than the original future DTSTART. Include an active monthly
+  fixture to check day-of-month fallback; an inactive monthly fixture will not stage.
+- Reused staging fixtures can deduplicate JSON/ICS by task UID across formats.
+  Remove only disposable prior-test rows before a fresh round trip, or explicitly
+  test deduplication instead. Cron loss comments survive as subject tooltips.
+
 ## Issue-template UI fixtures
 - To exercise copying a non-default issue status, create the issue first, then
   use Edit to change its status. The initial New issue form may offer only New.
