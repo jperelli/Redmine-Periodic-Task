@@ -4,7 +4,7 @@
 
 ### Features
 
-- *Administration → Periodic Tasks → Import from calendar*: upload an iCalendar (`.ics`) export, triage the repeating to-dos and events in a table (one project per row, unassigned rows stay for later) and create the periodic tasks with their recurrence, without external scripts **requires migration** ([#182](https://github.com/jperelli/Redmine-Periodic-Task/issues/182)) (@jperelli)
+- Import tasks from ics: upload a calendar file in *Administration → Periodic Tasks*, pick a project per row and create the periodic tasks **requires migration** ([#182](https://github.com/jperelli/Redmine-Periodic-Task/issues/182)) (@jperelli)
 
 ## v7.1.1 - 2026-09-11
 
