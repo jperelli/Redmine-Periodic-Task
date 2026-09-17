@@ -184,6 +184,22 @@ class JscalImportTest < ActiveSupport::TestCase
     assert_equal Time.utc(2026, 3, 2, 9, 0, 0), task.next_run_date
   end
 
+  def test_cancelled_tasks_become_inactive_tasks
+    result = parse([task('progress' => 'cancelled'), task('@type' => 'Event', 'status' => 'cancelled'),
+                    task('progress' => 'needs-action'), task({})])
+
+    assert_equal([false, false, nil, nil], result.items.map { |i| i.attributes['is_active'] })
+  end
+
+  def test_last_day_of_the_month
+    result = parse(task('start' => '2026-01-31T09:00:00', 'timeZone' => 'Etc/UTC',
+                        'recurrenceRules' => [{ 'frequency' => 'monthly', 'byMonthDay' => [-1] }]))
+
+    item = result.items.first
+    assert_equal [], item.warnings
+    assert_equal Time.utc(2026, 1, 31, 9), Time.iso8601(item.attributes['next_run_date'])
+  end
+
   private
 
   def parse(data, zone: ActiveSupport::TimeZone['UTC'])

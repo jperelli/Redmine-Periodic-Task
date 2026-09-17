@@ -48,3 +48,31 @@ $(document).on('change', '.periodictask-import-upload input.periodictask-import-
   form.find('.periodictask-import-chosen').text(file ? file.name + ' (' + format + ')' : '');
   form.find('input[type=submit]').prop('disabled', !file);
 });
+
+/* Task lists: the header checkbox checks or clears every row of its table,
+   and the entries of the bulk actions menu are enabled while a row is checked.
+   An entry submits the list form to its own URL. */
+function periodictaskUpdateBulkMenu(form) {
+  var checked = form.find('input[name="ids[]"]:checked').length > 0;
+  $('.periodictask-bulk-menu[data-form="' + form.attr('id') + '"] .periodictask-bulk-action')
+    .toggleClass('disabled', !checked);
+}
+$(document).on('change', '.periodictask-list-form .periodictask-toggle-selection', function() {
+  var form = $(this).closest('form');
+  form.find('input[name="ids[]"]').prop('checked', this.checked);
+  periodictaskUpdateBulkMenu(form);
+});
+$(document).on('change', '.periodictask-list-form input[name="ids[]"]', function() {
+  var form = $(this).closest('form');
+  var boxes = form.find('input[name="ids[]"]');
+  form.find('.periodictask-toggle-selection').prop('checked', boxes.length === boxes.filter(':checked').length);
+  periodictaskUpdateBulkMenu(form);
+});
+$(document).on('click', '.periodictask-bulk-action', function(event) {
+  event.preventDefault();
+  if ($(this).hasClass('disabled')) { return; }
+  var form = $('#' + $(this).closest('.periodictask-bulk-menu').data('form'));
+  $(this).closest('.drdn').removeClass('expanded');
+  form.attr('action', this.href);
+  form.trigger('submit');
+});

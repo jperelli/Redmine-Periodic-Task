@@ -984,6 +984,98 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_select 'a[href=?]', copy_periodictask_path(project_id: 'ecookbook', id: task.id)
   end
 
+  def test_index_has_row_checkboxes_and_the_bulk_actions_menu
+    task = create_test_periodictask
+    get :index, params: { project_id: 'ecookbook' }
+    assert_response :success
+    assert_select 'form#periodictask-list-form.multiple-submit[action=?]', '/projects/ecookbook/periodictask/export' do
+      assert_select 'th.checkbox input.periodictask-toggle-selection[type=checkbox]', 1
+      assert_select 'td.checkbox input[type=checkbox][name="ids[]"][value=?]', task.id.to_s
+    end
+    assert_select '.periodictask-bulk-menu[data-form="periodictask-list-form"]' do
+      assert_select '.drdn-trigger', text: /Actions/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]', '/projects/ecookbook/periodictask/export?export=ics',
+                    text: /Export to ics/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]',
+                    '/projects/ecookbook/periodictask/export?export=jscal', text: /Export to jscal/
+      assert_select 'a.periodictask-bulk-action.disabled[href=?]',
+                    '/projects/ecookbook/periodictask/export?export=cron', text: /Export to crontab/
+    end
+    assert_select 'link[href*="plugin_assets/periodictask/"][href*="periodictask"]'
+    assert_select 'script[src*="plugin_assets/periodictask/"][src*="periodictask"]'
+  end
+
+  def test_export_writes_the_checked_tasks_of_the_project_as_ics
+    checked = create_test_periodictask(subject: 'Checked task', description: 'Details, here',
+                                       interval_units: 'week', weekdays: [1, 5])
+    create_test_periodictask(subject: 'Not checked')
+    elsewhere = Periodictask.create!(project: Project.find(2), tracker_id: 1, author_id: 2, subject: 'Other project',
+                                     interval_number: 1, interval_units: 'day', next_run_date: 1.day.from_now)
+
+    post :export, params: { project_id: 'ecookbook', ids: [checked.id, elsewhere.id] }
+    assert_response :success
+    assert_match %r{\Atext/calendar}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-ecookbook\.ics"/, @response.headers['Content-Disposition'])
+    assert_includes @response.body, "UID:periodictask-#{checked.id}@"
+    assert_includes @response.body, 'SUMMARY:Checked task'
+    assert_includes @response.body, 'DESCRIPTION:Details\\, here'
+    assert_match(/RRULE:FREQ=WEEKLY;BYDAY=MO,FR;WKST=[A-Z]{2}/, @response.body)
+    assert_not_includes @response.body, 'Not checked'
+    assert_not_includes @response.body, 'Other project', 'tasks of other projects are not exported from here'
+    assert_equal 1, @response.body.scan('BEGIN:VTODO').size
+  end
+
+  def test_export_as_jscal_and_crontab
+    checked = create_test_periodictask(subject: 'Checked task', description: 'Details here', interval_units: 'week',
+                                       weekdays: [1, 5], next_run_date: Time.utc(2027, 3, 1, 9))
+    create_test_periodictask(subject: 'Not checked')
+
+    post :export, params: { project_id: 'ecookbook', export: 'jscal', ids: [checked.id] }
+    assert_response :success
+    assert_match %r{\Aapplication/jscalendar\+json}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-ecookbook\.json"/, @response.headers['Content-Disposition'])
+    entries = JSON.parse(@response.body)['entries']
+    titles = entries.map { |entry| entry['title'] }
+    assert_equal ['Checked task'], titles
+    assert_equal 'weekly', entries.first['recurrenceRules'].first['frequency']
+
+    post :export, params: { project_id: 'ecookbook', export: 'cron', ids: [checked.id] }
+    assert_response :success
+    assert_match %r{\Atext/plain}, @response.content_type
+    assert_match(/attachment; filename="periodictasks-ecookbook\.txt"/, @response.headers['Content-Disposition'])
+    assert_includes @response.body.split("\n"), '# Details here'
+    assert_includes @response.body.split("\n"), '0 9 * * 1,5  Checked task'
+    assert_not_includes @response.body, 'Not checked'
+  end
+
+  def test_export_in_an_unknown_format_is_not_found
+    task = create_test_periodictask
+    post :export, params: { project_id: 'ecookbook', export: 'pdf', ids: [task.id] }
+    assert_response :not_found
+  end
+
+  def test_export_uses_the_user_time_zone
+    User.find(2).pref.update!(time_zone: 'Buenos Aires')
+    create_test_periodictask(subject: 'Zoned', next_run_date: Time.utc(2027, 3, 3, 1))
+
+    post :export, params: { project_id: 'ecookbook', ids: Periodictask.pluck(:id) }
+    assert_response :success
+    assert_includes @response.body, 'DTSTART;TZID=America/Argentina/Buenos_Aires:20270302T220000'
+  end
+
+  def test_export_without_a_checked_row_goes_back_to_the_list
+    post :export, params: { project_id: 'ecookbook', ids: ['', 'abc'] }
+    assert_redirected_to '/projects/ecookbook/periodictask'
+    assert_equal I18n.t(:error_periodictask_export_no_selection), flash[:error]
+  end
+
+  def test_export_requires_the_periodictask_permission
+    task = create_test_periodictask
+    Role.find(1).remove_permission!(:periodictask)
+    post :export, params: { project_id: 'ecookbook', ids: [task.id] }
+    assert_response :forbidden
+  end
+
   def test_new_renders_the_attachments_field
     get :new, params: { project_id: 'ecookbook' }
     assert_response :success

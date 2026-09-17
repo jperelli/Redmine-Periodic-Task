@@ -15,9 +15,15 @@
     <p class="nodata"><%= l(:label_no_periodic_tasks) %></p>
   <% else %>
   <%= render 'periodictask/row_styles' %>
+  <%= render 'periodictask/bulk_actions', form: 'periodictask-list-form', export_path: export_periodictasks_path(:project_id => @project) %>
+  <%= form_tag(export_periodictasks_path(:project_id => @project), :id => 'periodictask-list-form', :class => 'periodictask-list-form multiple-submit') do %>
   <table class="list <%= sort_css_classes %>">
     <thead>
       <tr>
+        <th class="checkbox hide-when-print">
+          <%= check_box_tag 'check_all', '', false, :class => 'periodictask-toggle-selection',
+                            :title => "#{l(:button_check_all)} / #{l(:button_uncheck_all)}" %>
+        </th>
         <%= sort_header_tag('id', :caption => '#') %>
         <%= sort_header_tag('interval', :caption => l(:label_interval)) %>
         <%= sort_header_tag('next_run_date', :caption => l(:label_next_run_date)) %>
@@ -32,6 +38,7 @@
     <tbody>
       <% @tasks.each do |a| %>
         <tr class="<%= periodictask_row_class(a) %>" title="<%= periodictask_status_label(a) %>">
+          <td class="checkbox hide-when-print"><%= check_box_tag 'ids[]', a.id, false, :id => nil %></td>
           <td class="id"><%= link_to a.id, {:controller => 'periodictask', :action => 'show', :id => a.id, :project_id => @project} %></td>
           <td class="interval"><%= periodictask_schedule_description(a) %><%= periodictask_end_condition_note(a) %></td>
           <td><%= periodictask_next_run_with_title(a) %></td>
@@ -70,6 +77,7 @@
       <% end %>
     </tbody>
   </table>
+  <% end %>
   <% end %>
 
 <% else %>

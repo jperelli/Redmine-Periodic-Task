@@ -136,6 +136,25 @@ class CronImportTest < ActiveSupport::TestCase
     assert_equal Time.utc(2026, 3, 2, 9, 0, 0), task.next_run_date
   end
 
+  def test_commented_out_jobs_become_inactive_tasks
+    text = "# On hold\n# 0 9 * * 1 report\n\n# Runs 0 9 * * 1 too, but not a job\n# @reboot not a job either\n" \
+           "0 9 * * * daily\n# @weekly cleanup\n"
+    result = parse(text)
+
+    assert_equal %w[report daily cleanup], result.items.map(&:subject)
+    assert_equal([false, nil, false], result.items.map { |i| i.attributes['is_active'] })
+    assert_equal 'On hold', result.items[0].description
+    assert_equal 'week', result.items[0].attributes['interval_units']
+    assert_equal "Runs 0 9 * * 1 too, but not a job\n@reboot not a job either", result.items[1].description
+    assert_empty result.unsupported
+  end
+
+  def test_escaped_percent_signs_are_read_as_percent_signs
+    result = parse("0 9 * * * 100\\% done \\%s\n@daily 50% plain\n")
+
+    assert_equal ['100% done %s', '50% plain'], result.items.map(&:subject)
+  end
+
   private
 
   def parse(text, zone: ActiveSupport::TimeZone['UTC'])

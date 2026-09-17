@@ -37,15 +37,22 @@
 
 /* Calendar import: the triage table of staged items */
 .periodictask-import-upload fieldset.box p.info { margin: 4px 0 0; }
-.periodictask-import-menu { display: inline-block; vertical-align: middle; }
-.periodictask-import-menu .drdn-trigger { display: inline-block; padding: 3px 8px; border: 1px solid #ccc; border-radius: 3px; background: #f6f6f6; }
-.periodictask-import-menu .drdn-content { inset-inline-end: auto; left: 0; top: 26px; min-width: 12em; }
-.periodictask-import-menu .drdn-items > a { display: block; padding: 5px 10px; }
-.periodictask-import-menu .drdn-items > a:hover { background-color: #eef5fd; }
+.periodictask-import-menu, .periodictask-bulk-menu { display: inline-block; vertical-align: middle; }
+.periodictask-import-menu .drdn-trigger, .periodictask-bulk-menu .drdn-trigger { display: inline-block; padding: 3px 8px; border: 1px solid #ccc; border-radius: 3px; background: #f6f6f6; cursor: pointer; }
+.periodictask-import-menu .drdn-content, .periodictask-bulk-menu .drdn-content { inset-inline-end: auto; left: 0; top: 26px; min-width: 12em; }
+.periodictask-import-menu .drdn-items > a, .periodictask-bulk-menu .drdn-items > a { display: block; padding: 5px 10px; }
+.periodictask-import-menu .drdn-items > a:hover, .periodictask-bulk-menu .drdn-items > a:hover { background-color: #eef5fd; }
+/* Bulk actions above the task lists: entries greyed until a row is checked */
+.periodictask-bulk-menu { margin: 0 0 6px; }
+.periodictask-bulk-menu .drdn-items > a.disabled { color: #999; cursor: default; }
+.periodictask-bulk-menu .drdn-items > a.disabled:hover { background-color: transparent; }
 .periodictask-import-upload input.periodictask-import-file { display: none; }
 .periodictask-import-upload .periodictask-import-chosen { margin: 0 6px; }
 .periodictask-import-toolbar { margin: 6px 0; }
 table.list.periodictask-imports td.subject { max-width: 24em; }
 table.list.periodictask-imports td.periodictask-import-warnings { color: #7a5a12; font-size: 0.92em; }
 table.list.periodictask-imports tr.periodictask-import-failed td.subject { border-left: 3px solid #d9534f; }
+table.list.periodictask-imports tr.periodictask-import-inactive td.subject,
+table.list.periodictask-imports tr.periodictask-import-inactive td.interval { color: #888; }
+table.list.periodictask-imports span.periodictask-import-status { font-size: 0.92em; }
 table.list.periodictask-imports div.periodictask-import-error { margin: 4px 0 0; padding: 4px 6px; }
