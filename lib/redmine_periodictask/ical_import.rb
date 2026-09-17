@@ -2,7 +2,8 @@ require 'strscan'
 
 module RedminePeriodictask
   # The iCalendar (RFC 5545) reader: VTODO and VEVENT components with an
-  # RRULE. See CalendarImport for what is done with them.
+  # RRULE; a STATUS:CANCELLED one becomes an inactive task. See
+  # CalendarImport for what is done with them.
   class IcalImport < CalendarImport
     SOURCE = 'ical'.freeze
     ACCEPT = '.ics,text/calendar'.freeze
@@ -44,6 +45,10 @@ module RedminePeriodictask
 
     def description_of(props)
       text_value(props, 'DESCRIPTION')
+    end
+
+    def active?(props)
+      !text_value(props, 'STATUS').to_s.strip.casecmp?('CANCELLED')
     end
 
     def warn_exceptions(props, warnings)

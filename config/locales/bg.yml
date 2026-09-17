@@ -244,3 +244,5 @@ bg:
   label_periodictask_export_cron: "Експортиране в crontab"
   text_periodictask_export_hint: "Изтегляне на маркираните задачи като файл в този формат; страницата за импортиране го чете обратно."
   error_periodictask_export_no_selection: "Отметнете поне една задача за експорт."
+  text_periodictask_export_business_day_interval: "Redmine изпълнява тази задача всеки %{count} работни дни (пропускайки неработните); експортираното правило, всеки %{count} дни в работни дни, е само приближение."
+  text_periodictask_export_month_end_cron: "Redmine изпълнява тази задача в последния ден на месеца; cron няма поле за това, така че заданието е на 31-во число и пропуска по-късите месеци."

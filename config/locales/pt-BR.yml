@@ -244,3 +244,5 @@ pt-BR:
   label_periodictask_export_cron: "Exportar para crontab"
   text_periodictask_export_hint: "Baixar as tarefas marcadas como arquivo neste formato; a página de importação o lê de volta."
   error_periodictask_export_no_selection: "Marque pelo menos uma tarefa para exportar."
+  text_periodictask_export_business_day_interval: "O Redmine executa esta tarefa a cada %{count} dias úteis (pulando os dias não úteis); a regra exportada, a cada %{count} dias em dias úteis, é apenas uma aproximação."
+  text_periodictask_export_month_end_cron: "O Redmine executa esta tarefa no último dia do mês; o cron não tem campo para isso, então o job fica no dia 31 e pula os meses mais curtos."

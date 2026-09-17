@@ -225,6 +225,26 @@ class PeriodictaskImportsControllerTest < Redmine::IntegrationTest
     assert_select 'table.periodictask-imports td.subject', text: /Monthly report/
   end
 
+  def test_a_cancelled_item_is_staged_and_created_as_an_inactive_task
+    cancelled = CALENDAR.sub("SUMMARY:Weekly backup check\n", "SUMMARY:Weekly backup check\nSTATUS:CANCELLED\n")
+    result = RedminePeriodictask::IcalImport.parse(cancelled)
+    PeriodictaskImport.stage(result.items, source: 'ical', user: User.find_by_login('admin'))
+    weekly, monthly = PeriodictaskImport.sorted.to_a
+
+    log_user('admin', 'admin')
+    get '/admin/periodictask_imports'
+    assert_select "tr#periodictask-import-#{weekly.id}.periodictask-import-inactive td.subject " \
+                  'span.periodictask-import-status', text: "(#{I18n.t(:label_disabled)})"
+    assert_select "tr#periodictask-import-#{monthly.id}.periodictask-import-inactive", 0
+
+    assert_difference 'Periodictask.count', 2 do
+      post '/admin/periodictask_imports/import',
+           params: { project_ids: { weekly.id.to_s => '1', monthly.id.to_s => '1' } }
+    end
+    assert_equal false, Periodictask.find_by(subject: 'Weekly backup check').is_active
+    assert_equal true, Periodictask.find_by(subject: 'Monthly report').is_active
+  end
+
   def test_create_without_any_project_chosen_changes_nothing
     weekly, monthly = stage_calendar
 

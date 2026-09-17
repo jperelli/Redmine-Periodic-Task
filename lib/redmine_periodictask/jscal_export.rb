@@ -10,6 +10,9 @@ module RedminePeriodictask
   # end condition becomes until or count with the runs left, whichever
   # stops the task first. Tags become keywords, an inactive task has
   # progress "cancelled", an ended one "completed" and no recurrenceRules.
+  # A monthly task on the 31st gets byMonthDay [-1]; what the rule only
+  # approximates is said at the end of the description (JSCalendar has no
+  # comment property).
   class JscalExport < CalendarExport
     FORMAT = 'jscal'.freeze
     EXTENSION = 'json'.freeze
@@ -32,6 +35,7 @@ module RedminePeriodictask
       rule['interval'] = task.interval_number if task.interval_number > 1
       days = by_day(task)
       rule['byDay'] = days if days
+      rule['byMonthDay'] = [-1] if month_end?(task)
       rule['firstDayOfWeek'] = day_code(Periodictask.first_weekday) if task.interval_units == 'week' && days
       kind, limit = end_condition(task)
       rule['until'] = local(limit.in_time_zone(@zone)) if kind == :until
@@ -43,7 +47,8 @@ module RedminePeriodictask
 
     def entry(task)
       entry = { '@type' => 'Task', 'uid' => uid(task), 'updated' => utc(@now), 'title' => task.subject.to_s }
-      entry['description'] = task.description if task.description.present?
+      description = description(task)
+      entry['description'] = description if description.present?
       entry['start'] = local(start(task))
       entry['timeZone'] = @zone.tzinfo.name
       entry['recurrenceRules'] = [recurrence_rule(task)] if recurring?(task)
@@ -53,12 +58,18 @@ module RedminePeriodictask
       entry
     end
 
+    def description(task)
+      parts = [task.description.presence]
+      parts.concat(notes(task)) if recurring?(task)
+      parts.compact.join("\n\n")
+    end
+
     # Weekly tasks on chosen days, business days as the working week, and
     # monthly weekday mode as NDay objects with nthOfPeriod.
     def by_day(task)
       case task.interval_units
       when 'business_day' then workdays.map { |wday| nday(wday) }
-      when 'week' then task.weekdays.map { |wday| nday(wday) }.presence
+      when 'week' then weekdays(task).map { |wday| nday(wday) }.presence
       when 'month'
         return unless task.monthly_weekday_mode?
 

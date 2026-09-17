@@ -244,3 +244,5 @@ tr:
   label_periodictask_export_cron: "crontab olarak dışa aktar"
   text_periodictask_export_hint: "İşaretli görevleri bu biçimde dosya olarak indir; içe aktarma sayfası geri okur."
   error_periodictask_export_no_selection: "Dışa aktarmak için en az bir görev işaretleyin."
+  text_periodictask_export_business_day_interval: "Redmine bu görevi her %{count} iş gününde çalıştırır (çalışılmayan günleri atlayarak); dışa aktarılan kural, iş günlerinde her %{count} günde, yalnızca bir yaklaşımdır."
+  text_periodictask_export_month_end_cron: "Redmine bu görevi ayın son günü çalıştırır; cron'da bunun için bir alan yok, bu yüzden iş 31'inde ve daha kısa ayları atlar."

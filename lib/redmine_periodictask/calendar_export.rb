@@ -8,10 +8,16 @@ module RedminePeriodictask
   #
   # Times are written in +zone+ (the user's), so the weekday and the day of
   # the month are the ones the user sees; a task without a next run starts
-  # now.
+  # now. The plugin evaluates the schedule in the application's zone, so
+  # when the two zones put the start on different dates the weekdays of a
+  # weekly task are shifted along (see #weekdays).
   #
   # A task that has ended (all its runs done, or its next run past the end
   # date) is written without a recurrence, as a completed item.
+  #
+  # What a recurrence rule cannot say exactly is still written as the
+  # closest rule, with a note for the reader (see #notes): every N business
+  # days, which the plugin counts over working days only.
   class CalendarExport
     WEEKDAYS = %w[SU MO TU WE TH FR SA].freeze
 
@@ -49,8 +55,37 @@ module RedminePeriodictask
       (task.next_run_date || @now).in_time_zone(@zone)
     end
 
+    # The start as the plugin sees it, in the application's zone.
+    def anchor(task)
+      task.next_run_date || @now
+    end
+
+    # The weekdays of a weekly task as seen in +zone+: a run on Wednesday
+    # 01:00 UTC is on Tuesday 22:00 in Buenos Aires, so Wednesday becomes
+    # Tuesday there.
+    def weekdays(task)
+      shift = (start(task).to_date - anchor(task).to_date).to_i
+      task.weekdays.map { |wday| (wday + shift) % 7 }.sort
+    end
+
     def recurring?(task)
       !task.ended?
+    end
+
+    # A monthly task on the 31st: the last day of the month (BYMONTHDAY=-1)
+    # rather than a day shorter months skip.
+    def month_end?(task)
+      task.interval_units == 'month' && !task.monthly_weekday_mode? && anchor(task).day == 31
+    end
+
+    # Sentences for the reader about what the written rule only
+    # approximates.
+    def notes(task)
+      notes = []
+      if task.interval_units == 'business_day' && task.interval_number > 1
+        notes << I18n.t(:text_periodictask_export_business_day_interval, count: task.interval_number)
+      end
+      notes
     end
 
     # :needs_action, :cancelled (switched off) or :completed (ended).

@@ -6,7 +6,8 @@ module RedminePeriodictask
   # DTSTART is the next run (TZID form); the end condition becomes UNTIL or
   # COUNT with the runs left, whichever stops the task first. Tags become
   # CATEGORIES, an inactive task is a CANCELLED to-do, an ended one a
-  # COMPLETED to-do without RRULE.
+  # COMPLETED to-do without RRULE. A monthly task on the 31st gets
+  # BYMONTHDAY=-1; what the RRULE only approximates is said in a COMMENT.
   class IcalExport < CalendarExport
     FORMAT = 'ics'.freeze
     EXTENSION = 'ics'.freeze
@@ -30,6 +31,7 @@ module RedminePeriodictask
       parts = { 'FREQ' => FREQUENCIES.fetch(task.interval_units) }
       parts['INTERVAL'] = task.interval_number if task.interval_number > 1
       parts['BYDAY'] = byday(task)
+      parts['BYMONTHDAY'] = -1 if month_end?(task)
       parts['WKST'] = WEEKDAYS[Periodictask.first_weekday] if task.interval_units == 'week' && task.weekdays.any?
       kind, limit = end_condition(task)
       parts['UNTIL'] = utc(limit) if kind == :until
@@ -44,6 +46,7 @@ module RedminePeriodictask
       lines << "RRULE:#{rrule(task)}" if recurring?(task)
       lines << "SUMMARY:#{escape(task.subject)}"
       lines << "DESCRIPTION:#{escape(task.description)}" if task.description.present?
+      notes(task).each { |note| lines << "COMMENT:#{escape(note)}" } if recurring?(task)
       lines << "CATEGORIES:#{task.tag_names.map { |tag| escape(tag) }.join(',')}" if task.tag_names.any?
       lines << "STATUS:#{STATUSES.fetch(status(task))}"
       lines << "URL:#{url(task)}"
@@ -55,7 +58,7 @@ module RedminePeriodictask
     def byday(task)
       case task.interval_units
       when 'business_day' then workdays.map { |wday| WEEKDAYS[wday] }.join(',')
-      when 'week' then task.weekdays.map { |wday| WEEKDAYS[wday] }.join(',').presence
+      when 'week' then weekdays(task).map { |wday| WEEKDAYS[wday] }.join(',').presence
       when 'month'
         return unless task.monthly_weekday_mode?
 

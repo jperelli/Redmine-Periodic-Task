@@ -13,7 +13,8 @@ module RedminePeriodictask
   # of a weekly task or the ordinal weekdays of a monthly one, COUNT/UNTIL
   # to the end condition, the item's start (or due date) to the first run.
   # Parts with no counterpart are reported as warnings on the item rather
-  # than silently dropped.
+  # than silently dropped. An item marked cancelled (a task switched off
+  # and exported) becomes an inactive periodic task.
   class CalendarImport
     include Redmine::I18n
 
@@ -117,12 +118,19 @@ module RedminePeriodictask
     # no counterpart (excluded dates, extra dates, overrides, more rules).
     def warn_exceptions(entry, warnings); end
 
+    # Subclasses: false for an entry marked cancelled / disabled, which
+    # becomes an inactive task.
+    def active?(_entry)
+      true
+    end
+
     def build_item(entry, rule)
       warnings = []
       anchor = anchor_of(entry, warnings)
       attributes = schedule(rule_parts(entry, rule, warnings), anchor, warnings)
       return attributes if attributes.is_a?(Symbol)
 
+      attributes['is_active'] = false unless active?(entry)
       warn_exceptions(entry, warnings)
       Item.new(uid: uid_of(entry).presence, subject: subject_of(entry),
                description: description_of(entry).presence, rule: rule_text(rule),
@@ -214,20 +222,22 @@ module RedminePeriodictask
     end
 
     # A monthly task runs on the day of the month of its anchor, so the
-    # anchor moves to the first BYMONTHDAY; further days and counting from
-    # the end of the month (-1) have no counterpart.
+    # anchor moves to the first BYMONTHDAY (-1, the last day of the month,
+    # to the last day of the anchor's month); further days and other
+    # negative days have no counterpart.
     def apply_bymonthday(anchor, bymonthday, warnings)
       days = bymonthday.split(',').map(&:to_i)
       day = days.shift
       days.each { |d| warn(warnings, 'part_ignored', "BYMONTHDAY=#{d}") }
-      unless day.between?(1, 28) || (anchor && day.between?(29, anchor.end_of_month.day))
+      target = day == -1 && anchor ? anchor.end_of_month.day : day
+      unless target.between?(1, 28) || (anchor && target.between?(29, anchor.end_of_month.day))
         warn(warnings, 'part_ignored', "BYMONTHDAY=#{day}")
         return anchor
       end
-      return anchor if anchor.nil? || anchor.day == day
+      return anchor if anchor.nil? || anchor.day == target
 
       warn(warnings, 'monthday_moved', "BYMONTHDAY=#{day}")
-      anchor.change(day: day)
+      anchor.change(day: target)
     end
 
     # [[raw, wday], ...] for "1MO,-1FR,TU"; unknown day codes are dropped.

@@ -106,6 +106,27 @@ class IcalImportTest < ActiveSupport::TestCase
                   { 'key' => 'monthday_moved', 'part' => 'BYMONTHDAY=15' }], result.items.first.warnings
   end
 
+  def test_last_day_of_the_month_is_the_last_day_of_the_start_month
+    result = parse(item('DTSTART:20260131T090000Z', 'RRULE:FREQ=MONTHLY;BYMONTHDAY=-1') +
+                   item('DTSTART:20260228T090000Z', 'RRULE:FREQ=MONTHLY;BYMONTHDAY=-1') +
+                   item('DTSTART:20260401T090000Z', 'RRULE:FREQ=MONTHLY;BYMONTHDAY=-1'))
+
+    starts = result.items.map { |i| Time.iso8601(i.attributes['next_run_date']) }
+    assert_equal [Time.utc(2026, 1, 31, 9), Time.utc(2026, 2, 28, 9), Time.utc(2026, 4, 30, 9)], starts
+    assert_equal [[], [], [{ 'key' => 'monthday_moved', 'part' => 'BYMONTHDAY=-1' }]], result.items.map(&:warnings)
+    assert_equal(['month'] * 3, result.items.map { |i| i.attributes['interval_units'] })
+  end
+
+  def test_cancelled_items_become_inactive_tasks
+    result = parse(item('DTSTART:20260302T090000Z', 'RRULE:FREQ=DAILY', 'STATUS:CANCELLED') +
+                   item('DTSTART:20260302T090000Z', 'RRULE:FREQ=DAILY', 'STATUS:NEEDS-ACTION') +
+                   item('DTSTART:20260302T090000Z', 'RRULE:FREQ=DAILY'))
+
+    assert_equal([false, nil, nil], result.items.map { |i| i.attributes['is_active'] })
+    task = Periodictask.new(result.items.first.attributes.slice(*Periodictask::IMPORT_ATTRIBUTES))
+    assert_equal false, task.is_active
+  end
+
   def test_count_and_until_become_the_end_condition
     result = parse(item('DTSTART:20260302T090000Z', 'RRULE:FREQ=WEEKLY;COUNT=10') +
                    item('DTSTART:20260302T090000Z', 'RRULE:FREQ=WEEKLY;UNTIL=20261231T235959Z') +

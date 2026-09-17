@@ -67,12 +67,53 @@ class CronExportTest < ActiveSupport::TestCase
     assert_includes lines, '# Not carried over: end_date=2026-12-31, max_occurrences=10'
   end
 
+  def test_approximations_are_noted_above_the_job
+    lines = export([task(subject: 'Backups', interval_units: 'business_day', interval_number: 3),
+                    task(subject: 'Closing', interval_units: 'month', next_run_date: Time.utc(2026, 3, 31, 9)),
+                    task(subject: 'Standup', interval_units: 'business_day')]).split("\n")
+
+    backups = lines.index('0 9 * * 1,2,3,4,5  Backups')
+    assert_equal '# Not carried over: interval=3', lines[backups - 2]
+    assert_match(/\A# Redmine runs this task every 3 business days.*approximation/, lines[backups - 1])
+    closing = lines.index('0 9 31 * *  Closing')
+    assert_match(/\A# Redmine runs this task on the last day of the month/, lines[closing - 1])
+    assert_equal '', lines[lines.index('0 9 * * 1,2,3,4,5  Standup') - 1]
+  end
+
+  def test_weekdays_follow_the_start_into_the_given_zone
+    weekly = task(interval_units: 'week', weekdays: [0, 3], next_run_date: Time.utc(2026, 3, 4, 1)) # Wed 01:00 UTC
+
+    assert_includes export([weekly], zone: ActiveSupport::TimeZone['Buenos Aires']).split("\n"),
+                    '0 22 * * 2,6  Test task' # Tue 22:00 in -03:00
+  end
+
+  def test_percent_signs_are_escaped_and_read_back
+    text = export([task(subject: '100% done %s')])
+    assert_includes text.split("\n"), '0 9 1 * *  100\% done \%s'
+
+    result = RedminePeriodictask::CronImport.parse(text, zone: ActiveSupport::TimeZone['UTC'], now: NOW)
+    assert_equal ['100% done %s'], result.items.map(&:subject)
+  end
+
   def test_inactive_task_is_a_commented_out_job_and_a_task_without_next_run_starts_now
     paused = task(subject: 'Paused', is_active: false)
     paused.update_columns(next_run_date: nil)
 
     lines = export([paused]).split("\n")
     assert_includes lines, '# 0 12 1 * *  Paused'
+  end
+
+  def test_commented_out_job_reads_back_as_an_inactive_task
+    paused = task(subject: 'Paused', description: 'On hold', is_active: false, interval_units: 'week', weekdays: [1])
+    running = task(subject: 'Running', interval_units: 'day')
+
+    result = RedminePeriodictask::CronImport.parse(export([paused, running]), zone: ActiveSupport::TimeZone['UTC'],
+                                                                              now: NOW)
+    assert_equal %w[Paused Running], result.items.map(&:subject)
+    assert_equal false, result.items[0].attributes['is_active']
+    assert_equal 'On hold', result.items[0].description
+    assert_equal 'week', result.items[0].attributes['interval_units']
+    assert_nil result.items[1].attributes['is_active']
   end
 
   def test_ended_task_is_a_commented_out_job

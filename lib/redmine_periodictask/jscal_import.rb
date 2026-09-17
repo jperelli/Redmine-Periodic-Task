@@ -3,7 +3,9 @@ require 'json'
 module RedminePeriodictask
   # The JSCalendar (RFC 8984) reader: Task and Event objects with
   # recurrenceRules, on their own, in a Group or in a JSON array. See
-  # CalendarImport for what is done with them.
+  # CalendarImport for what is done with them. A cancelled one (a Task
+  # with progress "cancelled", an Event with status "cancelled") becomes
+  # an inactive task.
   #
   # A RecurrenceRule is the RRULE of RFC 5545 as a JSON object, so it is
   # turned back into RRULE parts (frequency "weekly" to FREQ=WEEKLY, byDay
@@ -105,6 +107,10 @@ module RedminePeriodictask
 
     def description_of(entry)
       entry['description'].to_s
+    end
+
+    def active?(entry)
+      !(entry['progress'].to_s.casecmp?('cancelled') || entry['status'].to_s.casecmp?('cancelled'))
     end
 
     def rule_text(rule)

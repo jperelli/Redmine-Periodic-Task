@@ -10,6 +10,7 @@
 - Export tasks to ics: checkboxes on the rows of the task lists (project tab and *Administration → Periodic Tasks*) and an *Actions → Export to ics* menu that downloads the checked tasks as an iCalendar file, one recurring to-do per task (@jperelli)
 - Export tasks to JSCalendar (RFC 8984): *Actions → Export to jscal* downloads the checked tasks as a JSON `Group` of `Task` objects with recurrence rules (@jperelli)
 - Export tasks to a crontab: *Actions → Export to crontab* downloads the checked tasks as `m h dom mon dow  subject` lines, the description as comments above each job; what cron cannot express is noted in a comment (@jperelli)
+- Round trips keep more: a disabled task exported as `STATUS:CANCELLED`, `progress: cancelled` or a commented-out cron job is imported back as disabled; a monthly task on the 31st is exported as the last day of the month (`BYMONTHDAY=-1`, read back too); *every N business days*, which no calendar rule expresses exactly, is exported with a note saying so (@jperelli)
 
 ## v7.1.1 - 2026-09-11
 

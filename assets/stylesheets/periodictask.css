@@ -52,4 +52,7 @@
 table.list.periodictask-imports td.subject { max-width: 24em; }
 table.list.periodictask-imports td.periodictask-import-warnings { color: #7a5a12; font-size: 0.92em; }
 table.list.periodictask-imports tr.periodictask-import-failed td.subject { border-left: 3px solid #d9534f; }
+table.list.periodictask-imports tr.periodictask-import-inactive td.subject,
+table.list.periodictask-imports tr.periodictask-import-inactive td.interval { color: #888; }
+table.list.periodictask-imports span.periodictask-import-status { font-size: 0.92em; }
 table.list.periodictask-imports div.periodictask-import-error { margin: 4px 0 0; padding: 4px 6px; }

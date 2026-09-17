@@ -117,6 +117,44 @@ class IcalExportTest < ActiveSupport::TestCase
     end
   end
 
+  def test_every_n_business_days_is_written_approximately_with_a_comment
+    ics = export([task(interval_units: 'business_day', interval_number: 3)])
+    lines = ics.gsub("\r\n ", '').split("\r\n") # unfolded
+    assert_includes lines, 'RRULE:FREQ=DAILY;INTERVAL=3;BYDAY=MO,TU,WE,TH,FR'
+    note = lines.grep(/\ACOMMENT:/)
+    assert_equal 1, note.size
+    assert_match(/every 3 business days/, note.first)
+    assert_match(/approximation/, note.first)
+
+    assert_empty export([task(interval_units: 'business_day')]).split("\r\n").grep(/\ACOMMENT:/)
+  end
+
+  def test_monthly_task_on_the_31st_is_the_last_day_of_the_month
+    assert_equal 'FREQ=MONTHLY;BYMONTHDAY=-1', rrule(interval_units: 'month', next_run_date: Time.utc(2026, 3, 31, 9))
+    assert_equal 'FREQ=MONTHLY', rrule(interval_units: 'month', next_run_date: Time.utc(2026, 3, 30, 9))
+    assert_equal 'FREQ=MONTHLY;BYDAY=-1FR',
+                 rrule(interval_units: 'month', monthly_mode: 'weekday', weekdays: [5], month_weeks: [5],
+                       next_run_date: Time.utc(2026, 7, 31, 9))
+
+    month_end = task(interval_units: 'month', next_run_date: Time.utc(2026, 3, 31, 9))
+    result = RedminePeriodictask::IcalImport.parse(export([month_end]), zone: ActiveSupport::TimeZone['UTC'],
+                                                                        now: NOW)
+    assert_equal [], result.items.first.warnings
+    assert_equal '2026-03-31T09:00:00Z', result.items.first.attributes['next_run_date']
+  end
+
+  def test_weekdays_follow_the_start_into_the_given_zone
+    weekly = task(interval_units: 'week', weekdays: [0, 3], next_run_date: Time.utc(2026, 3, 4, 1)) # Wed 01:00 UTC
+
+    lines = export([weekly], zone: ActiveSupport::TimeZone['Buenos Aires']).split("\r\n") # Tue 22:00 in -03:00
+    assert_includes lines, 'DTSTART;TZID=America/Argentina/Buenos_Aires:20260303T220000'
+    assert_includes lines, 'RRULE:FREQ=WEEKLY;BYDAY=TU,SA;WKST=MO'
+
+    late = task(interval_units: 'week', weekdays: [6], next_run_date: Time.utc(2026, 3, 7, 23)) # Sat 23:00 UTC
+    lines = export([late], zone: ActiveSupport::TimeZone['Tokyo']).split("\r\n") # Sun 08:00 in +09:00
+    assert_includes lines, 'RRULE:FREQ=WEEKLY;BYDAY=SU;WKST=MO'
+  end
+
   def test_inactive_task_is_a_cancelled_todo_and_a_task_without_next_run_starts_now
     paused = task(is_active: false)
     paused.update_columns(next_run_date: nil)
@@ -124,6 +162,16 @@ class IcalExportTest < ActiveSupport::TestCase
     lines = export([paused]).split("\r\n")
     assert_includes lines, 'STATUS:CANCELLED'
     assert_includes lines, "DTSTART:#{NOW.strftime('%Y%m%dT%H%M%SZ')}"
+  end
+
+  def test_cancelled_todo_reads_back_as_an_inactive_task
+    paused = task(subject: 'Paused', is_active: false)
+    running = task(subject: 'Running')
+
+    result = RedminePeriodictask::IcalImport.parse(export([paused, running]), zone: ActiveSupport::TimeZone['UTC'],
+                                                                              now: NOW)
+    assert_equal false, result.items[0].attributes['is_active']
+    assert_nil result.items[1].attributes['is_active']
   end
 
   def test_long_lines_are_folded_without_splitting_characters

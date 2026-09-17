@@ -246,3 +246,5 @@ zh:
   label_periodictask_export_cron: "导出为 crontab"
   text_periodictask_export_hint: "将勾选的任务下载为此格式的文件；导入页面可再读回。"
   error_periodictask_export_no_selection: "请至少勾选一个要导出的任务。"
+  text_periodictask_export_business_day_interval: "Redmine 每 %{count} 个工作日运行此任务（跳过非工作日）；导出的规则（工作日中每 %{count} 天）只是近似值。"
+  text_periodictask_export_month_end_cron: "Redmine 在每月最后一天运行此任务；cron 没有对应的字段，因此作业排在 31 日并跳过较短的月份。"

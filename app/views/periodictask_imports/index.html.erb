@@ -58,9 +58,12 @@
       <tbody>
         <% @imports.each do |import| %>
           <% task = import.build_periodictask %>
-          <tr class="periodictask-import <%= 'periodictask-import-failed' if import.last_error.present? %>" id="periodictask-import-<%= import.id %>">
+          <tr class="periodictask-import <%= 'periodictask-import-failed' if import.last_error.present? %> <%= 'periodictask-import-inactive' unless task.is_active? %>" id="periodictask-import-<%= import.id %>">
             <td class="subject">
               <span title="<%= import.description %>"><%= import.subject %></span>
+              <% unless task.is_active? %>
+                <span class="periodictask-import-status">(<%= l(:label_disabled) %>)</span>
+              <% end %>
               <% if import.last_error.present? %>
                 <div class="flash error periodictask-import-error"><%= import.last_error %></div>
               <% end %>

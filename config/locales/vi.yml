@@ -246,3 +246,5 @@ vi:
   label_periodictask_export_cron: "Xuất ra crontab"
   text_periodictask_export_hint: "Tải các tác vụ đã chọn dưới dạng tệp ở định dạng này; trang nhập đọc lại được."
   error_periodictask_export_no_selection: "Chọn ít nhất một tác vụ để xuất."
+  text_periodictask_export_business_day_interval: "Redmine chạy tác vụ này mỗi %{count} ngày làm việc (bỏ qua ngày nghỉ); quy tắc xuất ra, mỗi %{count} ngày vào các ngày làm việc, chỉ là xấp xỉ."
+  text_periodictask_export_month_end_cron: "Redmine chạy tác vụ này vào ngày cuối tháng; cron không có trường cho việc đó, nên công việc đặt vào ngày 31 và bỏ qua các tháng ngắn hơn."

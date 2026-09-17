@@ -244,3 +244,5 @@ ja:
   label_periodictask_export_cron: "crontab にエクスポート"
   text_periodictask_export_hint: "チェックしたタスクをこの形式のファイルとしてダウンロードします。インポートページで読み戻せます。"
   error_periodictask_export_no_selection: "エクスポートするタスクを 1 件以上チェックしてください。"
+  text_periodictask_export_business_day_interval: "Redmine はこのタスクを %{count} 営業日ごと（非稼働日を飛ばして）に実行します。エクスポートされたルール（稼働日の %{count} 日ごと）は近似にすぎません。"
+  text_periodictask_export_month_end_cron: "Redmine はこのタスクを月末日に実行します。cron にはそのフィールドがないため、ジョブは 31 日となり、短い月は飛ばされます。"

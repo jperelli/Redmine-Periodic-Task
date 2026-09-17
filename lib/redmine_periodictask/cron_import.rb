@@ -3,9 +3,11 @@ require 'digest/sha1'
 module RedminePeriodictask
   # The crontab reader: each job line of a user crontab (minute, hour, day
   # of month, month, day of week, command) or @daily-style shortcut becomes
-  # an item whose subject is the command and whose description is the
-  # comment lines right above it. Environment lines (MAILTO=...) are
-  # skipped. See CalendarImport for what is done with the items.
+  # an item whose subject is the command (with cron's \% read as %) and
+  # whose description is the comment lines right above it. Environment
+  # lines (MAILTO=...) are skipped. A commented-out job ("# 0 9 * * 1
+  # Report", a disabled job in cron terms) becomes an inactive task. See
+  # CalendarImport for what is done with the items.
   #
   # A job that runs more than once a day (several minutes or hours, or *
   # in either) is reported as unsupported. Otherwise the day fields pick
@@ -31,8 +33,9 @@ module RedminePeriodictask
 
     # A job line. +fields+ are the five time fields as sorted arrays of
     # integers, nil for an unrestricted (*) field; nil altogether for
-    # @reboot, which does not repeat.
-    Job = Struct.new(:rule, :fields, :command, :comments, keyword_init: true)
+    # @reboot, which does not repeat. +active+ is false for a commented-out
+    # job.
+    Job = Struct.new(:rule, :fields, :command, :comments, :active, keyword_init: true)
 
     private
 
@@ -43,7 +46,13 @@ module RedminePeriodictask
         if line.empty? || env_line?(line)
           comments = []
         elsif line.start_with?('#')
-          comments << line.sub(/\A#\s?/, '')
+          body = line.sub(/\A#\s?/, '')
+          if (job = disabled_job(body, comments))
+            yield job
+            comments = []
+          else
+            comments << body
+          end
         else
           yield job_of(line, comments)
           comments = []
@@ -55,23 +64,45 @@ module RedminePeriodictask
       line.match?(/\A[A-Za-z_][A-Za-z0-9_]*\s*=/)
     end
 
+    # The job a comment line is, when it reads as one (five valid time
+    # fields or a repeating shortcut, then a command); nil for an ordinary
+    # comment.
+    def disabled_job(body, comments)
+      return unless body.match?(/\A(@\w+|\S+(\s+\S+){4})\s+\S/)
+
+      job = job_of(body.strip, comments)
+      return if job.fields.nil?
+
+      job.active = false
+      job
+    rescue InvalidFile
+      nil
+    end
+
     # Any line that is not blank, a comment or an environment setting has
     # to be a job, as in cron itself; anything else is not a crontab.
     def job_of(line, comments)
       if line.start_with?('@')
         keyword, command = line.split(/\s+/, 2)
         keyword = keyword.downcase
-        return Job.new(rule: nil, fields: nil, command: command, comments: comments) if keyword == '@reboot'
+        command = unescape(command)
+        if keyword == '@reboot'
+          return Job.new(rule: nil, fields: nil, command: command, comments: comments, active: true)
+        end
 
         rule = SHORTCUTS[keyword] or raise InvalidFile
-        Job.new(rule: keyword, fields: parse_fields(rule.split), command: command, comments: comments)
+        Job.new(rule: keyword, fields: parse_fields(rule.split), command: command, comments: comments, active: true)
       else
         tokens = line.split(/\s+/, 6)
         raise InvalidFile if tokens.size < 6
 
-        Job.new(rule: tokens[0, 5].join(' '), fields: parse_fields(tokens[0, 5]), command: tokens[5],
-                comments: comments)
+        Job.new(rule: tokens[0, 5].join(' '), fields: parse_fields(tokens[0, 5]), command: unescape(tokens[5]),
+                comments: comments, active: true)
       end
+    end
+
+    def unescape(command)
+      command&.gsub('\%', '%')
     end
 
     def parse_fields(tokens)
@@ -180,6 +211,10 @@ module RedminePeriodictask
 
     def uid_of(job)
       "cron:#{Digest::SHA1.hexdigest("#{job.rule} #{job.command}")}"
+    end
+
+    def active?(job)
+      job.active
     end
 
     def subject_of(job)

@@ -90,6 +90,37 @@ class JscalExportTest < ActiveSupport::TestCase
     end
   end
 
+  def test_every_n_business_days_is_written_approximately_with_a_note_in_the_description
+    approximate = task(interval_units: 'business_day', interval_number: 2, description: 'Check the backups')
+    exact = task(interval_units: 'business_day', description: 'Daily standup')
+
+    entries = JSON.parse(export([approximate, exact]))['entries']
+    assert_equal 2, entries[0]['recurrenceRules'].first['interval']
+    assert_match(/\ACheck the backups\n\nRedmine runs this task every 2 business days.*approximation/m,
+                 entries[0]['description'])
+    assert_equal 'Daily standup', entries[1]['description']
+  end
+
+  def test_monthly_task_on_the_31st_is_the_last_day_of_the_month
+    assert_equal({ 'frequency' => 'monthly', 'byMonthDay' => [-1] },
+                 rule(interval_units: 'month', next_run_date: Time.utc(2026, 3, 31, 9)))
+    assert_equal({ 'frequency' => 'monthly' }, rule(interval_units: 'month', next_run_date: Time.utc(2026, 3, 30, 9)))
+
+    month_end = task(interval_units: 'month', next_run_date: Time.utc(2026, 3, 31, 9))
+    result = RedminePeriodictask::JscalImport.parse(export([month_end]), zone: ActiveSupport::TimeZone['UTC'],
+                                                                         now: NOW)
+    assert_equal [], result.items.first.warnings
+    assert_equal '2026-03-31T09:00:00Z', result.items.first.attributes['next_run_date']
+  end
+
+  def test_weekdays_follow_the_start_into_the_given_zone
+    weekly = task(interval_units: 'week', weekdays: [0, 3], next_run_date: Time.utc(2026, 3, 4, 1)) # Wed 01:00 UTC
+
+    entry = JSON.parse(export([weekly], zone: ActiveSupport::TimeZone['Buenos Aires']))['entries'].first
+    assert_equal '2026-03-03T22:00:00', entry['start'] # Tuesday
+    assert_equal(%w[tu sa], entry['recurrenceRules'].first['byDay'].map { |nday| nday['day'] })
+  end
+
   def test_inactive_task_is_cancelled_and_a_task_without_next_run_starts_now
     paused = task(is_active: false)
     paused.update_columns(next_run_date: nil)
@@ -97,6 +128,16 @@ class JscalExportTest < ActiveSupport::TestCase
     entry = JSON.parse(export([paused]))['entries'].first
     assert_equal 'cancelled', entry['progress']
     assert_equal '2026-03-01T12:00:00', entry['start']
+  end
+
+  def test_cancelled_task_reads_back_as_an_inactive_task
+    paused = task(subject: 'Paused', is_active: false)
+    running = task(subject: 'Running')
+
+    result = RedminePeriodictask::JscalImport.parse(export([paused, running]), zone: ActiveSupport::TimeZone['UTC'],
+                                                                               now: NOW)
+    assert_equal false, result.items[0].attributes['is_active']
+    assert_nil result.items[1].attributes['is_active']
   end
 
   def test_ended_task_is_completed_without_recurrence_rules

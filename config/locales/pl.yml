@@ -248,3 +248,5 @@ pl:
   label_periodictask_export_cron: "Eksportuj do crontab"
   text_periodictask_export_hint: "Pobierz zaznaczone zadania jako plik w tym formacie; strona importu odczyta go ponownie."
   error_periodictask_export_no_selection: "Zaznacz co najmniej jedno zadanie do eksportu."
+  text_periodictask_export_business_day_interval: "Redmine wykonuje to zadanie co %{count} dni roboczych (pomijając dni wolne); wyeksportowana reguła, co %{count} dni w dni robocze, jest tylko przybliżeniem."
+  text_periodictask_export_month_end_cron: "Redmine wykonuje to zadanie ostatniego dnia miesiąca; cron nie ma na to pola, więc zadanie jest 31. i pomija krótsze miesiące."
