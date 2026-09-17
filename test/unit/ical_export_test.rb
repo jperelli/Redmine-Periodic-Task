@@ -44,7 +44,7 @@ class IcalExportTest < ActiveSupport::TestCase
     assert_includes lines, 'RRULE:FREQ=WEEKLY;BYDAY=MO,WE;WKST=MO'
     assert_includes lines, 'CATEGORIES:ops,team'
     assert_equal 1, lines.count { |line| line.start_with?('DESCRIPTION:') }, 'a blank description is not written'
-    assert_equal 1, (lines.count { |line| line.start_with?('CATEGORIES:') })
+    assert_equal 1, lines.count { |line| line.start_with?('CATEGORIES:') }, 'tags are written once'
   end
 
   def test_dtstart_is_in_the_given_zone
@@ -56,7 +56,8 @@ class IcalExportTest < ActiveSupport::TestCase
 
   def test_format_registry_and_filenames
     exporters = RedminePeriodictask::CalendarExport.exporters
-    assert_equal %w[ics jscal cron], (exporters.map { |exporter| exporter::FORMAT })
+    formats = exporters.map { |exporter| exporter::FORMAT }
+    assert_equal %w[ics jscal cron], formats
     assert_equal RedminePeriodictask::IcalExport, RedminePeriodictask::CalendarExport.for_format('ics')
     assert_nil RedminePeriodictask::CalendarExport.for_format('pdf')
     assert_equal 'periodictasks-ecookbook.ics', RedminePeriodictask::IcalExport.filename('ecookbook')

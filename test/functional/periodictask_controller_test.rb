@@ -1035,7 +1035,8 @@ class PeriodictaskControllerTest < ActionController::TestCase
     assert_match %r{\Aapplication/jscalendar\+json}, @response.content_type
     assert_match(/attachment; filename="periodictasks-ecookbook\.json"/, @response.headers['Content-Disposition'])
     entries = JSON.parse(@response.body)['entries']
-    assert_equal ['Checked task'], (entries.map { |entry| entry['title'] })
+    titles = entries.map { |entry| entry['title'] }
+    assert_equal ['Checked task'], titles
     assert_equal 'weekly', entries.first['recurrenceRules'].first['frequency']
 
     post :export, params: { project_id: 'ecookbook', export: 'cron', ids: [checked.id] }

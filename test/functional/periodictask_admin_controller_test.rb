@@ -179,7 +179,8 @@ class PeriodictaskAdminControllerTest < Redmine::IntegrationTest
     assert_match %r{\Aapplication/jscalendar\+json}, @response.content_type
     assert_match(/attachment; filename="periodictasks-all\.json"/, @response.headers['Content-Disposition'])
     entries = JSON.parse(@response.body)['entries']
-    assert_equal ['Due task', 'Task on onlinestore'], (entries.map { |entry| entry['title'] })
+    titles = entries.map { |entry| entry['title'] }
+    assert_equal ['Due task', 'Task on onlinestore'], titles
     assert_includes entries.last['links']['redmine']['href'], "/projects/onlinestore/periodictask/#{other.id}"
 
     post '/admin/periodictasks/export', params: { export: 'cron', ids: [@due_task.id, other.id] }
