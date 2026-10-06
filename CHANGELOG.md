@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+
+- `rake redmine:check_periodictasks` loads `ScheduledTasksChecker` from the plugin file itself when the autoloader does not know it, so the task works even when Redmine picks the rake file up from a different copy than the one it registered (Debian packages: rake globs `/usr/share/redmine/plugins/` while plugins load from `/var/lib/redmine/<instance>/plugins/`); README explains the layout that keeps the rake task reachable ([#179](https://github.com/jperelli/Redmine-Periodic-Task/issues/179)) (@jperelli)
+
 ## v7.2.0 - 2026-09-17
 
 ### Features

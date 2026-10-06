@@ -21,6 +21,12 @@ namespace :redmine do
       MSG
     end
 
+    # This rake file can be picked up from a copy of the plugin that is not the
+    # one Redmine registered (see above). defined? prefers the registered
+    # copy's autoload; the require_relative fallback keeps the task working
+    # when the plugin lib is not on the autoloader at all.
+    require_relative '../scheduled_tasks_checker' unless defined?(ScheduledTasksChecker)
+
     ScheduledTasksChecker.checktasks!
   end
 end

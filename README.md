@@ -120,14 +120,22 @@ Then restart Redmine so it loads the plugin (see [Restarting Redmine](#restartin
 
 ### Debian / Ubuntu `redmine` package
 
-The Debian `redmine` 6.x package (Redmine root `/usr/share/redmine`) loads plugins from `/var/lib/redmine/<instance>/plugins/` (the instance is `default` unless you set `REDMINE_INSTANCE`), **not** from `/usr/share/redmine/plugins/`. A plugin cloned into `/usr/share/redmine/plugins/` does not show up under *Administration → Plugins*, and its rake task fails with `uninitialized constant ScheduledTasksChecker`, because Redmine still picks up the rake tasks from there. Install into the instance directory instead:
+The Debian `redmine` 6.x package (Redmine root `/usr/share/redmine`) loads plugins from `/var/lib/redmine/<instance>/plugins/` (the instance is `default` unless you set `REDMINE_INSTANCE`; the same directory is reachable as `/usr/share/redmine/instances/<instance>/plugins/`), **not** from `/usr/share/redmine/plugins/`. But `rake` only picks up plugin tasks under `plugins/` in the Redmine root, so the plugin must be reachable from **both** directories. Keep the clone in `/usr/share/redmine/plugins/` and symlink it into the instance directory:
 
     cd /usr/share/redmine
-    git clone https://github.com/jperelli/Redmine-Periodic-Task.git /var/lib/redmine/default/plugins/periodictask
+    git clone https://github.com/jperelli/Redmine-Periodic-Task.git plugins/periodictask
+    ln -s /usr/share/redmine/plugins/periodictask /var/lib/redmine/default/plugins/periodictask
     bundle install
     bundle exec rake redmine:plugins:migrate NAME=periodictask RAILS_ENV=production
 
-Or keep the clone in `/usr/share/redmine/plugins/periodictask` and symlink it: `ln -s /usr/share/redmine/plugins/periodictask /var/lib/redmine/default/plugins/periodictask`. Then restart Redmine. See `/usr/share/doc/redmine/README.Debian` for the details of the Debian layout.
+The other direction works too: clone into `/var/lib/redmine/default/plugins/periodictask` and `ln -s` it into `/usr/share/redmine/plugins/`.
+
+Two layouts to avoid:
+
+- **A real copy in each directory**: code gets loaded from both copies, which produces `warning: already initialized constant` noise and a risk of running a stale copy. Use a symlink in one of the two places instead.
+- **The plugin only in the instance directory**: Redmine works and shows it under *Administration → Plugins*, but `rake redmine:check_periodictasks` fails with "Don't know how to build task" because Redmine never loads the rake file from the instance plugins directory.
+
+If setting up cron is a problem anyway, the plugin can run the checker without it: see [Option B](#option-b-automatic-on-web-requests-no-cron) and [Option C](#option-c-check-url-external-scheduler). Then restart Redmine. See `/usr/share/doc/redmine/README.Debian` for the details of the Debian layout.
 
 ## Upgrade
 
