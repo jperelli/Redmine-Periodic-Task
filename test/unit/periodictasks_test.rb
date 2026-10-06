@@ -1307,7 +1307,7 @@ class PeriodictasksTest < ActiveSupport::TestCase
     first = task.created_issues.first
     assert_equal 'Previous report: ', first.description
 
-    task.update!(next_run_date: 1.day.ago)
+    task.reload.update!(next_run_date: 1.day.ago)
     ScheduledTasksChecker.checktasks!
     second = task.created_issues.first
     assert_not_equal first.id, second.id
@@ -1352,7 +1352,7 @@ class PeriodictasksTest < ActiveSupport::TestCase
     first_parent = Issue.where(subject: 'Parent').last
     assert_equal ['Compare with '], first_parent.children.map(&:subject)
 
-    task.update!(next_run_date: 1.day.ago)
+    task.reload.update!(next_run_date: 1.day.ago)
     ScheduledTasksChecker.checktasks!
     second_parent = Issue.where(subject: 'Parent').order(:id).last
     assert_not_equal first_parent.id, second_parent.id
