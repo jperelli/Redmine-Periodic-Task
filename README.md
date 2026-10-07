@@ -182,15 +182,21 @@ Edit the crontab of the user that owns your Redmine install (`crontab -e`) and a
 
 Once a day, at 01:00:
 
-    0 1 * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
+    0 1 * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production > /dev/null
 
 Once per hour:
 
-    0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
+    0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production > /dev/null
 
 Every 10 minutes:
 
-    */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
+    */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production > /dev/null
+
+Every run prints one summary line on stdout, also when nothing was due:
+
+    2026-10-07 21:00:01 +0200 periodictask: 3 task(s) due, 2 issue(s) created
+
+When a task fails, the line ends with `, 1 error(s)` and each error is also written to stderr (`... periodictask: error: #12 Backup: ...`). Cron mails whatever a job prints, so the lines above send stdout to `/dev/null`: you get a mail only when something failed. To keep a history instead, append both to a file: `>> /var/log/redmine/periodictask.log 2>&1`.
 
 ### Option B: automatic on web requests (no cron)
 

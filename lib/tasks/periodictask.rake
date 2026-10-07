@@ -27,6 +27,13 @@ namespace :redmine do
     # when the plugin lib is not on the autoloader at all.
     require_relative '../scheduled_tasks_checker' unless defined?(ScheduledTasksChecker)
 
-    ScheduledTasksChecker.checktasks!
+    # One summary line on stdout every run, zero included; the errors go to
+    # stderr too, so a cron line ending in > /dev/null mails only on errors.
+    result = ScheduledTasksChecker.run!
+    stamp = Time.current.strftime('%F %T %z')
+    summary = "#{stamp} periodictask: #{result.tasks_due} task(s) due, #{result.issues_created} issue(s) created"
+    summary += ", #{result.errors.size} error(s)" if result.errors.any?
+    puts summary
+    result.errors.each { |message| warn "#{stamp} periodictask: error: #{message}" }
   end
 end
