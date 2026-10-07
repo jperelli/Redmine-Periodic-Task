@@ -3,8 +3,13 @@ require 'redmine'
 # Load the view hook listener at boot so it registers itself. Done here (not via
 # an autoload reference in to_prepare) because a bare constant in void context
 # does not reliably trigger autoloading.
-require_relative 'lib/redmine_periodictask/hooks'
-require_relative 'lib/redmine_periodictask/web_scheduler'
+# Required through the path Redmine loaded this file from, not
+# require_relative: require_relative resolves symlinks, so a symlinked plugin
+# directory (Debian layout) loaded the same file twice, once from each path,
+# and warned "already initialized constant".
+plugin_lib = File.expand_path('lib/redmine_periodictask', File.dirname(__FILE__))
+require File.join(plugin_lib, 'hooks')
+require File.join(plugin_lib, 'web_scheduler')
 
 module RedminePeriodictask
   # Explains how next run dates are calculated; linked from the form and the

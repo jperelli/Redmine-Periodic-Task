@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- `rake redmine:check_periodictasks VERBOSE=1` prints one summary line per run on stdout (`<time> periodictask: N task(s) due, N issue(s) created`, zero included); without it the task stays silent on success. Errors of a run are now always written to stderr, so cron mails them ([#179](https://github.com/jperelli/Redmine-Periodic-Task/issues/179)) (@jperelli)
+
+### Fixes
+
+- No more `warning: already initialized constant RedminePeriodictask::WebScheduler::MODES` when the plugin directory is a symlink (Debian layout): `init.rb` loaded its files once through the symlink and once through its target ([#179](https://github.com/jperelli/Redmine-Periodic-Task/issues/179)) (@jperelli)
+
 ## v7.2.1 - 2026-10-06
 
 ### Fixes

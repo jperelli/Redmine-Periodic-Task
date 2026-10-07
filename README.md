@@ -192,6 +192,13 @@ Every 10 minutes:
 
     */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
+The task prints nothing when everything went fine, so cron (which mails whatever a job prints) stays quiet. When a task fails, each error is written to stderr (`2026-10-07 21:00:01 +0200 periodictask: error: #12 Backup: ...`), so cron mails you about it.
+
+Add `VERBOSE=1` to also get one summary line on stdout per run, also when nothing was due. Useful when running it by hand, or with a log file (`>> /var/log/redmine/periodictask.log 2>&1`):
+
+    $ bundle exec rake redmine:check_periodictasks RAILS_ENV=production VERBOSE=1
+    2026-10-07 21:00:01 +0200 periodictask: 3 task(s) due, 2 issue(s) created
+
 ### Option B: automatic on web requests (no cron)
 
 Go to *Administration → Plugins → Redmine Periodictask plugin → Configure* and set **Scheduler** to *Automatic on web requests*. From then on, every request to Redmine (any page, any user, the API too) checks whether the **Check interval** (default 5 minutes) has passed since the last check. If it has, the checker runs in a background thread of the web process, so the request itself is not slowed down. A row in `periodictask_scheduler_locks` makes sure only one process runs the check per interval, even with several Puma/Passenger workers or several application servers.

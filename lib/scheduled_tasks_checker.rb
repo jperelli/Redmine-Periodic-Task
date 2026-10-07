@@ -1,8 +1,16 @@
 class ScheduledTasksChecker
+  # What one checker run did, as recorded in PeriodictaskRun.
+  Result = Struct.new(:tasks_due, :issues_created, :errors, :notes, keyword_init: true)
+
   # Runs every due task, records the run in PeriodictaskRun and returns how
   # many tasks were processed. +source+ tells the run log what triggered it
   # (see PeriodictaskRun::SOURCES).
   def self.checktasks!(source: 'rake')
+    run!(source: source).tasks_due
+  end
+
+  # Same as checktasks!, returning the whole Result.
+  def self.run!(source: 'rake')
     now = Time.current
     errors = []
     notes = []
@@ -34,7 +42,7 @@ class ScheduledTasksChecker
         task.update_columns(last_error: "#{e.class}: #{e.message}")
       end
     end
-    tasks.size
+    Result.new(tasks_due: tasks.size, issues_created: issues_created, errors: errors, notes: notes)
   rescue StandardError => e
     errors << "#{e.class}: #{e.message}"
     raise
