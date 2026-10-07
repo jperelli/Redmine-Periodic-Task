@@ -27,13 +27,16 @@ namespace :redmine do
     # when the plugin lib is not on the autoloader at all.
     require_relative '../scheduled_tasks_checker' unless defined?(ScheduledTasksChecker)
 
-    # One summary line on stdout every run, zero included; the errors go to
-    # stderr too, so a cron line ending in > /dev/null mails only on errors.
+    # Silent on success, so cron (which mails any output) stays quiet. Errors
+    # always go to stderr; VERBOSE=1 adds one summary line on stdout per run,
+    # zero included.
     result = ScheduledTasksChecker.run!
     stamp = Time.current.strftime('%F %T %z')
-    summary = "#{stamp} periodictask: #{result.tasks_due} task(s) due, #{result.issues_created} issue(s) created"
-    summary += ", #{result.errors.size} error(s)" if result.errors.any?
-    puts summary
+    if %w[1 true yes].include?(ENV['VERBOSE'].to_s.downcase)
+      summary = "#{stamp} periodictask: #{result.tasks_due} task(s) due, #{result.issues_created} issue(s) created"
+      summary += ", #{result.errors.size} error(s)" if result.errors.any?
+      puts summary
+    end
     result.errors.each { |message| warn "#{stamp} periodictask: error: #{message}" }
   end
 end

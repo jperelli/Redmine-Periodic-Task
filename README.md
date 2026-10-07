@@ -182,21 +182,22 @@ Edit the crontab of the user that owns your Redmine install (`crontab -e`) and a
 
 Once a day, at 01:00:
 
-    0 1 * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production > /dev/null
+    0 1 * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
 Once per hour:
 
-    0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production > /dev/null
+    0 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
 Every 10 minutes:
 
-    */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production > /dev/null
+    */10 * * * * cd /opt/redmine && /usr/local/bin/bundle exec rake redmine:check_periodictasks RAILS_ENV=production
 
-Every run prints one summary line on stdout, also when nothing was due:
+The task prints nothing when everything went fine, so cron (which mails whatever a job prints) stays quiet. When a task fails, each error is written to stderr (`2026-10-07 21:00:01 +0200 periodictask: error: #12 Backup: ...`), so cron mails you about it.
 
+Add `VERBOSE=1` to also get one summary line on stdout per run, also when nothing was due. Useful when running it by hand, or with a log file (`>> /var/log/redmine/periodictask.log 2>&1`):
+
+    $ bundle exec rake redmine:check_periodictasks RAILS_ENV=production VERBOSE=1
     2026-10-07 21:00:01 +0200 periodictask: 3 task(s) due, 2 issue(s) created
-
-When a task fails, the line ends with `, 1 error(s)` and each error is also written to stderr (`... periodictask: error: #12 Backup: ...`). Cron mails whatever a job prints, so the lines above send stdout to `/dev/null`: you get a mail only when something failed. To keep a history instead, append both to a file: `>> /var/log/redmine/periodictask.log 2>&1`.
 
 ### Option B: automatic on web requests (no cron)
 

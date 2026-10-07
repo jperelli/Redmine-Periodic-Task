@@ -5,6 +5,7 @@ class CheckPeriodictasksRakeTest < ActiveSupport::TestCase
   RAKEFILE = File.expand_path('../../lib/tasks/periodictask.rake', __dir__)
 
   def setup
+    @previous_verbose = ENV.delete('VERBOSE')
     @previous_application = Rake.application
     Rake.application = Rake::Application.new
     Rake::Task.define_task(:environment)
@@ -13,24 +14,52 @@ class CheckPeriodictasksRakeTest < ActiveSupport::TestCase
 
   def teardown
     Rake.application = @previous_application
+    ENV['VERBOSE'] = @previous_verbose
   end
 
-  def test_runs_the_checker_and_prints_a_summary_even_when_nothing_was_due
-    ScheduledTasksChecker.expects(:run!).once.returns(result(0, 0))
+  def test_runs_the_checker_silently_by_default
+    ScheduledTasksChecker.expects(:run!).once.returns(result(3, 2))
+
+    out, err = capture_io { Rake::Task['redmine:check_periodictasks'].invoke }
+    assert_empty out
+    assert_empty err
+  end
+
+  def test_verbose_prints_a_summary_even_when_nothing_was_due
+    ENV['VERBOSE'] = '1'
+    ScheduledTasksChecker.stubs(:run!).returns(result(0, 0))
 
     out, err = capture_io { Rake::Task['redmine:check_periodictasks'].invoke }
     assert_match(/periodictask: 0 task\(s\) due, 0 issue\(s\) created$/, out)
     assert_empty err
   end
 
-  def test_summary_counts_the_created_issues
+  def test_verbose_summary_counts_the_created_issues
+    ENV['VERBOSE'] = 'true'
     ScheduledTasksChecker.stubs(:run!).returns(result(3, 2))
 
     out, _err = capture_io { Rake::Task['redmine:check_periodictasks'].invoke }
     assert_match(/periodictask: 3 task\(s\) due, 2 issue\(s\) created$/, out)
   end
 
-  def test_errors_are_counted_on_stdout_and_listed_on_stderr
+  def test_verbose_off_values_keep_it_silent
+    ENV['VERBOSE'] = '0'
+    ScheduledTasksChecker.stubs(:run!).returns(result(3, 2))
+
+    out, _err = capture_io { Rake::Task['redmine:check_periodictasks'].invoke }
+    assert_empty out
+  end
+
+  def test_errors_are_listed_on_stderr_without_verbose
+    ScheduledTasksChecker.stubs(:run!).returns(result(2, 1, ['#7 Backup: boom']))
+
+    out, err = capture_io { Rake::Task['redmine:check_periodictasks'].invoke }
+    assert_empty out
+    assert_match(/periodictask: error: #7 Backup: boom$/, err)
+  end
+
+  def test_verbose_summary_counts_the_errors
+    ENV['VERBOSE'] = '1'
     ScheduledTasksChecker.stubs(:run!).returns(result(2, 1, ['#7 Backup: boom']))
 
     out, err = capture_io { Rake::Task['redmine:check_periodictasks'].invoke }
